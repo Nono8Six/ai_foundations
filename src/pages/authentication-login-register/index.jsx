@@ -1,0 +1,196 @@
+// src/pages/authentication-login-register/index.jsx
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+
+import Icon from '../../components/AppIcon';
+import LoginForm from './components/LoginForm';
+import RegisterForm from './components/RegisterForm';
+import GoogleAuthButton from './components/GoogleAuthButton';
+
+const AuthenticationLoginRegister = () => {
+  const [activeTab, setActiveTab] = useState('login');
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  // Redirect if user is already logged in
+  useEffect(() => {
+    if (user) {
+      navigate('/user-dashboard');
+    }
+  }, [user, navigate]);
+
+  const handleAuthSuccess = (userData) => {
+    setIsLoading(true);
+    
+    // Simulate API call delay
+    setTimeout(() => {
+      setIsLoading(false);
+      // Redirect based on user role
+      if (userData.role === 'admin') {
+        navigate('/admin-dashboard');
+      } else {
+        navigate('/user-dashboard');
+      }
+    }, 1000);
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-background to-accent-50">
+      {/* Header with Logo */}
+      <header className="absolute top-0 right-0 p-6">
+        <Link to="/public-homepage" className="flex items-center space-x-2 group">
+          <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary-700 rounded-full flex items-center justify-center transition-transform duration-200 group-hover:scale-105 shadow-medium">
+            <Icon name="GraduationCap" size={28} color="white" />
+          </div>
+          <span className="text-xl font-semibold text-text-primary group-hover:text-primary transition-colors duration-200">
+            AI Foundations
+          </span>
+        </Link>
+      </header>
+
+      {/* Main Content */}
+      <div className="flex items-center justify-center min-h-screen px-4 py-12">
+        <div className="w-full max-w-md">
+          {/* Welcome Section */}
+          <div className="text-center mb-8">
+            <div className="w-20 h-20 bg-gradient-to-br from-primary to-primary-700 rounded-full flex items-center justify-center mx-auto mb-6 shadow-medium">
+              <Icon name="Brain" size={40} color="white" />
+            </div>
+            <h1 className="text-3xl font-bold text-text-primary mb-2">
+              {activeTab === 'login' ? 'Bon retour !' : 'Rejoignez-nous'}
+            </h1>
+            <p className="text-text-secondary">
+              {activeTab === 'login' ?'Connectez-vous pour continuer votre apprentissage IA' :'Commencez votre parcours d\'apprentissage IA dès aujourd\'hui'
+              }
+            </p>
+          </div>
+
+          {/* Authentication Card */}
+          <div className="bg-surface rounded-2xl shadow-medium border border-border overflow-hidden">
+            {/* Tab Navigation */}
+            <div className="flex border-b border-border">
+              <button
+                onClick={() => setActiveTab('login')}
+                className={`flex-1 py-4 px-6 text-sm font-medium transition-all duration-200 ${
+                  activeTab === 'login' ?'text-primary bg-primary-50 border-b-2 border-primary' :'text-text-secondary hover:text-primary hover:bg-secondary-50'
+                }`}
+              >
+                <Icon name="LogIn" size={18} className="inline mr-2" />
+                Connexion
+              </button>
+              <button
+                onClick={() => setActiveTab('register')}
+                className={`flex-1 py-4 px-6 text-sm font-medium transition-all duration-200 ${
+                  activeTab === 'register' ?'text-primary bg-primary-50 border-b-2 border-primary' :'text-text-secondary hover:text-primary hover:bg-secondary-50'
+                }`}
+              >
+                <Icon name="UserPlus" size={18} className="inline mr-2" />
+                Inscription
+              </button>
+            </div>
+
+            {/* Form Content */}
+            <div className="p-6">
+              {/* Google Auth Button */}
+              <GoogleAuthButton 
+                isLoading={isLoading}
+                disabled={isLoading}
+              />
+
+              {/* Divider */}
+              <div className="relative my-6">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-border"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-4 bg-surface text-text-secondary">
+                    ou continuez avec votre email
+                  </span>
+                </div>
+              </div>
+
+              {/* Forms */}
+              {activeTab === 'login' ? (
+                <LoginForm 
+                  onSuccess={handleAuthSuccess}
+                  isLoading={isLoading}
+                  setIsLoading={setIsLoading}
+                />
+              ) : (
+                <RegisterForm 
+                  onSuccess={handleAuthSuccess}
+                  isLoading={isLoading}
+                  setIsLoading={setIsLoading}
+                />
+              )}
+            </div>
+          </div>
+
+          {/* Footer Links */}
+          <div className="text-center mt-6 space-y-3">
+            {activeTab === 'login' ? (
+              <>
+                <Link
+                  to="#"
+                  className="block text-sm text-primary hover:text-primary-700 transition-colors duration-200"
+                >
+                  Mot de passe oublié ?
+                </Link>
+                <p className="text-sm text-text-secondary">
+                  Pas encore de compte ?{' '}
+                  <button
+                    onClick={() => setActiveTab('register')}
+                    className="text-primary hover:text-primary-700 font-medium transition-colors duration-200"
+                  >
+                    Créer un compte
+                  </button>
+                </p>
+              </>
+            ) : (
+              <p className="text-sm text-text-secondary">
+                Déjà un compte ?{' '}
+                <button
+                  onClick={() => setActiveTab('login')}
+                  className="text-primary hover:text-primary-700 font-medium transition-colors duration-200"
+                >
+                  Se connecter
+                </button>
+              </p>
+            )}
+          </div>
+
+          {/* Demo Info */}
+          <div className="mt-8 p-4 bg-accent-50 border border-accent-200 rounded-lg">
+            <div className="flex items-start space-x-3">
+              <Icon name="Info" size={20} className="text-accent flex-shrink-0 mt-0.5" />
+              <div>
+                <h4 className="text-sm font-medium text-accent-700 mb-1">
+                  Information de test
+                </h4>
+                <p className="text-xs text-accent-600 mb-2">
+                  Pour tester l'application, créez un compte ou utilisez Google OAuth.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Loading Overlay */}
+      {isLoading && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-modal">
+          <div className="bg-surface rounded-lg p-6 flex items-center space-x-4 shadow-medium">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            <span className="text-text-primary font-medium">
+              Connexion en cours...
+            </span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default AuthenticationLoginRegister;
