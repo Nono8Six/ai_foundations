@@ -10,8 +10,12 @@ COPY vite.config.mjs ./
 COPY tailwind.config.js ./
 COPY postcss.config.js ./
 
-# Installer les dépendances
-RUN npm ci --only=production
+# Installer les dépendances avec résolution forcée
+RUN npm install --legacy-peer-deps
+
+# Pour les résolutions Yarn (au cas où)
+RUN npm install -g yarn
+RUN yarn install --ignore-engines
 
 # Copier le reste des fichiers
 COPY . .

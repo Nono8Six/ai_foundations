@@ -1,6 +1,15 @@
 # IA Foundations
 
-Une plateforme complète pour les cours sur les Fondations de l'IA, construite avec React et Supabase, conteneurisée avec Docker pour un déploiement facile.
+Une plateforme complète pour les cours sur les Fondations de l'IA, construite avec React, Vite, Tailwind CSS et Supabase, conteneurisée avec Docker pour un déploiement facile.
+
+## 🚀 Fonctionnalités
+
+- Application React moderne avec Vite 6.3.5
+- Mise en page réactive avec Tailwind CSS
+- Gestion d'état avec Redux Toolkit
+- Authentification et base de données avec Supabase
+- Conteneurisation Docker avec support du hot-reload
+- Configuration optimisée pour le développement et la production
 
 ## 🚀 Démarrage Rapide avec Docker
 
@@ -20,15 +29,22 @@ Une plateforme complète pour les cours sur les Fondations de l'IA, construite a
    ```
 
 2. **Configurer les variables d'environnement**
-   - Copier le fichier `.env.example` en `.env.development` pour le développement
+   - Copier le fichier `.env.example` en `.env`
    - Remplir les variables requises (notamment les clés Supabase)
    ```bash
-   cp .env.example .env.devironnement
+   cp .env.example .env
    ```
 
 3. **Démarrer l'environnement de développement**
    ```bash
-   docker-compose up app-dev
+   # Reconstruire l'image avec le cache désactivé (si nécessaire)
+   docker-compose build --no-cache
+   
+   # Démarrer le conteneur
+   docker-compose up -d app-dev
+   
+   # Voir les logs
+   docker-compose logs -f app-dev
    ```
    L'application sera disponible sur http://localhost:3000
 
@@ -37,20 +53,40 @@ Une plateforme complète pour les cours sur les Fondations de l'IA, construite a
 | Commande | Description |
 |----------|-------------|
 | `docker-compose up -d app-dev` | Démarrer en mode développement avec hot-reload |
-| `docker-compose up --build` | Reconstruire et démarrer les conteneurs |
 | `docker-compose down` | Arrêter les conteneurs |
-| `docker-compose logs -f` | Voir les logs en temps réel |
-| `docker-compose exec app sh` | Se connecter au conteneur de l'application |
+| `docker-compose build --no-cache` | Reconstruire l'image sans utiliser le cache |
+| `docker-compose logs -f app-dev` | Voir les logs en temps réel |
+| `docker-compose exec app-dev sh` | Se connecter au conteneur de l'application |
+| `docker-compose exec app-dev npm audit` | Vérifier les vulnérabilités |
+| `docker-compose exec app-dev npm audit fix` | Corriger les vulnérabilités |
 
 ## 🏗 Déploiement en production
 
-1. Créer un fichier `.env.production` à partir de `.env.example`
-2. Construire l'image de production :
+1. **Configurer l'environnement de production**
+   - Créer un fichier `.env` à partir de `.env.example`
+   - Mettre à jour les variables pour la production
+
+2. **Construire l'image de production**
    ```bash
    docker-compose -f docker-compose.yml build app-prod
    ```
-3. Démarrer les services en production :
+
+3. **Démarrer les services en production**
    ```bash
+   docker-compose up -d app-prod
+   ```
+   L'application sera disponible sur le port 80
+
+4. **Mettre à jour l'application**
+   ```bash
+   # Arrêter les conteneurs
+   docker-compose down
+   
+   # Récupérer les dernières modifications
+   git pull
+   
+   # Reconstruire et redémarrer
+   docker-compose build --no-cache
    docker-compose up -d app-prod
    ```
 
@@ -70,13 +106,14 @@ chmod +x scripts/check-env.sh
 
 ### Variables d'environnement
 
-Copiez `.env.example` vers `.env.development` (développement) et/ou `.env.production` (production) et configurez les valeurs appropriées :
+Toutes les variables d'environnement sont configurées dans le fichier `.env` :
 
-- `VITE_SUPABASE_URL` : URL de votre projet Supabase
-- `VITE_SUPABASE_ANON_KEY` : Clé anonyme de votre projet Supabase
-- `VITE_APP_NAME` : Nom de l'application
-- `VITE_APP_ENV` : Environnement (development/production)
-- `VITE_DEBUG` : Activer/désactiver le mode debug
+- `VITE_SUPABASE_URL` : URL de votre projet Supabase (requis)
+- `VITE_SUPABASE_ANON_KEY` : Clé anonyme de votre projet Supabase (requis)
+- `VITE_APP_NAME` : Nom de l'application (défaut: "IA Foundations")
+- `VITE_APP_ENV` : Environnement (development/production, défaut: "development")
+- `VITE_DEBUG` : Activer/désactiver le mode debug (défaut: false)
+- `VITE_PORT` : Port sur lequel l'application s'exécute (défaut: 3000)
 
 ### Configuration de la base de données
 
