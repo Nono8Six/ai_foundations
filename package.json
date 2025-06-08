@@ -1,7 +1,8 @@
 {
-  "name": "ai_foundations_lms",
+  "name": "ia-foundations",
   "version": "0.1.0",
   "private": true,
+  "displayName": "IA Foundations",
   "dependencies": {
     "@dhiwise/component-tagger": "^1.0.1",
     "@reduxjs/toolkit": "^2.6.1",
