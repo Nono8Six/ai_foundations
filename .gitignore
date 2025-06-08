@@ -1,8 +1,80 @@
+# Fichiers système
 .DS_Store
-node_modules
-.idea
-package-lock.json
+Thumbs.db
+
+# Dossiers de dépendances
+node_modules/
+/.pnp
+.pnp.*
+
+# Fichiers de build
 /build
-.vscode/
+/dist
+/.cache
+/.svelte-kit
+/.vercel
+/.netlify
+/.output
+
+# Variables d'environnement
+.env
+.env.*
+!.env.example
+
+# Fichiers de configuration locaux
+.vscode/*
+!.vscode/extensions.json
 .idea/
-vite.config.*s.*
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Fichiers de dépendances
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Fichiers de cache
+.cache/
+.parcel-cache/
+.turbo/
+
+# Fichiers de logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Fichiers de test
+coverage/
+.nyc_output/
+
+# Fichiers temporaires
+*.tmp
+*.bak
+*.backup
+
+# Fichiers spécifiques à Vite
+vite.config.*.local
+vite.config.*.js
+vite.config.*.ts
+
+# Fichiers spécifiques à Docker
+.docker/
+*.dockerignore
+
+# Fichiers spécifiques à Supabase
+supabase/
+
+# Fichiers spécifiques à Windows
+[Dd]esktop.ini
+
+# Fichiers spécifiques à macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Fichiers spécifiques à Linux
+*~
+.fuse_hidden*
