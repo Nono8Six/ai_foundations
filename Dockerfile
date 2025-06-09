@@ -14,7 +14,6 @@ COPY postcss.config.js ./
 RUN npm install --legacy-peer-deps
 
 # Pour les résolutions Yarn (au cas où)
-RUN npm install -g yarn
 RUN yarn install --ignore-engines
 
 # Copier le reste des fichiers
