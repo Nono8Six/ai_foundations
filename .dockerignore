@@ -1,6 +1,9 @@
 # Dependencies
 node_modules
 
+# Ignore lockfile to prevent cross-platform npm issues
+package-lock.json
+
 # Build files
 /dist
 /build
