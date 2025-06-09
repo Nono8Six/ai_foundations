@@ -206,4 +206,4 @@ VITE_SUPABASE_ANON_KEY=votre_cle_anon_supabase
 
 ## 📄 Licence
 
-Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
+Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails
