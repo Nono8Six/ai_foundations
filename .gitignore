@@ -32,6 +32,8 @@ node_modules/
 *.sw?
 
 # Fichiers de dépendances
+# Le lockfile npm peut provoquer des erreurs entre environnements,
+# on l'ignore pour laisser chaque machine en générer un.
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
