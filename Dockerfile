@@ -13,9 +13,6 @@ COPY postcss.config.js ./
 # Installer les dépendances avec résolution forcée
 RUN npm install --legacy-peer-deps
 
-# Pour les résolutions Yarn (au cas où)
-RUN yarn install --ignore-engines
-
 # Copier le reste des fichiers
 COPY . .
 
