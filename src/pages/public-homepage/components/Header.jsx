@@ -1,18 +1,28 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import Icon from '../../../components/AppIcon';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, userProfile } = useAuth();
 
   const navigationItems = [
     { name: 'Accueil', path: '/public-homepage', icon: 'Home' },
     { name: 'Programmes', path: '/program-overview', icon: 'BookOpen' },
-    { name: 'Tableau de bord', path: '/user-dashboard', icon: 'LayoutDashboard' },
-    { name: 'Profil', path: '/user-profile-management', icon: 'User' },
-    { name: 'Admin', path: '/admin-dashboard', icon: 'Settings' }
   ];
+
+  if (user) {
+    navigationItems.push(
+      { name: 'Tableau de bord', path: '/user-dashboard', icon: 'LayoutDashboard' },
+      { name: 'Profil', path: '/user-profile-management', icon: 'User' }
+    );
+
+    if (userProfile?.is_admin) {
+      navigationItems.push({ name: 'Admin', path: '/admin-dashboard', icon: 'Settings' });
+    }
+  }
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-surface/95 backdrop-blur-sm border-b border-border shadow-subtle">
@@ -40,12 +50,14 @@ const Header = () => {
                 <span>{item.name}</span>
               </Link>
             ))}
-            <Link
-              to="/authentication-login-register"
-              className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors duration-200 font-medium"
-            >
-              Connexion
-            </Link>
+            {!user && (
+              <Link
+                to="/login"
+                className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors duration-200 font-medium"
+              >
+                Connexion
+              </Link>
+            )}
           </nav>
 
           {/* Mobile Menu Button */}
@@ -87,14 +99,16 @@ const Header = () => {
                     </Link>
                   ))}
                   <hr className="my-2 border-border" />
-                  <Link
-                    to="/authentication-login-register"
-                    onClick={() => setIsMenuOpen(false)}
-                    className="flex items-center space-x-3 px-4 py-3 text-primary hover:bg-primary-50 transition-colors duration-200 font-medium"
-                  >
-                    <Icon name="LogIn" size={18} />
-                    <span>Connexion</span>
-                  </Link>
+                  {!user && (
+                    <Link
+                      to="/login"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="flex items-center space-x-3 px-4 py-3 text-primary hover:bg-primary-50 transition-colors duration-200 font-medium"
+                    >
+                      <Icon name="LogIn" size={18} />
+                      <span>Connexion</span>
+                    </Link>
+                  )}
                 </motion.div>
               )}
             </AnimatePresence>
@@ -123,14 +137,16 @@ const Header = () => {
                     <span>{item.name}</span>
                   </Link>
                 ))}
-                <Link
-                  to="/authentication-login-register"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="flex items-center justify-center space-x-2 bg-primary text-white px-4 py-3 rounded-lg hover:bg-primary-700 transition-colors duration-200 font-medium mt-4"
-                >
-                  <Icon name="LogIn" size={18} />
-                  <span>Connexion</span>
-                </Link>
+                {!user && (
+                  <Link
+                    to="/login"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="flex items-center justify-center space-x-2 bg-primary text-white px-4 py-3 rounded-lg hover:bg-primary-700 transition-colors duration-200 font-medium mt-4"
+                  >
+                    <Icon name="LogIn" size={18} />
+                    <span>Connexion</span>
+                  </Link>
+                )}
               </nav>
             </motion.div>
           )}

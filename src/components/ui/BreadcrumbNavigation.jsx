@@ -14,9 +14,13 @@ const BreadcrumbNavigation = ({ customBreadcrumbs = null }) => {
       { label: 'Accueil', path: '/public-homepage' },
       { label: 'Programmes', path: '/program-overview' }
     ],
-    '/authentication-login-register': [
+    '/login': [
       { label: 'Accueil', path: '/public-homepage' },
-      { label: 'Connexion', path: '/authentication-login-register' }
+      { label: 'Connexion', path: '/login' }
+    ],
+    '/register': [
+      { label: 'Accueil', path: '/public-homepage' },
+      { label: 'Inscription', path: '/register' }
     ],
     '/user-dashboard': [
       { label: 'Tableau de bord', path: '/user-dashboard' }

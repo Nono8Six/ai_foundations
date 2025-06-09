@@ -245,7 +245,7 @@ const ProgramOverview = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
-                to="/authentication-login-register"
+                to="/register"
                 className="inline-flex items-center justify-center px-8 py-4 bg-surface text-primary font-semibold rounded-lg hover:bg-secondary-50 transition-colors duration-200"
               >
                 <Icon name="Rocket" size={20} className="mr-2" />

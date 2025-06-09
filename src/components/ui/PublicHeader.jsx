@@ -53,13 +53,13 @@ const PublicHeader = () => {
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center space-x-4">
             <Link
-              to="/authentication-login-register"
+              to="/login"
               className="text-sm font-medium text-text-secondary hover:text-primary transition-colors duration-200"
             >
               Connexion
             </Link>
             <Link
-              to="/authentication-login-register"
+              to="/register"
               className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-200 shadow-subtle hover:shadow-medium"
             >
               Commencer
@@ -102,14 +102,14 @@ const PublicHeader = () => {
           <div className="pt-4 pb-3 border-t border-border">
             <div className="flex items-center px-5 space-y-3 flex-col">
               <Link
-                to="/authentication-login-register"
+                to="/login"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="w-full text-center px-4 py-2 text-sm font-medium text-text-secondary hover:text-primary transition-colors duration-200"
               >
                 Connexion
               </Link>
               <Link
-                to="/authentication-login-register"
+                to="/register"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="w-full text-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-200 shadow-subtle"
               >

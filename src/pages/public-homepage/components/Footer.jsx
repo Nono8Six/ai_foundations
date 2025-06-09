@@ -18,7 +18,7 @@ const Footer = () => {
       { name: 'Tableau de bord', path: '/user-dashboard' },
       { name: 'Mon profil', path: '/user-profile-management' },
       { name: 'Mes cours', path: '/lesson-viewer' },
-      { name: 'Connexion', path: '/authentication-login-register' }
+      { name: 'Connexion', path: '/login' }
     ],
     entreprise: [
       { name: 'Solutions entreprise', path: '/program-overview' },
