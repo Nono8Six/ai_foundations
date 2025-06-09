@@ -4,7 +4,7 @@ server {
   # La ligne magique :
   # - Sur Google Cloud, ${PORT} sera remplacé par 8080.
   # - En local avec Docker, si la variable PORT n'est pas définie, il utilisera 80 par défaut.
-  listen ${PORT:-80};
+  listen ${PORT};
 
   server_name localhost;
 
