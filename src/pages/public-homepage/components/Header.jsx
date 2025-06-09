@@ -14,6 +14,18 @@ const Header = () => {
     { name: 'Programmes', path: '/program-overview', icon: 'BookOpen' },
   ];
 
+  const guestActions = [
+    {
+      name: 'Connexion',
+      path: '/login',
+    },
+    {
+      name: 'Rejoindre',
+      path: '/register',
+      primary: true,
+    },
+  ];
+
   if (user) {
     navigationItems.push(
       { name: 'Tableau de bord', path: '/user-dashboard', icon: 'LayoutDashboard' },
@@ -53,18 +65,19 @@ const Header = () => {
             ))}
             {!user && (
               <>
-                <Link
-                  to="/login"
-                  className="text-text-secondary hover:text-primary transition-colors duration-200"
-                >
-                  Connexion
-                </Link>
-                <Link
-                  to="/register"
-                  className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors duration-200 font-medium"
-                >
-                  Rejoindre
-                </Link>
+                {guestActions.map((action) => (
+                  <Link
+                    key={action.name}
+                    to={action.path}
+                    className={
+                      action.primary
+                        ? 'bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors duration-200 font-medium'
+                        : 'text-text-secondary hover:text-primary transition-colors duration-200'
+                    }
+                  >
+                    {action.name}
+                  </Link>
+                ))}
               </>
             )}
           </nav>
@@ -145,22 +158,21 @@ const Header = () => {
                 ))}
                 {!user && (
                   <div className="space-y-3 mt-4">
-                    <Link
-                      to="/login"
-                      onClick={() => setIsMenuOpen(false)}
-                      className="flex items-center justify-center space-x-2 text-text-secondary hover:text-primary transition-colors duration-200"
-                    >
-                      <Icon name="LogIn" size={18} />
-                      <span>Connexion</span>
-                    </Link>
-                    <Link
-                      to="/register"
-                      onClick={() => setIsMenuOpen(false)}
-                      className="flex items-center justify-center space-x-2 bg-primary text-white px-4 py-3 rounded-lg hover:bg-primary-700 transition-colors duration-200 font-medium"
-                    >
-                      <Icon name="UserPlus" size={18} />
-                      <span>Rejoindre</span>
-                    </Link>
+                    {guestActions.map((action) => (
+                      <Link
+                        key={action.name}
+                        to={action.path}
+                        onClick={() => setIsMenuOpen(false)}
+                        className={
+                          action.primary
+                            ? 'flex items-center justify-center space-x-2 bg-primary text-white px-4 py-3 rounded-lg hover:bg-primary-700 transition-colors duration-200 font-medium'
+                            : 'flex items-center justify-center space-x-2 text-text-secondary hover:text-primary transition-colors duration-200'
+                        }
+                      >
+                        <Icon name={action.primary ? 'UserPlus' : 'LogIn'} size={18} />
+                        <span>{action.name}</span>
+                      </Link>
+                    ))}
                   </div>
                 )}
               </nav>
