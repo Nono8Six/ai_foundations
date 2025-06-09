@@ -56,7 +56,7 @@ const NotFound = () => {
               Programmes
             </Link>
             <Link
-              to="/authentication-login-register"
+              to="/login"
               className="text-sm text-primary hover:text-primary-700 transition-colors duration-200"
             >
               Connexion

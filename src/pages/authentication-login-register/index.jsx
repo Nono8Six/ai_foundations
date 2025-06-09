@@ -1,6 +1,6 @@
 // src/pages/authentication-login-register/index.jsx
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 import Icon from '../../components/AppIcon';
@@ -9,10 +9,20 @@ import RegisterForm from './components/RegisterForm';
 import GoogleAuthButton from './components/GoogleAuthButton';
 
 const AuthenticationLoginRegister = () => {
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState('login');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { user } = useAuth();
+
+  // Switch tab based on current path
+  useEffect(() => {
+    if (location.pathname === '/register' || location.pathname === '/signup') {
+      setActiveTab('register');
+    } else {
+      setActiveTab('login');
+    }
+  }, [location.pathname]);
 
   // Redirect if user is already logged in
   useEffect(() => {

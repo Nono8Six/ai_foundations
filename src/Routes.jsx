@@ -53,7 +53,11 @@ const Routes = () => {
           <Route path="/public-homepage" element={<PublicHomepage />} />
           <Route path="/program-overview" element={<ProgramOverview />} />
           <Route path="/login" element={<AuthenticationLoginRegister />} />
-          <Route path="/signup" element={<AuthenticationLoginRegister />} />
+          <Route path="/register" element={<AuthenticationLoginRegister />} />
+          <Route
+            path="/authentication-login-register"
+            element={<Navigate to="/login" replace />}
+          />
 
           {/* Protected User Routes */}
           <Route path="/user-dashboard" element={

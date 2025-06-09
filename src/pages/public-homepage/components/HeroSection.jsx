@@ -63,7 +63,7 @@ const HeroSection = () => {
               className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
             >
               <Link
-                to="/authentication-login-register"
+                to="/register"
                 className="inline-flex items-center justify-center px-8 py-4 bg-primary text-white font-semibold rounded-lg hover:bg-primary-700 transition-all duration-200 shadow-medium hover:shadow-lg hover:-translate-y-0.5 group"
               >
                 <Icon name="Play" size={20} className="mr-2 group-hover:scale-110 transition-transform duration-200" />

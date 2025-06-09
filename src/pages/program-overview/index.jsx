@@ -132,7 +132,7 @@ const ProgramOverview = () => {
             {/* User Menu */}
             <div className="flex items-center space-x-4">
               <Link
-                to="/authentication-login-register"
+                to="/login"
                 className="px-4 py-2 text-sm font-medium text-primary border border-primary rounded-lg hover:bg-primary-50 transition-colors"
               >
                 Connexion
