@@ -18,8 +18,10 @@ node_modules/
 
 # Variables d'environnement
 .env
-.env.*
-!.env.example
+.env.local
+.env.development
+.env.production
+.env.*.local
 
 # Fichiers de configuration locaux
 .vscode/*
@@ -73,7 +75,6 @@ supabase/
 [Dd]esktop.ini
 
 # Fichiers spécifiques à macOS
-.DS_Store
 .AppleDouble
 .LSOverride
 

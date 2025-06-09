@@ -22,31 +22,27 @@ Une plateforme complète pour les cours sur les Fondations de l'IA, construite a
 
 ### Configuration initiale
 
-1. **Cloner le dépôt**
+1. **Installer les dépendances**
    ```bash
-   git clone https://github.com/votre-utilisateur/ai_foundations_lms.git
-   cd ai_foundations_lms
+   npm install
    ```
 
 2. **Configurer les variables d'environnement**
    - Copier le fichier `.env.example` en `.env`
-   - Remplir les variables requises (notamment les clés Supabase)
+   - Remplir les variables nécessaires (notamment Supabase)
    ```bash
    cp .env.example .env
    ```
 
-3. **Démarrer l'environnement de développement**
+3. **Vérifier la configuration**
    ```bash
-   # Reconstruire l'image avec le cache désactivé (si nécessaire)
-   docker-compose build --no-cache
-   
-   # Démarrer le conteneur
-   docker-compose up -d app-dev
-   
-   # Voir les logs
-   docker-compose logs -f app-dev
+   ./scripts/check-env.sh
    ```
-   L'application sera disponible sur http://localhost:3000
+
+4. **Démarrer le serveur de développement**
+   ```bash
+   npm run dev
+   ```
 
 ## 🛠 Commandes Docker utiles
 
@@ -95,10 +91,10 @@ Une plateforme complète pour les cours sur les Fondations de l'IA, construite a
 Un script est fourni pour vérifier que toutes les variables d'environnement requises sont définies :
 
 ```bash
-# Rendre le script exécutable (Linux/Mac)
+# Rendre le script exécutable si nécessaire
 chmod +x scripts/check-env.sh
 
-# Vérifier les variables d'environnement
+# Lancer la vérification
 ./scripts/check-env.sh
 ```
 
@@ -108,40 +104,25 @@ chmod +x scripts/check-env.sh
 
 Toutes les variables d'environnement sont configurées dans le fichier `.env` :
 
-- `VITE_SUPABASE_URL` : URL de votre projet Supabase (requis)
-- `VITE_SUPABASE_ANON_KEY` : Clé anonyme de votre projet Supabase (requis)
-- `VITE_APP_NAME` : Nom de l'application (défaut: "IA Foundations")
+- `VITE_SUPABASE_URL` : URL de votre instance Supabase
+- `VITE_SUPABASE_ANON_KEY` : Clé anonyme de votre instance Supabase
 - `VITE_APP_ENV` : Environnement (development/production, défaut: "development")
-- `VITE_DEBUG` : Activer/désactiver le mode debug (défaut: false)
-- `VITE_PORT` : Port sur lequel l'application s'exécute (défaut: 3000)
+- `VITE_APP_NAME` : Nom de l'application
+- `VITE_APP_VERSION` : Version de l'application
+- `VITE_DEBUG` : Activer le mode debug (true/false)
 
-### Configuration de la base de données
+### Variables d'environnement manquantes
 
-1. **Installer Supabase CLI**
-   ```bash
-   npm install -g supabase
-   ```
+Assurez-vous que votre fichier `.env` contient les variables requises :
 
-2. **Se connecter à Supabase**
-   ```bash
-   supabase login
-   ```
-
-3. **Lier votre projet**
-   ```bash
-   supabase link --project-ref votre-reference-projet
-   ```
-
-4. **Appliquer les migrations**
-   ```bash
-   supabase db push
-   ```
-
-### Volumes Docker
-
-- Le code source est monté en volume pour le développement
-- Les dépendances node_modules sont préservées dans un volume séparé
-- Les logs sont redirigés vers la sortie standard
+```env
+VITE_SUPABASE_URL=votre_url_supabase
+VITE_SUPABASE_ANON_KEY=votre_cle_anon_supabase
+VITE_APP_NAME="Votre Application"
+VITE_APP_ENV=development
+VITE_APP_VERSION=0.1.0
+VITE_DEBUG=true
+```
 
 ## 🔒 Sécurité
 
@@ -189,14 +170,6 @@ Cette erreur se produit lorsque les migrations de base de données n'ont pas ét
 2. Liez votre projet : `supabase link --project-ref votre-reference-projet`
 3. Appliquez les migrations : `supabase db push`
 4. Vérifiez que les tables existent dans le tableau de bord Supabase
-
-### Variables d'environnement introuvables
-
-Assurez-vous que votre fichier `.env.development` ou `.env.production` contient :
-```env
-VITE_SUPABASE_URL=votre_url_supabase
-VITE_SUPABASE_ANON_KEY=votre_cle_anon_supabase
-```
 
 ## 📚 Documentation supplémentaire
 
