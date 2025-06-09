@@ -1,35 +1,43 @@
-# Étape 1: Build de l'application
+# --- ÉTAPE 1: BUILDER ---
+# Utilise une image Node.js légère pour construire l'application React
 FROM node:18-alpine AS builder
 
-# Définir le répertoire de travail
+# Crée le dossier de travail DANS le conteneur
 WORKDIR /app
 
-# Copier les fichiers de configuration
-COPY package*.json ./
-COPY vite.config.mjs ./
-COPY tailwind.config.js ./
-COPY postcss.config.js ./
-
-# Installer les dépendances avec résolution forcée
+# Copie les fichiers de dépendances et installe les paquets
+# On copie uniquement package.json d'abord pour profiter du cache Docker
+COPY package.json ./
 RUN npm install --legacy-peer-deps
 
-# Copier le reste des fichiers
+# Copie TOUT le reste du code source
 COPY . .
 
-# Construire l'application
+# Lance la compilation de l'application React
+# Les fichiers seront générés dans /app/build
 RUN npm run build
 
-# Étape 2: Serveur Nginx pour servir l'application
+
+# --- ÉTAPE 2: PRODUCTION ---
+# Utilise une image Nginx très légère pour servir les fichiers statiques
 FROM nginx:stable-alpine
 
-# Copier la configuration Nginx personnalisée
-COPY nginx/default.conf.template /etc/nginx/templates/default.conf.template
+# LA CORRECTION CLÉ :
+# On définit une valeur PAR DÉFAUT pour la variable d'environnement PORT.
+# - En local (docker-compose), ce sera 80.
+# - Sur Cloud Run, cette valeur sera AUTOMATIQUEMENT ÉCRASÉE par 8080.
+ENV PORT=80
 
-# Copier les fichiers construits depuis le builder
-COPY --from=builder /app/build  /usr/share/nginx/html
-
-# Exposer le port 80
+# On expose le port par défaut pour la documentation.
 EXPOSE 80
 
-# Démarrer Nginx
+# Copie notre template de configuration Nginx.
+# Le script de démarrage de Nginx remplacera ${PORT} par la bonne valeur.
+COPY nginx/default.conf.template /etc/nginx/templates/default.conf.template
+
+# Copie les fichiers de l'application compilés depuis l'étape "builder"
+COPY --from=builder /app/build /usr/share/nginx/html
+
+# Commande pour démarrer Nginx au premier plan.
+# Le script d'entrée de l'image Nginx s'occupera de tout avant de lancer cette commande.
 CMD ["nginx", "-g", "daemon off;"]
