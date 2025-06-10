@@ -41,12 +41,6 @@
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
   "browserslist": {
     "production": [
       ">0.2%",
@@ -61,12 +55,14 @@
   },
   "type": "module",
   "devDependencies": {
+    "@eslint/js": "^9.27.0",
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@tailwindcss/container-queries": "^0.1.1",
     "@tailwindcss/forms": "^0.5.7",
     "@tailwindcss/line-clamp": "^0.1.0",
     "@tailwindcss/typography": "^0.5.16",
     "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/dom": "^10.1.0",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
     "@types/aria-query": "^5.0.4",
@@ -74,12 +70,12 @@
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",
     "@types/ws": "^8.18.1",
-    "@typescript-eslint/eslint-plugin": "^6.0.0",
-    "@typescript-eslint/parser": "^6.0.0",
+    "@typescript-eslint/eslint-plugin": "^7.13.0",
+    "@typescript-eslint/parser": "^7.13.0",
     "@vitejs/plugin-react": "^4.5.1",
     "@vitest/coverage-v8": "^1.0.0",
     "autoprefixer": "^10.4.17",
-    "eslint": "^8.45.0",
+    "eslint": "^9.27.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-jsx-a11y": "^6.7.1",
