@@ -12,6 +12,7 @@ import ProgressChart from './components/ProgressChart';
 import AchievementCarousel from './components/AchievementCarousel';
 import QuickActions from './components/QuickActions';
 import useRecentActivity from '../../hooks/useRecentActivity';
+import useAchievements from '../../hooks/useAchievements';
 
 const UserDashboard = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -22,6 +23,7 @@ const UserDashboard = () => {
   const [currentLesson, setCurrentLesson] = useState(null);
   const [coursesWithProgress, setCoursesWithProgress] = useState([]);
   const { activities } = useRecentActivity(user?.id);
+  const { achievements } = useAchievements(user?.id);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -182,10 +184,12 @@ const UserDashboard = () => {
         <main className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
           <div className='grid grid-cols-1 lg:grid-cols-4 gap-8'>
             <div className='lg:col-span-3 space-y-8'>
-              {/* Le reste de votre JSX pour le contenu principal va ici */}
+              <ProgressChart weeklyData={[]} monthlyData={[]} subjectData={[]} />
+              <RecentActivity activities={activities} />
             </div>
             <div className='lg:col-span-1 space-y-6'>
-              {/* Le reste de votre JSX pour la sidebar de droite va ici */}
+              <AchievementCarousel achievements={achievements} />
+              <QuickActions actions={[]} />
             </div>
           </div>
         </main>
