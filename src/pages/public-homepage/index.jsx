@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from 'react';
 
-
-
-
-
 import Header from './components/Header';
 import HeroSection from './components/HeroSection';
 import DataVisualization from './components/DataVisualization';
@@ -30,9 +26,9 @@ const PublicHomepage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className='min-h-screen bg-background'>
       <Header />
-      
+
       <main>
         <HeroSection />
         <DataVisualization />
@@ -42,10 +38,8 @@ const PublicHomepage = () => {
       </main>
 
       <Footer />
-      
-      {showCookieNotice && (
-        <CookieNotice onAccept={handleAcceptCookies} />
-      )}
+
+      {showCookieNotice && <CookieNotice onAccept={handleAcceptCookies} />}
     </div>
   );
 };

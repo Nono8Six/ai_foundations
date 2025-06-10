@@ -25,7 +25,9 @@ vi.mock('../../../context/CourseContext', () => ({
     userProgress: [],
     fetchUserProgress: vi.fn(() => Promise.resolve()),
     getNextLesson: vi.fn(() => Promise.resolve(null)),
-    calculateCourseProgress: vi.fn(() => Promise.resolve({ progress: 0, totalLessons: 0, completedLessons: 0 })),
+    calculateCourseProgress: vi.fn(() =>
+      Promise.resolve({ progress: 0, totalLessons: 0, completedLessons: 0 })
+    ),
   }),
 }));
 
@@ -34,7 +36,21 @@ vi.mock('../../../hooks/useRecentActivity', () => ({
 }));
 
 vi.mock('../../../hooks/useAchievements', () => ({
-  default: () => ({ achievements: [{ id: 'a1', title: 'First', description: 'First achievement', icon: '', rarity: 'common', xpReward: 10, earned: true }], loading: false, error: null }),
+  default: () => ({
+    achievements: [
+      {
+        id: 'a1',
+        title: 'First',
+        description: 'First achievement',
+        icon: '',
+        rarity: 'common',
+        xpReward: 10,
+        earned: true,
+      },
+    ],
+    loading: false,
+    error: null,
+  }),
 }));
 
 import UserDashboard from '../index.jsx';

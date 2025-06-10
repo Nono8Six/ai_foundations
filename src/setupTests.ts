@@ -34,7 +34,7 @@ const { ResizeObserver } = window;
 beforeEach(() => {
   // Nettoyage après chaque test
   cleanup();
-  
+
   // Mock ResizeObserver
   // @ts-expect-error - We're intentionally deleting the property
   delete window.ResizeObserver;
@@ -48,7 +48,7 @@ beforeEach(() => {
 afterEach(() => {
   // Restaure les mocks après chaque test
   vi.restoreAllMocks();
-  
+
   // Restaure le ResizeObserver original
   window.ResizeObserver = ResizeObserver;
 });

@@ -12,78 +12,78 @@ const Footer = () => {
       { name: 'IA Comptabilité', path: '/program-overview' },
       { name: 'IA Commerce', path: '/program-overview' },
       { name: 'IA Finance', path: '/program-overview' },
-      { name: 'Maintenance Prédictive', path: '/program-overview' }
+      { name: 'Maintenance Prédictive', path: '/program-overview' },
     ],
     plateforme: [
       { name: 'Tableau de bord', path: '/user-dashboard' },
       { name: 'Mon profil', path: '/user-profile-management' },
       { name: 'Mes cours', path: '/lesson-viewer' },
-      { name: 'Connexion', path: '/login' }
+      { name: 'Connexion', path: '/login' },
     ],
     entreprise: [
       { name: 'Solutions entreprise', path: '/program-overview' },
       { name: 'Formation équipes', path: '/program-overview' },
       { name: 'Consulting IA', path: '/program-overview' },
-      { name: 'Support technique', path: '/program-overview' }
+      { name: 'Support technique', path: '/program-overview' },
     ],
     legal: [
       { name: 'Mentions légales', path: '#' },
       { name: 'Politique de confidentialité', path: '#' },
-      { name: 'Conditions d\'utilisation', path: '#' },
-      { name: 'RGPD', path: '#' }
-    ]
+      { name: "Conditions d'utilisation", path: '#' },
+      { name: 'RGPD', path: '#' },
+    ],
   };
 
   const socialLinks = [
     { name: 'LinkedIn', icon: 'Linkedin', url: '#' },
     { name: 'Twitter', icon: 'Twitter', url: '#' },
     { name: 'YouTube', icon: 'Youtube', url: '#' },
-    { name: 'Facebook', icon: 'Facebook', url: '#' }
+    { name: 'Facebook', icon: 'Facebook', url: '#' },
   ];
 
   return (
-    <footer className="bg-secondary-900 text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <footer className='bg-secondary-900 text-white'>
+      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
         {/* Main Footer Content */}
-        <div className="py-16">
-          <div className="grid lg:grid-cols-6 gap-8">
+        <div className='py-16'>
+          <div className='grid lg:grid-cols-6 gap-8'>
             {/* Brand Section */}
-            <div className="lg:col-span-2">
-              <Link to="/public-homepage" className="flex items-center space-x-3 mb-6">
-                <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary-700 rounded-full flex items-center justify-center">
-                  <Icon name="Brain" size={28} color="white" />
+            <div className='lg:col-span-2'>
+              <Link to='/public-homepage' className='flex items-center space-x-3 mb-6'>
+                <div className='w-12 h-12 bg-gradient-to-br from-primary to-primary-700 rounded-full flex items-center justify-center'>
+                  <Icon name='Brain' size={28} color='white' />
                 </div>
-                <span className="text-2xl font-bold">AI Foundations</span>
+                <span className='text-2xl font-bold'>AI Foundations</span>
               </Link>
-              
-              <p className="text-secondary-300 mb-6 leading-relaxed">
-                La plateforme de formation IA de référence pour les professionnels. 
-                Transformez votre carrière avec l'intelligence artificielle.
+
+              <p className='text-secondary-300 mb-6 leading-relaxed'>
+                La plateforme de formation IA de référence pour les professionnels. Transformez
+                votre carrière avec l'intelligence artificielle.
               </p>
 
               {/* Contact Info */}
-              <div className="space-y-3 mb-6">
-                <div className="flex items-center">
-                  <Icon name="Mail" size={18} className="mr-3 text-primary" />
-                  <span className="text-secondary-300">contact@ai-foundations.fr</span>
+              <div className='space-y-3 mb-6'>
+                <div className='flex items-center'>
+                  <Icon name='Mail' size={18} className='mr-3 text-primary' />
+                  <span className='text-secondary-300'>contact@ai-foundations.fr</span>
                 </div>
-                <div className="flex items-center">
-                  <Icon name="Phone" size={18} className="mr-3 text-primary" />
-                  <span className="text-secondary-300">+33 1 23 45 67 89</span>
+                <div className='flex items-center'>
+                  <Icon name='Phone' size={18} className='mr-3 text-primary' />
+                  <span className='text-secondary-300'>+33 1 23 45 67 89</span>
                 </div>
-                <div className="flex items-center">
-                  <Icon name="MapPin" size={18} className="mr-3 text-primary" />
-                  <span className="text-secondary-300">Paris, France</span>
+                <div className='flex items-center'>
+                  <Icon name='MapPin' size={18} className='mr-3 text-primary' />
+                  <span className='text-secondary-300'>Paris, France</span>
                 </div>
               </div>
 
               {/* Social Links */}
-              <div className="flex space-x-4">
-                {socialLinks.map((social) => (
+              <div className='flex space-x-4'>
+                {socialLinks.map(social => (
                   <a
                     key={social.name}
                     href={social.url}
-                    className="w-10 h-10 bg-secondary-800 rounded-lg flex items-center justify-center hover:bg-primary transition-colors duration-200"
+                    className='w-10 h-10 bg-secondary-800 rounded-lg flex items-center justify-center hover:bg-primary transition-colors duration-200'
                     aria-label={social.name}
                   >
                     <Icon name={social.icon} size={18} />
@@ -94,15 +94,19 @@ const Footer = () => {
 
             {/* Formation Links */}
             <div>
-              <h3 className="text-lg font-semibold mb-6">Formation</h3>
-              <ul className="space-y-3">
-                {footerLinks.formation.map((link) => (
+              <h3 className='text-lg font-semibold mb-6'>Formation</h3>
+              <ul className='space-y-3'>
+                {footerLinks.formation.map(link => (
                   <li key={link.name}>
                     <Link
                       to={link.path}
-                      className="text-secondary-300 hover:text-white transition-colors duration-200 flex items-center group"
+                      className='text-secondary-300 hover:text-white transition-colors duration-200 flex items-center group'
                     >
-                      <Icon name="ChevronRight" size={14} className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                      <Icon
+                        name='ChevronRight'
+                        size={14}
+                        className='mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200'
+                      />
                       {link.name}
                     </Link>
                   </li>
@@ -112,15 +116,19 @@ const Footer = () => {
 
             {/* Platform Links */}
             <div>
-              <h3 className="text-lg font-semibold mb-6">Plateforme</h3>
-              <ul className="space-y-3">
-                {footerLinks.plateforme.map((link) => (
+              <h3 className='text-lg font-semibold mb-6'>Plateforme</h3>
+              <ul className='space-y-3'>
+                {footerLinks.plateforme.map(link => (
                   <li key={link.name}>
                     <Link
                       to={link.path}
-                      className="text-secondary-300 hover:text-white transition-colors duration-200 flex items-center group"
+                      className='text-secondary-300 hover:text-white transition-colors duration-200 flex items-center group'
                     >
-                      <Icon name="ChevronRight" size={14} className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                      <Icon
+                        name='ChevronRight'
+                        size={14}
+                        className='mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200'
+                      />
                       {link.name}
                     </Link>
                   </li>
@@ -130,15 +138,19 @@ const Footer = () => {
 
             {/* Enterprise Links */}
             <div>
-              <h3 className="text-lg font-semibold mb-6">Entreprise</h3>
-              <ul className="space-y-3">
-                {footerLinks.entreprise.map((link) => (
+              <h3 className='text-lg font-semibold mb-6'>Entreprise</h3>
+              <ul className='space-y-3'>
+                {footerLinks.entreprise.map(link => (
                   <li key={link.name}>
                     <Link
                       to={link.path}
-                      className="text-secondary-300 hover:text-white transition-colors duration-200 flex items-center group"
+                      className='text-secondary-300 hover:text-white transition-colors duration-200 flex items-center group'
                     >
-                      <Icon name="ChevronRight" size={14} className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                      <Icon
+                        name='ChevronRight'
+                        size={14}
+                        className='mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200'
+                      />
                       {link.name}
                     </Link>
                   </li>
@@ -148,15 +160,19 @@ const Footer = () => {
 
             {/* Legal Links */}
             <div>
-              <h3 className="text-lg font-semibold mb-6">Légal</h3>
-              <ul className="space-y-3">
-                {footerLinks.legal.map((link) => (
+              <h3 className='text-lg font-semibold mb-6'>Légal</h3>
+              <ul className='space-y-3'>
+                {footerLinks.legal.map(link => (
                   <li key={link.name}>
                     <a
                       href={link.path}
-                      className="text-secondary-300 hover:text-white transition-colors duration-200 flex items-center group"
+                      className='text-secondary-300 hover:text-white transition-colors duration-200 flex items-center group'
                     >
-                      <Icon name="ChevronRight" size={14} className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                      <Icon
+                        name='ChevronRight'
+                        size={14}
+                        className='mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200'
+                      />
                       {link.name}
                     </a>
                   </li>
@@ -167,22 +183,22 @@ const Footer = () => {
         </div>
 
         {/* Newsletter Section */}
-        <div className="border-t border-secondary-800 py-8">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
+        <div className='border-t border-secondary-800 py-8'>
+          <div className='grid md:grid-cols-2 gap-8 items-center'>
             <div>
-              <h3 className="text-xl font-semibold mb-2">Restez informé</h3>
-              <p className="text-secondary-300">
+              <h3 className='text-xl font-semibold mb-2'>Restez informé</h3>
+              <p className='text-secondary-300'>
                 Recevez les dernières actualités sur l'IA et nos nouveaux programmes
               </p>
             </div>
-            <div className="flex flex-col sm:flex-row gap-3">
+            <div className='flex flex-col sm:flex-row gap-3'>
               <input
-                type="email"
-                placeholder="Votre adresse email"
-                className="flex-1 px-4 py-3 bg-secondary-800 border border-secondary-700 rounded-lg text-white placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                type='email'
+                placeholder='Votre adresse email'
+                className='flex-1 px-4 py-3 bg-secondary-800 border border-secondary-700 rounded-lg text-white placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent'
               />
-              <button className="px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary-700 transition-colors duration-200 flex items-center justify-center">
-                <Icon name="Send" size={18} className="mr-2" />
+              <button className='px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary-700 transition-colors duration-200 flex items-center justify-center'>
+                <Icon name='Send' size={18} className='mr-2' />
                 S'abonner
               </button>
             </div>
@@ -190,23 +206,23 @@ const Footer = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-secondary-800 py-6">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="text-secondary-400 text-sm mb-4 md:mb-0">
+        <div className='border-t border-secondary-800 py-6'>
+          <div className='flex flex-col md:flex-row justify-between items-center'>
+            <div className='text-secondary-400 text-sm mb-4 md:mb-0'>
               © {currentYear} AI Foundations. Tous droits réservés.
             </div>
-            
-            <div className="flex items-center space-x-6 text-sm text-secondary-400">
-              <div className="flex items-center">
-                <Icon name="Shield" size={16} className="mr-2 text-success" />
+
+            <div className='flex items-center space-x-6 text-sm text-secondary-400'>
+              <div className='flex items-center'>
+                <Icon name='Shield' size={16} className='mr-2 text-success' />
                 <span>Certifié RGPD</span>
               </div>
-              <div className="flex items-center">
-                <Icon name="Award" size={16} className="mr-2 text-warning" />
+              <div className='flex items-center'>
+                <Icon name='Award' size={16} className='mr-2 text-warning' />
                 <span>Qualité Qualiopi</span>
               </div>
-              <div className="flex items-center">
-                <Icon name="Lock" size={16} className="mr-2 text-primary" />
+              <div className='flex items-center'>
+                <Icon name='Lock' size={16} className='mr-2 text-primary' />
                 <span>Sécurisé SSL</span>
               </div>
             </div>

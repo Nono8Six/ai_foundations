@@ -19,7 +19,8 @@ const UserDashboard = () => {
   const navigate = useNavigate();
 
   const { userProfile, user, signOut } = useAuth();
-  const { courses, userProgress, fetchUserProgress, getNextLesson, calculateCourseProgress } = useCourses();
+  const { courses, userProgress, fetchUserProgress, getNextLesson, calculateCourseProgress } =
+    useCourses();
   const [currentLesson, setCurrentLesson] = useState(null);
   const [coursesWithProgress, setCoursesWithProgress] = useState([]);
   const { activities } = useRecentActivity(user?.id);
@@ -140,7 +141,10 @@ const UserDashboard = () => {
                 <span className='text-xl font-bold text-text-primary'>AI Foundations</span>
               </Link>
               <nav className='hidden md:flex items-center space-x-8'>
-                <Link to='/program-overview' className='text-text-secondary hover:text-primary transition-colors'>
+                <Link
+                  to='/program-overview'
+                  className='text-text-secondary hover:text-primary transition-colors'
+                >
                   Programmes
                 </Link>
                 <Link to='/user-dashboard' className='text-primary font-medium'>
@@ -154,7 +158,11 @@ const UserDashboard = () => {
                 </button>
                 <div className='relative group'>
                   <button className='flex items-center space-x-2 p-1 rounded-full hover:bg-secondary-50 transition-colors'>
-                    <Image src={userData.avatar} alt={userData.name} className='w-8 h-8 rounded-full object-cover' />
+                    <Image
+                      src={userData.avatar}
+                      alt={userData.name}
+                      className='w-8 h-8 rounded-full object-cover'
+                    />
                     <Icon name='ChevronDown' size={16} className='text-text-secondary' />
                   </button>
                   <div className='absolute right-0 mt-2 w-48 bg-surface rounded-lg shadow-medium border border-border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200'>
@@ -163,13 +171,22 @@ const UserDashboard = () => {
                       <p className='text-sm text-text-secondary'>Niveau {userData.level}</p>
                     </div>
                     <div className='py-2'>
-                      <Link to='/user-profile-management' className='block px-4 py-2 text-sm text-text-secondary hover:bg-secondary-50 hover:text-primary transition-colors'>
+                      <Link
+                        to='/user-profile-management'
+                        className='block px-4 py-2 text-sm text-text-secondary hover:bg-secondary-50 hover:text-primary transition-colors'
+                      >
                         <Icon name='User' size={16} className='inline mr-2' /> Profil
                       </Link>
-                      <Link to='/program-overview' className='block px-4 py-2 text-sm text-text-secondary hover:bg-secondary-50 hover:text-primary transition-colors'>
+                      <Link
+                        to='/program-overview'
+                        className='block px-4 py-2 text-sm text-text-secondary hover:bg-secondary-50 hover:text-primary transition-colors'
+                      >
                         <Icon name='BookOpen' size={16} className='inline mr-2' /> Mes Cours
                       </Link>
-                      <button onClick={handleLogout} className='block w-full text-left px-4 py-2 text-sm text-text-secondary hover:bg-secondary-50 hover:text-primary transition-colors'>
+                      <button
+                        onClick={handleLogout}
+                        className='block w-full text-left px-4 py-2 text-sm text-text-secondary hover:bg-secondary-50 hover:text-primary transition-colors'
+                      >
                         <Icon name='LogOut' size={16} className='inline mr-2' /> Déconnexion
                       </button>
                     </div>

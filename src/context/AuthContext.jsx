@@ -14,7 +14,9 @@ export const AuthProvider = ({ children }) => {
     // Get session on initial load
     const getInitialSession = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
         setSession(session);
         setUser(session?.user ?? null);
 
@@ -31,7 +33,9 @@ export const AuthProvider = ({ children }) => {
     getInitialSession();
 
     // Set up auth subscription
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
@@ -49,13 +53,9 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // Fetch user profile data
-  const fetchUserProfile = async (userId) => {
+  const fetchUserProfile = async userId => {
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
+      const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).single();
 
       if (error) throw error;
       setUserProfile(data);
@@ -131,12 +131,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Update user profile
-  const updateProfile = async (updates) => {
+  const updateProfile = async updates => {
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .update(updates)
-        .eq('id', user.id);
+      const { data, error } = await supabase.from('profiles').update(updates).eq('id', user.id);
 
       if (error) throw error;
       setUserProfile({ ...userProfile, ...updates });
@@ -148,7 +145,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Reset password
-  const resetPassword = async (email) => {
+  const resetPassword = async email => {
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/reset-password`,
