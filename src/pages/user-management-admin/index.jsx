@@ -229,7 +229,7 @@ const UserManagementAdmin = () => {
                   Tableau de bord
                 </Link>
                 <Link
-                  to='/content-management-courses-modules-lessons'
+                  to='/cms'
                   className='text-text-secondary hover:text-primary transition-colors'
                 >
                   Contenu
