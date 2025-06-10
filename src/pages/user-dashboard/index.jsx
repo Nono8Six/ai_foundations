@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import { useCourses } from '../../context/CourseContext';
 import Icon from '../../components/AppIcon';
 import Image from '../../components/AppImage';
 import RecentActivity from './components/RecentActivity';
@@ -17,121 +19,42 @@ const UserDashboard = () => {
     return () => clearInterval(timer);
   }, []);
 
-  // Mock user data
+  const { userProfile, user, signOut } = useAuth();
+  const { courses, userProgress, fetchUserProgress, getNextLesson } = useCourses();
+  const [currentLesson, setCurrentLesson] = useState(null);
+
+  useEffect(() => {
+    if (user) {
+      fetchUserProgress().catch((err) => console.error('Failed to load progress', err));
+      getNextLesson().then(setCurrentLesson).catch((err) => console.error('Failed to get next lesson', err));
+    }
+  }, [user, fetchUserProgress, getNextLesson]);
+
   const userData = {
-    name: "Marie Dubois",
-    avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face",
-    level: 12,
-    xp: 2450,
-    xpToNextLevel: 3000,
-    currentStreak: 7,
-    totalCourses: 8,
-    completedCourses: 3,
-    totalLessons: 45,
-    completedLessons: 28
+    name: userProfile?.full_name || user?.email || 'Utilisateur',
+    avatar: userProfile?.avatar_url,
+    level: userProfile?.level || 1,
+    xp: userProfile?.xp || 0,
+    xpToNextLevel: Math.floor(100 * Math.pow(userProfile?.level || 1, 1.5)),
+    currentStreak: userProfile?.current_streak || 0,
+    totalCourses: courses.length,
+    completedCourses: 0,
+    totalLessons: userProgress.length,
+    completedLessons: userProgress.filter(p => p.status === 'completed').length
   };
 
-  // Mock current lesson data
-  const currentLesson = {
-    id: 1,
-    title: "Introduction aux Réseaux de Neurones",
-    courseName: "IA Fondamentale",
-    thumbnail: "https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?w=400&h=250&fit=crop",
-    progress: 65,
-    timeRemaining: "15 min restantes",
-    lastAccessed: "Il y a 2 heures"
-  };
+  const enrolledCourses = courses.map(course => ({
+    id: course.id,
+    title: course.title,
+    instructor: course.instructor || '---',
+    thumbnail: course.cover_image_url,
+    progress: 0,
+    totalLessons: 0,
+    completedLessons: 0,
+    nextLesson: '',
+    difficulty: 'Débutant'
+  }));
 
-  // Mock enrolled courses
-  const enrolledCourses = [
-    {
-      id: 1,
-      title: "IA Fondamentale",
-      instructor: "Dr. Laurent Martin",
-      thumbnail: "https://images.pixabay.com/photo/2023/01/26/22/14/ai-generated-7747171_1280.jpg?w=300&h=200&fit=crop",
-      progress: 65,
-      totalLessons: 12,
-      completedLessons: 8,
-      nextLesson: "Réseaux de Neurones Avancés",
-      difficulty: "Intermédiaire"
-    },
-    {
-      id: 2,
-      title: "Machine Learning Pratique",
-      instructor: "Sophie Rousseau",
-      thumbnail: "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=300&h=200&fit=crop",
-      progress: 30,
-      totalLessons: 15,
-      completedLessons: 4,
-      nextLesson: "Algorithmes de Classification",
-      difficulty: "Avancé"
-    },
-    {
-      id: 3,
-      title: "IA pour les Entreprises",
-      instructor: "Marc Lefevre",
-      thumbnail: "https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?w=300&h=200&fit=crop",
-      progress: 85,
-      totalLessons: 10,
-      completedLessons: 9,
-      nextLesson: "Implémentation en Production",
-      difficulty: "Expert"
-    },
-    {
-      id: 4,
-      title: "Éthique de l\'IA",
-      instructor: "Dr. Claire Moreau",
-      thumbnail: "https://images.pixabay.com/photo/2023/04/06/15/50/ai-generated-7904344_1280.jpg?w=300&h=200&fit=crop",
-      progress: 10,
-      totalLessons: 8,
-      completedLessons: 1,
-      nextLesson: "Biais Algorithmiques",
-      difficulty: "Débutant"
-    }
-  ];
-
-  // Mock upcoming deadlines
-  const upcomingDeadlines = [
-    {
-      id: 1,
-      title: "Projet Final - IA Fondamentale",
-      dueDate: "2024-02-15",
-      priority: "high",
-      type: "project"
-    },
-    {
-      id: 2,
-      title: "Quiz - Machine Learning",
-      dueDate: "2024-02-10",
-      priority: "medium",
-      type: "quiz"
-    },
-    {
-      id: 3,
-      title: "Certification IA Éthique",
-      dueDate: "2024-02-20",
-      priority: "low",
-      type: "certification"
-    }
-  ];
-
-  // Mock recommendations
-  const recommendations = [
-    {
-      id: 1,
-      title: "Deep Learning Avancé",
-      reason: "Basé sur votre progression en IA Fondamentale",
-      thumbnail: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=200&h=120&fit=crop",
-      difficulty: "Expert"
-    },
-    {
-      id: 2,
-      title: "Python pour l\'IA",
-      reason: "Complément parfait à vos cours actuels",
-      thumbnail: "https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg?w=200&h=120&fit=crop",
-      difficulty: "Intermédiaire"
-    }
-  ];
 
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
@@ -258,53 +181,55 @@ const UserDashboard = () => {
             </div>
 
             {/* Resume Learning Section */}
-            <div className="bg-surface rounded-xl border border-border p-6">
-              <h2 className="text-xl font-semibold text-text-primary mb-4">
-                Reprendre l'apprentissage
-              </h2>
-              <div className="bg-gradient-to-r from-secondary-50 to-primary-50 rounded-lg p-4 border border-secondary-200">
-                <div className="flex flex-col md:flex-row gap-4">
-                  <div className="md:w-32 h-20 rounded-lg overflow-hidden flex-shrink-0">
-                    <Image 
-                      src={currentLesson.thumbnail}
-                      alt={currentLesson.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-text-primary mb-1">
-                      {currentLesson.title}
-                    </h3>
-                    <p className="text-sm text-text-secondary mb-2">
-                      {currentLesson.courseName} • {currentLesson.lastAccessed}
-                    </p>
-                    <div className="flex items-center space-x-4 mb-3">
-                      <div className="flex-1 bg-secondary-200 rounded-full h-2">
-                        <div 
-                          className="bg-primary h-2 rounded-full transition-all duration-300"
-                          style={{ width: `${currentLesson.progress}%` }}
-                        ></div>
-                      </div>
-                      <span className="text-sm font-medium text-primary">
-                        {currentLesson.progress}%
-                      </span>
+            {currentLesson && (
+              <div className="bg-surface rounded-xl border border-border p-6">
+                <h2 className="text-xl font-semibold text-text-primary mb-4">
+                  Reprendre l'apprentissage
+                </h2>
+                <div className="bg-gradient-to-r from-secondary-50 to-primary-50 rounded-lg p-4 border border-secondary-200">
+                  <div className="flex flex-col md:flex-row gap-4">
+                    <div className="md:w-32 h-20 rounded-lg overflow-hidden flex-shrink-0">
+                      <Image
+                        src={currentLesson.thumbnail}
+                        alt={currentLesson.title}
+                        className="w-full h-full object-cover"
+                      />
                     </div>
-                    <p className="text-sm text-text-secondary mb-3">
-                      {currentLesson.timeRemaining}
-                    </p>
-                  </div>
-                  <div className="flex-shrink-0">
-                    <Link 
-                      to="/lesson-viewer"
-                      className="inline-flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors font-medium"
-                    >
-                      <Icon name="Play" size={16} className="mr-2" />
-                      Continuer
-                    </Link>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-text-primary mb-1">
+                        {currentLesson.title}
+                      </h3>
+                      <p className="text-sm text-text-secondary mb-2">
+                        {currentLesson.courseName} • {currentLesson.lastAccessed}
+                      </p>
+                      <div className="flex items-center space-x-4 mb-3">
+                        <div className="flex-1 bg-secondary-200 rounded-full h-2">
+                          <div
+                            className="bg-primary h-2 rounded-full transition-all duration-300"
+                            style={{ width: `${currentLesson.progress}%` }}
+                          ></div>
+                        </div>
+                        <span className="text-sm font-medium text-primary">
+                          {currentLesson.progress}%
+                        </span>
+                      </div>
+                      <p className="text-sm text-text-secondary mb-3">
+                        {currentLesson.timeRemaining}
+                      </p>
+                    </div>
+                    <div className="flex-shrink-0">
+                      <Link
+                        to="/lesson-viewer"
+                        className="inline-flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors font-medium"
+                      >
+                        <Icon name="Play" size={16} className="mr-2" />
+                        Continuer
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
 
             {/* Stats Overview */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -412,69 +337,38 @@ const UserDashboard = () => {
               </div>
             </div>
 
-            {/* Progress Chart */}
-            <ProgressChart />
+            {/* Progress Chart - requires real data */}
+            {false && <ProgressChart />}
 
-            {/* Recent Activity */}
-            <RecentActivity />
+            {/* Recent Activity - requires real data */}
+            {false && <RecentActivity />}
           </div>
 
           {/* Right Sidebar */}
           <div className="lg:col-span-1 space-y-6">
             {/* Achievement Carousel */}
-            <AchievementCarousel />
+            {false && <AchievementCarousel />}
 
             {/* Quick Actions */}
-            <QuickActions />
+            {false && <QuickActions />}
 
-            {/* Upcoming Deadlines */}
-            <div className="bg-surface rounded-xl border border-border p-6">
-              <h3 className="text-lg font-semibold text-text-primary mb-4">
-                Échéances à venir
-              </h3>
-              <div className="space-y-3">
-                {upcomingDeadlines.map((deadline) => (
-                  <div key={deadline.id} className={`border-l-4 pl-4 py-2 rounded-r-lg ${getPriorityColor(deadline.priority)}`}>
-                    <h4 className="font-medium text-text-primary text-sm">{deadline.title}</h4>
-                    <div className="flex items-center justify-between mt-1">
-                      <span className="text-xs text-text-secondary">
-                        {formatDate(deadline.dueDate)}
-                      </span>
-                      <Icon name={deadline.type === 'project' ? 'FolderOpen' : deadline.type === 'quiz' ? 'HelpCircle' : 'Award'} size={14} className="text-text-secondary" />
-                    </div>
-                  </div>
-                ))}
+            {false && (
+              <div className="bg-surface rounded-xl border border-border p-6">
+                <h3 className="text-lg font-semibold text-text-primary mb-4">
+                  Échéances à venir
+                </h3>
+                <div className="space-y-3" />
               </div>
-            </div>
+            )}
 
-            {/* Recommendations */}
-            <div className="bg-surface rounded-xl border border-border p-6">
-              <h3 className="text-lg font-semibold text-text-primary mb-4">
-                Recommandations
-              </h3>
-              <div className="space-y-4">
-                {recommendations.map((rec) => (
-                  <div key={rec.id} className="border border-border rounded-lg p-3 hover:shadow-subtle transition-all duration-200">
-                    <div className="flex gap-3">
-                      <div className="w-16 h-10 rounded overflow-hidden flex-shrink-0">
-                        <Image 
-                          src={rec.thumbnail}
-                          alt={rec.title}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-medium text-text-primary text-sm truncate">{rec.title}</h4>
-                        <p className="text-xs text-text-secondary mt-1">{rec.reason}</p>
-                        <span className={`inline-block mt-2 px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(rec.difficulty)}`}>
-                          {rec.difficulty}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+            {false && (
+              <div className="bg-surface rounded-xl border border-border p-6">
+                <h3 className="text-lg font-semibold text-text-primary mb-4">
+                  Recommandations
+                </h3>
+                <div className="space-y-4" />
               </div>
-            </div>
+            )}
 
             {/* Study Streak */}
             <div className="bg-gradient-to-br from-warning-50 to-warning-100 rounded-xl border border-warning-200 p-6">
