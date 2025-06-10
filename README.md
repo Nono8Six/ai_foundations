@@ -6,7 +6,6 @@ Une plateforme complète pour les cours sur les Fondations de l'IA, construite a
 
 - Application React moderne avec Vite 6.3.5
 - Mise en page réactive avec Tailwind CSS
-- Gestion d'état avec Redux Toolkit
 - Authentification et base de données avec Supabase
 - Conteneurisation Docker avec support du hot-reload
 - Configuration optimisée pour le développement et la production
