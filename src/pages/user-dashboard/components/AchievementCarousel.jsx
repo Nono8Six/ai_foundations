@@ -67,7 +67,9 @@ const AchievementCarousel = ({ achievements = [] }) => {
         </span>
       </div>
 
-      <div className={`relative rounded-lg border-2 p-4 mb-4 transition-all duration-300 ${getRarityColor(currentAchievement.rarity)}`}>
+      <div
+        className={`relative rounded-lg border-2 p-4 mb-4 transition-all duration-300 ${getRarityColor(currentAchievement.rarity)}`}
+      >
         {currentAchievement.earned && (
           <div className='absolute -top-2 -right-2 w-6 h-6 bg-success rounded-full flex items-center justify-center'>
             <Icon name='Check' size={14} color='white' />
@@ -75,26 +77,43 @@ const AchievementCarousel = ({ achievements = [] }) => {
         )}
         <div className='flex items-center gap-4'>
           <div className='w-12 h-12 rounded-full overflow-hidden flex-shrink-0'>
-            <Image src={currentAchievement.icon} alt={currentAchievement.title} className='w-full h-full object-cover' />
+            <Image
+              src={currentAchievement.icon}
+              alt={currentAchievement.title}
+              className='w-full h-full object-cover'
+            />
           </div>
           <div className='flex-1'>
             <h4 className='font-medium text-text-primary'>{currentAchievement.title}</h4>
             <p className='text-sm text-text-secondary'>{currentAchievement.description}</p>
           </div>
-          <div className={`text-sm font-medium ${getRarityTextColor(currentAchievement.rarity)}`}>{currentAchievement.xpReward} XP</div>
+          <div className={`text-sm font-medium ${getRarityTextColor(currentAchievement.rarity)}`}>
+            {currentAchievement.xpReward} XP
+          </div>
         </div>
       </div>
 
       <div className='flex justify-between items-center'>
-        <button onClick={prevAchievement} className='p-2 rounded-full hover:bg-secondary-100 transition-colors' disabled={achievements.length <= 1}>
+        <button
+          onClick={prevAchievement}
+          className='p-2 rounded-full hover:bg-secondary-100 transition-colors'
+          disabled={achievements.length <= 1}
+        >
           <Icon name='ChevronLeft' size={16} className='text-text-secondary' />
         </button>
         <div className='flex space-x-2'>
           {achievements.map((_, index) => (
-            <span key={index} className={`w-2 h-2 rounded-full ${index === currentIndex ? 'bg-primary' : 'bg-secondary-300 hover:bg-secondary-400'}`} />
+            <span
+              key={index}
+              className={`w-2 h-2 rounded-full ${index === currentIndex ? 'bg-primary' : 'bg-secondary-300 hover:bg-secondary-400'}`}
+            />
           ))}
         </div>
-        <button onClick={nextAchievement} className='p-2 rounded-full hover:bg-secondary-100 transition-colors' disabled={achievements.length <= 1}>
+        <button
+          onClick={nextAchievement}
+          className='p-2 rounded-full hover:bg-secondary-100 transition-colors'
+          disabled={achievements.length <= 1}
+        >
           <Icon name='ChevronRight' size={16} className='text-text-secondary' />
         </button>
       </div>

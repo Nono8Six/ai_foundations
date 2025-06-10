@@ -24,7 +24,11 @@ const QuickActions = ({ actions = [], onAction }) => {
               <h4 className='font-medium'>{action.title}</h4>
               <p className='text-sm opacity-90'>{action.description}</p>
             </div>
-            <Icon name='ArrowRight' size={16} className='opacity-70 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200' />
+            <Icon
+              name='ArrowRight'
+              size={16}
+              className='opacity-70 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200'
+            />
           </div>
         </Link>
       );
@@ -44,7 +48,11 @@ const QuickActions = ({ actions = [], onAction }) => {
             <h4 className='font-medium'>{action.title}</h4>
             <p className='text-sm opacity-90'>{action.description}</p>
           </div>
-          <Icon name='ArrowRight' size={16} className='opacity-70 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200' />
+          <Icon
+            name='ArrowRight'
+            size={16}
+            className='opacity-70 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200'
+          />
         </div>
       </button>
     );

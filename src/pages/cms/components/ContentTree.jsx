@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
 import Icon from '../../../components/AppIcon';
 
-const ContentTree = ({ 
-  contentData, 
-  searchQuery, 
-  selectedContent, 
-  selectedItems, 
-  onContentSelect, 
-  onItemsSelect, 
-  onReorder 
+const ContentTree = ({
+  contentData,
+  searchQuery,
+  selectedContent,
+  selectedItems,
+  onContentSelect,
+  onItemsSelect,
+  onReorder,
 }) => {
   const [expandedItems, setExpandedItems] = useState(new Set([1]));
   const [draggedItem, setDraggedItem] = useState(null);
 
-  const toggleExpanded = (id) => {
+  const toggleExpanded = id => {
     const newExpanded = new Set(expandedItems);
     if (newExpanded.has(id)) {
       newExpanded.delete(id);
@@ -40,7 +40,7 @@ const ContentTree = ({
     e.dataTransfer.effectAllowed = 'move';
   };
 
-  const handleDragOver = (e) => {
+  const handleDragOver = e => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
   };
@@ -54,35 +54,36 @@ const ContentTree = ({
     setDraggedItem(null);
   };
 
-  const getStatusIcon = (status) => {
+  const getStatusIcon = status => {
     switch (status) {
       case 'published':
-        return <Icon name="CheckCircle" size={16} className="text-accent" />;
+        return <Icon name='CheckCircle' size={16} className='text-accent' />;
       case 'draft':
-        return <Icon name="Clock" size={16} className="text-warning" />;
+        return <Icon name='Clock' size={16} className='text-warning' />;
       default:
-        return <Icon name="Circle" size={16} className="text-secondary-400" />;
+        return <Icon name='Circle' size={16} className='text-secondary-400' />;
     }
   };
 
-  const getTypeIcon = (type) => {
+  const getTypeIcon = type => {
     switch (type) {
       case 'course':
-        return <Icon name="BookOpen" size={16} className="text-primary" />;
+        return <Icon name='BookOpen' size={16} className='text-primary' />;
       case 'module':
-        return <Icon name="Folder" size={16} className="text-secondary-600" />;
+        return <Icon name='Folder' size={16} className='text-secondary-600' />;
       case 'lesson':
-        return <Icon name="FileText" size={16} className="text-secondary-500" />;
+        return <Icon name='FileText' size={16} className='text-secondary-500' />;
       default:
-        return <Icon name="File" size={16} className="text-secondary-400" />;
+        return <Icon name='File' size={16} className='text-secondary-400' />;
     }
   };
 
   const filterContent = (items, query) => {
     if (!query) return items;
-    return items.filter(item => 
-      item.title.toLowerCase().includes(query.toLowerCase()) ||
-      item.description?.toLowerCase().includes(query.toLowerCase())
+    return items.filter(
+      item =>
+        item.title.toLowerCase().includes(query.toLowerCase()) ||
+        item.description?.toLowerCase().includes(query.toLowerCase())
     );
   };
 
@@ -90,57 +91,56 @@ const ContentTree = ({
     if (!lessons || lessons.length === 0) return null;
 
     return (
-      <div className="ml-6">
-        {lessons.map((lesson) => (
+      <div className='ml-6'>
+        {lessons.map(lesson => (
           <div
             key={lesson.id}
             draggable
-            onDragStart={(e) => handleDragStart(e, lesson)}
+            onDragStart={e => handleDragStart(e, lesson)}
             onDragOver={handleDragOver}
-            onDrop={(e) => handleDrop(e, lesson)}
-            onClick={(e) => handleItemSelect(lesson, e)}
+            onDrop={e => handleDrop(e, lesson)}
+            onClick={e => handleItemSelect(lesson, e)}
             className={`flex items-center p-2 rounded-lg cursor-pointer transition-colors duration-200 group ${
               selectedContent?.id === lesson.id
                 ? 'bg-primary-50 border border-primary-200'
                 : selectedItems.includes(lesson.id)
-                ? 'bg-accent-50 border border-accent-200' :'hover:bg-secondary-50'
+                  ? 'bg-accent-50 border border-accent-200'
+                  : 'hover:bg-secondary-50'
             }`}
           >
             <input
-              type="checkbox"
+              type='checkbox'
               checked={selectedItems.includes(lesson.id)}
-              onChange={(e) => {
+              onChange={e => {
                 e.stopPropagation();
                 const newSelected = e.target.checked
                   ? [...selectedItems, lesson.id]
                   : selectedItems.filter(id => id !== lesson.id);
                 onItemsSelect(newSelected);
               }}
-              className="mr-2 rounded border-secondary-300 text-primary focus:ring-primary"
+              className='mr-2 rounded border-secondary-300 text-primary focus:ring-primary'
             />
-            
+
             {getTypeIcon(lesson.type)}
-            
-            <div className="flex-1 ml-2 min-w-0">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-text-primary truncate">
+
+            <div className='flex-1 ml-2 min-w-0'>
+              <div className='flex items-center justify-between'>
+                <span className='text-sm font-medium text-text-primary truncate'>
                   {lesson.title}
                 </span>
-                <div className="flex items-center space-x-1 ml-2">
+                <div className='flex items-center space-x-1 ml-2'>
                   {getStatusIcon(lesson.status)}
-                  <span className="text-xs text-text-secondary">
-                    {lesson.duration}min
-                  </span>
+                  <span className='text-xs text-text-secondary'>{lesson.duration}min</span>
                 </div>
               </div>
-              <div className="text-xs text-text-secondary mt-1">
+              <div className='text-xs text-text-secondary mt-1'>
                 {lesson.completions} complétions
               </div>
             </div>
 
-            <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 ml-2">
-              <button className="p-1 hover:bg-secondary-100 rounded">
-                <Icon name="MoreVertical" size={14} className="text-secondary-500" />
+            <div className='opacity-0 group-hover:opacity-100 transition-opacity duration-200 ml-2'>
+              <button className='p-1 hover:bg-secondary-100 rounded'>
+                <Icon name='MoreVertical' size={14} className='text-secondary-500' />
               </button>
             </div>
           </div>
@@ -153,67 +153,68 @@ const ContentTree = ({
     if (!modules || modules.length === 0) return null;
 
     return (
-      <div className="ml-6">
-        {modules.map((module) => (
-          <div key={module.id} className="mb-1">
+      <div className='ml-6'>
+        {modules.map(module => (
+          <div key={module.id} className='mb-1'>
             <div
               draggable
-              onDragStart={(e) => handleDragStart(e, module)}
+              onDragStart={e => handleDragStart(e, module)}
               onDragOver={handleDragOver}
-              onDrop={(e) => handleDrop(e, module)}
-              onClick={(e) => handleItemSelect(module, e)}
+              onDrop={e => handleDrop(e, module)}
+              onClick={e => handleItemSelect(module, e)}
               className={`flex items-center p-2 rounded-lg cursor-pointer transition-colors duration-200 group ${
                 selectedContent?.id === module.id
                   ? 'bg-primary-50 border border-primary-200'
                   : selectedItems.includes(module.id)
-                  ? 'bg-accent-50 border border-accent-200' :'hover:bg-secondary-50'
+                    ? 'bg-accent-50 border border-accent-200'
+                    : 'hover:bg-secondary-50'
               }`}
             >
               <input
-                type="checkbox"
+                type='checkbox'
                 checked={selectedItems.includes(module.id)}
-                onChange={(e) => {
+                onChange={e => {
                   e.stopPropagation();
                   const newSelected = e.target.checked
                     ? [...selectedItems, module.id]
                     : selectedItems.filter(id => id !== module.id);
                   onItemsSelect(newSelected);
                 }}
-                className="mr-2 rounded border-secondary-300 text-primary focus:ring-primary"
+                className='mr-2 rounded border-secondary-300 text-primary focus:ring-primary'
               />
 
               <button
-                onClick={(e) => {
+                onClick={e => {
                   e.stopPropagation();
                   toggleExpanded(module.id);
                 }}
-                className="mr-2 p-1 hover:bg-secondary-100 rounded transition-colors duration-200"
+                className='mr-2 p-1 hover:bg-secondary-100 rounded transition-colors duration-200'
               >
                 <Icon
-                  name={expandedItems.has(module.id) ? "ChevronDown" : "ChevronRight"}
+                  name={expandedItems.has(module.id) ? 'ChevronDown' : 'ChevronRight'}
                   size={14}
-                  className="text-secondary-500"
+                  className='text-secondary-500'
                 />
               </button>
 
               {getTypeIcon(module.type)}
-              
-              <div className="flex-1 ml-2 min-w-0">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-text-primary truncate">
+
+              <div className='flex-1 ml-2 min-w-0'>
+                <div className='flex items-center justify-between'>
+                  <span className='text-sm font-medium text-text-primary truncate'>
                     {module.title}
                   </span>
-                  <div className="flex items-center space-x-1 ml-2">
-                    <span className="text-xs text-text-secondary">
+                  <div className='flex items-center space-x-1 ml-2'>
+                    <span className='text-xs text-text-secondary'>
                       {module.lessons?.length || 0} leçons
                     </span>
                   </div>
                 </div>
               </div>
 
-              <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 ml-2">
-                <button className="p-1 hover:bg-secondary-100 rounded">
-                  <Icon name="MoreVertical" size={14} className="text-secondary-500" />
+              <div className='opacity-0 group-hover:opacity-100 transition-opacity duration-200 ml-2'>
+                <button className='p-1 hover:bg-secondary-100 rounded'>
+                  <Icon name='MoreVertical' size={14} className='text-secondary-500' />
                 </button>
               </div>
             </div>
@@ -228,71 +229,68 @@ const ContentTree = ({
   const filteredContent = filterContent(contentData, searchQuery);
 
   return (
-    <div className="p-4 space-y-2">
-      {filteredContent.map((course) => (
-        <div key={course.id} className="mb-2">
+    <div className='p-4 space-y-2'>
+      {filteredContent.map(course => (
+        <div key={course.id} className='mb-2'>
           <div
             draggable
-            onDragStart={(e) => handleDragStart(e, course)}
+            onDragStart={e => handleDragStart(e, course)}
             onDragOver={handleDragOver}
-            onDrop={(e) => handleDrop(e, course)}
-            onClick={(e) => handleItemSelect(course, e)}
+            onDrop={e => handleDrop(e, course)}
+            onClick={e => handleItemSelect(course, e)}
             className={`flex items-center p-3 rounded-lg cursor-pointer transition-colors duration-200 group ${
               selectedContent?.id === course.id
                 ? 'bg-primary-50 border border-primary-200'
                 : selectedItems.includes(course.id)
-                ? 'bg-accent-50 border border-accent-200' :'hover:bg-secondary-50'
+                  ? 'bg-accent-50 border border-accent-200'
+                  : 'hover:bg-secondary-50'
             }`}
           >
             <input
-              type="checkbox"
+              type='checkbox'
               checked={selectedItems.includes(course.id)}
-              onChange={(e) => {
+              onChange={e => {
                 e.stopPropagation();
                 const newSelected = e.target.checked
                   ? [...selectedItems, course.id]
                   : selectedItems.filter(id => id !== course.id);
                 onItemsSelect(newSelected);
               }}
-              className="mr-3 rounded border-secondary-300 text-primary focus:ring-primary"
+              className='mr-3 rounded border-secondary-300 text-primary focus:ring-primary'
             />
 
             <button
-              onClick={(e) => {
+              onClick={e => {
                 e.stopPropagation();
                 toggleExpanded(course.id);
               }}
-              className="mr-3 p-1 hover:bg-secondary-100 rounded transition-colors duration-200"
+              className='mr-3 p-1 hover:bg-secondary-100 rounded transition-colors duration-200'
             >
               <Icon
-                name={expandedItems.has(course.id) ? "ChevronDown" : "ChevronRight"}
+                name={expandedItems.has(course.id) ? 'ChevronDown' : 'ChevronRight'}
                 size={16}
-                className="text-secondary-500"
+                className='text-secondary-500'
               />
             </button>
 
             {getTypeIcon(course.type)}
-            
-            <div className="flex-1 ml-3 min-w-0">
-              <div className="flex items-center justify-between">
-                <span className="font-medium text-text-primary truncate">
-                  {course.title}
-                </span>
-                <div className="flex items-center space-x-2 ml-2">
+
+            <div className='flex-1 ml-3 min-w-0'>
+              <div className='flex items-center justify-between'>
+                <span className='font-medium text-text-primary truncate'>{course.title}</span>
+                <div className='flex items-center space-x-2 ml-2'>
                   {getStatusIcon(course.status)}
-                  <span className="text-xs text-text-secondary">
-                    {course.enrollments} inscrits
-                  </span>
+                  <span className='text-xs text-text-secondary'>{course.enrollments} inscrits</span>
                 </div>
               </div>
-              <div className="text-sm text-text-secondary mt-1 truncate">
+              <div className='text-sm text-text-secondary mt-1 truncate'>
                 {course.modules?.length || 0} modules • {course.price}€
               </div>
             </div>
 
-            <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 ml-2">
-              <button className="p-1 hover:bg-secondary-100 rounded">
-                <Icon name="MoreVertical" size={16} className="text-secondary-500" />
+            <div className='opacity-0 group-hover:opacity-100 transition-opacity duration-200 ml-2'>
+              <button className='p-1 hover:bg-secondary-100 rounded'>
+                <Icon name='MoreVertical' size={16} className='text-secondary-500' />
               </button>
             </div>
           </div>
@@ -302,9 +300,9 @@ const ContentTree = ({
       ))}
 
       {filteredContent.length === 0 && (
-        <div className="text-center py-8">
-          <Icon name="Search" size={48} className="text-secondary-300 mx-auto mb-4" />
-          <p className="text-text-secondary">
+        <div className='text-center py-8'>
+          <Icon name='Search' size={48} className='text-secondary-300 mx-auto mb-4' />
+          <p className='text-text-secondary'>
             {searchQuery ? 'Aucun contenu trouvé' : 'Aucun contenu disponible'}
           </p>
         </div>

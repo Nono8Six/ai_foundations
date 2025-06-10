@@ -1,5 +1,18 @@
 import React, { useState } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+} from 'recharts';
 import Icon from '../../../components/AppIcon';
 
 const ProgressChart = ({ weeklyData = [], monthlyData = [], subjectData = [] }) => {
@@ -28,7 +41,7 @@ const ProgressChart = ({ weeklyData = [], monthlyData = [], subjectData = [] }) 
 
   const tabs = [
     { id: 'weekly', label: 'Cette semaine', icon: 'Calendar' },
-    { id: 'monthly', label: 'Ces 6 mois', icon: 'TrendingUp' }
+    { id: 'monthly', label: 'Ces 6 mois', icon: 'TrendingUp' },
   ];
 
   if (!weeklyData.length && !monthlyData.length) {
@@ -42,7 +55,9 @@ const ProgressChart = ({ weeklyData = [], monthlyData = [], subjectData = [] }) 
   return (
     <div className='bg-surface rounded-xl border border-border p-6'>
       <div className='flex flex-col sm:flex-row sm:items-center justify-between mb-6'>
-        <h2 className='text-xl font-semibold text-text-primary mb-4 sm:mb-0'>Progression d\'apprentissage</h2>
+        <h2 className='text-xl font-semibold text-text-primary mb-4 sm:mb-0'>
+          Progression d\'apprentissage
+        </h2>
         <div className='flex bg-secondary-100 rounded-lg p-1'>
           {tabs.map(tab => (
             <button
@@ -77,7 +92,12 @@ const ProgressChart = ({ weeklyData = [], monthlyData = [], subjectData = [] }) 
             <ResponsiveContainer width='100%' height='100%'>
               <BarChart data={subjectData} layout='vertical'>
                 <XAxis type='number' hide />
-                <YAxis type='category' dataKey='name' tick={{ fill: '#6b7280', fontSize: 12 }} width={100} />
+                <YAxis
+                  type='category'
+                  dataKey='name'
+                  tick={{ fill: '#6b7280', fontSize: 12 }}
+                  width={100}
+                />
                 <Bar dataKey='value'>
                   {subjectData.map((entry, index) => (
                     <Cell key={index} fill={entry.color} />
@@ -89,7 +109,15 @@ const ProgressChart = ({ weeklyData = [], monthlyData = [], subjectData = [] }) 
           <div className='h-48'>
             <ResponsiveContainer width='100%' height='100%'>
               <PieChart>
-                <Pie data={subjectData} dataKey='value' nameKey='name' cx='50%' cy='50%' outerRadius={60} label>
+                <Pie
+                  data={subjectData}
+                  dataKey='value'
+                  nameKey='name'
+                  cx='50%'
+                  cy='50%'
+                  outerRadius={60}
+                  label
+                >
                   {subjectData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}

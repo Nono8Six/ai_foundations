@@ -11,29 +11,29 @@ const PersonalInfoTab = ({ userData }) => {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    reset
+    reset,
   } = useForm({
     defaultValues: {
       name: userData.name,
       email: userData.email,
       phone: userData.phone,
       profession: userData.profession,
-      company: userData.company
-    }
+      company: userData.company,
+    },
   });
 
-  const onSubmit = async (data) => {
+  const onSubmit = async data => {
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
     console.log('Profile updated:', data);
     setIsEditing(false);
   };
 
-  const handleAvatarChange = (event) => {
+  const handleAvatarChange = event => {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = e => {
         setAvatarPreview(e.target.result);
       };
       reader.readAsDataURL(file);
@@ -47,56 +47,56 @@ const PersonalInfoTab = ({ userData }) => {
   };
 
   return (
-    <div className="space-y-8">
+    <div className='space-y-8'>
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className='flex items-center justify-between'>
         <div>
-          <h3 className="text-lg font-semibold text-text-primary">Informations personnelles</h3>
-          <p className="text-text-secondary text-sm mt-1">
+          <h3 className='text-lg font-semibold text-text-primary'>Informations personnelles</h3>
+          <p className='text-text-secondary text-sm mt-1'>
             Gérez vos informations de profil et vos préférences de compte
           </p>
         </div>
         {!isEditing && (
           <button
             onClick={() => setIsEditing(true)}
-            className="inline-flex items-center px-4 py-2 border border-border rounded-lg text-sm font-medium text-text-primary bg-surface hover:bg-secondary-50 transition-colors"
+            className='inline-flex items-center px-4 py-2 border border-border rounded-lg text-sm font-medium text-text-primary bg-surface hover:bg-secondary-50 transition-colors'
           >
-            <Icon name="Edit" size={16} className="mr-2" />
+            <Icon name='Edit' size={16} className='mr-2' />
             Modifier
           </button>
         )}
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className='space-y-6'>
         {/* Avatar Upload */}
-        <div className="bg-secondary-50 rounded-lg p-6">
-          <h4 className="text-base font-medium text-text-primary mb-4">Photo de profil</h4>
-          <div className="flex items-center space-x-6">
-            <div className="relative">
-              <div className="w-20 h-20 rounded-full overflow-hidden">
-                <Image 
-                  src={avatarPreview} 
-                  alt="Avatar preview"
-                  className="w-full h-full object-cover"
+        <div className='bg-secondary-50 rounded-lg p-6'>
+          <h4 className='text-base font-medium text-text-primary mb-4'>Photo de profil</h4>
+          <div className='flex items-center space-x-6'>
+            <div className='relative'>
+              <div className='w-20 h-20 rounded-full overflow-hidden'>
+                <Image
+                  src={avatarPreview}
+                  alt='Avatar preview'
+                  className='w-full h-full object-cover'
                 />
               </div>
               {isEditing && (
-                <label className="absolute bottom-0 right-0 w-6 h-6 bg-primary text-white rounded-full flex items-center justify-center cursor-pointer hover:bg-primary-700 transition-colors">
-                  <Icon name="Camera" size={12} />
+                <label className='absolute bottom-0 right-0 w-6 h-6 bg-primary text-white rounded-full flex items-center justify-center cursor-pointer hover:bg-primary-700 transition-colors'>
+                  <Icon name='Camera' size={12} />
                   <input
-                    type="file"
-                    accept="image/*"
+                    type='file'
+                    accept='image/*'
                     onChange={handleAvatarChange}
-                    className="hidden"
+                    className='hidden'
                   />
                 </label>
               )}
             </div>
             <div>
-              <p className="text-sm text-text-primary font-medium mb-1">
+              <p className='text-sm text-text-primary font-medium mb-1'>
                 Choisissez une nouvelle photo de profil
               </p>
-              <p className="text-xs text-text-secondary">
+              <p className='text-xs text-text-secondary'>
                 JPG, PNG ou GIF. Taille maximale de 2MB.
               </p>
             </div>
@@ -104,98 +104,93 @@ const PersonalInfoTab = ({ userData }) => {
         </div>
 
         {/* Personal Information Form */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
           {/* Name */}
           <div>
-            <label className="block text-sm font-medium text-text-primary mb-2">
+            <label className='block text-sm font-medium text-text-primary mb-2'>
               Nom complet *
             </label>
             <input
-              type="text"
-              {...register('name', { 
+              type='text'
+              {...register('name', {
                 required: 'Le nom est requis',
-                minLength: { value: 2, message: 'Le nom doit contenir au moins 2 caractères' }
+                minLength: { value: 2, message: 'Le nom doit contenir au moins 2 caractères' },
               })}
               disabled={!isEditing}
               className={`w-full px-3 py-2 border rounded-lg text-sm transition-colors ${
-                isEditing 
-                  ? 'border-border focus:border-primary focus:ring-1 focus:ring-primary bg-surface' :'border-transparent bg-secondary-50 text-text-secondary'
+                isEditing
+                  ? 'border-border focus:border-primary focus:ring-1 focus:ring-primary bg-surface'
+                  : 'border-transparent bg-secondary-50 text-text-secondary'
               } ${errors.name ? 'border-error' : ''}`}
             />
-            {errors.name && (
-              <p className="mt-1 text-xs text-error">{errors.name.message}</p>
-            )}
+            {errors.name && <p className='mt-1 text-xs text-error'>{errors.name.message}</p>}
           </div>
 
           {/* Email */}
           <div>
-            <label className="block text-sm font-medium text-text-primary mb-2">
+            <label className='block text-sm font-medium text-text-primary mb-2'>
               Adresse e-mail *
             </label>
             <input
-              type="email"
-              {...register('email', { 
-                required: 'L\'email est requis',
-                pattern: { 
+              type='email'
+              {...register('email', {
+                required: "L'email est requis",
+                pattern: {
                   value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                  message: 'Adresse e-mail invalide'
-                }
+                  message: 'Adresse e-mail invalide',
+                },
               })}
               disabled={!isEditing}
               className={`w-full px-3 py-2 border rounded-lg text-sm transition-colors ${
-                isEditing 
-                  ? 'border-border focus:border-primary focus:ring-1 focus:ring-primary bg-surface' :'border-transparent bg-secondary-50 text-text-secondary'
+                isEditing
+                  ? 'border-border focus:border-primary focus:ring-1 focus:ring-primary bg-surface'
+                  : 'border-transparent bg-secondary-50 text-text-secondary'
               } ${errors.email ? 'border-error' : ''}`}
             />
-            {errors.email && (
-              <p className="mt-1 text-xs text-error">{errors.email.message}</p>
-            )}
+            {errors.email && <p className='mt-1 text-xs text-error'>{errors.email.message}</p>}
           </div>
 
           {/* Phone */}
           <div>
-            <label className="block text-sm font-medium text-text-primary mb-2">
-              Téléphone
-            </label>
+            <label className='block text-sm font-medium text-text-primary mb-2'>Téléphone</label>
             <input
-              type="tel"
+              type='tel'
               {...register('phone')}
               disabled={!isEditing}
               className={`w-full px-3 py-2 border rounded-lg text-sm transition-colors ${
-                isEditing 
-                  ? 'border-border focus:border-primary focus:ring-1 focus:ring-primary bg-surface' :'border-transparent bg-secondary-50 text-text-secondary'
+                isEditing
+                  ? 'border-border focus:border-primary focus:ring-1 focus:ring-primary bg-surface'
+                  : 'border-transparent bg-secondary-50 text-text-secondary'
               }`}
             />
           </div>
 
           {/* Profession */}
           <div>
-            <label className="block text-sm font-medium text-text-primary mb-2">
-              Profession
-            </label>
+            <label className='block text-sm font-medium text-text-primary mb-2'>Profession</label>
             <input
-              type="text"
+              type='text'
               {...register('profession')}
               disabled={!isEditing}
               className={`w-full px-3 py-2 border rounded-lg text-sm transition-colors ${
-                isEditing 
-                  ? 'border-border focus:border-primary focus:ring-1 focus:ring-primary bg-surface' :'border-transparent bg-secondary-50 text-text-secondary'
+                isEditing
+                  ? 'border-border focus:border-primary focus:ring-1 focus:ring-primary bg-surface'
+                  : 'border-transparent bg-secondary-50 text-text-secondary'
               }`}
             />
           </div>
 
           {/* Company */}
-          <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-text-primary mb-2">
-              Entreprise
-            </label>
+          <div className='md:col-span-2'>
+            <label className='block text-sm font-medium text-text-primary mb-2'>Entreprise</label>
             <input
-              type="text"
+              type='text'
               {...register('company')}
               disabled={!isEditing}
               className={`w-full px-3 py-2 border rounded-lg text-sm transition-colors ${
-                isEditing 
-                  ? 'border-border focus:border-primary focus:ring-1 focus:ring-primary bg-surface' :'border-transparent bg-secondary-50 text-text-secondary'
+                isEditing
+                  ? 'border-border focus:border-primary focus:ring-1 focus:ring-primary bg-surface'
+                  : 'border-transparent bg-secondary-50 text-text-secondary'
               }`}
             />
           </div>
@@ -203,20 +198,20 @@ const PersonalInfoTab = ({ userData }) => {
 
         {/* Action Buttons */}
         {isEditing && (
-          <div className="flex items-center justify-end space-x-4 pt-6 border-t border-border">
+          <div className='flex items-center justify-end space-x-4 pt-6 border-t border-border'>
             <button
-              type="button"
+              type='button'
               onClick={handleCancel}
-              className="px-4 py-2 border border-border rounded-lg text-sm font-medium text-text-secondary hover:bg-secondary-50 transition-colors"
+              className='px-4 py-2 border border-border rounded-lg text-sm font-medium text-text-secondary hover:bg-secondary-50 transition-colors'
             >
               Annuler
             </button>
             <button
-              type="submit"
+              type='submit'
               disabled={isSubmitting}
-              className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-primary hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors disabled:opacity-50"
+              className='inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-primary hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors disabled:opacity-50'
             >
-              {isSubmitting && <Icon name="Loader2" size={16} className="mr-2 animate-spin" />}
+              {isSubmitting && <Icon name='Loader2' size={16} className='mr-2 animate-spin' />}
               Enregistrer
             </button>
           </div>
@@ -224,19 +219,19 @@ const PersonalInfoTab = ({ userData }) => {
       </form>
 
       {/* Account Information */}
-      <div className="bg-secondary-50 rounded-lg p-6">
-        <h4 className="text-base font-medium text-text-primary mb-4">Informations du compte</h4>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+      <div className='bg-secondary-50 rounded-lg p-6'>
+        <h4 className='text-base font-medium text-text-primary mb-4'>Informations du compte</h4>
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-4 text-sm'>
           <div>
-            <span className="text-text-secondary">Date d'inscription:</span>
-            <span className="ml-2 text-text-primary font-medium">
+            <span className='text-text-secondary'>Date d'inscription:</span>
+            <span className='ml-2 text-text-primary font-medium'>
               {new Date(userData.joinDate).toLocaleDateString('fr-FR')}
             </span>
           </div>
           <div>
-            <span className="text-text-secondary">Statut du compte:</span>
-            <span className="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-success-100 text-success-700">
-              <Icon name="CheckCircle" size={12} className="mr-1" />
+            <span className='text-text-secondary'>Statut du compte:</span>
+            <span className='ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-success-100 text-success-700'>
+              <Icon name='CheckCircle' size={12} className='mr-1' />
               Actif
             </span>
           </div>

@@ -81,7 +81,11 @@ const RecentActivity = ({ activities = [] }) => {
                 <p className='text-xs text-text-secondary mt-1'>Par {activity.instructor}</p>
               </div>
               <div className='w-12 h-8 rounded overflow-hidden flex-shrink-0'>
-                <Image src={activity.thumbnail} alt={activity.description} className='w-full h-full object-cover' />
+                <Image
+                  src={activity.thumbnail}
+                  alt={activity.description}
+                  className='w-full h-full object-cover'
+                />
               </div>
             </div>
           </div>
@@ -123,7 +127,9 @@ const RecentActivity = ({ activities = [] }) => {
       <div className='space-y-4'>
         {activities.map((activity, index) => (
           <div key={activity.id} className='relative'>
-            {index < activities.length - 1 && <div className='absolute left-5 top-10 w-0.5 h-8 bg-border'></div>}
+            {index < activities.length - 1 && (
+              <div className='absolute left-5 top-10 w-0.5 h-8 bg-border'></div>
+            )}
             <div className='flex items-start gap-4 p-3 rounded-lg hover:bg-secondary-50 transition-colors duration-200'>
               {getActivityIcon(activity)}
               <div className='flex-1 min-w-0'>
