@@ -446,6 +446,7 @@ export const CourseProvider = ({ children }) => {
     modules,
     lessons,
     userProgress,
+    fetchUserProgress,
     loading,
     fetchModules,
     fetchLessons,
