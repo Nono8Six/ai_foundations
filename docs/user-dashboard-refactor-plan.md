@@ -29,6 +29,7 @@ This document outlines the tasks required to replace all mock data used in the `
 - ✅ Child components now take data via props (step 5).
 - ✅ Added `useRecentActivity` hook and integrated it into the dashboard (step 4 started).
 - ✅ Dashboard wrapped in an error boundary (step 6 complete).
-- ❌ Achievement hook still missing (step 4 continued) and integration tests remain to be written (step 7).
+- ✅ Achievement hook implemented and integrated into the dashboard.
+- ❌ Integration tests remain to be written (step 7).
 
 This plan allows incremental migration from demo content to production-ready features backed entirely by Supabase.
