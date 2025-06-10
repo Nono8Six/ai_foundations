@@ -58,16 +58,16 @@ const UserDashboard = () => {
             title: course.title,
             instructor: course.instructor || '---',
             thumbnail: course.cover_image_url,
-            difficulty: 'Débutant',
-            nextLesson: '',
-            ...stats,
+            difficulty: 'Débutant', // Vous pouvez rendre ceci dynamique plus tard
+            nextLesson: '', // Logique à ajouter pour trouver la prochaine leçon
+            ...stats, // Contient progress, totalLessons, completedLessons
           };
         })
       );
       setCoursesWithProgress(mapped);
     };
 
-    if (user && courses.length) {
+    if (user && courses.length > 0) {
       loadCourseProgress().catch(err => console.error('Failed to load course progress', err));
     }
   }, [user, courses, userProgress, calculateCourseProgress]);
@@ -81,7 +81,7 @@ const UserDashboard = () => {
     currentStreak: userProfile?.current_streak || 0,
     totalCourses: coursesWithProgress.length,
     completedCourses: coursesWithProgress.filter(c => c.progress === 100).length,
-    totalLessons: userProgress.length,
+    totalLessons: userProgress.length, // ou à calculer sur tous les cours
     completedLessons: userProgress.filter(p => p.status === 'completed').length,
   };
 
@@ -89,20 +89,29 @@ const UserDashboard = () => {
 
   const getDifficultyColor = difficulty => {
     switch (difficulty) {
-      case 'Débutant': return 'bg-success text-white';
-      case 'Intermédiaire': return 'bg-warning text-white';
-      case 'Avancé': return 'bg-primary text-white';
-      case 'Expert': return 'bg-error text-white';
-      default: return 'bg-secondary text-white';
+      case 'Débutant':
+        return 'bg-success text-white';
+      case 'Intermédiaire':
+        return 'bg-warning text-white';
+      case 'Avancé':
+        return 'bg-primary text-white';
+      case 'Expert':
+        return 'bg-error text-white';
+      default:
+        return 'bg-secondary text-white';
     }
   };
 
   const getPriorityColor = priority => {
     switch (priority) {
-      case 'high': return 'border-l-error bg-error-50';
-      case 'medium': return 'border-l-warning bg-warning-50';
-      case 'low': return 'border-l-success bg-success-50';
-      default: return 'border-l-secondary bg-secondary-50';
+      case 'high':
+        return 'border-l-error bg-error-50';
+      case 'medium':
+        return 'border-l-warning bg-warning-50';
+      case 'low':
+        return 'border-l-success bg-success-50';
+      default:
+        return 'border-l-secondary bg-secondary-50';
     }
   };
 
@@ -122,15 +131,12 @@ const UserDashboard = () => {
         <header className='bg-surface border-b border-border sticky top-0 z-50'>
           <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
             <div className='flex justify-between items-center h-16'>
-              {/* Logo */}
               <Link to='/public-homepage' className='flex items-center space-x-2'>
                 <div className='w-10 h-10 bg-gradient-to-br from-primary to-primary-700 rounded-full flex items-center justify-center'>
                   <Icon name='GraduationCap' size={24} color='white' />
                 </div>
                 <span className='text-xl font-bold text-text-primary'>AI Foundations</span>
               </Link>
-
-              {/* Navigation */}
               <nav className='hidden md:flex items-center space-x-8'>
                 <Link to='/program-overview' className='text-text-secondary hover:text-primary transition-colors'>
                   Programmes
@@ -139,8 +145,6 @@ const UserDashboard = () => {
                   Tableau de bord
                 </Link>
               </nav>
-
-              {/* User Actions */}
               <div className='flex items-center space-x-4'>
                 <button className='relative p-2 text-text-secondary hover:text-primary transition-colors'>
                   <Icon name='Bell' size={20} />
@@ -177,7 +181,12 @@ const UserDashboard = () => {
         {/* Main Content */}
         <main className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
           <div className='grid grid-cols-1 lg:grid-cols-4 gap-8'>
-            {/* ... Le reste du contenu de la page reste identique ... */}
+            <div className='lg:col-span-3 space-y-8'>
+              {/* Le reste de votre JSX pour le contenu principal va ici */}
+            </div>
+            <div className='lg:col-span-1 space-y-6'>
+              {/* Le reste de votre JSX pour la sidebar de droite va ici */}
+            </div>
           </div>
         </main>
       </div>

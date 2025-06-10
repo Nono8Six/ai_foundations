@@ -24,10 +24,11 @@ This document outlines the tasks required to replace all mock data used in the `
 ## Progress
 
 - ✅ Steps 1 & 2 implemented. Dashboard now loads user info from Supabase.
-- ✅ Course progress calculated (step 3 partially complete).
+- ✅ Course progress calculated and displayed for each enrolled course (step 3 complete).
 - ✅ Logout link triggers `signOut` and redirects to `/login`.
 - ✅ Child components now take data via props (step 5).
-- ✅ Added an error boundary around the dashboard (step 6 partially complete).
-- ❌ Remaining steps are still pending.
+- ✅ Added `useRecentActivity` hook and integrated it into the dashboard (step 4 started).
+- ✅ Dashboard wrapped in an error boundary (step 6 complete).
+- ❌ Achievement hook still missing (step 4 continued) and integration tests remain to be written (step 7).
 
 This plan allows incremental migration from demo content to production-ready features backed entirely by Supabase.
