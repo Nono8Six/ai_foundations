@@ -1,14 +1,16 @@
+version: '3.8'
+
 services:
-  # Service pour le développement
   app:
     build:
       context: .
-      target: builder
+      target: builder  # Utilise l'étape builder du Dockerfile
     container_name: ia-foundations-dev
-    command: sh -c "npm install && npm run dev"
+    command: npm run dev -- --host
     volumes:
       - .:/app
       - /app/node_modules
+      - /app/build
     ports:
       - "3000:3000"
     env_file:
@@ -18,52 +20,3 @@ services:
       - CHOKIDAR_USEPOLLING=true
       - VITE_PORT=3000
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 5s
-
-  # Service pour la production
-  app-prod:
-    build:
-      context: .
-      target: production
-    container_name: ia-foundations-prod
-    ports:
-      - "3000:80"
-    env_file:
-      - .env
-    restart: always
-    healthcheck:
-      test: ["CMD", "wget", "--spider", "-q", "http://localhost:80"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
-
-  # Service pour le développement avec hot-reload
-  app-dev:
-    build:
-      context: .
-      target: builder
-    container_name: ia-foundations-hot
-    command: sh -c "npm install && npm run dev -- --host"
-    volumes:
-      - .:/app
-      - /app/node_modules
-    ports:
-      - "3000:3000"
-    env_file:
-      - .env
-    environment:
-      - NODE_ENV=development
-      - CHOKIDAR_USEPOLLING=true
-      - WATCHPACK_POLLING=true
-    restart: unless-stopped
-
-# Configuration du réseau
-networks:
-  default:
-    driver: bridge
