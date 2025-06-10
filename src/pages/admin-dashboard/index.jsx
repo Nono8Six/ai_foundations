@@ -68,7 +68,7 @@ const AdminDashboard = () => {
     { name: 'Gestion utilisateurs', path: '/user-management-admin', icon: 'Users' },
     {
       name: 'Gestion contenu',
-      path: '/content-management-courses-modules-lessons',
+      path: '/cms',
       icon: 'BookOpen',
     },
     { name: "Vue d\'ensemble", path: '/program-overview', icon: 'GraduationCap' },
@@ -282,7 +282,7 @@ const AdminDashboard = () => {
                 <span className='text-sm font-medium text-text-primary'>Ajouter utilisateur</span>
               </Link>
               <Link
-                to='/content-management-courses-modules-lessons'
+                to='/cms'
                 className='flex items-center p-4 border border-border rounded-lg hover:bg-secondary-50 transition-colors'
               >
                 <Icon name='Plus' size={20} className='text-primary mr-3' />
