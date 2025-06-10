@@ -36,7 +36,7 @@ export const CourseProvider = ({ children }) => {
   }, []);
 
   // Fetch modules for a specific course
-  const fetchModules = async (courseId) => {
+  const fetchModules = async courseId => {
     try {
       setLoading(true);
       const { data, error } = await supabase
@@ -58,7 +58,7 @@ export const CourseProvider = ({ children }) => {
   };
 
   // Fetch lessons for a specific module
-  const fetchLessons = async (moduleId) => {
+  const fetchLessons = async moduleId => {
     try {
       setLoading(true);
       const { data, error } = await supabase
@@ -80,7 +80,7 @@ export const CourseProvider = ({ children }) => {
   };
 
   // Fetch a specific lesson
-  const fetchLesson = async (lessonId) => {
+  const fetchLesson = async lessonId => {
     try {
       const { data, error } = await supabase
         .from('lessons')
@@ -97,19 +97,18 @@ export const CourseProvider = ({ children }) => {
   };
 
   // Mark a lesson as completed
-  const completeLesson = async (lessonId) => {
+  const completeLesson = async lessonId => {
     if (!user) return null;
-    
+
     try {
       // Call the handle_lesson_completion function
-      const { data, error } = await supabase
-        .rpc('handle_lesson_completion', {
-          user_id: user.id,
-          lesson_id: lessonId
-        });
+      const { data, error } = await supabase.rpc('handle_lesson_completion', {
+        user_id: user.id,
+        lesson_id: lessonId,
+      });
 
       if (error) throw error;
-      
+
       // Refresh user progress
       await fetchUserProgress();
       return data;
@@ -122,7 +121,7 @@ export const CourseProvider = ({ children }) => {
   // Fetch user progress
   const fetchUserProgress = async () => {
     if (!user) return;
-    
+
     try {
       const { data, error } = await supabase
         .from('user_progress')
@@ -141,11 +140,13 @@ export const CourseProvider = ({ children }) => {
   // Get the next lesson to continue
   const getNextLesson = async () => {
     if (!user) return null;
-    
+
     try {
       // Get all completed lessons
-      const completedLessons = userProgress.filter(p => p.status === 'completed').map(p => p.lesson_id);
-      
+      const completedLessons = userProgress
+        .filter(p => p.status === 'completed')
+        .map(p => p.lesson_id);
+
       // Get all published lessons in order
       const { data: allLessons, error } = await supabase
         .from('lessons')
@@ -155,7 +156,7 @@ export const CourseProvider = ({ children }) => {
         .order('lesson_order', { ascending: true });
 
       if (error) throw error;
-      
+
       // Find the first lesson not in completedLessons
       const nextLesson = allLessons.find(lesson => !completedLessons.includes(lesson.id));
       return nextLesson || allLessons[0]; // Return first lesson if all completed
@@ -168,7 +169,7 @@ export const CourseProvider = ({ children }) => {
   // Calculate overall progress percentage
   const calculateProgress = async () => {
     if (!user) return 0;
-    
+
     try {
       // Get total number of published lessons
       const { count: totalLessons, error: countError } = await supabase
@@ -177,10 +178,10 @@ export const CourseProvider = ({ children }) => {
         .eq('is_published', true);
 
       if (countError) throw countError;
-      
+
       // Get number of completed lessons
       const completedLessons = userProgress.filter(p => p.status === 'completed').length;
-      
+
       // Calculate percentage
       return totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
     } catch (error) {
@@ -190,26 +191,57 @@ export const CourseProvider = ({ children }) => {
   };
 
   // Calculate progress for a specific module
-  const calculateModuleProgress = (moduleId) => {
+  const calculateModuleProgress = moduleId => {
     if (!user || !userProgress.length) return 0;
-    
+
     // Get all lessons for this module
     const moduleLessons = lessons.filter(lesson => lesson.module_id === moduleId);
     if (!moduleLessons.length) return 0;
-    
+
     // Count completed lessons for this module
     const completedLessons = userProgress.filter(
-      p => p.status === 'completed' && 
-      moduleLessons.some(lesson => lesson.id === p.lesson_id)
+      p => p.status === 'completed' && moduleLessons.some(lesson => lesson.id === p.lesson_id)
     ).length;
-    
+
     return Math.round((completedLessons / moduleLessons.length) * 100);
+  };
+
+  // Calculate progress for a specific course
+  const calculateCourseProgress = async courseId => {
+    if (!user) return { totalLessons: 0, completedLessons: 0, progress: 0 };
+
+    try {
+      const { data: lessonsForCourse, error } = await supabase
+        .from('lessons')
+        .select('id, module_id, modules!inner(course_id)')
+        .eq('modules.course_id', courseId)
+        .eq('is_published', true);
+
+      if (error) throw error;
+
+      const completedLessons = userProgress.filter(
+        p => p.status === 'completed' && lessonsForCourse.some(lesson => lesson.id === p.lesson_id)
+      ).length;
+
+      const progress = lessonsForCourse.length
+        ? Math.round((completedLessons / lessonsForCourse.length) * 100)
+        : 0;
+
+      return {
+        totalLessons: lessonsForCourse.length,
+        completedLessons,
+        progress,
+      };
+    } catch (error) {
+      console.error('Error calculating course progress:', error.message);
+      return { totalLessons: 0, completedLessons: 0, progress: 0 };
+    }
   };
 
   // Admin functions
   const isAdmin = async () => {
     if (!user) return false;
-    
+
     try {
       const { data, error } = await supabase
         .from('profiles')
@@ -227,13 +259,11 @@ export const CourseProvider = ({ children }) => {
 
   // CRUD operations for admin
   // Create a new course
-  const createCourse = async (courseData) => {
+  const createCourse = async courseData => {
     try {
       const { data, error } = await supabase
         .from('courses')
-        .insert([
-          { ...courseData, updated_at: new Date() }
-        ])
+        .insert([{ ...courseData, updated_at: new Date() }])
         .select()
         .single();
 
@@ -257,7 +287,7 @@ export const CourseProvider = ({ children }) => {
         .single();
 
       if (error) throw error;
-      setCourses(courses.map(course => course.id === courseId ? data : course));
+      setCourses(courses.map(course => (course.id === courseId ? data : course)));
       return data;
     } catch (error) {
       console.error('Error updating course:', error.message);
@@ -266,12 +296,9 @@ export const CourseProvider = ({ children }) => {
   };
 
   // Delete a course
-  const deleteCourse = async (courseId) => {
+  const deleteCourse = async courseId => {
     try {
-      const { error } = await supabase
-        .from('courses')
-        .delete()
-        .eq('id', courseId);
+      const { error } = await supabase.from('courses').delete().eq('id', courseId);
 
       if (error) throw error;
       setCourses(courses.filter(course => course.id !== courseId));
@@ -282,13 +309,11 @@ export const CourseProvider = ({ children }) => {
   };
 
   // Create a new module
-  const createModule = async (moduleData) => {
+  const createModule = async moduleData => {
     try {
       const { data, error } = await supabase
         .from('modules')
-        .insert([
-          { ...moduleData, updated_at: new Date() }
-        ])
+        .insert([{ ...moduleData, updated_at: new Date() }])
         .select()
         .single();
 
@@ -312,7 +337,7 @@ export const CourseProvider = ({ children }) => {
         .single();
 
       if (error) throw error;
-      setModules(modules.map(module => module.id === moduleId ? data : module));
+      setModules(modules.map(module => (module.id === moduleId ? data : module)));
       return data;
     } catch (error) {
       console.error('Error updating module:', error.message);
@@ -321,12 +346,9 @@ export const CourseProvider = ({ children }) => {
   };
 
   // Delete a module
-  const deleteModule = async (moduleId) => {
+  const deleteModule = async moduleId => {
     try {
-      const { error } = await supabase
-        .from('modules')
-        .delete()
-        .eq('id', moduleId);
+      const { error } = await supabase.from('modules').delete().eq('id', moduleId);
 
       if (error) throw error;
       setModules(modules.filter(module => module.id !== moduleId));
@@ -337,13 +359,11 @@ export const CourseProvider = ({ children }) => {
   };
 
   // Create a new lesson
-  const createLesson = async (lessonData) => {
+  const createLesson = async lessonData => {
     try {
       const { data, error } = await supabase
         .from('lessons')
-        .insert([
-          { ...lessonData, updated_at: new Date() }
-        ])
+        .insert([{ ...lessonData, updated_at: new Date() }])
         .select()
         .single();
 
@@ -367,7 +387,7 @@ export const CourseProvider = ({ children }) => {
         .single();
 
       if (error) throw error;
-      setLessons(lessons.map(lesson => lesson.id === lessonId ? data : lesson));
+      setLessons(lessons.map(lesson => (lesson.id === lessonId ? data : lesson)));
       return data;
     } catch (error) {
       console.error('Error updating lesson:', error.message);
@@ -376,12 +396,9 @@ export const CourseProvider = ({ children }) => {
   };
 
   // Delete a lesson
-  const deleteLesson = async (lessonId) => {
+  const deleteLesson = async lessonId => {
     try {
-      const { error } = await supabase
-        .from('lessons')
-        .delete()
-        .eq('id', lessonId);
+      const { error } = await supabase.from('lessons').delete().eq('id', lessonId);
 
       if (error) throw error;
       setLessons(lessons.filter(lesson => lesson.id !== lessonId));
@@ -398,12 +415,10 @@ export const CourseProvider = ({ children }) => {
       const updates = moduleIds.map((id, index) => ({
         id,
         module_order: index + 1,
-        updated_at: new Date()
+        updated_at: new Date(),
       }));
 
-      const { error } = await supabase
-        .from('modules')
-        .upsert(updates);
+      const { error } = await supabase.from('modules').upsert(updates);
 
       if (error) throw error;
       await fetchModules(courseId);
@@ -420,12 +435,10 @@ export const CourseProvider = ({ children }) => {
       const updates = lessonIds.map((id, index) => ({
         id,
         lesson_order: index + 1,
-        updated_at: new Date()
+        updated_at: new Date(),
       }));
 
-      const { error } = await supabase
-        .from('lessons')
-        .upsert(updates);
+      const { error } = await supabase.from('lessons').upsert(updates);
 
       if (error) throw error;
       await fetchLessons(moduleId);
@@ -446,6 +459,7 @@ export const CourseProvider = ({ children }) => {
     modules,
     lessons,
     userProgress,
+    fetchUserProgress,
     loading,
     fetchModules,
     fetchLessons,
@@ -454,6 +468,7 @@ export const CourseProvider = ({ children }) => {
     getNextLesson,
     calculateProgress,
     calculateModuleProgress,
+    calculateCourseProgress,
     // Admin functions
     isAdmin,
     createCourse,
