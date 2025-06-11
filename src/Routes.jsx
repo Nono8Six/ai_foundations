@@ -2,22 +2,22 @@
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes as RouterRoutes, Route, Navigate } from 'react-router-dom';
 import ScrollToTop from '@/components/ScrollToTop';
-import ErrorBoundary from '@/components/ErrorBoundary'; // Corrigé : Utilisation de l'alias de chemin
-import { useAuth } from '@/context/AuthContext'; // Corrigé : Utilisation de l'alias de chemin
+import ErrorBoundary from '@/components/ErrorBoundary';
+import { useAuth } from '@/context/AuthContext';
 
 // --- Optimisation du chargement avec Lazy Loading ---
-// Cela permet de ne charger le code d'une page que lorsque l'utilisateur la visite,
-// améliorant ainsi le temps de chargement initial de l'application.
+// Chaque page est chargée uniquement lorsque l'utilisateur la visite.
 
 const PublicHomepage = lazy(() => import('@/pages/public-homepage/index.jsx'));
 const ProgramOverview = lazy(() => import('@/pages/program-overview/index.jsx'));
-const AuthenticationLoginRegister = lazy(() => import('@/pages/auth/index.jsx'));
+const AuthenticationLoginRegister = lazy(() => import('@/pages/authentication-login-register/index.jsx'));
 const UserDashboard = lazy(() => import('@/pages/user-dashboard/index.jsx'));
 const UserProfileManagement = lazy(() => import('@/pages/user-profile-management/index.jsx'));
 const LessonViewer = lazy(() => import('@/pages/lesson-viewer/index.jsx'));
 const AdminDashboard = lazy(() => import('@/pages/admin-dashboard/index.jsx'));
 const UserManagementAdmin = lazy(() => import('@/pages/user-management-admin/index.jsx'));
-const ContentManagementCoursesModulesLessons = lazy(() => import('@/pages/cms/index.jsx'));
+// CORRECTION : Le chemin a été corrigé pour correspondre à la structure de vos dossiers.
+const ContentManagementCoursesModulesLessons = lazy(() => import('@/pages/content-management-courses-modules-lessons/index.jsx')); 
 const NotFound = lazy(() => import('@/pages/NotFound.jsx'));
 
 // --- Composant de chargement pour le "Suspense" ---
@@ -27,7 +27,7 @@ const PageLoader = () => (
   </div>
 );
 
-// --- Route Protégée (légèrement optimisée) ---
+// --- Route Protégée ---
 // Ce composant gère l'accès aux routes privées pour les utilisateurs connectés et les administrateurs.
 const ProtectedRoute = ({ children, requireAdmin = false }) => {
   const { user, userProfile, loading } = useAuth();
@@ -50,6 +50,7 @@ const ProtectedRoute = ({ children, requireAdmin = false }) => {
 };
 
 // --- Définition des Routes ---
+// Le nom du composant est changé en 'AppRoutes' pour éviter toute confusion avec le composant <Routes> de react-router-dom.
 const AppRoutes = () => {
   return (
     <BrowserRouter>
@@ -73,7 +74,8 @@ const AppRoutes = () => {
             {/* Routes Protégées pour les Administrateurs */}
             <Route path='/admin-dashboard' element={<ProtectedRoute requireAdmin={true}><AdminDashboard /></ProtectedRoute>} />
             <Route path='/user-management-admin' element={<ProtectedRoute requireAdmin={true}><UserManagementAdmin /></ProtectedRoute>} />
-            <Route path='/cms' element={<ProtectedRoute requireAdmin={true}><ContentManagementCoursesModulesLessons /></ProtectedRoute>} />
+            {/* CORRECTION : Le chemin de la route est changé pour être plus cohérent. */}
+            <Route path='/content-management' element={<ProtectedRoute requireAdmin={true}><ContentManagementCoursesModulesLessons /></ProtectedRoute>} /> 
 
             {/* Route pour page non trouvée */}
             <Route path='*' element={<NotFound />} />

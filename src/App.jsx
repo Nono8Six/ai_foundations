@@ -1,16 +1,20 @@
 // src/App.jsx
-import React from 'react';
-import Routes from './Routes';
-import { AuthProvider } from './context/AuthContext';
-import { CourseProvider } from './context/CourseContext';
+import React from "react";
+import { BrowserRouter } from "react-router-dom"; // <-- Importer BrowserRouter ici
+import Routes from "./Routes";
+import { AuthProvider } from "./context/AuthContext";
+import { CourseProvider } from "./context/CourseContext";
 
 function App() {
   return (
-    <AuthProvider>
-      <CourseProvider>
-        <Routes />
-      </CourseProvider>
-    </AuthProvider>
+    // On enveloppe TOUT dans le BrowserRouter
+    <BrowserRouter>
+      <AuthProvider>
+        <CourseProvider>
+          <Routes />
+        </CourseProvider>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 
