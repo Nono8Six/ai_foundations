@@ -924,3 +924,31 @@ Ce plan détaille toutes les tâches nécessaires pour transformer le projet AI 
 - **Maintenabilité** : Réduction de 70% du code dupliqué
 - **Sécurité** : Élimination des failles potentielles liées aux données mockées
 - **Expérience utilisateur** : Amélioration significative avec des données réelles et des transitions fluides
+
+### Problèmes spécifiques à résoudre en priorité
+
+#### 1. Correction du problème d'authentification
+- [ ] **Résoudre l'erreur "Invalid Refresh Token"** (2h)
+  - [ ] Analyser le problème dans `AuthContext.jsx`
+  - [ ] Vérifier la configuration de Supabase Auth
+  - [ ] Implémenter une meilleure gestion des tokens
+  - [ ] Ajouter un mécanisme de récupération en cas d'échec de rafraîchissement
+  - [ ] Tester avec différents scénarios de connexion/déconnexion
+
+#### 2. Correction du problème de mise à jour du profil
+- [ ] **Résoudre le problème de mise à jour du profil** (3h)
+  - [ ] Déboguer `PersonalInfoTab.jsx` et la fonction `onSubmit`
+  - [ ] Vérifier les permissions RLS pour la table `profiles`
+  - [ ] Implémenter une meilleure gestion des erreurs
+  - [ ] Ajouter des logs pour identifier le problème exact
+  - [ ] Tester la mise à jour du profil avec différents champs
+
+#### 3. Optimisation des performances critiques
+- [ ] **Améliorer les performances de chargement initial** (4h)
+  - [ ] Optimiser `AuthContext` pour réduire les requêtes inutiles
+  - [ ] Implémenter le chargement lazy des composants lourds
+  - [ ] Ajouter des états de chargement pour améliorer l'UX
+  - [ ] Mesurer et optimiser les métriques Web Vitals
+
+### Conclusion
+Ce plan de refactorisation complet permettra de transformer AI Foundations d'un prototype avec des données mockées en une application robuste, performante et sécurisée, entièrement intégrée avec Supabase. En suivant ce plan étape par étape, vous pourrez maintenir la fonctionnalité de l'application tout en améliorant progressivement sa qualité et ses performances.
