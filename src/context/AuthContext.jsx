@@ -184,7 +184,6 @@ export const AuthProvider = ({ children }) => {
       console.log('🧹 Cleaning up user state...');
       setUser(null);
       setUserProfile(null);
-      localStorage.removeItem('authToken');
       console.log('🏠 Navigating to home...');
       navigate('/');
     }
