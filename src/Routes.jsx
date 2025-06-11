@@ -60,8 +60,9 @@ const AppRoutes = () => {
           <RouterRoutes>
             {/* Routes Publiques */}
             <Route path='/' element={<PublicHomepage />} />
-            <Route path='/public-homepage' element={<PublicHomepage />} />
-            <Route path='/program-overview' element={<ProgramOverview />} />
+            <Route path='/public-homepage' element={<Navigate to='/' replace />} />
+            <Route path='/programmes' element={<ProgramOverview />} />
+            <Route path='/program-overview' element={<Navigate to='/programmes' replace />} />
             <Route path='/login' element={<AuthenticationLoginRegister />} />
             <Route path='/register' element={<AuthenticationLoginRegister />} />
 

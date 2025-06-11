@@ -105,8 +105,8 @@ const ContentManagementCoursesModulesLessons = () => {
 
   // Navigation items
   const navigationItems = [
-    { path: '/public-homepage', label: 'Accueil', icon: 'Home' },
-    { path: '/program-overview', label: 'Programmes', icon: 'BookOpen' },
+    { path: '/', label: 'Accueil', icon: 'Home' },
+    { path: '/programmes', label: 'Programmes', icon: 'BookOpen' },
     { path: '/user-dashboard', label: 'Tableau de bord', icon: 'LayoutDashboard' },
     { path: '/lesson-viewer', label: 'Leçons', icon: 'Play' },
     { path: '/user-profile-management', label: 'Profil', icon: 'User' },

@@ -7,12 +7,12 @@ const Footer = () => {
 
   const footerLinks = {
     formation: [
-      { name: 'Programmes', path: '/program-overview' },
-      { name: 'Fondamentaux IA', path: '/program-overview' },
-      { name: 'IA Comptabilité', path: '/program-overview' },
-      { name: 'IA Commerce', path: '/program-overview' },
-      { name: 'IA Finance', path: '/program-overview' },
-      { name: 'Maintenance Prédictive', path: '/program-overview' },
+      { name: 'Programmes', path: '/programmes' },
+      { name: 'Fondamentaux IA', path: '/programmes' },
+      { name: 'IA Comptabilité', path: '/programmes' },
+      { name: 'IA Commerce', path: '/programmes' },
+      { name: 'IA Finance', path: '/programmes' },
+      { name: 'Maintenance Prédictive', path: '/programmes' },
     ],
     plateforme: [
       { name: 'Tableau de bord', path: '/user-dashboard' },
@@ -21,10 +21,10 @@ const Footer = () => {
       { name: 'Connexion', path: '/login' },
     ],
     entreprise: [
-      { name: 'Solutions entreprise', path: '/program-overview' },
-      { name: 'Formation équipes', path: '/program-overview' },
-      { name: 'Consulting IA', path: '/program-overview' },
-      { name: 'Support technique', path: '/program-overview' },
+      { name: 'Solutions entreprise', path: '/programmes' },
+      { name: 'Formation équipes', path: '/programmes' },
+      { name: 'Consulting IA', path: '/programmes' },
+      { name: 'Support technique', path: '/programmes' },
     ],
     legal: [
       { name: 'Mentions légales', path: '#' },
@@ -49,7 +49,7 @@ const Footer = () => {
           <div className='grid lg:grid-cols-6 gap-8'>
             {/* Brand Section */}
             <div className='lg:col-span-2'>
-              <Link to='/public-homepage' className='flex items-center space-x-3 mb-6'>
+              <Link to='/' className='flex items-center space-x-3 mb-6'>
                 <div className='w-12 h-12 bg-gradient-to-br from-primary to-primary-700 rounded-full flex items-center justify-center'>
                   <Icon name='Brain' size={28} color='white' />
                 </div>

@@ -25,7 +25,7 @@ const NotFound = () => {
         {/* Action Buttons */}
         <div className='space-y-4'>
           <Link
-            to='/public-homepage'
+            to='/'
             className='inline-flex items-center justify-center w-full px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-primary hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-200 shadow-subtle hover:shadow-medium'
           >
             <Icon name='Home' size={20} className='mr-2' />
@@ -48,7 +48,7 @@ const NotFound = () => {
           </p>
           <div className='flex justify-center space-x-6'>
             <Link
-              to='/program-overview'
+              to='/programmes'
               className='text-sm text-primary hover:text-primary-700 transition-colors duration-200'
             >
               Programmes

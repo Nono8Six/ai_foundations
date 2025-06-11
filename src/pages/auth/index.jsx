@@ -50,7 +50,7 @@ const AuthenticationLoginRegister = () => {
     <div className='min-h-screen bg-gradient-to-br from-primary-50 via-background to-accent-50'>
       {/* Header with Logo */}
       <header className='absolute top-0 right-0 p-6'>
-        <Link to='/public-homepage' className='flex items-center space-x-2 group'>
+        <Link to='/' className='flex items-center space-x-2 group'>
           <div className='w-12 h-12 bg-gradient-to-br from-primary to-primary-700 rounded-full flex items-center justify-center transition-transform duration-200 group-hover:scale-105 shadow-medium'>
             <Icon name='GraduationCap' size={28} color='white' />
           </div>

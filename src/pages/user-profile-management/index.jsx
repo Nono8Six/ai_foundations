@@ -97,7 +97,7 @@ const UserProfileManagement = () => {
                 Tableau de bord
               </Link>
               <Link
-                to='/program-overview'
+                to='/programmes'
                 className='text-text-secondary hover:text-primary transition-colors'
               >
                 Programmes
