@@ -10,7 +10,7 @@ const RecentActivity = () => {
       user: {
         name: 'Marie Dubois',
         avatar:
-          'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=40&h=40&fit=crop&crop=face',
+          'https://ui-avatars.com/api/?name=Marie+Dubois&background=3b82f6&color=ffffff',
       },
       action: "s\'est inscrite sur la plateforme",
       timestamp: 'Il y a 5 minutes',
@@ -23,7 +23,7 @@ const RecentActivity = () => {
       user: {
         name: 'Jean Martin',
         avatar:
-          'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face',
+          'https://ui-avatars.com/api/?name=Jean+Martin&background=10b981&color=ffffff',
       },
       action: "a terminé le cours \'Introduction à l\'IA'",
       timestamp: 'Il y a 12 minutes',
@@ -36,7 +36,7 @@ const RecentActivity = () => {
       user: {
         name: 'Sophie Laurent',
         avatar:
-          'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face',
+          'https://ui-avatars.com/api/?name=Sophie+Laurent&background=8b5cf6&color=ffffff',
       },
       action: "a créé un nouveau module \'Machine Learning Avancé'",
       timestamp: 'Il y a 1 heure',
@@ -49,7 +49,7 @@ const RecentActivity = () => {
       user: {
         name: 'Pierre Moreau',
         avatar:
-          'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face',
+          'https://ui-avatars.com/api/?name=Pierre+Moreau&background=f59e0b&color=ffffff',
       },
       action: "a débloqué le badge \'Expert IA'",
       timestamp: 'Il y a 2 heures',
@@ -74,7 +74,7 @@ const RecentActivity = () => {
       user: {
         name: 'Emma Rousseau',
         avatar:
-          'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=40&h=40&fit=crop&crop=face',
+          'https://ui-avatars.com/api/?name=Emma+Rousseau&background=ec4899&color=ffffff',
       },
       action: 'a effectué un paiement de €299',
       timestamp: 'Il y a 4 heures',
@@ -87,7 +87,7 @@ const RecentActivity = () => {
       user: {
         name: 'Lucas Bernard',
         avatar:
-          'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop&crop=face',
+          'https://ui-avatars.com/api/?name=Lucas+Bernard&background=6366f1&color=ffffff',
       },
       action: "s\'est inscrit au cours \'Deep Learning Pratique'",
       timestamp: 'Il y a 5 heures',
@@ -100,7 +100,7 @@ const RecentActivity = () => {
       user: {
         name: 'Camille Petit',
         avatar:
-          'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=40&h=40&fit=crop&crop=face',
+          'https://ui-avatars.com/api/?name=Camille+Petit&background=ef4444&color=ffffff',
       },
       action: "s\'est connectée depuis un nouvel appareil",
       timestamp: 'Il y a 6 heures',

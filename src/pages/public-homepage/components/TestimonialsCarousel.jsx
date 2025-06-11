@@ -13,8 +13,8 @@ const TestimonialsCarousel = () => {
       role: 'Expert-comptable',
       company: 'Cabinet Dubois & Associés',
       age: 45,
-      avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
-      content: `Grâce à AI Foundations, j'ai pu automatiser 60% de mes tâches répétitives. 
+      avatar: 'https://ui-avatars.com/api/?name=Marie+Dubois&background=3b82f6&color=ffffff',
+      content: `Grâce à AI Foundations, j'ai automatisé 60% de mes tâches comptables. 
       
       La formation sur l'IA pour la comptabilité m'a permis d'implémenter des solutions d'OCR et d'analyse automatique des factures. Mon cabinet a gagné en efficacité et mes clients apprécient la rapidité de traitement.`,
       rating: 5,
@@ -31,7 +31,7 @@ const TestimonialsCarousel = () => {
       role: 'Directeur Commercial',
       company: 'TechSolutions SARL',
       age: 52,
-      avatar: 'https://randomuser.me/api/portraits/men/46.jpg',
+      avatar: 'https://ui-avatars.com/api/?name=Jean-Pierre+Martin&background=10b981&color=ffffff',
       content: `À 52 ans, je pensais qu'il était trop tard pour apprendre l'IA. AI Foundations m'a prouvé le contraire ! La formation est progressive et adaptée aux professionnels expérimentés. J'ai maintenant des chatbots qui gèrent 70% de nos demandes clients.`,
       rating: 5,
       course: 'IA et Commerce Digital',
@@ -47,7 +47,7 @@ const TestimonialsCarousel = () => {
       role: 'Analyste Financière',
       company: 'InvestCorp',
       age: 29,
-      avatar: 'https://randomuser.me/api/portraits/women/32.jpg',
+      avatar: 'https://ui-avatars.com/api/?name=Sophie+Chen&background=8b5cf6&color=ffffff',
       content: `La formation en IA pour la finance a révolutionné mon approche de l'analyse des risques. 
       
       Les modèles prédictifs que j'ai appris à développer nous ont permis d'identifier des opportunités d'investissement avec une précision de 85%. Un ROI exceptionnel !`,
@@ -65,7 +65,7 @@ const TestimonialsCarousel = () => {
       role: 'Responsable Maintenance',
       company: 'Industrie Plus',
       age: 58,
-      avatar: 'https://randomuser.me/api/portraits/men/58.jpg',
+      avatar: 'https://ui-avatars.com/api/?name=Robert+Lefebvre&background=f59e0b&color=ffffff',
       content: `Proche de la retraite, j'ai voulu me former à l'IA pour transmettre des compétences modernes à mon équipe. 
       
       La maintenance prédictive nous a permis de réduire les pannes de 40% et d'optimiser nos coûts. Une formation accessible même pour les seniors !`,
@@ -83,7 +83,7 @@ const TestimonialsCarousel = () => {
       role: 'Entrepreneure',
       company: 'StartUp Innovante',
       age: 26,
-      avatar: 'https://randomuser.me/api/portraits/women/26.jpg',
+      avatar: 'https://ui-avatars.com/api/?name=Amélie+Rousseau&background=ec4899&color=ffffff',
       content: `En tant que jeune entrepreneure, l'IA était essentielle pour rester compétitive. AI Foundations m'a donné les clés pour intégrer l'IA dans tous les aspects de mon business. De la relation client à l'optimisation des processus, tout est automatisé !`,
       rating: 5,
       course: "Fondamentaux de l\'IA",
@@ -248,7 +248,7 @@ const TestimonialsCarousel = () => {
           {/* Navigation Buttons */}
           <button
             onClick={prevTestimonial}
-            className='absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-surface border border-border rounded-full flex items-center justify-center hover:bg-secondary-50 transition-colors duration-200 shadow-subtle'
+            className='absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-surface border border-border rounded-full flex items-center justify-center hover:bg-secondary-50 transition-colors duration-200'
             aria-label='Témoignage précédent'
           >
             <Icon name='ChevronLeft' size={20} />
@@ -256,7 +256,7 @@ const TestimonialsCarousel = () => {
 
           <button
             onClick={nextTestimonial}
-            className='absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-surface border border-border rounded-full flex items-center justify-center hover:bg-secondary-50 transition-colors duration-200 shadow-subtle'
+            className='absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-surface border border-border rounded-full flex items-center justify-center hover:bg-secondary-50 transition-colors duration-200'
             aria-label='Témoignage suivant'
           >
             <Icon name='ChevronRight' size={20} />

@@ -61,6 +61,9 @@ export const AuthProvider = ({ children }) => {
         console.log('🔄 Token refreshed');
       } else if (event === 'USER_UPDATED') {
         console.log('👤 User updated');
+        if (session?.user) {
+          await fetchUserProfile(session.user.id);
+        }
       }
     });
 
@@ -74,23 +77,17 @@ export const AuthProvider = ({ children }) => {
   const fetchUserProfile = async userId => {
     try {
       console.log('🔍 Fetching profile for user:', userId);
-      const { data, error } = await supabase.from('profiles').select('*').eq('id', userId);
+      const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).single();
 
       if (error) throw error;
       
-      // Handle case where no profile exists yet
-      if (!data || data.length === 0) {
-        console.log('⚠️ No profile found for user, it will be created automatically');
-        setUserProfile(null);
-        return;
-      }
-      
-      // Use the first profile if multiple exist (shouldn't happen due to unique constraint)
-      console.log('✅ Profile fetched successfully:', data[0]);
-      setUserProfile(data[0]);
+      console.log('✅ Profile fetched successfully:', data);
+      setUserProfile(data);
+      return data;
     } catch (error) {
       console.error('❌ Error fetching user profile:', error.message);
       setError(error);
+      return null;
     }
   };
 
@@ -193,11 +190,24 @@ export const AuthProvider = ({ children }) => {
   const updateProfile = async updates => {
     try {
       console.log('📝 Updating profile:', updates);
-      const { data, error } = await supabase.from('profiles').update(updates).eq('id', user.id);
+      
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+      
+      const { data, error } = await supabase
+        .from('profiles')
+        .update(updates)
+        .eq('id', user.id)
+        .select();
 
       if (error) throw error;
-      console.log('✅ Profile updated successfully');
-      setUserProfile({ ...userProfile, ...updates });
+      
+      console.log('✅ Profile updated successfully:', data);
+      
+      // Update local state with the new profile data
+      setUserProfile(prev => ({ ...prev, ...updates }));
+      
       return data;
     } catch (error) {
       console.error('❌ Error updating profile:', error.message);
@@ -230,6 +240,7 @@ export const AuthProvider = ({ children }) => {
     logout,
     resetPassword,
     updateProfile,
+    fetchUserProfile,
     user,
     userProfile,
     session,

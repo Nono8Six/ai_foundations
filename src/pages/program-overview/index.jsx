@@ -42,7 +42,7 @@ const ProgramOverview = () => {
       achievements: ['Premier Pas IA', 'Explorateur'],
       image:
         course.cover_image_url ||
-        'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=250&fit=crop',
+        'https://images.pexels.com/photos/373543/pexels-photo-373543.jpeg?w=400&h=250&fit=crop',
       isEnrolled: false, // Default value, could be calculated from user enrollment
       progress: 0, // Default value, could be calculated from user progress
       isFree: true, // Default value, could be stored in course data

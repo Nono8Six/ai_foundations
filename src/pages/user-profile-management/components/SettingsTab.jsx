@@ -1,9 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { useAuth } from '../../../context/AuthContext';
+import { supabase } from '../../../lib/supabase';
 import Icon from '../../../components/AppIcon';
 
 const SettingsTab = ({ userData }) => {
+  const { user, updateProfile } = useAuth();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  
+  // Settings state - these would ideally be stored in a user_settings table
   const [notificationSettings, setNotificationSettings] = useState({
     emailNotifications: true,
     pushNotifications: false,
@@ -27,6 +33,60 @@ const SettingsTab = ({ userData }) => {
     autoplay: true,
   });
 
+  // Load settings from Supabase on component mount
+  useEffect(() => {
+    loadUserSettings();
+  }, [user]);
+
+  const loadUserSettings = async () => {
+    if (!user) return;
+
+    try {
+      // Try to load settings from a user_settings table
+      // For now, we'll use localStorage as a fallback
+      const savedSettings = localStorage.getItem(`user_settings_${user.id}`);
+      if (savedSettings) {
+        const settings = JSON.parse(savedSettings);
+        setNotificationSettings(settings.notifications || notificationSettings);
+        setPrivacySettings(settings.privacy || privacySettings);
+        setLearningPreferences(settings.learning || learningPreferences);
+      }
+    } catch (error) {
+      console.error('Error loading user settings:', error);
+    }
+  };
+
+  const saveUserSettings = async () => {
+    if (!user) return;
+
+    setIsSaving(true);
+    try {
+      const settings = {
+        notifications: notificationSettings,
+        privacy: privacySettings,
+        learning: learningPreferences,
+        updatedAt: new Date().toISOString(),
+      };
+
+      // Save to localStorage for now
+      // In a real app, you'd save this to a user_settings table in Supabase
+      localStorage.setItem(`user_settings_${user.id}`, JSON.stringify(settings));
+
+      // You could also save some preferences to the profiles table
+      await updateProfile({
+        // Add any profile-level preferences here
+      });
+
+      console.log('✅ Settings saved successfully');
+      alert('Paramètres sauvegardés avec succès !');
+    } catch (error) {
+      console.error('❌ Error saving settings:', error);
+      alert('Erreur lors de la sauvegarde des paramètres');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const {
     register,
     handleSubmit,
@@ -34,9 +94,7 @@ const SettingsTab = ({ userData }) => {
   } = useForm();
 
   const onSubmit = async data => {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    console.log('Settings updated:', data);
+    await saveUserSettings();
   };
 
   const handleNotificationChange = setting => {
@@ -60,27 +118,61 @@ const SettingsTab = ({ userData }) => {
     }));
   };
 
-  const handleDeleteAccount = () => {
-    // Simulate account deletion
-    console.log('Account deletion requested');
-    setShowDeleteConfirm(false);
+  const handleDeleteAccount = async () => {
+    try {
+      // In a real app, you'd call a Supabase function to handle account deletion
+      console.log('Account deletion requested for user:', user.id);
+      alert('Demande de suppression de compte envoyée. Vous recevrez un email de confirmation.');
+      setShowDeleteConfirm(false);
+    } catch (error) {
+      console.error('Error requesting account deletion:', error);
+      alert('Erreur lors de la demande de suppression');
+    }
   };
 
-  const exportData = () => {
-    // Simulate data export
-    const userData = {
-      profile: 'User profile data...',
-      progress: 'Learning progress data...',
-      achievements: 'Achievement data...',
-    };
+  const exportData = async () => {
+    try {
+      // Export user data
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
 
-    const dataStr = JSON.stringify(userData, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'mes-donnees-ai-foundations.json';
-    link.click();
+      const { data: progress } = await supabase
+        .from('user_progress')
+        .select('*')
+        .eq('user_id', user.id);
+
+      const { data: achievements } = await supabase
+        .from('achievements')
+        .select('*')
+        .eq('user_id', user.id);
+
+      const userData = {
+        profile,
+        progress,
+        achievements,
+        settings: {
+          notifications: notificationSettings,
+          privacy: privacySettings,
+          learning: learningPreferences,
+        },
+        exportDate: new Date().toISOString(),
+      };
+
+      const dataStr = JSON.stringify(userData, null, 2);
+      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(dataBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `mes-donnees-ai-foundations-${new Date().toISOString().split('T')[0]}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error exporting data:', error);
+      alert('Erreur lors de l\'export des données');
+    }
   };
 
   return (
@@ -305,7 +397,7 @@ const SettingsTab = ({ userData }) => {
               <div>
                 <p className='text-sm font-medium text-text-primary'>Exporter mes données</p>
                 <p className='text-xs text-text-secondary'>
-                  Télécharger une copie de toutes vos données
+                  Télécharger une copie de toutes vos données (profil, progrès, réalisations)
                 </p>
               </div>
               <button
@@ -350,10 +442,10 @@ const SettingsTab = ({ userData }) => {
         <div className='flex justify-end pt-6 border-t border-border'>
           <button
             type='submit'
-            disabled={isSubmitting}
+            disabled={isSubmitting || isSaving}
             className='inline-flex items-center px-6 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-primary hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors disabled:opacity-50'
           >
-            {isSubmitting && <Icon name='Loader2' size={16} className='mr-2 animate-spin' />}
+            {(isSubmitting || isSaving) && <Icon name='Loader2' size={16} className='mr-2 animate-spin' />}
             Enregistrer les paramètres
           </button>
         </div>

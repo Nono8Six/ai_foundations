@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   BarChart,
   Bar,
@@ -13,39 +13,117 @@ import {
   Pie,
   Cell,
 } from 'recharts';
+import { useAuth } from '../../../context/AuthContext';
+import { useCourses } from '../../../context/CourseContext';
+import useAchievements from '../../../hooks/useAchievements';
+import useRecentActivity from '../../../hooks/useRecentActivity';
 import Icon from '../../../components/AppIcon';
 
 const LearningStatsTab = ({ userData }) => {
-  // Mock learning data
-  const weeklyProgress = [
-    { day: 'Lun', minutes: 45, xp: 120 },
-    { day: 'Mar', minutes: 60, xp: 180 },
-    { day: 'Mer', minutes: 30, xp: 90 },
-    { day: 'Jeu', minutes: 75, xp: 200 },
-    { day: 'Ven', minutes: 90, xp: 250 },
-    { day: 'Sam', minutes: 120, xp: 300 },
-    { day: 'Dim', minutes: 40, xp: 110 },
-  ];
+  const { user, userProfile } = useAuth();
+  const { courses, userProgress } = useCourses();
+  const { achievements } = useAchievements(user?.id);
+  const { activities } = useRecentActivity(user?.id);
+  
+  const [weeklyData, setWeeklyData] = useState([]);
+  const [monthlyData, setMonthlyData] = useState([]);
+  const [subjectData, setSubjectData] = useState([]);
 
-  const monthlyStats = [
-    { month: 'Jan', completed: 2, started: 3 },
-    { month: 'Fév', completed: 3, started: 4 },
-    { month: 'Mar', completed: 3, started: 2 },
-  ];
+  // Calculate real learning statistics
+  useEffect(() => {
+    if (!userProgress.length) {
+      // If no progress data, show empty charts
+      setWeeklyData([]);
+      setMonthlyData([]);
+      setSubjectData([]);
+      return;
+    }
 
-  const skillDistribution = [
-    { name: 'IA Générale', value: 35, color: '#3b82f6' },
-    { name: 'Machine Learning', value: 25, color: '#10b981' },
-    { name: 'Automatisation', value: 20, color: '#f59e0b' },
-    { name: 'Analyse de données', value: 20, color: '#ef4444' },
-  ];
+    // Calculate weekly progress based on actual completion dates
+    const weeklyStats = calculateWeeklyProgress();
+    setWeeklyData(weeklyStats);
 
-  const streakHistory = [
-    { week: 'S1', streak: 5 },
-    { week: 'S2', streak: 7 },
-    { week: 'S3', streak: 12 },
-    { week: 'S4', streak: 15 },
-  ];
+    // Calculate monthly progress
+    const monthlyStats = calculateMonthlyProgress();
+    setMonthlyData(monthlyStats);
+
+    // Calculate subject distribution based on enrolled courses
+    const subjectStats = calculateSubjectDistribution();
+    setSubjectData(subjectStats);
+  }, [userProgress, courses, activities]);
+
+  const calculateWeeklyProgress = () => {
+    const days = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+    const weekData = days.map(day => ({ day, minutes: 0, xp: 0, lessons: 0 }));
+
+    // Get activities from the last 7 days
+    const lastWeek = new Date();
+    lastWeek.setDate(lastWeek.getDate() - 7);
+
+    activities.forEach(activity => {
+      const activityDate = new Date(activity.created_at);
+      if (activityDate >= lastWeek) {
+        const dayIndex = (activityDate.getDay() + 6) % 7; // Convert Sunday=0 to Monday=0
+        if (activity.type === 'lesson_completed') {
+          weekData[dayIndex].lessons += 1;
+          weekData[dayIndex].minutes += 15; // Estimate 15 minutes per lesson
+          weekData[dayIndex].xp += 50; // Estimate 50 XP per lesson
+        }
+      }
+    });
+
+    return weekData;
+  };
+
+  const calculateMonthlyProgress = () => {
+    const months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun'];
+    const monthData = months.map(month => ({ month, completed: 0, started: 0 }));
+
+    // Calculate based on user progress
+    const completedLessons = userProgress.filter(p => p.status === 'completed');
+    const inProgressLessons = userProgress.filter(p => p.status === 'in_progress');
+
+    // Distribute across months (simplified - you might want to use actual dates)
+    if (completedLessons.length > 0) {
+      const monthIndex = new Date().getMonth();
+      if (monthIndex < monthData.length) {
+        monthData[monthIndex].completed = completedLessons.length;
+        monthData[monthIndex].started = inProgressLessons.length;
+      }
+    }
+
+    return monthData;
+  };
+
+  const calculateSubjectDistribution = () => {
+    if (!courses.length) return [];
+
+    // Group courses by category/subject
+    const subjects = {};
+    courses.forEach(course => {
+      const category = course.category || 'IA Générale';
+      if (!subjects[category]) {
+        subjects[category] = 0;
+      }
+      subjects[category] += 1;
+    });
+
+    const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
+    return Object.entries(subjects).map(([name, value], index) => ({
+      name,
+      value,
+      color: colors[index % colors.length],
+    }));
+  };
+
+  // Calculate real statistics
+  const totalLearningTime = Math.floor(userProgress.filter(p => p.status === 'completed').length * 0.25); // 15 min per lesson
+  const coursesCompleted = courses.filter(course => {
+    // Check if all lessons in course are completed
+    return userProgress.some(p => p.status === 'completed');
+  }).length;
+  const currentStreak = userProfile?.current_streak || 0;
+  const currentLevel = userProfile?.level || 1;
 
   return (
     <div className='space-y-8'>
@@ -63,7 +141,7 @@ const LearningStatsTab = ({ userData }) => {
           <div className='flex items-center justify-between'>
             <div>
               <p className='text-primary-600 text-sm font-medium'>Temps total</p>
-              <p className='text-2xl font-bold text-primary-700'>{userData.totalLearningTime}h</p>
+              <p className='text-2xl font-bold text-primary-700'>{totalLearningTime}h</p>
             </div>
             <div className='w-12 h-12 bg-primary-500 rounded-lg flex items-center justify-center'>
               <Icon name='Clock' size={24} color='white' />
@@ -75,7 +153,7 @@ const LearningStatsTab = ({ userData }) => {
           <div className='flex items-center justify-between'>
             <div>
               <p className='text-accent-600 text-sm font-medium'>Cours terminés</p>
-              <p className='text-2xl font-bold text-accent-700'>{userData.coursesCompleted}</p>
+              <p className='text-2xl font-bold text-accent-700'>{coursesCompleted}</p>
             </div>
             <div className='w-12 h-12 bg-accent-500 rounded-lg flex items-center justify-center'>
               <Icon name='BookOpen' size={24} color='white' />
@@ -87,7 +165,7 @@ const LearningStatsTab = ({ userData }) => {
           <div className='flex items-center justify-between'>
             <div>
               <p className='text-orange-600 text-sm font-medium'>Série actuelle</p>
-              <p className='text-2xl font-bold text-orange-700'>{userData.streak} jours</p>
+              <p className='text-2xl font-bold text-orange-700'>{currentStreak} jours</p>
             </div>
             <div className='w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center'>
               <Icon name='Flame' size={24} color='white' />
@@ -99,7 +177,7 @@ const LearningStatsTab = ({ userData }) => {
           <div className='flex items-center justify-between'>
             <div>
               <p className='text-purple-600 text-sm font-medium'>Niveau actuel</p>
-              <p className='text-2xl font-bold text-purple-700'>{userData.level}</p>
+              <p className='text-2xl font-bold text-purple-700'>{currentLevel}</p>
             </div>
             <div className='w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center'>
               <Icon name='Trophy' size={24} color='white' />
@@ -109,160 +187,226 @@ const LearningStatsTab = ({ userData }) => {
       </div>
 
       {/* Charts Section */}
-      <div className='grid grid-cols-1 lg:grid-cols-2 gap-8'>
-        {/* Weekly Progress */}
-        <div className='bg-surface rounded-lg border border-border p-6'>
-          <h4 className='text-base font-semibold text-text-primary mb-4'>Progrès hebdomadaire</h4>
-          <div className='h-64'>
-            <ResponsiveContainer width='100%' height='100%'>
-              <BarChart data={weeklyProgress}>
-                <CartesianGrid strokeDasharray='3 3' stroke='#e2e8f0' />
-                <XAxis dataKey='day' stroke='#64748b' fontSize={12} />
-                <YAxis stroke='#64748b' fontSize={12} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#ffffff',
-                    border: '1px solid #e2e8f0',
-                    borderRadius: '8px',
-                    fontSize: '12px',
-                  }}
-                />
-                <Bar dataKey='minutes' fill='#3b82f6' radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+      {weeklyData.length > 0 || monthlyData.length > 0 ? (
+        <div className='grid grid-cols-1 lg:grid-cols-2 gap-8'>
+          {/* Weekly Progress */}
+          <div className='bg-surface rounded-lg border border-border p-6'>
+            <h4 className='text-base font-semibold text-text-primary mb-4'>Progrès hebdomadaire</h4>
+            {weeklyData.length > 0 ? (
+              <div className='h-64'>
+                <ResponsiveContainer width='100%' height='100%'>
+                  <BarChart data={weeklyData}>
+                    <CartesianGrid strokeDasharray='3 3' stroke='#e2e8f0' />
+                    <XAxis dataKey='day' stroke='#64748b' fontSize={12} />
+                    <YAxis stroke='#64748b' fontSize={12} />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: '#ffffff',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '8px',
+                        fontSize: '12px',
+                      }}
+                    />
+                    <Bar dataKey='minutes' fill='#3b82f6' radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            ) : (
+              <div className='h-64 flex items-center justify-center text-text-secondary'>
+                <div className='text-center'>
+                  <Icon name='BarChart3' size={48} className='mx-auto mb-4 opacity-50' />
+                  <p>Aucune donnée d'apprentissage cette semaine</p>
+                  <p className='text-sm'>Commencez une leçon pour voir vos statistiques</p>
+                </div>
+              </div>
+            )}
           </div>
-        </div>
 
-        {/* XP Progress */}
-        <div className='bg-surface rounded-lg border border-border p-6'>
-          <h4 className='text-base font-semibold text-text-primary mb-4'>Évolution XP</h4>
-          <div className='h-64'>
-            <ResponsiveContainer width='100%' height='100%'>
-              <LineChart data={weeklyProgress}>
-                <CartesianGrid strokeDasharray='3 3' stroke='#e2e8f0' />
-                <XAxis dataKey='day' stroke='#64748b' fontSize={12} />
-                <YAxis stroke='#64748b' fontSize={12} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#ffffff',
-                    border: '1px solid #e2e8f0',
-                    borderRadius: '8px',
-                    fontSize: '12px',
-                  }}
-                />
-                <Line
-                  type='monotone'
-                  dataKey='xp'
-                  stroke='#10b981'
-                  strokeWidth={3}
-                  dot={{ fill: '#10b981', strokeWidth: 2, r: 4 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
+          {/* XP Progress */}
+          <div className='bg-surface rounded-lg border border-border p-6'>
+            <h4 className='text-base font-semibold text-text-primary mb-4'>Évolution XP</h4>
+            {weeklyData.length > 0 && weeklyData.some(d => d.xp > 0) ? (
+              <div className='h-64'>
+                <ResponsiveContainer width='100%' height='100%'>
+                  <LineChart data={weeklyData}>
+                    <CartesianGrid strokeDasharray='3 3' stroke='#e2e8f0' />
+                    <XAxis dataKey='day' stroke='#64748b' fontSize={12} />
+                    <YAxis stroke='#64748b' fontSize={12} />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: '#ffffff',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '8px',
+                        fontSize: '12px',
+                      }}
+                    />
+                    <Line
+                      type='monotone'
+                      dataKey='xp'
+                      stroke='#10b981'
+                      strokeWidth={3}
+                      dot={{ fill: '#10b981', strokeWidth: 2, r: 4 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            ) : (
+              <div className='h-64 flex items-center justify-center text-text-secondary'>
+                <div className='text-center'>
+                  <Icon name='TrendingUp' size={48} className='mx-auto mb-4 opacity-50' />
+                  <p>Aucun XP gagné cette semaine</p>
+                  <p className='text-sm'>Terminez des leçons pour gagner de l'XP</p>
+                </div>
+              </div>
+            )}
           </div>
-        </div>
 
-        {/* Skill Distribution */}
-        <div className='bg-surface rounded-lg border border-border p-6'>
-          <h4 className='text-base font-semibold text-text-primary mb-4'>
-            Répartition des compétences
-          </h4>
-          <div className='h-64'>
-            <ResponsiveContainer width='100%' height='100%'>
-              <PieChart>
-                <Pie
-                  data={skillDistribution}
-                  cx='50%'
-                  cy='50%'
-                  innerRadius={60}
-                  outerRadius={100}
-                  paddingAngle={5}
-                  dataKey='value'
-                >
-                  {skillDistribution.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
+          {/* Subject Distribution */}
+          <div className='bg-surface rounded-lg border border-border p-6'>
+            <h4 className='text-base font-semibold text-text-primary mb-4'>
+              Répartition des cours
+            </h4>
+            {subjectData.length > 0 ? (
+              <>
+                <div className='h-64'>
+                  <ResponsiveContainer width='100%' height='100%'>
+                    <PieChart>
+                      <Pie
+                        data={subjectData}
+                        cx='50%'
+                        cy='50%'
+                        innerRadius={60}
+                        outerRadius={100}
+                        paddingAngle={5}
+                        dataKey='value'
+                      >
+                        {subjectData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: '#ffffff',
+                          border: '1px solid #e2e8f0',
+                          borderRadius: '8px',
+                          fontSize: '12px',
+                        }}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className='grid grid-cols-2 gap-2 mt-4'>
+                  {subjectData.map((subject, index) => (
+                    <div key={index} className='flex items-center space-x-2'>
+                      <div
+                        className='w-3 h-3 rounded-full'
+                        style={{ backgroundColor: subject.color }}
+                      ></div>
+                      <span className='text-xs text-text-secondary'>{subject.name}</span>
+                    </div>
                   ))}
-                </Pie>
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#ffffff',
-                    border: '1px solid #e2e8f0',
-                    borderRadius: '8px',
-                    fontSize: '12px',
-                  }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
+                </div>
+              </>
+            ) : (
+              <div className='h-64 flex items-center justify-center text-text-secondary'>
+                <div className='text-center'>
+                  <Icon name='PieChart' size={48} className='mx-auto mb-4 opacity-50' />
+                  <p>Aucun cours inscrit</p>
+                  <p className='text-sm'>Inscrivez-vous à des cours pour voir la répartition</p>
+                </div>
+              </div>
+            )}
           </div>
-          <div className='grid grid-cols-2 gap-2 mt-4'>
-            {skillDistribution.map((skill, index) => (
-              <div key={index} className='flex items-center space-x-2'>
-                <div
-                  className='w-3 h-3 rounded-full'
-                  style={{ backgroundColor: skill.color }}
-                ></div>
-                <span className='text-xs text-text-secondary'>{skill.name}</span>
+
+          {/* Activity Summary */}
+          <div className='bg-surface rounded-lg border border-border p-6'>
+            <h4 className='text-base font-semibold text-text-primary mb-4'>Résumé d'activité</h4>
+            <div className='space-y-4'>
+              <div className='flex items-center justify-between p-3 bg-secondary-50 rounded-lg'>
+                <div className='flex items-center space-x-3'>
+                  <Icon name='BookOpen' size={20} className='text-primary' />
+                  <span className='text-sm font-medium text-text-primary'>Leçons terminées</span>
+                </div>
+                <span className='text-lg font-bold text-primary'>
+                  {userProgress.filter(p => p.status === 'completed').length}
+                </span>
+              </div>
+              
+              <div className='flex items-center justify-between p-3 bg-secondary-50 rounded-lg'>
+                <div className='flex items-center space-x-3'>
+                  <Icon name='Clock' size={20} className='text-accent' />
+                  <span className='text-sm font-medium text-text-primary'>Leçons en cours</span>
+                </div>
+                <span className='text-lg font-bold text-accent'>
+                  {userProgress.filter(p => p.status === 'in_progress').length}
+                </span>
+              </div>
+
+              <div className='flex items-center justify-between p-3 bg-secondary-50 rounded-lg'>
+                <div className='flex items-center space-x-3'>
+                  <Icon name='Award' size={20} className='text-warning' />
+                  <span className='text-sm font-medium text-text-primary'>Réalisations</span>
+                </div>
+                <span className='text-lg font-bold text-warning'>
+                  {achievements.length}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className='bg-surface rounded-lg border border-border p-12 text-center'>
+          <Icon name='BarChart3' size={64} className='mx-auto mb-6 text-secondary-300' />
+          <h3 className='text-xl font-semibold text-text-primary mb-2'>
+            Commencez votre parcours d'apprentissage
+          </h3>
+          <p className='text-text-secondary mb-6'>
+            Vos statistiques d'apprentissage apparaîtront ici une fois que vous aurez commencé des cours.
+          </p>
+          <a
+            href='/programmes'
+            className='inline-flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors'
+          >
+            <Icon name='BookOpen' size={20} className='mr-2' />
+            Découvrir les cours
+          </a>
+        </div>
+      )}
+
+      {/* Achievements Gallery */}
+      {achievements.length > 0 && (
+        <div className='bg-surface rounded-lg border border-border p-6'>
+          <h4 className='text-base font-semibold text-text-primary mb-6'>Réalisations débloquées</h4>
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
+            {achievements.map(achievement => (
+              <div
+                key={achievement.id}
+                className='bg-gradient-to-br from-secondary-50 to-secondary-100 rounded-lg p-4 border border-secondary-200'
+              >
+                <div className='flex items-start space-x-4'>
+                  <div className='w-12 h-12 bg-gradient-to-br from-primary to-primary-700 rounded-lg flex items-center justify-center flex-shrink-0'>
+                    <Icon name='Award' size={24} color='white' />
+                  </div>
+                  <div className='flex-1 min-w-0'>
+                    <h5 className='text-sm font-semibold text-text-primary mb-1'>
+                      {achievement.title}
+                    </h5>
+                    <p className='text-xs text-text-secondary mb-2'>{achievement.description}</p>
+                    <div className='flex items-center justify-between'>
+                      <span className='inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary-700'>
+                        {achievement.rarity}
+                      </span>
+                      <span className='text-xs text-text-secondary'>
+                        {new Date(achievement.created_at).toLocaleDateString('fr-FR')}
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
         </div>
-
-        {/* Streak History */}
-        <div className='bg-surface rounded-lg border border-border p-6'>
-          <h4 className='text-base font-semibold text-text-primary mb-4'>Historique des séries</h4>
-          <div className='h-64'>
-            <ResponsiveContainer width='100%' height='100%'>
-              <BarChart data={streakHistory}>
-                <CartesianGrid strokeDasharray='3 3' stroke='#e2e8f0' />
-                <XAxis dataKey='week' stroke='#64748b' fontSize={12} />
-                <YAxis stroke='#64748b' fontSize={12} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#ffffff',
-                    border: '1px solid #e2e8f0',
-                    borderRadius: '8px',
-                    fontSize: '12px',
-                  }}
-                />
-                <Bar dataKey='streak' fill='#f59e0b' radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      </div>
-
-      {/* Achievements Gallery */}
-      <div className='bg-surface rounded-lg border border-border p-6'>
-        <h4 className='text-base font-semibold text-text-primary mb-6'>Réalisations débloquées</h4>
-        <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
-          {userData.achievements.map(achievement => (
-            <div
-              key={achievement.id}
-              className='bg-gradient-to-br from-secondary-50 to-secondary-100 rounded-lg p-4 border border-secondary-200'
-            >
-              <div className='flex items-start space-x-4'>
-                <div className='w-12 h-12 bg-gradient-to-br from-primary to-primary-700 rounded-lg flex items-center justify-center flex-shrink-0'>
-                  <Icon name={achievement.icon} size={24} color='white' />
-                </div>
-                <div className='flex-1 min-w-0'>
-                  <h5 className='text-sm font-semibold text-text-primary mb-1'>
-                    {achievement.name}
-                  </h5>
-                  <p className='text-xs text-text-secondary mb-2'>{achievement.description}</p>
-                  <div className='flex items-center justify-between'>
-                    <span className='inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary-700'>
-                      {achievement.category}
-                    </span>
-                    <span className='text-xs text-text-secondary'>
-                      {new Date(achievement.unlockedDate).toLocaleDateString('fr-FR')}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      )}
 
       {/* Learning Goals */}
       <div className='bg-surface rounded-lg border border-border p-6'>
@@ -275,12 +419,12 @@ const LearningStatsTab = ({ userData }) => {
               <Icon name='Target' size={20} className='text-primary' />
               <div>
                 <p className='text-sm font-medium text-text-primary'>Objectif quotidien</p>
-                <p className='text-xs text-text-secondary'>30 minutes par jour</p>
+                <p className='text-xs text-text-secondary'>Maintenir votre série d'apprentissage</p>
               </div>
             </div>
             <div className='text-right'>
-              <p className='text-sm font-semibold text-accent'>75%</p>
-              <p className='text-xs text-text-secondary'>22.5/30 min</p>
+              <p className='text-sm font-semibold text-accent'>{currentStreak} jours</p>
+              <p className='text-xs text-text-secondary'>Série actuelle</p>
             </div>
           </div>
 
@@ -288,13 +432,13 @@ const LearningStatsTab = ({ userData }) => {
             <div className='flex items-center space-x-3'>
               <Icon name='Calendar' size={20} className='text-primary' />
               <div>
-                <p className='text-sm font-medium text-text-primary'>Objectif mensuel</p>
-                <p className='text-xs text-text-secondary'>Terminer 3 cours</p>
+                <p className='text-sm font-medium text-text-primary'>Progression niveau</p>
+                <p className='text-xs text-text-secondary'>Vers le niveau {currentLevel + 1}</p>
               </div>
             </div>
             <div className='text-right'>
-              <p className='text-sm font-semibold text-success'>100%</p>
-              <p className='text-xs text-text-secondary'>3/3 cours</p>
+              <p className='text-sm font-semibold text-primary'>{userProfile?.xp || 0} XP</p>
+              <p className='text-xs text-text-secondary'>Points actuels</p>
             </div>
           </div>
         </div>

@@ -28,7 +28,7 @@ const ContentManagementCoursesModulesLessons = () => {
       description:
         "Découvrez les fondamentaux de l'IA et ses applications pratiques dans le monde professionnel.",
       status: 'published',
-      thumbnail: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400',
+      thumbnail: 'https://images.pexels.com/photos/373543/pexels-photo-373543.jpeg?w=400',
       price: 299,
       enrollments: 1247,
       rating: 4.8,
@@ -93,7 +93,7 @@ const ContentManagementCoursesModulesLessons = () => {
       description:
         'Apprenez les bases du machine learning avec des exemples pratiques et des exercices interactifs.',
       status: 'draft',
-      thumbnail: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=400',
+      thumbnail: 'https://images.pexels.com/photos/8386434/pexels-photo-8386434.jpeg?w=400',
       price: 399,
       enrollments: 0,
       rating: 0,

@@ -7,13 +7,15 @@ import Image from '../../../components/AppImage';
 const PersonalInfoTab = ({ userData }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState(userData.avatar);
-  const { updateProfile } = useAuth();
+  const [isUploading, setIsUploading] = useState(false);
+  const { updateProfile, userProfile } = useAuth();
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
+    setValue,
   } = useForm({
     defaultValues: {
       name: userData.name,
@@ -26,32 +28,47 @@ const PersonalInfoTab = ({ userData }) => {
 
   const onSubmit = async data => {
     try {
-      setIsSubmitting(true);
+      console.log('🔄 Submitting profile update:', data);
       
-      // Prepare the update data
+      // Prepare the update data for Supabase profiles table
       const updates = {
         full_name: data.name,
-        // We don't update email here as it's managed by auth
-        // Add other fields if they're added to the profiles table
+        // Add other fields if they exist in your profiles table
+        // phone: data.phone,
+        // profession: data.profession,
+        // company: data.company,
       };
+      
+      // If avatar was changed, include it
+      if (avatarPreview !== userData.avatar) {
+        updates.avatar_url = avatarPreview;
+      }
+      
+      console.log('📝 Updates to send:', updates);
       
       // Update the profile in Supabase
       await updateProfile(updates);
       
+      console.log('✅ Profile updated successfully');
       setIsEditing(false);
+      
+      // Show success message
+      alert('Profil mis à jour avec succès !');
+      
     } catch (error) {
-      console.error('Error updating profile:', error);
-    } finally {
-      setIsSubmitting(false);
+      console.error('❌ Error updating profile:', error);
+      alert('Erreur lors de la mise à jour du profil: ' + error.message);
     }
   };
 
   const handleAvatarChange = event => {
     const file = event.target.files[0];
     if (file) {
+      setIsUploading(true);
       const reader = new FileReader();
       reader.onload = e => {
         setAvatarPreview(e.target.result);
+        setIsUploading(false);
       };
       reader.readAsDataURL(file);
     }
@@ -108,6 +125,11 @@ const PersonalInfoTab = ({ userData }) => {
                   />
                 </label>
               )}
+              {isUploading && (
+                <div className='absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center'>
+                  <Icon name='Loader2' size={16} className='animate-spin text-white' />
+                </div>
+              )}
             </div>
             <div>
               <p className='text-sm text-text-primary font-medium mb-1'>
@@ -160,7 +182,7 @@ const PersonalInfoTab = ({ userData }) => {
               disabled={true} // Email is always disabled as it's managed by auth
               className='w-full px-3 py-2 border border-transparent bg-secondary-50 text-text-secondary rounded-lg text-sm'
             />
-            {errors.email && <p className='mt-1 text-xs text-error'>{errors.email.message}</p>}
+            <p className='mt-1 text-xs text-text-secondary'>L'email ne peut pas être modifié ici</p>
           </div>
 
           {/* Phone */}
@@ -175,6 +197,7 @@ const PersonalInfoTab = ({ userData }) => {
                   ? 'border-border focus:border-primary focus:ring-1 focus:ring-primary bg-surface'
                   : 'border-transparent bg-secondary-50 text-text-secondary'
               }`}
+              placeholder='+33 1 23 45 67 89'
             />
           </div>
 
@@ -190,6 +213,7 @@ const PersonalInfoTab = ({ userData }) => {
                   ? 'border-border focus:border-primary focus:ring-1 focus:ring-primary bg-surface'
                   : 'border-transparent bg-secondary-50 text-text-secondary'
               }`}
+              placeholder='Ex: Développeur, Comptable, etc.'
             />
           </div>
 
@@ -205,6 +229,7 @@ const PersonalInfoTab = ({ userData }) => {
                   ? 'border-border focus:border-primary focus:ring-1 focus:ring-primary bg-surface'
                   : 'border-transparent bg-secondary-50 text-text-secondary'
               }`}
+              placeholder='Nom de votre entreprise'
             />
           </div>
         </div>
@@ -246,6 +271,18 @@ const PersonalInfoTab = ({ userData }) => {
             <span className='ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-success-100 text-success-700'>
               <Icon name='CheckCircle' size={12} className='mr-1' />
               Actif
+            </span>
+          </div>
+          <div>
+            <span className='text-text-secondary'>Niveau actuel:</span>
+            <span className='ml-2 text-text-primary font-medium'>
+              Niveau {userProfile?.level || 1}
+            </span>
+          </div>
+          <div>
+            <span className='text-text-secondary'>Points XP:</span>
+            <span className='ml-2 text-text-primary font-medium'>
+              {userProfile?.xp || 0} XP
             </span>
           </div>
         </div>

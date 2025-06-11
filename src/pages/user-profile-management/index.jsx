@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Icon from '../../components/AppIcon';
 import Image from '../../components/AppImage';
@@ -10,6 +10,8 @@ import SettingsTab from './components/SettingsTab';
 const UserProfileManagement = () => {
   const [activeTab, setActiveTab] = useState('personal');
   const { user, userProfile, logout } = useAuth();
+  const navigate = useNavigate();
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
 
   // Use real user data instead of mock data
   const userData = {
@@ -34,6 +36,7 @@ const UserProfileManagement = () => {
   const handleLogout = async () => {
     try {
       await logout();
+      navigate('/login');
     } catch (error) {
       console.error('Erreur lors de la déconnexion:', error);
     }
@@ -96,19 +99,53 @@ const UserProfileManagement = () => {
 
             {/* User Menu */}
             <div className='flex items-center space-x-4'>
-              <button
-                onClick={handleLogout}
-                className='flex items-center space-x-2 px-3 py-2 text-text-secondary hover:text-primary transition-colors'
-              >
-                <Icon name='LogOut' size={16} />
-                <span className='hidden sm:inline'>Déconnexion</span>
-              </button>
-              <div className='w-8 h-8 rounded-full overflow-hidden'>
-                <Image
-                  src={userData.avatar}
-                  alt={userData.name}
-                  className='w-full h-full object-cover'
-                />
+              {/* Profile Dropdown */}
+              <div className='relative profile-menu'>
+                <button
+                  onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                  className='w-12 h-12 bg-gradient-to-br from-primary to-primary-700 rounded-full flex items-center justify-center hover:shadow-medium transition-all duration-200'
+                >
+                  {userProfile?.avatar_url ? (
+                    <Image 
+                      src={userProfile.avatar_url} 
+                      alt={userProfile.full_name || 'Profil'} 
+                      className='w-full h-full rounded-full object-cover'
+                    />
+                  ) : (
+                    <span className='text-white font-medium text-sm'>{getInitials()}</span>
+                  )}
+                </button>
+
+                {isProfileMenuOpen && (
+                  <div className='absolute right-0 mt-2 w-56 bg-surface rounded-lg shadow-medium border border-border py-2 z-50'>
+                    <div className='px-4 py-2 border-b border-border mb-2'>
+                      <p className='font-medium text-text-primary'>{userProfile?.full_name || user?.email}</p>
+                      <p className='text-sm text-text-secondary'>Niveau {userProfile?.level || 1}</p>
+                    </div>
+                    
+                    {tabs.map(tab => (
+                      <button
+                        key={tab.id}
+                        onClick={() => {
+                          setActiveTab(tab.id);
+                          setIsProfileMenuOpen(false);
+                        }}
+                        className='flex items-center space-x-3 px-4 py-2 w-full text-left text-text-secondary hover:bg-secondary-50 hover:text-primary transition-colors duration-200'
+                      >
+                        <Icon name={tab.icon} size={18} />
+                        <span>{tab.label}</span>
+                      </button>
+                    ))}
+                    
+                    <button
+                      onClick={handleLogout}
+                      className='w-full px-4 py-2 text-left text-text-primary hover:bg-secondary-50 transition-colors duration-200 flex items-center space-x-2 border-t border-border mt-2 pt-2'
+                    >
+                      <Icon name='LogOut' size={16} />
+                      <span>Déconnexion</span>
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -147,9 +184,6 @@ const UserProfileManagement = () => {
                       className='w-full h-full object-cover'
                     />
                   </div>
-                  <button className='absolute bottom-4 right-0 w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center hover:bg-primary-700 transition-colors'>
-                    <Icon name='Camera' size={16} />
-                  </button>
                 </div>
                 <h2 className='text-xl font-semibold text-text-primary mb-1'>{userData.name}</h2>
                 <p className='text-text-secondary text-sm'>{userData.email}</p>

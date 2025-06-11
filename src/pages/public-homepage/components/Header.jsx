@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import Icon from '../../../components/AppIcon';
+import Image from '../../../components/AppImage';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { user, userProfile, loading, error, logout } = useAuth();
+  const navigate = useNavigate();
 
   if (error) {
     console.error('Erreur de chargement du profil:', error);
@@ -16,7 +18,7 @@ const Header = () => {
   const getInitials = () => {
     try {
       if (!user) return null;
-      const name = user.user_metadata?.full_name || userProfile?.full_name || '';
+      const name = userProfile?.full_name || user.user_metadata?.full_name || '';
       const [first = '', last = ''] = name.split(' ');
       return `${first.charAt(0)}${last.charAt(0)}`;
     } catch (err) {
@@ -30,6 +32,7 @@ const Header = () => {
       await logout();
       setIsProfileOpen(false);
       setIsMenuOpen(false);
+      navigate('/login');
     } catch (error) {
       console.error('Erreur lors de la déconnexion:', error);
     }
@@ -50,6 +53,20 @@ const Header = () => {
       navigationItems.push({ name: 'Admin', path: '/admin-dashboard', icon: 'Settings' });
     }
   }
+
+  // Ensure profile menu is always available on all pages
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isProfileOpen && !event.target.closest('.profile-menu')) {
+        setIsProfileOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isProfileOpen]);
 
   return (
     <header className='fixed top-0 left-0 right-0 z-50 bg-surface/95 backdrop-blur-sm border-b border-border shadow-subtle'>
@@ -109,12 +126,9 @@ const Header = () => {
 
           {/* Profile Dropdown */}
           {user && (
-            <div className='hidden lg:block relative'>
+            <div className='profile-menu relative'>
               <button
-                onClick={() => {
-                  setIsProfileOpen(!isProfileOpen);
-                  setIsMenuOpen(false);
-                }}
+                onClick={() => setIsProfileOpen(!isProfileOpen)}
                 className='w-12 h-12 bg-gradient-to-br from-primary to-primary-700 rounded-full flex items-center justify-center hover:shadow-medium transition-all duration-200'
               >
                 {loading ? (
@@ -133,19 +147,25 @@ const Header = () => {
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95, y: -10 }}
                     transition={{ duration: 0.2 }}
-                    className='absolute right-0 mt-2 w-56 bg-surface rounded-lg shadow-medium border border-border py-2'
+                    className='absolute right-0 mt-2 w-56 bg-surface rounded-lg shadow-medium border border-border py-2 z-50'
                   >
+                    <div className='px-4 py-2 border-b border-border mb-2'>
+                      <p className='font-medium text-text-primary'>{userProfile?.full_name || user.email}</p>
+                      <p className='text-sm text-text-secondary'>Niveau {userProfile?.level || 1}</p>
+                    </div>
+                    
                     {navigationItems.map(item => (
                       <Link
                         key={item.name}
                         to={item.path}
                         onClick={() => setIsProfileOpen(false)}
-                        className='flex items-center space-x-3 px-4 py-3 text-text-secondary hover:bg-secondary-50 hover:text-primary transition-colors duration-200'
+                        className='flex items-center space-x-3 px-4 py-2 text-text-secondary hover:bg-secondary-50 hover:text-primary transition-colors duration-200'
                       >
                         <Icon name={item.icon} size={18} />
                         <span>{item.name}</span>
                       </Link>
                     ))}
+                    
                     <button
                       onClick={handleLogout}
                       className='w-full px-4 py-2 text-left text-text-primary hover:bg-secondary-50 transition-colors duration-200 flex items-center space-x-2'

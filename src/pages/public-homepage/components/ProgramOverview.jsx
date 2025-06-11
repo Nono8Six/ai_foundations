@@ -15,7 +15,7 @@ const ProgramOverview = () => {
       duration: '4 semaines',
       modules: 12,
       thumbnail:
-        'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=250&fit=crop',
+        'https://images.pexels.com/photos/373543/pexels-photo-373543.jpeg?w=400&h=250&fit=crop',
       category: 'Fondamentaux',
       rating: 4.8,
       students: 2340,
@@ -45,7 +45,7 @@ const ProgramOverview = () => {
       duration: '5 semaines',
       modules: 15,
       thumbnail:
-        'https://images.pixabay.com/photo/2020/06/25/18/25/artificial-intelligence-5339753_1280.jpg?w=400&h=250&fit=crop',
+        'https://images.pexels.com/photos/8386434/pexels-photo-8386434.jpeg?w=400&h=250&fit=crop',
       category: 'Commerce',
       rating: 4.7,
       students: 1560,
@@ -60,7 +60,7 @@ const ProgramOverview = () => {
       duration: '8 semaines',
       modules: 24,
       thumbnail:
-        'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=400&h=250&fit=crop',
+        'https://images.pexels.com/photos/2599244/pexels-photo-2599244.jpeg?w=400&h=250&fit=crop',
       category: 'Avancé',
       rating: 4.9,
       students: 890,
@@ -90,7 +90,7 @@ const ProgramOverview = () => {
       duration: '5 semaines',
       modules: 16,
       thumbnail:
-        'https://images.pixabay.com/photo/2018/05/08/08/44/artificial-intelligence-3382507_1280.jpg?w=400&h=250&fit=crop',
+        'https://images.pexels.com/photos/3912981/pexels-photo-3912981.jpeg?w=400&h=250&fit=crop',
       category: 'Industrie',
       rating: 4.6,
       students: 780,
