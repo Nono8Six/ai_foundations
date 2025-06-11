@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../../../context/AuthContext';
 import Icon from '../../../components/AppIcon';
@@ -8,7 +8,8 @@ const PersonalInfoTab = ({ userData }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState(userData.avatar);
   const [isUploading, setIsUploading] = useState(false);
-  const { updateProfile, userProfile } = useAuth();
+  const [isSaving, setIsSaving] = useState(false);
+  const { updateProfile, userProfile, fetchUserProfile, user } = useAuth();
 
   const {
     register,
@@ -26,8 +27,17 @@ const PersonalInfoTab = ({ userData }) => {
     },
   });
 
+  // Update form when userProfile changes
+  useEffect(() => {
+    if (userProfile) {
+      setValue('name', userProfile.full_name || '');
+      // Add other fields if they exist in your profiles table
+    }
+  }, [userProfile, setValue]);
+
   const onSubmit = async data => {
     try {
+      setIsSaving(true);
       console.log('🔄 Submitting profile update:', data);
       
       // Prepare the update data for Supabase profiles table
@@ -49,6 +59,9 @@ const PersonalInfoTab = ({ userData }) => {
       // Update the profile in Supabase
       await updateProfile(updates);
       
+      // Refresh the profile data
+      await fetchUserProfile(user.id);
+      
       console.log('✅ Profile updated successfully');
       setIsEditing(false);
       
@@ -58,6 +71,8 @@ const PersonalInfoTab = ({ userData }) => {
     } catch (error) {
       console.error('❌ Error updating profile:', error);
       alert('Erreur lors de la mise à jour du profil: ' + error.message);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -159,7 +174,7 @@ const PersonalInfoTab = ({ userData }) => {
               className={`w-full px-3 py-2 border rounded-lg text-sm transition-colors ${
                 isEditing
                   ? 'border-border focus:border-primary focus:ring-1 focus:ring-primary bg-surface'
-                  : 'border-transparent bg-secondary-50 text-text-secondary'
+                  : 'border-transparent bg-secondary-50 text-text-primary'
               } ${errors.name ? 'border-error' : ''}`}
             />
             {errors.name && <p className='mt-1 text-xs text-error'>{errors.name.message}</p>}
@@ -180,7 +195,7 @@ const PersonalInfoTab = ({ userData }) => {
                 },
               })}
               disabled={true} // Email is always disabled as it's managed by auth
-              className='w-full px-3 py-2 border border-transparent bg-secondary-50 text-text-secondary rounded-lg text-sm'
+              className='w-full px-3 py-2 border border-transparent bg-secondary-50 text-text-primary rounded-lg text-sm'
             />
             <p className='mt-1 text-xs text-text-secondary'>L'email ne peut pas être modifié ici</p>
           </div>
@@ -195,7 +210,7 @@ const PersonalInfoTab = ({ userData }) => {
               className={`w-full px-3 py-2 border rounded-lg text-sm transition-colors ${
                 isEditing
                   ? 'border-border focus:border-primary focus:ring-1 focus:ring-primary bg-surface'
-                  : 'border-transparent bg-secondary-50 text-text-secondary'
+                  : 'border-transparent bg-secondary-50 text-text-primary'
               }`}
               placeholder='+33 1 23 45 67 89'
             />
@@ -211,7 +226,7 @@ const PersonalInfoTab = ({ userData }) => {
               className={`w-full px-3 py-2 border rounded-lg text-sm transition-colors ${
                 isEditing
                   ? 'border-border focus:border-primary focus:ring-1 focus:ring-primary bg-surface'
-                  : 'border-transparent bg-secondary-50 text-text-secondary'
+                  : 'border-transparent bg-secondary-50 text-text-primary'
               }`}
               placeholder='Ex: Développeur, Comptable, etc.'
             />
@@ -227,7 +242,7 @@ const PersonalInfoTab = ({ userData }) => {
               className={`w-full px-3 py-2 border rounded-lg text-sm transition-colors ${
                 isEditing
                   ? 'border-border focus:border-primary focus:ring-1 focus:ring-primary bg-surface'
-                  : 'border-transparent bg-secondary-50 text-text-secondary'
+                  : 'border-transparent bg-secondary-50 text-text-primary'
               }`}
               placeholder='Nom de votre entreprise'
             />
@@ -246,11 +261,17 @@ const PersonalInfoTab = ({ userData }) => {
             </button>
             <button
               type='submit'
-              disabled={isSubmitting}
+              disabled={isSubmitting || isSaving}
               className='inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-primary hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors disabled:opacity-50'
             >
-              {isSubmitting && <Icon name='Loader2' size={16} className='mr-2 animate-spin' />}
-              Enregistrer
+              {(isSubmitting || isSaving) ? (
+                <>
+                  <Icon name='Loader2' size={16} className='mr-2 animate-spin' />
+                  Enregistrement...
+                </>
+              ) : (
+                'Enregistrer'
+              )}
             </button>
           </div>
         )}

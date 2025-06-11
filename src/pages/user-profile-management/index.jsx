@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Icon from '../../components/AppIcon';
@@ -22,6 +22,20 @@ const UserProfileManagement = () => {
       .slice(0, 2)
       .join('');
   };
+
+  // Close profile menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isProfileMenuOpen && !event.target.closest('.profile-menu')) {
+        setIsProfileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isProfileMenuOpen]);
 
   // Use real user data instead of mock data
   const userData = {
@@ -110,10 +124,10 @@ const UserProfileManagement = () => {
             {/* User Menu */}
             <div className='flex items-center space-x-4'>
               {/* Profile Dropdown */}
-              <div className='relative profile-menu'>
+              <div className='profile-menu relative'>
                 <button
                   onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                  className='w-12 h-12 bg-gradient-to-br from-primary to-primary-700 rounded-full flex items-center justify-center hover:shadow-medium transition-all duration-200'
+                  className='w-10 h-10 bg-gradient-to-br from-primary to-primary-700 rounded-full flex items-center justify-center hover:shadow-medium transition-all duration-200'
                 >
                   {userProfile?.avatar_url ? (
                     <Image 
@@ -129,7 +143,7 @@ const UserProfileManagement = () => {
                 {isProfileMenuOpen && (
                   <div className='absolute right-0 mt-2 w-56 bg-surface rounded-lg shadow-medium border border-border py-2 z-50'>
                     <div className='px-4 py-2 border-b border-border mb-2'>
-                      <p className='font-medium text-text-primary'>{userProfile?.full_name || user?.email}</p>
+                      <p className='font-medium text-text-primary truncate'>{userProfile?.full_name || 'Utilisateur'}</p>
                       <p className='text-sm text-text-secondary'>Niveau {userProfile?.level || 1}</p>
                     </div>
                     

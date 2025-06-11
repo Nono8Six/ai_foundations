@@ -20,7 +20,7 @@ const Header = () => {
       if (!user) return null;
       const name = userProfile?.full_name || user.user_metadata?.full_name || '';
       const [first = '', last = ''] = name.split(' ');
-      return `${first.charAt(0)}${last.charAt(0)}`;
+      return `${first.charAt(0)}${last.charAt(0)}`.toUpperCase();
     } catch (err) {
       console.error('Erreur lors de la génération des initiales:', err);
       return null;
@@ -46,7 +46,7 @@ const Header = () => {
   if (user) {
     navigationItems.push(
       { name: 'Tableau de bord', path: '/user-dashboard', icon: 'LayoutDashboard' },
-      { name: 'Profil', path: '/user-profile-management', icon: 'User' }
+      { name: 'Profil', path: '/profile', icon: 'User' }
     );
 
     if (userProfile?.is_admin) {
@@ -129,10 +129,16 @@ const Header = () => {
             <div className='profile-menu relative'>
               <button
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
-                className='w-12 h-12 bg-gradient-to-br from-primary to-primary-700 rounded-full flex items-center justify-center hover:shadow-medium transition-all duration-200'
+                className='w-10 h-10 bg-gradient-to-br from-primary to-primary-700 rounded-full flex items-center justify-center hover:shadow-medium transition-all duration-200'
               >
                 {loading ? (
                   <div className='w-5 h-5 rounded-full bg-gray-200 animate-pulse' />
+                ) : userProfile?.avatar_url ? (
+                  <Image 
+                    src={userProfile.avatar_url} 
+                    alt='Profile' 
+                    className='w-full h-full rounded-full object-cover'
+                  />
                 ) : getInitials() ? (
                   <span className='text-white font-medium text-sm'>{getInitials()}</span>
                 ) : (
@@ -150,7 +156,7 @@ const Header = () => {
                     className='absolute right-0 mt-2 w-56 bg-surface rounded-lg shadow-medium border border-border py-2 z-50'
                   >
                     <div className='px-4 py-2 border-b border-border mb-2'>
-                      <p className='font-medium text-text-primary'>{userProfile?.full_name || user.email}</p>
+                      <p className='font-medium text-text-primary truncate'>{userProfile?.full_name || 'Arnaud'}</p>
                       <p className='text-sm text-text-secondary'>Niveau {userProfile?.level || 1}</p>
                     </div>
                     
@@ -168,7 +174,7 @@ const Header = () => {
                     
                     <button
                       onClick={handleLogout}
-                      className='w-full px-4 py-2 text-left text-text-primary hover:bg-secondary-50 transition-colors duration-200 flex items-center space-x-2'
+                      className='w-full px-4 py-2 text-left text-text-primary hover:bg-secondary-50 transition-colors duration-200 flex items-center space-x-2 border-t border-border mt-2 pt-2'
                     >
                       <Icon name='LogOut' size={16} />
                       <span>Déconnexion</span>

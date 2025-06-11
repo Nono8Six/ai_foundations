@@ -1,22 +1,21 @@
-// src/Routes.jsx
 import React, { Suspense, lazy } from 'react';
 // On retire BrowserRouter de cette ligne !
 import { Routes as RouterRoutes, Route, Navigate } from 'react-router-dom';
-import ScrollToTop from '@/components/ScrollToTop';
-import ErrorBoundary from '@/components/ErrorBoundary';
-import { useAuth } from '@/context/AuthContext';
+import ScrollToTop from './components/ScrollToTop';
+import ErrorBoundary from './components/ErrorBoundary';
+import { useAuth } from './context/AuthContext';
 
 // --- Lazy Loading des pages ---
-const PublicHomepage = lazy(() => import('@/pages/public-homepage/index.jsx'));
-const ProgramOverview = lazy(() => import('@/pages/program-overview/index.jsx'));
-const AuthenticationLoginRegister = lazy(() => import('@/pages/auth/index.jsx'));
-const UserDashboard = lazy(() => import('@/pages/user-dashboard/index.jsx'));
-const UserProfileManagement = lazy(() => import('@/pages/user-profile-management/index.jsx'));
-const LessonViewer = lazy(() => import('@/pages/lesson-viewer/index.jsx'));
-const AdminDashboard = lazy(() => import('@/pages/admin-dashboard/index.jsx'));
-const UserManagementAdmin = lazy(() => import('@/pages/user-management-admin/index.jsx'));
-const ContentManagementCoursesModulesLessons = lazy(() => import('@/pages/cms/index.jsx'));
-const NotFound = lazy(() => import('@/pages/NotFound.jsx'));
+const PublicHomepage = lazy(() => import('./pages/public-homepage/index.jsx'));
+const ProgramOverview = lazy(() => import('./pages/program-overview/index.jsx'));
+const AuthenticationLoginRegister = lazy(() => import('./pages/auth/index.jsx'));
+const UserDashboard = lazy(() => import('./pages/user-dashboard/index.jsx'));
+const UserProfileManagement = lazy(() => import('./pages/user-profile-management/index.jsx'));
+const LessonViewer = lazy(() => import('./pages/lesson-viewer/index.jsx'));
+const AdminDashboard = lazy(() => import('./pages/admin-dashboard/index.jsx'));
+const UserManagementAdmin = lazy(() => import('./pages/user-management-admin/index.jsx'));
+const ContentManagementCoursesModulesLessons = lazy(() => import('./pages/cms/index.jsx'));
+const NotFound = lazy(() => import('./pages/NotFound.jsx'));
 
 // --- Composant de chargement ---
 const PageLoader = () => (
@@ -44,15 +43,18 @@ const AppRoutes = () => {
           {/* ... vos routes ici, elles ne changent pas ... */}
           <Route path='/' element={<PublicHomepage />} />
           <Route path='/public-homepage' element={<PublicHomepage />} />
+          <Route path='/programmes' element={<ProgramOverview />} />
           <Route path='/program-overview' element={<ProgramOverview />} />
           <Route path='/login' element={<AuthenticationLoginRegister />} />
           <Route path='/register' element={<AuthenticationLoginRegister />} />
           <Route path='/user-dashboard' element={<ProtectedRoute><UserDashboard /></ProtectedRoute>} />
-          <Route path='/user-profile-management' element={<ProtectedRoute><UserProfileManagement /></ProtectedRoute>} />
+          <Route path='/profile' element={<ProtectedRoute><UserProfileManagement /></ProtectedRoute>} />
+          <Route path='/user-profile-management' element={<Navigate to="/profile" replace />} />
           <Route path='/lesson-viewer' element={<ProtectedRoute><LessonViewer /></ProtectedRoute>} />
           <Route path='/lesson-viewer/:lessonId' element={<ProtectedRoute><LessonViewer /></ProtectedRoute>} />
           <Route path='/admin-dashboard' element={<ProtectedRoute requireAdmin={true}><AdminDashboard /></ProtectedRoute>} />
           <Route path='/user-management-admin' element={<ProtectedRoute requireAdmin={true}><UserManagementAdmin /></ProtectedRoute>} />
+          <Route path='/cms' element={<ProtectedRoute requireAdmin={true}><ContentManagementCoursesModulesLessons /></ProtectedRoute>} />
           <Route path='/content-management' element={<ProtectedRoute requireAdmin={true}><ContentManagementCoursesModulesLessons /></ProtectedRoute>} />
           <Route path='*' element={<NotFound />} />
         </RouterRoutes>
