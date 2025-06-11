@@ -1,14 +1,15 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import Icon from '../../components/AppIcon';
-import { useCourses } from '../../context/CourseContext';
 
 import CourseCard from './components/CourseCard';
 import FilterSidebar from './components/FilterSidebar';
 import CoursePathway from './components/CoursePathway';
 
 const ProgramOverview = () => {
-  const { courses, loading } = useCourses();
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('popularity');
   const [filters, setFilters] = useState({
@@ -19,6 +20,20 @@ const ProgramOverview = () => {
   });
   const [showFilters, setShowFilters] = useState(false);
   const [viewMode, setViewMode] = useState('grid'); // grid or pathway
+  const [loading, setLoading] = useState(true);
+  const [courses, setCourses] = useState([]);
+
+  // Simulate loading courses
+  useEffect(() => {
+    setLoading(true);
+    // Simulate API call delay
+    const timer = setTimeout(() => {
+      setCourses([]);
+      setLoading(false);
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   // Transform Supabase courses to match expected format
   const formattedCourses = useMemo(() => {
@@ -119,10 +134,14 @@ const ProgramOverview = () => {
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-20'>
         {/* Page Header */}
         <div className='mb-8'>
-          <h1 className='text-3xl font-bold text-text-primary mb-4'>Programmes de Formation IA</h1>
+          <h1 className='text-3xl font-bold text-text-primary mb-4'>
+            {user ? 'Catalogue de Formations' : 'Programmes de Formation IA'}
+          </h1>
           <p className='text-lg text-text-secondary max-w-3xl'>
-            Découvrez notre catalogue complet de formations en intelligence artificielle, conçues
-            pour tous les niveaux et adaptées aux besoins professionnels.
+            {user 
+              ? 'Découvrez nos formations spécialisées et enrichissez vos compétences en IA'
+              : 'Découvrez notre catalogue complet de formations en intelligence artificielle, conçues pour tous les niveaux et adaptées aux besoins professionnels.'
+            }
           </p>
         </div>
 
@@ -134,7 +153,7 @@ const ProgramOverview = () => {
               <Icon
                 name='Search'
                 size={20}
-                className='absolute left-3 top-1/2 transform -translate-y-1/2 text-text-secondary'
+                className='absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary-400'
               />
               <input
                 type='text'
@@ -227,35 +246,48 @@ const ProgramOverview = () => {
                 </div>
 
                 {/* Course Display */}
-                {viewMode === 'grid' ? (
-                  <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6'>
-                    {filteredAndSortedCourses.map(course => (
-                      <CourseCard key={course.id} course={course} />
-                    ))}
-                  </div>
+                {filteredAndSortedCourses.length > 0 ? (
+                  viewMode === 'grid' ? (
+                    <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6'>
+                      {filteredAndSortedCourses.map(course => (
+                        <CourseCard key={course.id} course={course} />
+                      ))}
+                    </div>
+                  ) : (
+                    <CoursePathway courses={filteredAndSortedCourses} />
+                  )
                 ) : (
-                  <CoursePathway courses={filteredAndSortedCourses} />
-                )}
-
-                {/* No Results */}
-                {filteredAndSortedCourses.length === 0 && (
-                  <div className='text-center py-12'>
-                    <Icon name='BookOpen' size={48} className='mx-auto text-text-secondary mb-4' />
-                    <h3 className='text-lg font-medium text-text-primary mb-2'>
-                      Aucun cours trouvé
+                  <div className='text-center py-12 bg-surface rounded-xl border border-border p-8'>
+                    <Icon name='BookOpen' size={64} className='mx-auto text-secondary-300 mb-6' />
+                    <h3 className='text-xl font-medium text-text-primary mb-4'>
+                      Aucun cours disponible pour le moment
                     </h3>
-                    <p className='text-text-secondary mb-6'>
-                      Essayez de modifier vos critères de recherche ou vos filtres.
+                    <p className='text-text-secondary mb-6 max-w-lg mx-auto'>
+                      {searchQuery 
+                        ? 'Aucun cours ne correspond à votre recherche. Essayez de modifier vos critères.'
+                        : 'Notre catalogue de formations est en cours de préparation. Revenez bientôt pour découvrir nos cours sur l\'IA.'}
                     </p>
-                    <button
-                      onClick={() => {
-                        setSearchQuery('');
-                        setFilters({ skillLevel: [], duration: [], category: [], status: [] });
-                      }}
-                      className='px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors'
-                    >
-                      Réinitialiser les filtres
-                    </button>
+                    {searchQuery && (
+                      <button
+                        onClick={() => {
+                          setSearchQuery('');
+                          setFilters({ skillLevel: [], duration: [], category: [], status: [] });
+                        }}
+                        className='px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors'
+                      >
+                        <Icon name='RefreshCw' size={18} className='mr-2 inline-block' />
+                        Réinitialiser les filtres
+                      </button>
+                    )}
+                    {!user && !searchQuery && (
+                      <Link
+                        to='/register'
+                        className='px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors inline-flex items-center'
+                      >
+                        <Icon name='UserPlus' size={18} className='mr-2' />
+                        Créer un compte
+                      </Link>
+                    )}
                   </div>
                 )}
               </>

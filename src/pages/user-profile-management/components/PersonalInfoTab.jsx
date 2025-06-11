@@ -212,7 +212,7 @@ const PersonalInfoTab = ({ userData }) => {
                   ? 'border-border focus:border-primary focus:ring-1 focus:ring-primary bg-surface'
                   : 'border-transparent bg-secondary-50 text-text-primary'
               }`}
-              placeholder='+33 1 23 45 67 89'
+              placeholder=''
             />
           </div>
 
@@ -228,7 +228,7 @@ const PersonalInfoTab = ({ userData }) => {
                   ? 'border-border focus:border-primary focus:ring-1 focus:ring-primary bg-surface'
                   : 'border-transparent bg-secondary-50 text-text-primary'
               }`}
-              placeholder='Ex: Développeur, Comptable, etc.'
+              placeholder=''
             />
           </div>
 
@@ -244,7 +244,7 @@ const PersonalInfoTab = ({ userData }) => {
                   ? 'border-border focus:border-primary focus:ring-1 focus:ring-primary bg-surface'
                   : 'border-transparent bg-secondary-50 text-text-primary'
               }`}
-              placeholder='Nom de votre entreprise'
+              placeholder=''
             />
           </div>
         </div>

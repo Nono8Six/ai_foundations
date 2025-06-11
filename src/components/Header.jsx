@@ -50,21 +50,35 @@ const Header = () => {
     }
   };
 
-  const navigationItems = [
-    { name: 'Accueil', path: '/', icon: 'Home' },
-    { name: 'Programmes', path: '/programmes', icon: 'BookOpen' },
-  ];
+  // Navigation items for the top navbar
+  const navItems = user 
+    ? [
+        { name: 'Accueil', path: '/', icon: 'Home' },
+        { name: 'Catalogue', path: '/programmes', icon: 'BookOpen' },
+        { name: 'Mon Espace', path: '/espace', icon: 'LayoutDashboard' },
+      ]
+    : [
+        { name: 'Accueil', path: '/', icon: 'Home' },
+        { name: 'Programmes', path: '/programmes', icon: 'BookOpen' },
+      ];
 
-  if (user) {
-    navigationItems.push(
-      { name: 'Mon Espace', path: '/espace', icon: 'LayoutDashboard' },
-      { name: 'Profil', path: '/profile', icon: 'User' }
-    );
+  // Profile menu items (only shown in dropdown)
+  const profileItems = user
+    ? [
+        { name: 'Mon Profil', path: '/profile', icon: 'User' },
+        { name: 'Mes Statistiques', path: '/profile?tab=stats', icon: 'BarChart3' },
+        { name: 'Paramètres', path: '/profile?tab=settings', icon: 'Settings' },
+      ]
+    : [];
 
-    if (userProfile?.is_admin) {
-      navigationItems.push({ name: 'Admin', path: '/admin-dashboard', icon: 'Settings' });
-    }
-  }
+  // Admin items (only shown for admins)
+  const adminItems = userProfile?.is_admin
+    ? [
+        { name: 'Administration', path: '/admin-dashboard', icon: 'Shield' },
+        { name: 'Gestion Contenu', path: '/cms', icon: 'FileText' },
+        { name: 'Gestion Utilisateurs', path: '/user-management-admin', icon: 'Users' },
+      ]
+    : [];
 
   // Close profile menu when clicking outside
   useEffect(() => {
@@ -94,7 +108,7 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className='hidden lg:flex items-center space-x-8'>
-            {navigationItems.map(item => (
+            {navItems.map(item => (
               <Link
                 key={item.path}
                 to={item.path}
@@ -163,23 +177,44 @@ const Header = () => {
               {isProfileOpen && (
                 <div className='absolute right-0 mt-2 w-56 bg-surface rounded-lg shadow-medium border border-border py-2 z-50'>
                   <div className='px-4 py-2 border-b border-border mb-2'>
-                    <p className='font-medium text-text-primary truncate'>{getFirstName()}</p>
+                    <p className='font-medium text-text-primary'>{getFirstName()}</p>
                     <p className='text-sm text-text-secondary'>Niveau {userProfile?.level || 1}</p>
                   </div>
                   
-                  {navigationItems.map(item => (
+                  {/* Profile menu items */}
+                  {profileItems.map(item => (
                     <Link
                       key={item.path}
                       to={item.path}
                       onClick={() => setIsProfileOpen(false)}
                       className={`flex items-center space-x-3 px-4 py-2 text-text-secondary hover:bg-secondary-50 hover:text-primary transition-colors duration-200 ${
-                        location.pathname === item.path ? 'bg-secondary-50 text-primary' : ''
+                        location.pathname === item.path.split('?')[0] ? 'bg-secondary-50 text-primary' : ''
                       }`}
                     >
                       <Icon name={item.icon} size={18} />
                       <span>{item.name}</span>
                     </Link>
                   ))}
+                  
+                  {/* Admin menu items */}
+                  {adminItems.length > 0 && (
+                    <>
+                      <div className='border-t border-border my-2'></div>
+                      {adminItems.map(item => (
+                        <Link
+                          key={item.path}
+                          to={item.path}
+                          onClick={() => setIsProfileOpen(false)}
+                          className={`flex items-center space-x-3 px-4 py-2 text-text-secondary hover:bg-secondary-50 hover:text-primary transition-colors duration-200 ${
+                            location.pathname === item.path ? 'bg-secondary-50 text-primary' : ''
+                          }`}
+                        >
+                          <Icon name={item.icon} size={18} />
+                          <span>{item.name}</span>
+                        </Link>
+                      ))}
+                    </>
+                  )}
                   
                   <button
                     onClick={handleLogout}
@@ -199,7 +234,7 @@ const Header = () => {
       {isMenuOpen && (
         <div className='lg:hidden border-t border-border mt-4 pt-4 pb-4'>
           <nav className='space-y-2'>
-            {navigationItems.map(item => (
+            {navItems.map(item => (
               <Link
                 key={item.path}
                 to={item.path}
@@ -212,6 +247,37 @@ const Header = () => {
                 <span>{item.name}</span>
               </Link>
             ))}
+            
+            {/* Profile items in mobile menu */}
+            {user && profileItems.map(item => (
+              <Link
+                key={item.path}
+                to={item.path}
+                onClick={() => setIsMenuOpen(false)}
+                className={`flex items-center space-x-3 px-4 py-3 text-text-secondary hover:bg-secondary-50 hover:text-primary transition-colors duration-200 rounded-lg ${
+                  location.pathname === item.path.split('?')[0] ? 'bg-secondary-50 text-primary' : ''
+                }`}
+              >
+                <Icon name={item.icon} size={18} />
+                <span>{item.name}</span>
+              </Link>
+            ))}
+            
+            {/* Admin items in mobile menu */}
+            {adminItems.length > 0 && adminItems.map(item => (
+              <Link
+                key={item.path}
+                to={item.path}
+                onClick={() => setIsMenuOpen(false)}
+                className={`flex items-center space-x-3 px-4 py-3 text-text-secondary hover:bg-secondary-50 hover:text-primary transition-colors duration-200 rounded-lg ${
+                  location.pathname === item.path ? 'bg-secondary-50 text-primary' : ''
+                }`}
+              >
+                <Icon name={item.icon} size={18} />
+                <span>{item.name}</span>
+              </Link>
+            ))}
+            
             {user && (
               <button
                 onClick={handleLogout}

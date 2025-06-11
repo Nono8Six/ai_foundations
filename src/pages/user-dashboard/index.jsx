@@ -108,7 +108,7 @@ const UserDashboard = () => {
   const quickActions = [
     {
       id: 'continue',
-      title: 'Continuer mon apprentissage',
+      title: 'Continuer mon parcours',
       description: currentLesson ? `Reprendre "${currentLesson.title}"` : 'Commencer un cours',
       icon: 'Play',
       color: 'bg-primary',
@@ -124,8 +124,8 @@ const UserDashboard = () => {
     },
     {
       id: 'explore',
-      title: 'Découvrir de nouveaux cours',
-      description: 'Explorer notre catalogue de formations',
+      title: 'Découvrir des formations',
+      description: 'Explorer notre catalogue de cours',
       icon: 'BookOpen',
       color: 'bg-accent',
       hoverColor: 'hover:bg-accent-700',
@@ -202,7 +202,7 @@ const UserDashboard = () => {
                     to='/programmes'
                     className='text-primary hover:text-primary-700 transition-colors text-sm font-medium'
                   >
-                    Voir tous les cours
+                    Voir le catalogue
                   </Link>
                 </div>
                 
@@ -318,7 +318,7 @@ const UserDashboard = () => {
                 </div>
                 
                 <Link
-                  to='/profile'
+                  to='/profile?tab=stats'
                   className='w-full mt-4 text-center text-primary hover:text-primary-700 transition-colors text-sm font-medium py-2 border border-primary rounded-lg hover:bg-primary-50 block'
                 >
                   Voir toutes mes statistiques
