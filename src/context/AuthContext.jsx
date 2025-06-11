@@ -61,9 +61,6 @@ export const AuthProvider = ({ children }) => {
         console.log('🔄 Token refreshed');
       } else if (event === 'USER_UPDATED') {
         console.log('👤 User updated');
-        if (session?.user) {
-          await fetchUserProfile(session.user.id);
-        }
       }
     });
 
@@ -77,17 +74,23 @@ export const AuthProvider = ({ children }) => {
   const fetchUserProfile = async userId => {
     try {
       console.log('🔍 Fetching profile for user:', userId);
-      const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).single();
+      const { data, error } = await supabase.from('profiles').select('*').eq('id', userId);
 
       if (error) throw error;
       
-      console.log('✅ Profile fetched successfully:', data);
-      setUserProfile(data);
-      return data;
+      // Handle case where no profile exists yet
+      if (!data || data.length === 0) {
+        console.log('⚠️ No profile found for user, it will be created automatically');
+        setUserProfile(null);
+        return;
+      }
+      
+      // Use the first profile if multiple exist (shouldn't happen due to unique constraint)
+      console.log('✅ Profile fetched successfully:', data[0]);
+      setUserProfile(data[0]);
     } catch (error) {
       console.error('❌ Error fetching user profile:', error.message);
       setError(error);
-      return null;
     }
   };
 
@@ -141,16 +144,12 @@ export const AuthProvider = ({ children }) => {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/espace`,
-          queryParams: {
-            access_type: 'offline',
-            prompt: 'consent',
-          }
+          redirectTo: `${window.location.origin}/user-dashboard`,
         },
       });
 
       if (error) throw error;
-      console.log('✅ Google sign in initiated', data);
+      console.log('✅ Google sign in initiated');
       return data;
     } catch (error) {
       console.error('❌ Error signing in with Google:', error.message);
@@ -184,36 +183,70 @@ export const AuthProvider = ({ children }) => {
       console.log('🧹 Cleaning up user state...');
       setUser(null);
       setUserProfile(null);
+      localStorage.removeItem('authToken');
       console.log('🏠 Navigating to home...');
       navigate('/');
     }
   };
 
-  // Update user profile
+  // Update user profile using RPC function
   const updateProfile = async updates => {
     try {
       console.log('📝 Updating profile:', updates);
       
-      if (!user) {
-        throw new Error('User not authenticated');
-      }
-      
-      const { data, error } = await supabase
-        .from('profiles')
-        .update(updates)
-        .eq('id', user.id)
-        .select();
+      // Use the RPC function to update profile
+      const { data, error } = await supabase.rpc('update_user_profile', {
+        profile_data: updates
+      });
 
       if (error) throw error;
       
       console.log('✅ Profile updated successfully:', data);
       
-      // Update local state with the new profile data
-      setUserProfile(prev => ({ ...prev, ...updates }));
+      // Update local state with the returned data
+      setUserProfile(data);
       
       return data;
     } catch (error) {
       console.error('❌ Error updating profile:', error.message);
+      setError(error);
+      throw error;
+    }
+  };
+
+  // Update user settings using RPC function
+  const updateUserSettings = async settings => {
+    try {
+      console.log('📝 Updating user settings:', settings);
+      
+      const { data, error } = await supabase.rpc('update_user_settings_rpc', {
+        settings_data: settings
+      });
+
+      if (error) throw error;
+      
+      console.log('✅ Settings updated successfully:', data);
+      return data;
+    } catch (error) {
+      console.error('❌ Error updating settings:', error.message);
+      setError(error);
+      throw error;
+    }
+  };
+
+  // Get user settings using RPC function
+  const getUserSettings = async () => {
+    try {
+      console.log('🔍 Getting user settings...');
+      
+      const { data, error } = await supabase.rpc('get_user_settings_rpc');
+
+      if (error) throw error;
+      
+      console.log('✅ Settings retrieved successfully:', data);
+      return data;
+    } catch (error) {
+      console.error('❌ Error getting settings:', error.message);
       setError(error);
       throw error;
     }
@@ -243,7 +276,8 @@ export const AuthProvider = ({ children }) => {
     logout,
     resetPassword,
     updateProfile,
-    fetchUserProfile,
+    updateUserSettings,
+    getUserSettings,
     user,
     userProfile,
     session,

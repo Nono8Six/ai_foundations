@@ -1,25 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
 import { useAuth } from '../../../context/AuthContext';
-import { supabase } from '../../../lib/supabase';
-import useUserSettings from '../../../hooks/useUserSettings';
 import Icon from '../../../components/AppIcon';
 
 const SettingsTab = ({ userData }) => {
-  const { user, updateProfile } = useAuth();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  
-  const {
-    settings,
-    updateNotificationSettings,
-    updatePrivacySettings,
-    updateLearningPreferences,
-    loading,
-    error
-  } = useUserSettings();
-  
-  const [notificationSettings, setNotificationSettings] = useState(settings.notification_settings || {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const { updateUserSettings, getUserSettings } = useAuth();
+
+  const [notificationSettings, setNotificationSettings] = useState({
     emailNotifications: true,
     pushNotifications: false,
     weeklyReport: true,
@@ -27,14 +16,14 @@ const SettingsTab = ({ userData }) => {
     reminderNotifications: true,
   });
 
-  const [privacySettings, setPrivacySettings] = useState(settings.privacy_settings || {
+  const [privacySettings, setPrivacySettings] = useState({
     profileVisibility: 'private',
     showProgress: false,
     showAchievements: true,
     allowMessages: false,
   });
 
-  const [learningPreferences, setLearningPreferences] = useState(settings.learning_preferences || {
+  const [learningPreferences, setLearningPreferences] = useState({
     dailyGoal: 30,
     preferredDuration: 'medium',
     difficultyProgression: 'adaptive',
@@ -42,141 +31,114 @@ const SettingsTab = ({ userData }) => {
     autoplay: true,
   });
 
-  // Update local state when settings are loaded
+  // Load user settings on component mount
   useEffect(() => {
-    if (!loading && settings) {
-      if (settings.notification_settings) {
-        setNotificationSettings(settings.notification_settings);
+    const loadUserSettings = async () => {
+      try {
+        setIsLoading(true);
+        const settings = await getUserSettings();
+        
+        if (settings) {
+          if (settings.notification_settings) {
+            setNotificationSettings(settings.notification_settings);
+          }
+          if (settings.privacy_settings) {
+            setPrivacySettings(settings.privacy_settings);
+          }
+          if (settings.learning_preferences) {
+            setLearningPreferences(settings.learning_preferences);
+          }
+        }
+      } catch (error) {
+        console.error('Error loading user settings:', error);
+      } finally {
+        setIsLoading(false);
       }
-      if (settings.privacy_settings) {
-        setPrivacySettings(settings.privacy_settings);
-      }
-      if (settings.learning_preferences) {
-        setLearningPreferences(settings.learning_preferences);
-      }
+    };
+
+    loadUserSettings();
+  }, [getUserSettings]);
+
+  const handleSaveSettings = async () => {
+    try {
+      setIsSubmitting(true);
+      
+      const settingsData = {
+        notification_settings: notificationSettings,
+        privacy_settings: privacySettings,
+        learning_preferences: learningPreferences,
+      };
+
+      await updateUserSettings(settingsData);
+      
+      // Show success message
+      alert('Paramètres sauvegardés avec succès !');
+      
+    } catch (error) {
+      console.error('Error saving settings:', error);
+      alert('Erreur lors de la sauvegarde des paramètres. Veuillez réessayer.');
+    } finally {
+      setIsSubmitting(false);
     }
-  }, [loading, settings]);
-
-  const {
-    register,
-    handleSubmit,
-    formState: { isSubmitting },
-  } = useForm();
-
-  const onSubmit = async data => {
-    await saveUserSettings();
   };
 
   const handleNotificationChange = setting => {
-    const newSettings = {
-      ...notificationSettings,
-      [setting]: !notificationSettings[setting],
-    };
-    setNotificationSettings(newSettings);
+    setNotificationSettings(prev => ({
+      ...prev,
+      [setting]: !prev[setting],
+    }));
   };
 
   const handlePrivacyChange = (setting, value) => {
-    const newSettings = {
-      ...privacySettings,
+    setPrivacySettings(prev => ({
+      ...prev,
       [setting]: value,
-    };
-    setPrivacySettings(newSettings);
+    }));
   };
 
   const handleLearningPreferenceChange = (setting, value) => {
-    const newSettings = {
-      ...learningPreferences,
+    setLearningPreferences(prev => ({
+      ...prev,
       [setting]: value,
+    }));
+  };
+
+  const handleDeleteAccount = () => {
+    // Simulate account deletion
+    console.log('Account deletion requested');
+    setShowDeleteConfirm(false);
+  };
+
+  const exportData = () => {
+    // Simulate data export
+    const userData = {
+      profile: 'User profile data...',
+      progress: 'Learning progress data...',
+      achievements: 'Achievement data...',
+      settings: {
+        notifications: notificationSettings,
+        privacy: privacySettings,
+        learning: learningPreferences,
+      },
     };
-    setLearningPreferences(newSettings);
+
+    const dataStr = JSON.stringify(userData, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'mes-donnees-ai-foundations.json';
+    link.click();
   };
 
-  const saveUserSettings = async () => {
-    if (!user) return;
-
-    setIsSaving(true);
-    try {
-      // Save notification settings
-      await updateNotificationSettings(notificationSettings);
-      
-      // Save privacy settings
-      await updatePrivacySettings(privacySettings);
-      
-      // Save learning preferences
-      await updateLearningPreferences(learningPreferences);
-      
-      console.log('✅ Settings saved successfully');
-      alert('Paramètres sauvegardés avec succès !');
-    } catch (error) {
-      console.error('❌ Error saving settings:', error);
-      alert('Erreur lors de la sauvegarde des paramètres');
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const handleDeleteAccount = async () => {
-    try {
-      // In a real app, you'd call a Supabase function to handle account deletion
-      console.log('Account deletion requested for user:', user.id);
-      alert('Demande de suppression de compte envoyée. Vous recevrez un email de confirmation.');
-      setShowDeleteConfirm(false);
-    } catch (error) {
-      console.error('Error requesting account deletion:', error);
-      alert('Erreur lors de la demande de suppression');
-    }
-  };
-
-  const exportData = async () => {
-    try {
-      // Export user data
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single();
-
-      const { data: progress } = await supabase
-        .from('user_progress')
-        .select('*')
-        .eq('user_id', user.id);
-
-      const { data: achievements } = await supabase
-        .from('achievements')
-        .select('*')
-        .eq('user_id', user.id);
-
-      const { data: userSettings } = await supabase
-        .from('user_settings')
-        .select('*')
-        .eq('user_id', user.id)
-        .single();
-
-      const userData = {
-        profile,
-        progress,
-        achievements,
-        settings: userSettings || {
-          notification_settings: notificationSettings,
-          privacy_settings: privacySettings,
-          learning_preferences: learningPreferences,
-        },
-        exportDate: new Date().toISOString(),
-      };
-
-      const dataStr = JSON.stringify(userData, null, 2);
-      const dataBlob = new Blob([dataStr], { type: 'application/json' });
-      const url = URL.createObjectURL(dataBlob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `mes-donnees-ai-foundations-${new Date().toISOString().split('T')[0]}.json`;
-      link.click();
-      URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error('Error exporting data:', error);
-      alert('Erreur lors de l\'export des données');
-    }
-  };
+  if (isLoading) {
+    return (
+      <div className='flex items-center justify-center py-8'>
+        <Icon name='Loader2' size={24} className='animate-spin text-primary' />
+        <span className='ml-2 text-text-secondary'>Chargement des paramètres...</span>
+      </div>
+    );
+  }
 
   return (
     <div className='space-y-8'>
@@ -188,7 +150,7 @@ const SettingsTab = ({ userData }) => {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className='space-y-8'>
+      <div className='space-y-8'>
         {/* Notification Settings */}
         <div className='bg-surface rounded-lg border border-border p-6'>
           <h4 className='text-base font-semibold text-text-primary mb-4 flex items-center'>
@@ -400,7 +362,7 @@ const SettingsTab = ({ userData }) => {
               <div>
                 <p className='text-sm font-medium text-text-primary'>Exporter mes données</p>
                 <p className='text-xs text-text-secondary'>
-                  Télécharger une copie de toutes vos données (profil, progrès, réalisations)
+                  Télécharger une copie de toutes vos données
                 </p>
               </div>
               <button
@@ -444,15 +406,16 @@ const SettingsTab = ({ userData }) => {
         {/* Save Button */}
         <div className='flex justify-end pt-6 border-t border-border'>
           <button
-            type='submit'
-            disabled={isSubmitting || isSaving}
+            type='button'
+            onClick={handleSaveSettings}
+            disabled={isSubmitting}
             className='inline-flex items-center px-6 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-primary hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors disabled:opacity-50'
           >
-            {(isSubmitting || isSaving) && <Icon name='Loader2' size={16} className='mr-2 animate-spin' />}
-            Enregistrer les paramètres
+            {isSubmitting && <Icon name='Loader2' size={16} className='mr-2 animate-spin' />}
+            {isSubmitting ? 'Sauvegarde...' : 'Enregistrer les paramètres'}
           </button>
         </div>
-      </form>
+      </div>
 
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (

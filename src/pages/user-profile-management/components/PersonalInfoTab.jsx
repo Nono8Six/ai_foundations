@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../../../context/AuthContext';
 import Icon from '../../../components/AppIcon';
@@ -7,16 +7,15 @@ import Image from '../../../components/AppImage';
 const PersonalInfoTab = ({ userData }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState(userData.avatar);
-  const [isUploading, setIsUploading] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const { updateProfile, userProfile, fetchUserProfile, user } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { updateProfile } = useAuth();
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
     reset,
-    setValue,
+    setError,
   } = useForm({
     defaultValues: {
       name: userData.name,
@@ -27,63 +26,57 @@ const PersonalInfoTab = ({ userData }) => {
     },
   });
 
-  // Update form when userProfile changes
-  useEffect(() => {
-    if (userProfile) {
-      setValue('name', userProfile.full_name || '');
-      // Add other fields if they exist in your profiles table
-    }
-  }, [userProfile, setValue]);
-
   const onSubmit = async data => {
     try {
-      setIsSaving(true);
-      console.log('🔄 Submitting profile update:', data);
+      setIsSubmitting(true);
       
-      // Prepare the update data for Supabase profiles table
+      // Prepare the update data
       const updates = {
         full_name: data.name,
-        // Add other fields if they exist in your profiles table
-        // phone: data.phone,
-        // profession: data.profession,
-        // company: data.company,
+        // Add avatar_url if it was changed
+        ...(avatarPreview !== userData.avatar && { avatar_url: avatarPreview }),
       };
       
-      // If avatar was changed, include it
-      if (avatarPreview !== userData.avatar) {
-        updates.avatar_url = avatarPreview;
-      }
+      console.log('Submitting profile updates:', updates);
       
-      console.log('📝 Updates to send:', updates);
-      
-      // Update the profile in Supabase
+      // Update the profile in Supabase using RPC function
       await updateProfile(updates);
       
-      // Refresh the profile data
-      await fetchUserProfile(user.id);
-      
-      console.log('✅ Profile updated successfully');
+      console.log('Profile updated successfully');
       setIsEditing(false);
       
       // Show success message
       alert('Profil mis à jour avec succès !');
       
     } catch (error) {
-      console.error('❌ Error updating profile:', error);
-      alert('Erreur lors de la mise à jour du profil: ' + error.message);
+      console.error('Error updating profile:', error);
+      setError('root', { 
+        type: 'manual', 
+        message: 'Erreur lors de la mise à jour du profil. Veuillez réessayer.' 
+      });
     } finally {
-      setIsSaving(false);
+      setIsSubmitting(false);
     }
   };
 
   const handleAvatarChange = event => {
     const file = event.target.files[0];
     if (file) {
-      setIsUploading(true);
+      // Validate file size (max 2MB)
+      if (file.size > 2 * 1024 * 1024) {
+        alert('La taille du fichier ne doit pas dépasser 2MB');
+        return;
+      }
+
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        alert('Veuillez sélectionner un fichier image valide');
+        return;
+      }
+
       const reader = new FileReader();
       reader.onload = e => {
         setAvatarPreview(e.target.result);
-        setIsUploading(false);
       };
       reader.readAsDataURL(file);
     }
@@ -140,11 +133,6 @@ const PersonalInfoTab = ({ userData }) => {
                   />
                 </label>
               )}
-              {isUploading && (
-                <div className='absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center'>
-                  <Icon name='Loader2' size={16} className='animate-spin text-white' />
-                </div>
-              )}
             </div>
             <div>
               <p className='text-sm text-text-primary font-medium mb-1'>
@@ -156,6 +144,16 @@ const PersonalInfoTab = ({ userData }) => {
             </div>
           </div>
         </div>
+
+        {/* Error Message */}
+        {errors.root && (
+          <div className='bg-error-50 border border-error-200 rounded-lg p-4'>
+            <div className='flex items-center'>
+              <Icon name='AlertCircle' size={20} className='text-error mr-2' />
+              <p className='text-sm text-error-700'>{errors.root.message}</p>
+            </div>
+          </div>
+        )}
 
         {/* Personal Information Form */}
         <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
@@ -174,7 +172,7 @@ const PersonalInfoTab = ({ userData }) => {
               className={`w-full px-3 py-2 border rounded-lg text-sm transition-colors ${
                 isEditing
                   ? 'border-border focus:border-primary focus:ring-1 focus:ring-primary bg-surface'
-                  : 'border-transparent bg-secondary-50 text-text-primary'
+                  : 'border-transparent bg-secondary-50 text-text-secondary'
               } ${errors.name ? 'border-error' : ''}`}
             />
             {errors.name && <p className='mt-1 text-xs text-error'>{errors.name.message}</p>}
@@ -187,15 +185,9 @@ const PersonalInfoTab = ({ userData }) => {
             </label>
             <input
               type='email'
-              {...register('email', {
-                required: "L'email est requis",
-                pattern: {
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                  message: 'Adresse e-mail invalide',
-                },
-              })}
+              {...register('email')}
               disabled={true} // Email is always disabled as it's managed by auth
-              className='w-full px-3 py-2 border border-transparent bg-secondary-50 text-text-primary rounded-lg text-sm'
+              className='w-full px-3 py-2 border border-transparent bg-secondary-50 text-text-secondary rounded-lg text-sm'
             />
             <p className='mt-1 text-xs text-text-secondary'>L'email ne peut pas être modifié ici</p>
           </div>
@@ -210,9 +202,9 @@ const PersonalInfoTab = ({ userData }) => {
               className={`w-full px-3 py-2 border rounded-lg text-sm transition-colors ${
                 isEditing
                   ? 'border-border focus:border-primary focus:ring-1 focus:ring-primary bg-surface'
-                  : 'border-transparent bg-secondary-50 text-text-primary'
+                  : 'border-transparent bg-secondary-50 text-text-secondary'
               }`}
-              placeholder=''
+              placeholder='Ex: 06 12 34 56 78'
             />
           </div>
 
@@ -226,9 +218,9 @@ const PersonalInfoTab = ({ userData }) => {
               className={`w-full px-3 py-2 border rounded-lg text-sm transition-colors ${
                 isEditing
                   ? 'border-border focus:border-primary focus:ring-1 focus:ring-primary bg-surface'
-                  : 'border-transparent bg-secondary-50 text-text-primary'
+                  : 'border-transparent bg-secondary-50 text-text-secondary'
               }`}
-              placeholder=''
+              placeholder='Ex: Développeur, Comptable, etc.'
             />
           </div>
 
@@ -242,9 +234,9 @@ const PersonalInfoTab = ({ userData }) => {
               className={`w-full px-3 py-2 border rounded-lg text-sm transition-colors ${
                 isEditing
                   ? 'border-border focus:border-primary focus:ring-1 focus:ring-primary bg-surface'
-                  : 'border-transparent bg-secondary-50 text-text-primary'
+                  : 'border-transparent bg-secondary-50 text-text-secondary'
               }`}
-              placeholder=''
+              placeholder='Ex: Mon Entreprise SARL'
             />
           </div>
         </div>
@@ -255,23 +247,18 @@ const PersonalInfoTab = ({ userData }) => {
             <button
               type='button'
               onClick={handleCancel}
-              className='px-4 py-2 border border-border rounded-lg text-sm font-medium text-text-secondary hover:bg-secondary-50 transition-colors'
+              disabled={isSubmitting}
+              className='px-4 py-2 border border-border rounded-lg text-sm font-medium text-text-secondary hover:bg-secondary-50 transition-colors disabled:opacity-50'
             >
               Annuler
             </button>
             <button
               type='submit'
-              disabled={isSubmitting || isSaving}
+              disabled={isSubmitting}
               className='inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-primary hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors disabled:opacity-50'
             >
-              {(isSubmitting || isSaving) ? (
-                <>
-                  <Icon name='Loader2' size={16} className='mr-2 animate-spin' />
-                  Enregistrement...
-                </>
-              ) : (
-                'Enregistrer'
-              )}
+              {isSubmitting && <Icon name='Loader2' size={16} className='mr-2 animate-spin' />}
+              {isSubmitting ? 'Enregistrement...' : 'Enregistrer'}
             </button>
           </div>
         )}
@@ -292,18 +279,6 @@ const PersonalInfoTab = ({ userData }) => {
             <span className='ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-success-100 text-success-700'>
               <Icon name='CheckCircle' size={12} className='mr-1' />
               Actif
-            </span>
-          </div>
-          <div>
-            <span className='text-text-secondary'>Niveau actuel:</span>
-            <span className='ml-2 text-text-primary font-medium'>
-              Niveau {userProfile?.level || 1}
-            </span>
-          </div>
-          <div>
-            <span className='text-text-secondary'>Points XP:</span>
-            <span className='ml-2 text-text-primary font-medium'>
-              {userProfile?.xp || 0} XP
             </span>
           </div>
         </div>
