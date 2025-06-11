@@ -7,7 +7,23 @@ import Icon from '../../../components/AppIcon';
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const { user, userProfile } = useAuth();
+  const { user, userProfile, loading, error, logout } = useAuth();
+
+  if (error) {
+    console.error('Erreur de chargement du profil:', error);
+  }
+
+  const getInitials = () => {
+    try {
+      if (!user) return null;
+      const name = user.user_metadata?.full_name || userProfile?.full_name || '';
+      const [first = '', last = ''] = name.split(' ');
+      return `${first.charAt(0)}${last.charAt(0)}`;
+    } catch (err) {
+      console.error('Erreur lors de la génération des initiales:', err);
+      return null;
+    }
+  };
 
   const navigationItems = [
     { name: 'Accueil', path: '/public-homepage', icon: 'Home' },
@@ -91,7 +107,13 @@ const Header = () => {
                 }}
                 className='w-12 h-12 bg-gradient-to-br from-primary to-primary-700 rounded-full flex items-center justify-center hover:shadow-medium transition-all duration-200'
               >
-                <Icon name='User' size={20} color='white' />
+                {loading ? (
+                  <div className='w-5 h-5 rounded-full bg-gray-200 animate-pulse' />
+                ) : getInitials() ? (
+                  <span className='text-white font-medium text-sm'>{getInitials()}</span>
+                ) : (
+                  <Icon name='User' size={20} color='white' />
+                )}
               </button>
 
               <AnimatePresence>
@@ -114,6 +136,16 @@ const Header = () => {
                         <span>{item.name}</span>
                       </Link>
                     ))}
+                    <button
+                      onClick={() => {
+                        setIsProfileOpen(false);
+                        logout();
+                      }}
+                      className='w-full px-4 py-2 text-left text-text-primary hover:bg-secondary-50 transition-colors duration-200 flex items-center space-x-2'
+                    >
+                      <Icon name='LogOut' size={16} />
+                      <span>Déconnexion</span>
+                    </button>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -143,6 +175,18 @@ const Header = () => {
                     <span>{item.name}</span>
                   </Link>
                 ))}
+                {user && (
+                  <button
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      logout();
+                    }}
+                    className='flex items-center space-x-2 w-full px-4 py-3 text-text-primary hover:bg-secondary-50 transition-colors duration-200 rounded-lg'
+                  >
+                    <Icon name='LogOut' size={16} />
+                    <span>Déconnexion</span>
+                  </button>
+                )}
                 {!user && (
                   <div className='space-y-3 mt-4'>
                     <Link
