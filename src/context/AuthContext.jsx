@@ -1,6 +1,7 @@
 // src/context/AuthContext.jsx
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { supabase } from '../lib/supabase';
+import { useNavigate } from 'react-router-dom';
 
 const AuthContext = createContext();
 
@@ -9,6 +10,8 @@ export const AuthProvider = ({ children }) => {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
   const [userProfile, setUserProfile] = useState(null);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Get session on initial load
@@ -25,6 +28,7 @@ export const AuthProvider = ({ children }) => {
         }
       } catch (error) {
         console.error('Error getting initial session:', error.message);
+        setError(error);
       } finally {
         setLoading(false);
       }
@@ -61,6 +65,7 @@ export const AuthProvider = ({ children }) => {
       setUserProfile(data);
     } catch (error) {
       console.error('Error fetching user profile:', error.message);
+      setError(error);
     }
   };
 
@@ -81,6 +86,7 @@ export const AuthProvider = ({ children }) => {
       return data;
     } catch (error) {
       console.error('Error signing up:', error.message);
+      setError(error);
       throw error;
     }
   };
@@ -97,6 +103,7 @@ export const AuthProvider = ({ children }) => {
       return data;
     } catch (error) {
       console.error('Error signing in:', error.message);
+      setError(error);
       throw error;
     }
   };
@@ -115,6 +122,7 @@ export const AuthProvider = ({ children }) => {
       return data;
     } catch (error) {
       console.error('Error signing in with Google:', error.message);
+      setError(error);
       throw error;
     }
   };
@@ -126,7 +134,22 @@ export const AuthProvider = ({ children }) => {
       if (error) throw error;
     } catch (error) {
       console.error('Error signing out:', error.message);
+      setError(error);
       throw error;
+    }
+  };
+
+  // Logout helper used by UI
+  const logout = async () => {
+    try {
+      await signOut();
+    } catch (err) {
+      console.error('Erreur lors de la déconnexion:', err);
+    } finally {
+      setUser(null);
+      setUserProfile(null);
+      localStorage.removeItem('authToken');
+      navigate('/');
     }
   };
 
@@ -140,6 +163,7 @@ export const AuthProvider = ({ children }) => {
       return data;
     } catch (error) {
       console.error('Error updating profile:', error.message);
+      setError(error);
       throw error;
     }
   };
@@ -153,6 +177,7 @@ export const AuthProvider = ({ children }) => {
       if (error) throw error;
     } catch (error) {
       console.error('Error resetting password:', error.message);
+      setError(error);
       throw error;
     }
   };
@@ -162,12 +187,14 @@ export const AuthProvider = ({ children }) => {
     signIn,
     signInWithGoogle,
     signOut,
+    logout,
     resetPassword,
     updateProfile,
     user,
     userProfile,
     session,
     loading,
+    error,
     isAdmin: userProfile?.is_admin || false,
   };
 

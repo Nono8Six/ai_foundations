@@ -1,9 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../../context/AuthContext';
 import { motion } from 'framer-motion';
 import Icon from '../../../components/AppIcon';
 
 const HeroSection = () => {
+  const { user } = useAuth();
   return (
     <section className='relative pt-20 pb-16 lg:pt-24 lg:pb-20 bg-gradient-to-br from-primary-50 via-surface to-accent-50 overflow-hidden'>
       {/* Background Pattern */}
@@ -63,17 +65,31 @@ const HeroSection = () => {
               transition={{ duration: 0.6, delay: 0.5 }}
               className='flex flex-col sm:flex-row gap-4 justify-center lg:justify-start'
             >
-              <Link
-                to='/register'
-                className='inline-flex items-center justify-center px-8 py-4 bg-primary text-white font-semibold rounded-lg hover:bg-primary-700 transition-all duration-200 shadow-medium hover:shadow-lg hover:-translate-y-0.5 group'
-              >
-                <Icon
-                  name='Play'
-                  size={20}
-                  className='mr-2 group-hover:scale-110 transition-transform duration-200'
-                />
-                Commencer maintenant
-              </Link>
+              {!user ? (
+                <Link
+                  to='/register'
+                  className='inline-flex items-center justify-center px-8 py-4 bg-primary text-white font-semibold rounded-lg hover:bg-primary-700 transition-all duration-200 shadow-medium hover:shadow-lg hover:-translate-y-0.5 group'
+                >
+                  <Icon
+                    name='Play'
+                    size={20}
+                    className='mr-2 group-hover:scale-110 transition-transform duration-200'
+                  />
+                  Commencer maintenant
+                </Link>
+              ) : (
+                <Link
+                  to='/user-dashboard'
+                  className='inline-flex items-center justify-center px-8 py-4 bg-primary text-white font-semibold rounded-lg hover:bg-primary-700 transition-all duration-200 shadow-medium hover:shadow-lg hover:-translate-y-0.5 group'
+                >
+                  <Icon
+                    name='Play'
+                    size={20}
+                    className='mr-2 group-hover:scale-110 transition-transform duration-200'
+                  />
+                  Accéder à mon tableau de bord
+                </Link>
+              )}
 
               <Link
                 to='/program-overview'
