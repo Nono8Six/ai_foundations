@@ -1,7 +1,6 @@
 // vite.config.mjs
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import tsconfigPaths from "vite-tsconfig-paths";
 import path from "path"; // <-- Importez le module 'path'
 
 // https://vitejs.dev/config/
@@ -13,8 +12,7 @@ export default defineConfig({
   
   plugins: [
     react(),
-    // On garde tsconfigPaths au cas où, mais l'ajout manuel est plus robuste
-    tsconfigPaths(), 
+    // Removed tsconfigPaths() to avoid conflict with manual alias resolution
   ],
 
   // --- AJOUT DE CETTE SECTION ---
