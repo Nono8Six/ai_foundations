@@ -13,6 +13,16 @@ const UserProfileManagement = () => {
   const navigate = useNavigate();
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
 
+  // Function to get user initials
+  const getInitials = () => {
+    const name = userProfile?.full_name || user?.user_metadata?.full_name || user?.email || 'User';
+    return name
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase())
+      .slice(0, 2)
+      .join('');
+  };
+
   // Use real user data instead of mock data
   const userData = {
     id: user?.id || '',
