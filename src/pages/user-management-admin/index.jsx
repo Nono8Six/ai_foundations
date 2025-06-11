@@ -207,50 +207,7 @@ const UserManagementAdmin = () => {
   };
 
   return (
-    <div className='min-h-screen bg-background'>
-      {/* Header */}
-      <header className='bg-surface border-b border-border shadow-subtle'>
-        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-          <div className='flex justify-between items-center h-16'>
-            {/* Logo and Navigation */}
-            <div className='flex items-center space-x-8'>
-              <Link to='/admin-dashboard' className='flex items-center space-x-2'>
-                <div className='w-8 h-8 bg-gradient-to-br from-primary to-primary-700 rounded-full flex items-center justify-center'>
-                  <Icon name='GraduationCap' size={20} color='white' />
-                </div>
-                <span className='text-xl font-bold text-text-primary'>AI Foundations</span>
-              </Link>
-
-              <nav className='hidden md:flex space-x-6'>
-                <Link
-                  to='/admin-dashboard'
-                  className='text-text-secondary hover:text-primary transition-colors'
-                >
-                  Tableau de bord
-                </Link>
-                <Link
-                  to='/cms'
-                  className='text-text-secondary hover:text-primary transition-colors'
-                >
-                  Contenu
-                </Link>
-                <span className='text-primary font-medium'>Utilisateurs</span>
-              </nav>
-            </div>
-
-            {/* User Menu */}
-            <div className='flex items-center space-x-4'>
-              <button className='p-2 text-text-secondary hover:text-primary transition-colors'>
-                <Icon name='Bell' size={20} />
-              </button>
-              <div className='w-8 h-8 bg-primary rounded-full flex items-center justify-center'>
-                <Icon name='User' size={16} color='white' />
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-
+    <div className='min-h-screen bg-background pt-16'>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
         {/* Page Header */}
         <div className='mb-8'>

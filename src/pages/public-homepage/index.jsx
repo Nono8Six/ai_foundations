@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 
-import Header from './components/Header';
 import HeroSection from './components/HeroSection';
 import DataVisualization from './components/DataVisualization';
 import ProgramOverview from './components/ProgramOverview';
@@ -27,9 +26,7 @@ const PublicHomepage = () => {
 
   return (
     <div className='min-h-screen bg-background'>
-      <Header />
-
-      <main>
+      <main className='pt-16'>
         <HeroSection />
         <DataVisualization />
         <ProgramOverview />

@@ -115,74 +115,8 @@ const ProgramOverview = () => {
 
   return (
     <div className='min-h-screen bg-background'>
-      {/* Header Navigation */}
-      <header className='bg-surface border-b border-border sticky top-0 z-50'>
-        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-          <div className='flex items-center justify-between h-16'>
-            {/* Logo */}
-            <Link to='/' className='flex items-center space-x-3'>
-              <div className='w-10 h-10 bg-gradient-to-br from-primary to-primary-700 rounded-full flex items-center justify-center'>
-                <Icon name='GraduationCap' size={24} color='white' />
-              </div>
-              <span className='text-xl font-bold text-text-primary'>AI Foundations</span>
-            </Link>
-
-            {/* Navigation */}
-            <nav className='hidden md:flex items-center space-x-8'>
-              <Link
-                to='/'
-                className='text-text-secondary hover:text-primary transition-colors'
-              >
-                Accueil
-              </Link>
-              <Link to='/programmes' className='text-primary font-medium'>
-                Programmes
-              </Link>
-              <Link
-                to='/user-dashboard'
-                className='text-text-secondary hover:text-primary transition-colors'
-              >
-                Tableau de bord
-              </Link>
-            </nav>
-
-            {/* User Menu */}
-            <div className='flex items-center space-x-4'>
-              <Link
-                to='/login'
-                className='px-4 py-2 text-sm font-medium text-primary border border-primary rounded-lg hover:bg-primary-50 transition-colors'
-              >
-                Connexion
-              </Link>
-              <Link
-                to='/user-profile-management'
-                className='px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary-700 transition-colors'
-              >
-                Profil
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Breadcrumb */}
-      <div className='bg-secondary-50 border-b border-border'>
-        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3'>
-          <nav className='flex items-center space-x-2 text-sm'>
-            <Link
-              to='/'
-              className='text-text-secondary hover:text-primary transition-colors'
-            >
-              Accueil
-            </Link>
-            <Icon name='ChevronRight' size={16} className='text-text-secondary' />
-            <span className='text-text-primary font-medium'>Programmes</span>
-          </nav>
-        </div>
-      </div>
-
       {/* Main Content */}
-      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
+      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-20'>
         {/* Page Header */}
         <div className='mb-8'>
           <h1 className='text-3xl font-bold text-text-primary mb-4'>Programmes de Formation IA</h1>

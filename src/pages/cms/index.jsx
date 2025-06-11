@@ -107,9 +107,9 @@ const ContentManagementCoursesModulesLessons = () => {
   const navigationItems = [
     { path: '/', label: 'Accueil', icon: 'Home' },
     { path: '/programmes', label: 'Programmes', icon: 'BookOpen' },
-    { path: '/user-dashboard', label: 'Tableau de bord', icon: 'LayoutDashboard' },
+    { path: '/espace', label: 'Mon Espace', icon: 'LayoutDashboard' },
     { path: '/lesson-viewer', label: 'Leçons', icon: 'Play' },
-    { path: '/user-profile-management', label: 'Profil', icon: 'User' },
+    { path: '/profile', label: 'Profil', icon: 'User' },
     { path: '/admin-dashboard', label: 'Admin', icon: 'Settings' },
     { path: '/cms', label: 'Contenu', icon: 'FileText', active: true },
     { path: '/user-management-admin', label: 'Utilisateurs', icon: 'Users' },
@@ -186,53 +186,7 @@ const ContentManagementCoursesModulesLessons = () => {
   };
 
   return (
-    <div className='min-h-screen bg-background'>
-      {/* Header Navigation */}
-      <header className='bg-surface border-b border-border shadow-subtle'>
-        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-          <div className='flex justify-between items-center h-16'>
-            {/* Logo */}
-            <div className='flex items-center'>
-              <div className='w-10 h-10 bg-gradient-to-br from-primary to-primary-700 rounded-full flex items-center justify-center'>
-                <Icon name='GraduationCap' size={24} color='white' />
-              </div>
-              <span className='ml-3 text-xl font-bold text-text-primary'>AI Foundations</span>
-            </div>
-
-            {/* Navigation */}
-            <nav className='hidden md:flex space-x-1'>
-              {navigationItems.map(item => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center ${
-                    item.active
-                      ? 'bg-primary text-white'
-                      : 'text-text-secondary hover:text-text-primary hover:bg-secondary-50'
-                  }`}
-                >
-                  <Icon name={item.icon} size={16} className='mr-2' />
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
-
-            {/* User Menu */}
-            <div className='flex items-center space-x-4'>
-              <button
-                onClick={() => setShowMediaLibrary(true)}
-                className='p-2 text-text-secondary hover:text-text-primary hover:bg-secondary-50 rounded-lg transition-colors duration-200'
-              >
-                <Icon name='Image' size={20} />
-              </button>
-              <div className='w-8 h-8 bg-gradient-to-br from-accent to-accent-700 rounded-full flex items-center justify-center'>
-                <span className='text-white text-sm font-medium'>A</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-
+    <div className='min-h-screen bg-background pt-16'>
       <div className='flex h-[calc(100vh-4rem)]'>
         {/* Content Tree Sidebar */}
         <div className='w-80 bg-surface border-r border-border flex flex-col'>

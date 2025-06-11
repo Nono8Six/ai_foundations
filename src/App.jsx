@@ -1,10 +1,10 @@
 // src/App.jsx
 import React from "react";
-// On importe BrowserRouter ici, au plus haut niveau.
 import { BrowserRouter } from "react-router-dom";
 import AppRoutes from "./Routes"; // On utilise le composant qui contient les <Route>
 import { AuthProvider } from "./context/AuthContext";
 import { CourseProvider } from "./context/CourseContext";
+import Header from "./components/Header";
 
 function App() {
   return (
@@ -13,6 +13,7 @@ function App() {
       {/* AuthProvider est maintenant à l'intérieur et peut utiliser les hooks de routage. */}
       <AuthProvider>
         <CourseProvider>
+          <Header />
           <AppRoutes />
         </CourseProvider>
       </AuthProvider>

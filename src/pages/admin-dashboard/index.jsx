@@ -72,7 +72,7 @@ const AdminDashboard = () => {
       icon: 'BookOpen',
     },
     { name: "Vue d\'ensemble", path: '/programmes', icon: 'GraduationCap' },
-    { name: 'Profil utilisateur', path: '/user-profile-management', icon: 'User' },
+    { name: 'Profil utilisateur', path: '/profile', icon: 'User' },
   ];
 
   const timeRanges = [
@@ -83,7 +83,7 @@ const AdminDashboard = () => {
   ];
 
   return (
-    <div className='min-h-screen bg-background'>
+    <div className='min-h-screen bg-background pt-16'>
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div
@@ -94,7 +94,7 @@ const AdminDashboard = () => {
 
       {/* Sidebar */}
       <div
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-surface shadow-medium transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-surface shadow-medium transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} top-16`}
       >
         <div className='flex items-center justify-between h-16 px-6 border-b border-border'>
           <div className='flex items-center space-x-3'>
@@ -134,7 +134,7 @@ const AdminDashboard = () => {
           <div className='bg-secondary-50 rounded-lg p-4'>
             <div className='flex items-center space-x-3 mb-2'>
               <Image
-                src='https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face'
+                src='https://ui-avatars.com/api/?name=Admin+User&background=3b82f6&color=ffffff'
                 alt='Admin Avatar'
                 className='w-8 h-8 rounded-full object-cover'
               />
@@ -144,7 +144,7 @@ const AdminDashboard = () => {
               </div>
             </div>
             <Link
-              to='/user-profile-management'
+              to='/profile'
               className='text-xs text-primary hover:text-primary-700 transition-colors'
             >
               Voir le profil
@@ -156,7 +156,7 @@ const AdminDashboard = () => {
       {/* Main content */}
       <div className='lg:pl-64'>
         {/* Top navigation */}
-        <header className='bg-surface shadow-subtle border-b border-border'>
+        <header className='bg-surface shadow-subtle border-b border-border fixed top-16 left-0 right-0 z-30 lg:left-64'>
           <div className='flex items-center justify-between h-16 px-6'>
             <div className='flex items-center space-x-4'>
               <button
@@ -203,24 +203,12 @@ const AdminDashboard = () => {
                 <Icon name='Bell' size={20} />
                 <span className='absolute top-1 right-1 w-2 h-2 bg-error rounded-full'></span>
               </button>
-
-              {/* Profile dropdown */}
-              <div className='relative'>
-                <button className='flex items-center space-x-2 p-2 rounded-lg hover:bg-secondary-100 transition-colors'>
-                  <Image
-                    src='https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face'
-                    alt='Admin Avatar'
-                    className='w-8 h-8 rounded-full object-cover'
-                  />
-                  <Icon name='ChevronDown' size={16} />
-                </button>
-              </div>
             </div>
           </div>
         </header>
 
         {/* Dashboard content */}
-        <main className='p-6'>
+        <main className='p-6 pt-36'>
           {/* Quick stats */}
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8'>
             {quickStats.map(stat => (

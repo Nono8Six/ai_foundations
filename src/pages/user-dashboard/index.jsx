@@ -16,7 +16,6 @@ import useAchievements from '../../hooks/useAchievements';
 
 const UserDashboard = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   const { userProfile, user, logout } = useAuth();
@@ -33,20 +32,6 @@ const UserDashboard = () => {
     }, 60000);
     return () => clearInterval(timer);
   }, []);
-
-  // Close profile menu when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (isProfileMenuOpen && !event.target.closest('.profile-menu')) {
-        setIsProfileMenuOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isProfileMenuOpen]);
 
   const handleLogout = async () => {
     try {
@@ -119,16 +104,6 @@ const UserDashboard = () => {
     return 'Bonsoir';
   };
 
-  // Get initials for avatar
-  const getInitials = () => {
-    const name = userProfile?.full_name || user?.user_metadata?.full_name || user?.email || 'User';
-    return name
-      .split(' ')
-      .map(word => word.charAt(0).toUpperCase())
-      .slice(0, 2)
-      .join('');
-  };
-
   // Define quick actions based on user state
   const quickActions = [
     {
@@ -172,88 +147,8 @@ const UserDashboard = () => {
   return (
     <ErrorBoundary>
       <div className='min-h-screen bg-background'>
-        {/* Header */}
-        <header className='bg-surface border-b border-border sticky top-0 z-50'>
-          <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-            <div className='flex justify-between items-center h-16'>
-              <Link to='/' className='flex items-center space-x-2'>
-                <div className='w-10 h-10 bg-gradient-to-br from-primary to-primary-700 rounded-full flex items-center justify-center'>
-                  <Icon name='GraduationCap' size={24} color='white' />
-                </div>
-                <span className='text-xl font-bold text-text-primary'>AI Foundations</span>
-              </Link>
-              <nav className='hidden md:flex items-center space-x-8'>
-                <Link
-                  to='/programmes'
-                  className='text-text-secondary hover:text-primary transition-colors'
-                >
-                  Programmes
-                </Link>
-                <Link to='/espace' className='text-primary font-medium'>
-                  Mon Espace
-                </Link>
-              </nav>
-              <div className='flex items-center space-x-4'>
-                <button className='relative p-2 text-text-secondary hover:text-primary transition-colors'>
-                  <Icon name='Bell' size={20} />
-                  <span className='absolute -top-1 -right-1 w-3 h-3 bg-error rounded-full'></span>
-                </button>
-                <div className='profile-menu relative group'>
-                  <button 
-                    onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                    className='flex items-center space-x-2 p-1 rounded-full hover:bg-secondary-50 transition-colors'
-                  >
-                    {userProfile?.avatar_url ? (
-                      <Image
-                        src={userProfile.avatar_url}
-                        alt={userProfile.full_name || 'Profil'}
-                        className='w-8 h-8 rounded-full object-cover'
-                      />
-                    ) : (
-                      <div className='w-8 h-8 bg-gradient-to-br from-primary to-primary-700 rounded-full flex items-center justify-center'>
-                        <span className='text-white font-medium text-sm'>{getInitials()}</span>
-                      </div>
-                    )}
-                    <Icon name='ChevronDown' size={16} className='text-text-secondary' />
-                  </button>
-                  {isProfileMenuOpen && (
-                    <div className='absolute right-0 mt-2 w-56 bg-surface rounded-lg shadow-medium border border-border z-50'>
-                      <div className='p-3 border-b border-border'>
-                        <p className='font-medium text-text-primary truncate'>{getFirstName()}</p>
-                        <p className='text-sm text-text-secondary'>Niveau {userData.level}</p>
-                      </div>
-                      <div className='py-2'>
-                        <Link
-                          to='/profile'
-                          onClick={() => setIsProfileMenuOpen(false)}
-                          className='block px-4 py-2 text-sm text-text-secondary hover:bg-secondary-50 hover:text-primary transition-colors'
-                        >
-                          <Icon name='User' size={16} className='inline mr-2' /> Profil
-                        </Link>
-                        <Link
-                          to='/programmes'
-                          onClick={() => setIsProfileMenuOpen(false)}
-                          className='block px-4 py-2 text-sm text-text-secondary hover:bg-secondary-50 hover:text-primary transition-colors'
-                        >
-                          <Icon name='BookOpen' size={16} className='inline mr-2' /> Mes Cours
-                        </Link>
-                        <button
-                          onClick={handleLogout}
-                          className='block w-full text-left px-4 py-2 text-sm text-text-secondary hover:bg-secondary-50 hover:text-primary transition-colors'
-                        >
-                          <Icon name='LogOut' size={16} className='inline mr-2' /> Déconnexion
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </header>
-
         {/* Main Content */}
-        <main className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
+        <main className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-20'>
           {/* Welcome Banner */}
           <div className='bg-gradient-to-r from-primary-50 to-accent-50 rounded-xl p-6 mb-8 border border-primary-100'>
             <div className='flex flex-col md:flex-row items-start md:items-center justify-between'>

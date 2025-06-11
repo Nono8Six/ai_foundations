@@ -184,10 +184,10 @@ Cette technologie transforme notre façon de travailler et d'interagir avec la t
   }
 
   return (
-    <div className='min-h-screen bg-background flex flex-col'>
+    <div className='min-h-screen bg-background flex flex-col pt-16'>
       {/* Header */}
       <header
-        className={`bg-surface border-b border-border transition-all duration-300 ${isHeaderCollapsed ? 'h-12' : 'h-16'} flex items-center justify-between px-4 lg:px-6 relative z-50`}
+        className={`bg-surface border-b border-border transition-all duration-300 ${isHeaderCollapsed ? 'h-12' : 'h-16'} flex items-center justify-between px-4 lg:px-6 relative z-40 fixed top-16 left-0 right-0`}
       >
         <div className='flex items-center space-x-4'>
           <button
@@ -198,11 +198,11 @@ Cette technologie transforme notre façon de travailler et d'interagir avec la t
           </button>
 
           <Link
-            to='/user-dashboard'
+            to='/espace'
             className='flex items-center space-x-2 text-text-secondary hover:text-primary transition-colors'
           >
             <Icon name='ArrowLeft' size={20} />
-            <span className='hidden sm:inline'>Retour au tableau de bord</span>
+            <span className='hidden sm:inline'>Retour à mon espace</span>
           </Link>
         </div>
 
@@ -219,7 +219,7 @@ Cette technologie transforme notre façon de travailler et d'interagir avec la t
           </button>
 
           <button
-            onClick={() => navigate('/user-dashboard')}
+            onClick={() => navigate('/espace')}
             className='p-2 hover:bg-secondary-50 rounded-lg transition-colors'
           >
             <Icon name='X' size={20} />
@@ -227,7 +227,7 @@ Cette technologie transforme notre façon de travailler et d'interagir avec la t
         </div>
       </header>
 
-      <div className='flex-1 flex overflow-hidden'>
+      <div className='flex-1 flex overflow-hidden mt-16'>
         {/* Sidebar - Lesson Navigation */}
         <LessonNavigation
           isOpen={isSidebarOpen}

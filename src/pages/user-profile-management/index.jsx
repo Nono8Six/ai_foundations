@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Icon from '../../components/AppIcon';
 import Image from '../../components/AppImage';
@@ -9,33 +9,18 @@ import SettingsTab from './components/SettingsTab';
 
 const UserProfileManagement = () => {
   const [activeTab, setActiveTab] = useState('personal');
-  const { user, userProfile, logout } = useAuth();
+  const { user, userProfile } = useAuth();
   const navigate = useNavigate();
-  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const location = useLocation();
 
-  // Function to get user initials
-  const getInitials = () => {
-    const name = userProfile?.full_name || user?.user_metadata?.full_name || user?.email || 'User';
-    return name
-      .split(' ')
-      .map(word => word.charAt(0).toUpperCase())
-      .slice(0, 2)
-      .join('');
-  };
-
-  // Close profile menu when clicking outside
+  // Check for tab parameter in URL
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (isProfileMenuOpen && !event.target.closest('.profile-menu')) {
-        setIsProfileMenuOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isProfileMenuOpen]);
+    const params = new URLSearchParams(location.search);
+    const tab = params.get('tab');
+    if (tab && ['personal', 'stats', 'settings'].includes(tab)) {
+      setActiveTab(tab);
+    }
+  }, [location]);
 
   // Use real user data instead of mock data
   const userData = {
@@ -45,7 +30,7 @@ const UserProfileManagement = () => {
     phone: '', // This would need to be added to the profiles table if needed
     profession: '', // This would need to be added to the profiles table if needed
     company: '', // This would need to be added to the profiles table if needed
-    avatar: userProfile?.avatar_url || user?.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(userProfile?.full_name || user?.email || 'User')}&background=1e40af&color=fff`,
+    avatar: userProfile?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(userProfile?.full_name || user?.email || 'User')}&background=1e40af&color=fff`,
     joinDate: user?.created_at || new Date().toISOString(),
     level: userProfile?.level || 1,
     xp: userProfile?.xp || 0,
@@ -55,15 +40,6 @@ const UserProfileManagement = () => {
     coursesCompleted: 0, // This would need to be calculated from user progress
     certificatesEarned: 0, // This would need to be calculated from achievements
     achievements: [], // This would come from the achievements table
-  };
-
-  const handleLogout = async () => {
-    try {
-      await logout();
-      navigate('/login');
-    } catch (error) {
-      console.error('Erreur lors de la déconnexion:', error);
-    }
   };
 
   const tabs = [
@@ -87,113 +63,8 @@ const UserProfileManagement = () => {
 
   return (
     <div className='min-h-screen bg-background'>
-      {/* Header with Navigation */}
-      <header className='bg-surface border-b border-border sticky top-0 z-40'>
-        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-          <div className='flex items-center justify-between h-16'>
-            {/* Logo */}
-            <Link to='/user-dashboard' className='flex items-center space-x-2'>
-              <div className='w-8 h-8 bg-gradient-to-br from-primary to-primary-700 rounded-full flex items-center justify-center'>
-                <Icon name='GraduationCap' size={20} color='white' />
-              </div>
-              <span className='text-xl font-bold text-primary'>AI Foundations</span>
-            </Link>
-
-            {/* Navigation */}
-            <nav className='hidden md:flex items-center space-x-8'>
-              <Link
-                to='/user-dashboard'
-                className='text-text-secondary hover:text-primary transition-colors'
-              >
-                Tableau de bord
-              </Link>
-              <Link
-                to='/programmes'
-                className='text-text-secondary hover:text-primary transition-colors'
-              >
-                Programmes
-              </Link>
-              <Link
-                to='/lesson-viewer'
-                className='text-text-secondary hover:text-primary transition-colors'
-              >
-                Leçons
-              </Link>
-            </nav>
-
-            {/* User Menu */}
-            <div className='flex items-center space-x-4'>
-              {/* Profile Dropdown */}
-              <div className='profile-menu relative'>
-                <button
-                  onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                  className='w-10 h-10 bg-gradient-to-br from-primary to-primary-700 rounded-full flex items-center justify-center hover:shadow-medium transition-all duration-200'
-                >
-                  {userProfile?.avatar_url ? (
-                    <Image 
-                      src={userProfile.avatar_url} 
-                      alt={userProfile.full_name || 'Profil'} 
-                      className='w-full h-full rounded-full object-cover'
-                    />
-                  ) : (
-                    <span className='text-white font-medium text-sm'>{getInitials()}</span>
-                  )}
-                </button>
-
-                {isProfileMenuOpen && (
-                  <div className='absolute right-0 mt-2 w-56 bg-surface rounded-lg shadow-medium border border-border py-2 z-50'>
-                    <div className='px-4 py-2 border-b border-border mb-2'>
-                      <p className='font-medium text-text-primary truncate'>{userProfile?.full_name || 'Utilisateur'}</p>
-                      <p className='text-sm text-text-secondary'>Niveau {userProfile?.level || 1}</p>
-                    </div>
-                    
-                    {tabs.map(tab => (
-                      <button
-                        key={tab.id}
-                        onClick={() => {
-                          setActiveTab(tab.id);
-                          setIsProfileMenuOpen(false);
-                        }}
-                        className='flex items-center space-x-3 px-4 py-2 w-full text-left text-text-secondary hover:bg-secondary-50 hover:text-primary transition-colors duration-200'
-                      >
-                        <Icon name={tab.icon} size={18} />
-                        <span>{tab.label}</span>
-                      </button>
-                    ))}
-                    
-                    <button
-                      onClick={handleLogout}
-                      className='w-full px-4 py-2 text-left text-text-primary hover:bg-secondary-50 transition-colors duration-200 flex items-center space-x-2 border-t border-border mt-2 pt-2'
-                    >
-                      <Icon name='LogOut' size={16} />
-                      <span>Déconnexion</span>
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Breadcrumb */}
-      <div className='bg-secondary-50 border-b border-border'>
-        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3'>
-          <nav className='flex items-center space-x-2 text-sm'>
-            <Link
-              to='/user-dashboard'
-              className='text-text-secondary hover:text-primary transition-colors'
-            >
-              Tableau de bord
-            </Link>
-            <Icon name='ChevronRight' size={16} className='text-text-secondary' />
-            <span className='text-text-primary font-medium'>Profil</span>
-          </nav>
-        </div>
-      </div>
-
       {/* Main Content */}
-      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
+      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-20'>
         <div className='lg:grid lg:grid-cols-12 lg:gap-8'>
           {/* Profile Sidebar */}
           <div className='lg:col-span-3 mb-8 lg:mb-0'>
@@ -273,7 +144,10 @@ const UserProfileManagement = () => {
                   {tabs.map(tab => (
                     <button
                       key={tab.id}
-                      onClick={() => setActiveTab(tab.id)}
+                      onClick={() => {
+                        setActiveTab(tab.id);
+                        navigate(`/profile?tab=${tab.id}`, { replace: true });
+                      }}
                       className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                         activeTab === tab.id
                           ? 'border-primary text-primary'
