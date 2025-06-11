@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import Icon from '../../../components/AppIcon';
@@ -10,6 +10,7 @@ const Header = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { user, userProfile, loading, error, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   if (error) {
     console.error('Erreur de chargement du profil:', error);
@@ -45,7 +46,7 @@ const Header = () => {
 
   if (user) {
     navigationItems.push(
-      { name: 'Tableau de bord', path: '/user-dashboard', icon: 'LayoutDashboard' },
+      { name: 'Mon Espace', path: '/espace', icon: 'LayoutDashboard' },
       { name: 'Profil', path: '/profile', icon: 'User' }
     );
 
@@ -86,9 +87,13 @@ const Header = () => {
           <nav className='hidden lg:flex items-center space-x-8'>
             {navigationItems.slice(0, 2).map(item => (
               <Link
-                key={item.name}
+                key={item.path}
                 to={item.path}
-                className='flex items-center space-x-2 text-text-secondary hover:text-primary transition-colors duration-200'
+                className={`flex items-center space-x-2 transition-colors duration-200 ${
+                  location.pathname === item.path 
+                    ? 'text-primary font-medium' 
+                    : 'text-text-secondary hover:text-primary'
+                }`}
               >
                 <Icon name={item.icon} size={18} />
                 <span>{item.name}</span>
@@ -156,16 +161,18 @@ const Header = () => {
                     className='absolute right-0 mt-2 w-56 bg-surface rounded-lg shadow-medium border border-border py-2 z-50'
                   >
                     <div className='px-4 py-2 border-b border-border mb-2'>
-                      <p className='font-medium text-text-primary truncate'>{userProfile?.full_name || 'Arnaud'}</p>
+                      <p className='font-medium text-text-primary truncate'>{userProfile?.full_name || getFirstName()}</p>
                       <p className='text-sm text-text-secondary'>Niveau {userProfile?.level || 1}</p>
                     </div>
                     
                     {navigationItems.map(item => (
                       <Link
-                        key={item.name}
+                        key={item.path}
                         to={item.path}
                         onClick={() => setIsProfileOpen(false)}
-                        className='flex items-center space-x-3 px-4 py-2 text-text-secondary hover:bg-secondary-50 hover:text-primary transition-colors duration-200'
+                        className={`flex items-center space-x-3 px-4 py-2 text-text-secondary hover:bg-secondary-50 hover:text-primary transition-colors duration-200 ${
+                          location.pathname === item.path ? 'bg-secondary-50 text-primary' : ''
+                        }`}
                       >
                         <Icon name={item.icon} size={18} />
                         <span>{item.name}</span>
@@ -199,10 +206,12 @@ const Header = () => {
               <nav className='space-y-2'>
                 {navigationItems.map(item => (
                   <Link
-                    key={item.name}
+                    key={item.path}
                     to={item.path}
                     onClick={() => setIsMenuOpen(false)}
-                    className='flex items-center space-x-3 px-4 py-3 text-text-secondary hover:bg-secondary-50 hover:text-primary transition-colors duration-200 rounded-lg'
+                    className={`flex items-center space-x-3 px-4 py-3 text-text-secondary hover:bg-secondary-50 hover:text-primary transition-colors duration-200 rounded-lg ${
+                      location.pathname === item.path ? 'bg-secondary-50 text-primary' : ''
+                    }`}
                   >
                     <Icon name={item.icon} size={18} />
                     <span>{item.name}</span>

@@ -4,8 +4,11 @@ import Icon from '../../../components/AppIcon';
 
 const QuickActions = ({ actions = [], onAction }) => {
   const handleAction = action => {
-    if (action.link && action.link !== '#') return;
-    if (onAction) onAction(action);
+    if (action.onClick) {
+      action.onClick();
+    } else if (onAction) {
+      onAction(action);
+    }
   };
 
   const renderAction = action => {

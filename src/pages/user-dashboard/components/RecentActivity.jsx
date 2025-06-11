@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import Icon from '../../../components/AppIcon';
 import Image from '../../../components/AppImage';
 
@@ -115,19 +116,41 @@ const RecentActivity = ({ activities = [] }) => {
     }
   };
 
+  // Generate placeholder activities if none exist
+  const getPlaceholderActivities = () => {
+    return [
+      {
+        id: 'placeholder-1',
+        type: 'placeholder',
+        title: 'Commencez votre parcours',
+        description: 'Inscrivez-vous à un cours pour voir votre activité ici',
+        icon: 'BookOpen',
+        iconColor: 'text-primary',
+        timestamp: 'Maintenant',
+      }
+    ];
+  };
+
+  const displayActivities = activities.length > 0 ? activities : getPlaceholderActivities();
+
   return (
     <div className='bg-surface rounded-xl border border-border p-6'>
       <div className='flex items-center justify-between mb-6'>
         <h2 className='text-xl font-semibold text-text-primary'>Activité récente</h2>
-        <button className='text-primary hover:text-primary-700 transition-colors text-sm font-medium'>
-          Voir tout
-        </button>
+        {activities.length > 0 && (
+          <Link 
+            to="/profile?tab=stats" 
+            className='text-primary hover:text-primary-700 transition-colors text-sm font-medium'
+          >
+            Voir tout
+          </Link>
+        )}
       </div>
 
       <div className='space-y-4'>
-        {activities.map((activity, index) => (
-          <div key={activity.id} className='relative'>
-            {index < activities.length - 1 && (
+        {displayActivities.map((activity, index) => (
+          <div key={activity.id || index} className='relative'>
+            {index < displayActivities.length - 1 && (
               <div className='absolute left-5 top-10 w-0.5 h-8 bg-border'></div>
             )}
             <div className='flex items-start gap-4 p-3 rounded-lg hover:bg-secondary-50 transition-colors duration-200'>
@@ -139,16 +162,18 @@ const RecentActivity = ({ activities = [] }) => {
             </div>
           </div>
         ))}
-        {activities.length === 0 && (
-          <p className='text-sm text-text-secondary'>Aucune activité récente.</p>
-        )}
       </div>
 
-      <div className='mt-6 pt-4 border-t border-border'>
-        <button className='w-full text-center text-primary hover:text-primary-700 transition-colors text-sm font-medium py-2'>
-          Afficher toute l'activité
-        </button>
-      </div>
+      {activities.length > 0 && (
+        <div className='mt-6 pt-4 border-t border-border'>
+          <Link 
+            to="/profile?tab=stats"
+            className='w-full text-center text-primary hover:text-primary-700 transition-colors text-sm font-medium py-2 block'
+          >
+            Afficher toute l'activité
+          </Link>
+        </div>
+      )}
     </div>
   );
 };
