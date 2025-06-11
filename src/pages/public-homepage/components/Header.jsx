@@ -28,6 +28,18 @@ const Header = () => {
     }
   };
 
+  const getFirstName = () => {
+    try {
+      if (!user) return 'Utilisateur';
+      const name = userProfile?.full_name || user.user_metadata?.full_name || '';
+      const [first = 'Utilisateur'] = name.split(' ');
+      return first;
+    } catch (err) {
+      console.error('Erreur lors de la récupération du prénom:', err);
+      return 'Utilisateur';
+    }
+  };
+
   const handleLogout = async () => {
     try {
       await logout();
