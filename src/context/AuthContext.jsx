@@ -150,6 +150,7 @@ export const AuthProvider = ({ children }) => {
       setUserProfile(null);
       localStorage.removeItem('authToken');
       navigate('/');
+      window.location.assign('/');
     }
   };
 

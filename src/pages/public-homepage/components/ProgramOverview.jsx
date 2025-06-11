@@ -232,7 +232,7 @@ const ProgramOverview = () => {
 
                 {/* CTA Button */}
                 <Link
-                  to='/program-overview'
+                  to='/programmes'
                   className='w-full inline-flex items-center justify-center px-4 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary-700 transition-colors duration-200 group'
                 >
                   <span>Découvrir le programme</span>
@@ -272,7 +272,7 @@ const ProgramOverview = () => {
                 Commencer gratuitement
               </Link>
               <Link
-                to='/program-overview'
+                to='/programmes'
                 className='inline-flex items-center justify-center px-8 py-4 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-primary transition-colors duration-200'
               >
                 <Icon name='Info' size={20} className='mr-2' />

@@ -134,7 +134,7 @@ const UserDashboard = () => {
         <header className='bg-surface border-b border-border sticky top-0 z-50'>
           <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
             <div className='flex justify-between items-center h-16'>
-              <Link to='/public-homepage' className='flex items-center space-x-2'>
+              <Link to='/' className='flex items-center space-x-2'>
                 <div className='w-10 h-10 bg-gradient-to-br from-primary to-primary-700 rounded-full flex items-center justify-center'>
                   <Icon name='GraduationCap' size={24} color='white' />
                 </div>
@@ -142,7 +142,7 @@ const UserDashboard = () => {
               </Link>
               <nav className='hidden md:flex items-center space-x-8'>
                 <Link
-                  to='/program-overview'
+                  to='/programmes'
                   className='text-text-secondary hover:text-primary transition-colors'
                 >
                   Programmes
@@ -178,7 +178,7 @@ const UserDashboard = () => {
                         <Icon name='User' size={16} className='inline mr-2' /> Profil
                       </Link>
                       <Link
-                        to='/program-overview'
+                        to='/programmes'
                         className='block px-4 py-2 text-sm text-text-secondary hover:bg-secondary-50 hover:text-primary transition-colors'
                       >
                         <Icon name='BookOpen' size={16} className='inline mr-2' /> Mes Cours

@@ -120,7 +120,7 @@ const ProgramOverview = () => {
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='flex items-center justify-between h-16'>
             {/* Logo */}
-            <Link to='/public-homepage' className='flex items-center space-x-3'>
+            <Link to='/' className='flex items-center space-x-3'>
               <div className='w-10 h-10 bg-gradient-to-br from-primary to-primary-700 rounded-full flex items-center justify-center'>
                 <Icon name='GraduationCap' size={24} color='white' />
               </div>
@@ -130,12 +130,12 @@ const ProgramOverview = () => {
             {/* Navigation */}
             <nav className='hidden md:flex items-center space-x-8'>
               <Link
-                to='/public-homepage'
+                to='/'
                 className='text-text-secondary hover:text-primary transition-colors'
               >
                 Accueil
               </Link>
-              <Link to='/program-overview' className='text-primary font-medium'>
+              <Link to='/programmes' className='text-primary font-medium'>
                 Programmes
               </Link>
               <Link
@@ -170,7 +170,7 @@ const ProgramOverview = () => {
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3'>
           <nav className='flex items-center space-x-2 text-sm'>
             <Link
-              to='/public-homepage'
+              to='/'
               className='text-text-secondary hover:text-primary transition-colors'
             >
               Accueil

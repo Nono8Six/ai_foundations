@@ -26,8 +26,8 @@ const Header = () => {
   };
 
   const navigationItems = [
-    { name: 'Accueil', path: '/public-homepage', icon: 'Home' },
-    { name: 'Programmes', path: '/program-overview', icon: 'BookOpen' },
+    { name: 'Accueil', path: '/', icon: 'Home' },
+    { name: 'Programmes', path: '/programmes', icon: 'BookOpen' },
   ];
 
   if (user) {
@@ -46,7 +46,7 @@ const Header = () => {
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
         <div className='flex justify-between items-center h-16'>
           {/* Logo */}
-          <Link to='/public-homepage' className='flex items-center space-x-2'>
+          <Link to='/' className='flex items-center space-x-2'>
             <div className='w-10 h-10 bg-gradient-to-br from-primary to-primary-700 rounded-full flex items-center justify-center'>
               <Icon name='Brain' size={24} color='white' />
             </div>

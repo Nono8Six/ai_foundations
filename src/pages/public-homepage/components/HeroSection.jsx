@@ -92,7 +92,7 @@ const HeroSection = () => {
               )}
 
               <Link
-                to='/program-overview'
+                to='/programmes'
                 className='inline-flex items-center justify-center px-8 py-4 border-2 border-primary text-primary font-semibold rounded-lg hover:bg-primary hover:text-white transition-all duration-200 group'
               >
                 <Icon
