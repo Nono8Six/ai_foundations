@@ -25,6 +25,16 @@ const Header = () => {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await logout();
+      setIsProfileOpen(false);
+      setIsMenuOpen(false);
+    } catch (error) {
+      console.error('Erreur lors de la déconnexion:', error);
+    }
+  };
+
   const navigationItems = [
     { name: 'Accueil', path: '/', icon: 'Home' },
     { name: 'Programmes', path: '/programmes', icon: 'BookOpen' },
@@ -137,10 +147,7 @@ const Header = () => {
                       </Link>
                     ))}
                     <button
-                      onClick={() => {
-                        setIsProfileOpen(false);
-                        logout();
-                      }}
+                      onClick={handleLogout}
                       className='w-full px-4 py-2 text-left text-text-primary hover:bg-secondary-50 transition-colors duration-200 flex items-center space-x-2'
                     >
                       <Icon name='LogOut' size={16} />
@@ -177,10 +184,7 @@ const Header = () => {
                 ))}
                 {user && (
                   <button
-                    onClick={() => {
-                      setIsMenuOpen(false);
-                      logout();
-                    }}
+                    onClick={handleLogout}
                     className='flex items-center space-x-2 w-full px-4 py-3 text-text-primary hover:bg-secondary-50 transition-colors duration-200 rounded-lg'
                   >
                     <Icon name='LogOut' size={16} />

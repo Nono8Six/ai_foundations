@@ -18,7 +18,7 @@ const UserDashboard = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const navigate = useNavigate();
 
-  const { userProfile, user, signOut } = useAuth();
+  const { userProfile, user, logout } = useAuth();
   const { courses, userProgress, fetchUserProgress, getNextLesson, calculateCourseProgress } =
     useCourses();
   const [currentLesson, setCurrentLesson] = useState(null);
@@ -35,7 +35,7 @@ const UserDashboard = () => {
 
   const handleLogout = async () => {
     try {
-      await signOut();
+      await logout();
       navigate('/login');
     } catch (error) {
       console.error('Logout error:', error);
@@ -77,7 +77,7 @@ const UserDashboard = () => {
 
   const userData = {
     name: userProfile?.full_name || user?.email || 'Utilisateur',
-    avatar: userProfile?.avatar_url,
+    avatar: userProfile?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(userProfile?.full_name || user?.email || 'User')}&background=1e40af&color=fff`,
     level: userProfile?.level || 1,
     xp: userProfile?.xp || 0,
     xpToNextLevel: Math.floor(100 * Math.pow(userProfile?.level || 1, 1.5)),
@@ -90,42 +90,27 @@ const UserDashboard = () => {
 
   const enrolledCourses = coursesWithProgress;
 
-  const getDifficultyColor = difficulty => {
-    switch (difficulty) {
-      case 'Débutant':
-        return 'bg-success text-white';
-      case 'Intermédiaire':
-        return 'bg-warning text-white';
-      case 'Avancé':
-        return 'bg-primary text-white';
-      case 'Expert':
-        return 'bg-error text-white';
-      default:
-        return 'bg-secondary text-white';
-    }
-  };
-
-  const getPriorityColor = priority => {
-    switch (priority) {
-      case 'high':
-        return 'border-l-error bg-error-50';
-      case 'medium':
-        return 'border-l-warning bg-warning-50';
-      case 'low':
-        return 'border-l-success bg-success-50';
-      default:
-        return 'border-l-secondary bg-secondary-50';
-    }
-  };
-
-  const formatDate = dateString => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('fr-FR', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-    });
-  };
+  // Define quick actions based on user state
+  const quickActions = [
+    {
+      id: 'continue',
+      title: 'Continuer mon apprentissage',
+      description: currentLesson ? `Reprendre "${currentLesson.title}"` : 'Commencer un cours',
+      icon: 'Play',
+      color: 'bg-primary',
+      hoverColor: 'hover:bg-primary-700',
+      link: currentLesson ? `/lesson-viewer/${currentLesson.id}` : '/programmes',
+    },
+    {
+      id: 'explore',
+      title: 'Explorer les programmes',
+      description: 'Découvrir de nouveaux cours',
+      icon: 'BookOpen',
+      color: 'bg-accent',
+      hoverColor: 'hover:bg-accent-700',
+      link: '/programmes',
+    },
+  ];
 
   return (
     <ErrorBoundary>
@@ -206,7 +191,7 @@ const UserDashboard = () => {
             </div>
             <div className='lg:col-span-1 space-y-6'>
               <AchievementCarousel achievements={achievements} />
-              <QuickActions actions={[]} />
+              <QuickActions actions={quickActions} />
             </div>
           </div>
         </main>

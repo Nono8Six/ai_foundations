@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import Icon from '../../components/AppIcon';
 import Image from '../../components/AppImage';
 import PersonalInfoTab from './components/PersonalInfoTab';
@@ -8,51 +9,34 @@ import SettingsTab from './components/SettingsTab';
 
 const UserProfileManagement = () => {
   const [activeTab, setActiveTab] = useState('personal');
+  const { user, userProfile, logout } = useAuth();
 
-  // Mock user data
+  // Use real user data instead of mock data
   const userData = {
-    id: 1,
-    name: 'Marie Dubois',
-    email: 'marie.dubois@email.com',
-    phone: '+33 6 12 34 56 78',
-    profession: 'Comptable',
-    company: 'Cabinet Expertise Comptable',
-    avatar:
-      'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face',
-    joinDate: '2024-01-15',
-    level: 12,
-    xp: 2450,
-    nextLevelXp: 2800,
-    streak: 15,
-    totalLearningTime: 45.5,
-    coursesCompleted: 8,
-    certificatesEarned: 3,
-    achievements: [
-      {
-        id: 1,
-        name: 'Premier Pas',
-        description: 'Complétez votre première leçon',
-        icon: 'Trophy',
-        unlockedDate: '2024-01-16',
-        category: 'Débutant',
-      },
-      {
-        id: 2,
-        name: 'Série de 7',
-        description: 'Maintenez une série de 7 jours',
-        icon: 'Flame',
-        unlockedDate: '2024-01-23',
-        category: 'Constance',
-      },
-      {
-        id: 3,
-        name: 'Expert IA',
-        description: "Complétez le module avancé d\'IA",
-        icon: 'Brain',
-        unlockedDate: '2024-02-10',
-        category: 'Expertise',
-      },
-    ],
+    id: user?.id || '',
+    name: userProfile?.full_name || user?.user_metadata?.full_name || user?.email || 'Utilisateur',
+    email: user?.email || '',
+    phone: '', // This would need to be added to the profiles table if needed
+    profession: '', // This would need to be added to the profiles table if needed
+    company: '', // This would need to be added to the profiles table if needed
+    avatar: userProfile?.avatar_url || user?.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(userProfile?.full_name || user?.email || 'User')}&background=1e40af&color=fff`,
+    joinDate: user?.created_at || new Date().toISOString(),
+    level: userProfile?.level || 1,
+    xp: userProfile?.xp || 0,
+    nextLevelXp: Math.floor(100 * Math.pow((userProfile?.level || 1), 1.5)),
+    streak: userProfile?.current_streak || 0,
+    totalLearningTime: 0, // This would need to be calculated from user progress
+    coursesCompleted: 0, // This would need to be calculated from user progress
+    certificatesEarned: 0, // This would need to be calculated from achievements
+    achievements: [], // This would come from the achievements table
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Erreur lors de la déconnexion:', error);
+    }
   };
 
   const tabs = [
@@ -112,6 +96,13 @@ const UserProfileManagement = () => {
 
             {/* User Menu */}
             <div className='flex items-center space-x-4'>
+              <button
+                onClick={handleLogout}
+                className='flex items-center space-x-2 px-3 py-2 text-text-secondary hover:text-primary transition-colors'
+              >
+                <Icon name='LogOut' size={16} />
+                <span className='hidden sm:inline'>Déconnexion</span>
+              </button>
               <div className='w-8 h-8 rounded-full overflow-hidden'>
                 <Image
                   src={userData.avatar}
@@ -161,7 +152,7 @@ const UserProfileManagement = () => {
                   </button>
                 </div>
                 <h2 className='text-xl font-semibold text-text-primary mb-1'>{userData.name}</h2>
-                <p className='text-text-secondary text-sm'>{userData.profession}</p>
+                <p className='text-text-secondary text-sm'>{userData.email}</p>
               </div>
 
               {/* Level Progress */}

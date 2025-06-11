@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useAuth } from '../../../context/AuthContext';
 import Icon from '../../../components/AppIcon';
 import Image from '../../../components/AppImage';
 
 const PersonalInfoTab = ({ userData }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState(userData.avatar);
+  const { updateProfile } = useAuth();
 
   const {
     register,
@@ -16,17 +18,32 @@ const PersonalInfoTab = ({ userData }) => {
     defaultValues: {
       name: userData.name,
       email: userData.email,
-      phone: userData.phone,
-      profession: userData.profession,
-      company: userData.company,
+      phone: userData.phone || '',
+      profession: userData.profession || '',
+      company: userData.company || '',
     },
   });
 
   const onSubmit = async data => {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    console.log('Profile updated:', data);
-    setIsEditing(false);
+    try {
+      setIsSubmitting(true);
+      
+      // Prepare the update data
+      const updates = {
+        full_name: data.name,
+        // We don't update email here as it's managed by auth
+        // Add other fields if they're added to the profiles table
+      };
+      
+      // Update the profile in Supabase
+      await updateProfile(updates);
+      
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Error updating profile:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleAvatarChange = event => {
@@ -94,10 +111,10 @@ const PersonalInfoTab = ({ userData }) => {
             </div>
             <div>
               <p className='text-sm text-text-primary font-medium mb-1'>
-                Choisissez une nouvelle photo de profil
+                {isEditing ? 'Choisissez une nouvelle photo de profil' : 'Votre photo de profil'}
               </p>
               <p className='text-xs text-text-secondary'>
-                JPG, PNG ou GIF. Taille maximale de 2MB.
+                {isEditing ? 'JPG, PNG ou GIF. Taille maximale de 2MB.' : 'Utilisée pour personnaliser votre expérience'}
               </p>
             </div>
           </div>
@@ -140,12 +157,8 @@ const PersonalInfoTab = ({ userData }) => {
                   message: 'Adresse e-mail invalide',
                 },
               })}
-              disabled={!isEditing}
-              className={`w-full px-3 py-2 border rounded-lg text-sm transition-colors ${
-                isEditing
-                  ? 'border-border focus:border-primary focus:ring-1 focus:ring-primary bg-surface'
-                  : 'border-transparent bg-secondary-50 text-text-secondary'
-              } ${errors.email ? 'border-error' : ''}`}
+              disabled={true} // Email is always disabled as it's managed by auth
+              className='w-full px-3 py-2 border border-transparent bg-secondary-50 text-text-secondary rounded-lg text-sm'
             />
             {errors.email && <p className='mt-1 text-xs text-error'>{errors.email.message}</p>}
           </div>
