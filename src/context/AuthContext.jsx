@@ -59,50 +59,22 @@ export const AuthProvider = ({ children }) => {
   // Fetch user profile data
   const fetchUserProfile = async userId => {
     try {
-      const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).single();
+      const { data, error } = await supabase.from('profiles').select('*').eq('id', userId);
 
-      if (error) {
-        // If profile doesn't exist, create one
-        if (error.code === 'PGRST116') {
-          console.log('Profile not found, creating new profile...');
-          await createUserProfile(userId);
-          return;
-        }
-        throw error;
+      if (error) throw error;
+      
+      // Handle case where no profile exists yet
+      if (!data || data.length === 0) {
+        console.log('No profile found for user, it will be created automatically');
+        setUserProfile(null);
+        return;
       }
-      setUserProfile(data);
+      
+      // Use the first profile if multiple exist (shouldn't happen due to unique constraint)
+      setUserProfile(data[0]);
     } catch (error) {
       console.error('Error fetching user profile:', error.message);
       setError(error);
-    }
-  };
-
-  // Create user profile
-  const createUserProfile = async (userId, additionalData = {}) => {
-    try {
-      const { data: userData } = await supabase.auth.getUser();
-      const user = userData?.user;
-      
-      const profileData = {
-        id: userId,
-        email: user?.email || '',
-        full_name: user?.user_metadata?.full_name || additionalData.full_name || '',
-        level: 1,
-        xp: 0,
-        current_streak: 0,
-        is_admin: false,
-        ...additionalData
-      };
-
-      const { data, error } = await supabase.from('profiles').insert([profileData]).select().single();
-
-      if (error) throw error;
-      setUserProfile(data);
-      return data;
-    } catch (error) {
-      console.error('Error creating user profile:', error.message);
-      setError(error);
-      throw error;
     }
   };
 
@@ -120,25 +92,6 @@ export const AuthProvider = ({ children }) => {
       });
 
       if (error) throw error;
-
-      // Create profile for the new user
-      if (data.user && !data.user.identities?.length === 0) {
-        // User already exists, don't create duplicate profile
-        return data;
-      }
-
-      if (data.user) {
-        try {
-          await createUserProfile(data.user.id, {
-            full_name: `${firstName} ${lastName}`,
-            email: email
-          });
-        } catch (profileError) {
-          console.error('Error creating profile after signup:', profileError);
-          // Don't throw here as the user was created successfully
-        }
-      }
-
       return data;
     } catch (error) {
       console.error('Error signing up:', error.message);
