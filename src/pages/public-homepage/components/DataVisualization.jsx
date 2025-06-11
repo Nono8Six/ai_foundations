@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+import { colors, theme } from '../../../utils/theme';
 import { motion } from 'framer-motion';
 import {
   BarChart,
@@ -35,11 +36,14 @@ const DataVisualization = () => {
     { month: 'Jun', users: 5200, completion: 88 },
   ];
 
-  const skillDistributionData = [
-    { name: 'Débutant', value: 45, color: '#3b82f6' },
-    { name: 'Intermédiaire', value: 35, color: '#059669' },
-    { name: 'Avancé', value: 20, color: '#f59e0b' },
-  ];
+  const skillDistributionData = useMemo(
+    () => [
+      { name: 'Débutant', value: 45, color: colors['primary-500'] },
+      { name: 'Intermédiaire', value: 35, color: colors['accent-600'] },
+      { name: 'Avancé', value: 20, color: colors['warning-500'] },
+    ],
+    []
+  );
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -100,26 +104,26 @@ const DataVisualization = () => {
             <div className='h-80'>
               <ResponsiveContainer width='100%' height='100%'>
                 <BarChart data={industryImpactData}>
-                  <CartesianGrid strokeDasharray='3 3' stroke='#e2e8f0' />
-                  <XAxis dataKey='industry' tick={{ fontSize: 12 }} stroke='#64748b' />
-                  <YAxis tick={{ fontSize: 12 }} stroke='#64748b' />
+                  <CartesianGrid strokeDasharray='3 3' stroke={colors.border} />
+                  <XAxis dataKey='industry' tick={{ fontSize: 12 }} stroke={colors.secondary} />
+                  <YAxis tick={{ fontSize: 12 }} stroke={colors.secondary} />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: '#ffffff',
-                      border: '1px solid #e2e8f0',
-                      borderRadius: '8px',
-                      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                      backgroundColor: colors.surface,
+                      border: `1px solid ${colors.border}`,
+                      borderRadius: '0.5rem',
+                      boxShadow: theme.boxShadow.medium,
                     }}
                   />
                   <Bar
                     dataKey='productivity'
-                    fill='#3b82f6'
+                    fill={colors['primary-500']}
                     name='Productivité %'
                     radius={[4, 4, 0, 0]}
                   />
                   <Bar
                     dataKey='automation'
-                    fill='#059669'
+                    fill={colors['accent-600']}
                     name='Automatisation %'
                     radius={[4, 4, 0, 0]}
                   />
@@ -142,31 +146,31 @@ const DataVisualization = () => {
             <div className='h-80'>
               <ResponsiveContainer width='100%' height='100%'>
                 <LineChart data={adoptionTrendData}>
-                  <CartesianGrid strokeDasharray='3 3' stroke='#e2e8f0' />
-                  <XAxis dataKey='month' tick={{ fontSize: 12 }} stroke='#64748b' />
-                  <YAxis tick={{ fontSize: 12 }} stroke='#64748b' />
+                  <CartesianGrid strokeDasharray='3 3' stroke={colors.border} />
+                  <XAxis dataKey='month' tick={{ fontSize: 12 }} stroke={colors.secondary} />
+                  <YAxis tick={{ fontSize: 12 }} stroke={colors.secondary} />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: '#ffffff',
-                      border: '1px solid #e2e8f0',
-                      borderRadius: '8px',
-                      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                      backgroundColor: colors.surface,
+                      border: `1px solid ${colors.border}`,
+                      borderRadius: '0.5rem',
+                      boxShadow: theme.boxShadow.medium,
                     }}
                   />
                   <Line
                     type='monotone'
                     dataKey='users'
-                    stroke='#3b82f6'
+                    stroke={colors['primary-500']}
                     strokeWidth={3}
-                    dot={{ fill: '#3b82f6', strokeWidth: 2, r: 6 }}
+                    dot={{ fill: colors['primary-500'], strokeWidth: 2, r: 6 }}
                     name='Utilisateurs'
                   />
                   <Line
                     type='monotone'
                     dataKey='completion'
-                    stroke='#059669'
+                    stroke={colors['accent-600']}
                     strokeWidth={3}
-                    dot={{ fill: '#059669', strokeWidth: 2, r: 6 }}
+                    dot={{ fill: colors['accent-600'], strokeWidth: 2, r: 6 }}
                     name='Taux de completion %'
                   />
                 </LineChart>

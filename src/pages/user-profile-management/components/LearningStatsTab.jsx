@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
+import { colors } from '../../../utils/theme';
 import {
   BarChart,
   Bar,
@@ -108,11 +109,18 @@ const LearningStatsTab = ({ userData }) => {
       subjects[category] += 1;
     });
 
-    const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
+        const chartColors = [
+      colors['primary-500'],
+      colors['accent-500'],
+      colors['warning-500'],
+      colors['error-500'],
+      colors['primary-700'],
+      colors['secondary-500'],
+    ];
     return Object.entries(subjects).map(([name, value], index) => ({
       name,
       value,
-      color: colors[index % colors.length],
+      fill: chartColors[index % chartColors.length],
     }));
   };
 
@@ -196,18 +204,18 @@ const LearningStatsTab = ({ userData }) => {
               <div className='h-64'>
                 <ResponsiveContainer width='100%' height='100%'>
                   <BarChart data={weeklyData}>
-                    <CartesianGrid strokeDasharray='3 3' stroke='#e2e8f0' />
-                    <XAxis dataKey='day' stroke='#64748b' fontSize={12} />
-                    <YAxis stroke='#64748b' fontSize={12} />
+                    <CartesianGrid strokeDasharray='3 3' stroke={colors.border} />
+                    <XAxis dataKey='day' stroke={colors.secondary} fontSize={12} />
+                    <YAxis stroke={colors.secondary} fontSize={12} />
                     <Tooltip
                       contentStyle={{
-                        backgroundColor: '#ffffff',
-                        border: '1px solid #e2e8f0',
+                        backgroundColor: colors.surface,
+                        border: `1px solid ${colors.border}`,
                         borderRadius: '8px',
                         fontSize: '12px',
                       }}
                     />
-                    <Bar dataKey='minutes' fill='#3b82f6' radius={[4, 4, 0, 0]} />
+                    <Bar dataKey='minutes' fill={colors['primary-500']} radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -229,13 +237,13 @@ const LearningStatsTab = ({ userData }) => {
               <div className='h-64'>
                 <ResponsiveContainer width='100%' height='100%'>
                   <LineChart data={weeklyData}>
-                    <CartesianGrid strokeDasharray='3 3' stroke='#e2e8f0' />
-                    <XAxis dataKey='day' stroke='#64748b' fontSize={12} />
-                    <YAxis stroke='#64748b' fontSize={12} />
+                    <CartesianGrid strokeDasharray='3 3' stroke={colors.border} />
+                    <XAxis dataKey='day' stroke={colors.secondary} fontSize={12} />
+                    <YAxis stroke={colors.secondary} fontSize={12} />
                     <Tooltip
                       contentStyle={{
-                        backgroundColor: '#ffffff',
-                        border: '1px solid #e2e8f0',
+                        backgroundColor: colors.surface,
+                        border: `1px solid ${colors.border}`,
                         borderRadius: '8px',
                         fontSize: '12px',
                       }}
@@ -243,9 +251,9 @@ const LearningStatsTab = ({ userData }) => {
                     <Line
                       type='monotone'
                       dataKey='xp'
-                      stroke='#10b981'
+                      stroke={colors.accent}
                       strokeWidth={3}
-                      dot={{ fill: '#10b981', strokeWidth: 2, r: 4 }}
+                      dot={{ fill: colors.accent, strokeWidth: 2, r: 4 }}
                     />
                   </LineChart>
                 </ResponsiveContainer>
@@ -281,13 +289,13 @@ const LearningStatsTab = ({ userData }) => {
                         dataKey='value'
                       >
                         {subjectData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
+                          <Cell key={`cell-${index}`} fill={entry.fill} />
                         ))}
                       </Pie>
                       <Tooltip
                         contentStyle={{
-                          backgroundColor: '#ffffff',
-                          border: '1px solid #e2e8f0',
+                          backgroundColor: colors.surface,
+                          border: `1px solid ${colors.border}`,
                           borderRadius: '8px',
                           fontSize: '12px',
                         }}
@@ -300,7 +308,7 @@ const LearningStatsTab = ({ userData }) => {
                     <div key={index} className='flex items-center space-x-2'>
                       <div
                         className='w-3 h-3 rounded-full'
-                        style={{ backgroundColor: subject.color }}
+                        style={{ backgroundColor: subject.fill }}
                       ></div>
                       <span className='text-xs text-text-secondary'>{subject.name}</span>
                     </div>

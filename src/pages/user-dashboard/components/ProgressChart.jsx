@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
+import { colors } from '../../../utils/theme';
 import {
   LineChart,
   Line,
@@ -67,11 +68,11 @@ const ProgressChart = ({ weeklyData = [], monthlyData = [], subjectData = [] }) 
 
     // Subject distribution
     const subjects = [
-      { name: 'IA Générale', value: 35, color: '#3b82f6' },
-      { name: 'Machine Learning', value: 25, color: '#10b981' },
-      { name: 'Deep Learning', value: 20, color: '#f59e0b' },
-      { name: 'NLP', value: 15, color: '#8b5cf6' },
-      { name: 'Computer Vision', value: 5, color: '#ef4444' }
+            { name: 'IA Générale', value: 35, color: colors['primary-500'] },
+            { name: 'Machine Learning', value: 25, color: colors['accent-500'] },
+            { name: 'Deep Learning', value: 20, color: colors['warning-500'] },
+            { name: 'NLP', value: 15, color: colors['primary-700'] },
+            { name: 'Computer Vision', value: 5, color: colors['error-500'] }
     ];
 
     setChartData({
@@ -150,13 +151,13 @@ const ProgressChart = ({ weeklyData = [], monthlyData = [], subjectData = [] }) 
       <div className='w-full h-60'>
         <ResponsiveContainer width='100%' height='100%'>
           <LineChart data={getCurrentData()} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
-            <CartesianGrid strokeDasharray='3 3' stroke='#e5e7eb' />
-            <XAxis dataKey={getXAxisKey()} tick={{ fill: '#6b7280', fontSize: 12 }} />
-            <YAxis tick={{ fill: '#6b7280', fontSize: 12 }} />
+            <CartesianGrid strokeDasharray='3 3' stroke={colors.border} />
+            <XAxis dataKey={getXAxisKey()} tick={{ fill: colors.secondary, fontSize: 12 }} />
+            <YAxis tick={{ fill: colors.secondary, fontSize: 12 }} />
             <Tooltip content={<CustomTooltip />} />
-            <Line type='monotone' dataKey='hours' stroke='#3b82f6' strokeWidth={2} dot={false} />
-            <Line type='monotone' dataKey='lessons' stroke='#10b981' strokeWidth={2} dot={false} />
-            <Line type='monotone' dataKey='xp' stroke='#f59e0b' strokeWidth={2} dot={false} />
+            <Line type='monotone' dataKey='hours' stroke={colors['primary-500']} strokeWidth={2} dot={false} />
+            <Line type='monotone' dataKey='lessons' stroke={colors['accent-500']} strokeWidth={2} dot={false} />
+            <Line type='monotone' dataKey='xp' stroke={colors['warning-500']} strokeWidth={2} dot={false} />
           </LineChart>
         </ResponsiveContainer>
       </div>
