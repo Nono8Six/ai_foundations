@@ -9,13 +9,13 @@ import { useAuth } from '@/context/AuthContext';
 // --- Lazy Loading des pages ---
 const PublicHomepage = lazy(() => import('@/pages/public-homepage/index.jsx'));
 const ProgramOverview = lazy(() => import('@/pages/program-overview/index.jsx'));
-const AuthenticationLoginRegister = lazy(() => import('@/pages/authentication-login-register/index.jsx'));
+const AuthenticationLoginRegister = lazy(() => import('@/pages/auth/index.jsx'));
 const UserDashboard = lazy(() => import('@/pages/user-dashboard/index.jsx'));
 const UserProfileManagement = lazy(() => import('@/pages/user-profile-management/index.jsx'));
 const LessonViewer = lazy(() => import('@/pages/lesson-viewer/index.jsx'));
 const AdminDashboard = lazy(() => import('@/pages/admin-dashboard/index.jsx'));
 const UserManagementAdmin = lazy(() => import('@/pages/user-management-admin/index.jsx'));
-const ContentManagementCoursesModulesLessons = lazy(() => import('@/pages/content-management-courses-modules-lessons/index.jsx'));
+const ContentManagementCoursesModulesLessons = lazy(() => import('@/pages/cms/index.jsx'));
 const NotFound = lazy(() => import('@/pages/NotFound.jsx'));
 
 // --- Composant de chargement ---
