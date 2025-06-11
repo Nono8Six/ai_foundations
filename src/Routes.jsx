@@ -1,6 +1,6 @@
 // src/Routes.jsx
 import React, { Suspense, lazy } from 'react';
-import { BrowserRouter, Routes as RouterRoutes, Route, Navigate } from 'react-router-dom';
+import { Routes as RouterRoutes, Route, Navigate } from 'react-router-dom';
 import ScrollToTop from '@/components/ScrollToTop';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { useAuth } from '@/context/AuthContext';
@@ -53,36 +53,34 @@ const ProtectedRoute = ({ children, requireAdmin = false }) => {
 // Le nom du composant est changé en 'AppRoutes' pour éviter toute confusion avec le composant <Routes> de react-router-dom.
 const AppRoutes = () => {
   return (
-    <BrowserRouter>
-      <ErrorBoundary>
-        <ScrollToTop />
-        <Suspense fallback={<PageLoader />}>
-          <RouterRoutes>
-            {/* Routes Publiques */}
-            <Route path='/' element={<PublicHomepage />} />
-            <Route path='/public-homepage' element={<PublicHomepage />} />
-            <Route path='/program-overview' element={<ProgramOverview />} />
-            <Route path='/login' element={<AuthenticationLoginRegister />} />
-            <Route path='/register' element={<AuthenticationLoginRegister />} />
+    <ErrorBoundary>
+      <ScrollToTop />
+      <Suspense fallback={<PageLoader />}>
+        <RouterRoutes>
+          {/* Routes Publiques */}
+          <Route path='/' element={<PublicHomepage />} />
+          <Route path='/public-homepage' element={<PublicHomepage />} />
+          <Route path='/program-overview' element={<ProgramOverview />} />
+          <Route path='/login' element={<AuthenticationLoginRegister />} />
+          <Route path='/register' element={<AuthenticationLoginRegister />} />
 
-            {/* Routes Protégées pour les Utilisateurs */}
-            <Route path='/user-dashboard' element={<ProtectedRoute><UserDashboard /></ProtectedRoute>} />
-            <Route path='/user-profile-management' element={<ProtectedRoute><UserProfileManagement /></ProtectedRoute>} />
-            <Route path='/lesson-viewer' element={<ProtectedRoute><LessonViewer /></ProtectedRoute>} />
-            <Route path='/lesson-viewer/:lessonId' element={<ProtectedRoute><LessonViewer /></ProtectedRoute>} />
+          {/* Routes Protégées pour les Utilisateurs */}
+          <Route path='/user-dashboard' element={<ProtectedRoute><UserDashboard /></ProtectedRoute>} />
+          <Route path='/user-profile-management' element={<ProtectedRoute><UserProfileManagement /></ProtectedRoute>} />
+          <Route path='/lesson-viewer' element={<ProtectedRoute><LessonViewer /></ProtectedRoute>} />
+          <Route path='/lesson-viewer/:lessonId' element={<ProtectedRoute><LessonViewer /></ProtectedRoute>} />
 
-            {/* Routes Protégées pour les Administrateurs */}
-            <Route path='/admin-dashboard' element={<ProtectedRoute requireAdmin={true}><AdminDashboard /></ProtectedRoute>} />
-            <Route path='/user-management-admin' element={<ProtectedRoute requireAdmin={true}><UserManagementAdmin /></ProtectedRoute>} />
-            {/* CORRECTION : Le chemin de la route est changé pour être plus cohérent. */}
-            <Route path='/content-management' element={<ProtectedRoute requireAdmin={true}><ContentManagementCoursesModulesLessons /></ProtectedRoute>} /> 
+          {/* Routes Protégées pour les Administrateurs */}
+          <Route path='/admin-dashboard' element={<ProtectedRoute requireAdmin={true}><AdminDashboard /></ProtectedRoute>} />
+          <Route path='/user-management-admin' element={<ProtectedRoute requireAdmin={true}><UserManagementAdmin /></ProtectedRoute>} />
+          {/* CORRECTION : Le chemin de la route est changé pour être plus cohérent. */}
+          <Route path='/content-management' element={<ProtectedRoute requireAdmin={true}><ContentManagementCoursesModulesLessons /></ProtectedRoute>} /> 
 
-            {/* Route pour page non trouvée */}
-            <Route path='*' element={<NotFound />} />
-          </RouterRoutes>
-        </Suspense>
-      </ErrorBoundary>
-    </BrowserRouter>
+          {/* Route pour page non trouvée */}
+          <Route path='*' element={<NotFound />} />
+        </RouterRoutes>
+      </Suspense>
+    </ErrorBoundary>
   );
 };
 
