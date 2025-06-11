@@ -30,7 +30,8 @@ const QuickActions = ({ actions = [], onAction }) => {
             <Icon
               name='ArrowRight'
               size={16}
-              className='text-white opacity-70 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200'
+              color="white"
+              className='opacity-70 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200'
             />
           </div>
         </Link>
@@ -54,7 +55,8 @@ const QuickActions = ({ actions = [], onAction }) => {
           <Icon
             name='ArrowRight'
             size={16}
-            className='text-white opacity-70 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200'
+            color="white"
+            className='opacity-70 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200'
           />
         </div>
       </button>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../../../context/AuthContext';
 import { supabase } from '../../../lib/supabase';
+import useUserSettings from '../../../hooks/useUserSettings';
 import Icon from '../../../components/AppIcon';
 
 const SettingsTab = ({ userData }) => {
@@ -9,8 +10,16 @@ const SettingsTab = ({ userData }) => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   
-  // Settings state - these would ideally be stored in a user_settings table
-  const [notificationSettings, setNotificationSettings] = useState({
+  const {
+    settings,
+    updateNotificationSettings,
+    updatePrivacySettings,
+    updateLearningPreferences,
+    loading,
+    error
+  } = useUserSettings();
+  
+  const [notificationSettings, setNotificationSettings] = useState(settings.notification_settings || {
     emailNotifications: true,
     pushNotifications: false,
     weeklyReport: true,
@@ -18,14 +27,14 @@ const SettingsTab = ({ userData }) => {
     reminderNotifications: true,
   });
 
-  const [privacySettings, setPrivacySettings] = useState({
+  const [privacySettings, setPrivacySettings] = useState(settings.privacy_settings || {
     profileVisibility: 'private',
     showProgress: false,
     showAchievements: true,
     allowMessages: false,
   });
 
-  const [learningPreferences, setLearningPreferences] = useState({
+  const [learningPreferences, setLearningPreferences] = useState(settings.learning_preferences || {
     dailyGoal: 30,
     preferredDuration: 'medium',
     difficultyProgression: 'adaptive',
@@ -33,59 +42,20 @@ const SettingsTab = ({ userData }) => {
     autoplay: true,
   });
 
-  // Load settings from Supabase on component mount
+  // Update local state when settings are loaded
   useEffect(() => {
-    loadUserSettings();
-  }, [user]);
-
-  const loadUserSettings = async () => {
-    if (!user) return;
-
-    try {
-      // Try to load settings from a user_settings table
-      // For now, we'll use localStorage as a fallback
-      const savedSettings = localStorage.getItem(`user_settings_${user.id}`);
-      if (savedSettings) {
-        const settings = JSON.parse(savedSettings);
-        setNotificationSettings(settings.notifications || notificationSettings);
-        setPrivacySettings(settings.privacy || privacySettings);
-        setLearningPreferences(settings.learning || learningPreferences);
+    if (!loading && settings) {
+      if (settings.notification_settings) {
+        setNotificationSettings(settings.notification_settings);
       }
-    } catch (error) {
-      console.error('Error loading user settings:', error);
+      if (settings.privacy_settings) {
+        setPrivacySettings(settings.privacy_settings);
+      }
+      if (settings.learning_preferences) {
+        setLearningPreferences(settings.learning_preferences);
+      }
     }
-  };
-
-  const saveUserSettings = async () => {
-    if (!user) return;
-
-    setIsSaving(true);
-    try {
-      const settings = {
-        notifications: notificationSettings,
-        privacy: privacySettings,
-        learning: learningPreferences,
-        updatedAt: new Date().toISOString(),
-      };
-
-      // Save to localStorage for now
-      // In a real app, you'd save this to a user_settings table in Supabase
-      localStorage.setItem(`user_settings_${user.id}`, JSON.stringify(settings));
-
-      // You could also save some preferences to the profiles table
-      await updateProfile({
-        // Add any profile-level preferences here
-      });
-
-      console.log('✅ Settings saved successfully');
-      alert('Paramètres sauvegardés avec succès !');
-    } catch (error) {
-      console.error('❌ Error saving settings:', error);
-      alert('Erreur lors de la sauvegarde des paramètres');
-    } finally {
-      setIsSaving(false);
-    }
-  };
+  }, [loading, settings]);
 
   const {
     register,
@@ -98,24 +68,51 @@ const SettingsTab = ({ userData }) => {
   };
 
   const handleNotificationChange = setting => {
-    setNotificationSettings(prev => ({
-      ...prev,
-      [setting]: !prev[setting],
-    }));
+    const newSettings = {
+      ...notificationSettings,
+      [setting]: !notificationSettings[setting],
+    };
+    setNotificationSettings(newSettings);
   };
 
   const handlePrivacyChange = (setting, value) => {
-    setPrivacySettings(prev => ({
-      ...prev,
+    const newSettings = {
+      ...privacySettings,
       [setting]: value,
-    }));
+    };
+    setPrivacySettings(newSettings);
   };
 
   const handleLearningPreferenceChange = (setting, value) => {
-    setLearningPreferences(prev => ({
-      ...prev,
+    const newSettings = {
+      ...learningPreferences,
       [setting]: value,
-    }));
+    };
+    setLearningPreferences(newSettings);
+  };
+
+  const saveUserSettings = async () => {
+    if (!user) return;
+
+    setIsSaving(true);
+    try {
+      // Save notification settings
+      await updateNotificationSettings(notificationSettings);
+      
+      // Save privacy settings
+      await updatePrivacySettings(privacySettings);
+      
+      // Save learning preferences
+      await updateLearningPreferences(learningPreferences);
+      
+      console.log('✅ Settings saved successfully');
+      alert('Paramètres sauvegardés avec succès !');
+    } catch (error) {
+      console.error('❌ Error saving settings:', error);
+      alert('Erreur lors de la sauvegarde des paramètres');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleDeleteAccount = async () => {
@@ -149,14 +146,20 @@ const SettingsTab = ({ userData }) => {
         .select('*')
         .eq('user_id', user.id);
 
+      const { data: userSettings } = await supabase
+        .from('user_settings')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
       const userData = {
         profile,
         progress,
         achievements,
-        settings: {
-          notifications: notificationSettings,
-          privacy: privacySettings,
-          learning: learningPreferences,
+        settings: userSettings || {
+          notification_settings: notificationSettings,
+          privacy_settings: privacySettings,
+          learning_preferences: learningPreferences,
         },
         exportDate: new Date().toISOString(),
       };
