@@ -141,12 +141,16 @@ export const AuthProvider = ({ children }) => {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/user-dashboard`,
+          redirectTo: `${window.location.origin}/espace`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          }
         },
       });
 
       if (error) throw error;
-      console.log('✅ Google sign in initiated');
+      console.log('✅ Google sign in initiated', data);
       return data;
     } catch (error) {
       console.error('❌ Error signing in with Google:', error.message);

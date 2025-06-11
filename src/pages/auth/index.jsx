@@ -27,7 +27,7 @@ const AuthenticationLoginRegister = () => {
   // Redirect if user is already logged in
   useEffect(() => {
     if (user) {
-      navigate('/user-dashboard');
+      navigate('/espace');
     }
   }, [user, navigate]);
 
@@ -41,25 +41,13 @@ const AuthenticationLoginRegister = () => {
       if (userData.role === 'admin') {
         navigate('/admin-dashboard');
       } else {
-        navigate('/user-dashboard');
+        navigate('/espace');
       }
     }, 1000);
   };
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-primary-50 via-background to-accent-50'>
-      {/* Header with Logo */}
-      <header className='absolute top-0 right-0 p-6'>
-        <Link to='/' className='flex items-center space-x-2 group'>
-          <div className='w-12 h-12 bg-gradient-to-br from-primary to-primary-700 rounded-full flex items-center justify-center transition-transform duration-200 group-hover:scale-105 shadow-medium'>
-            <Icon name='GraduationCap' size={28} color='white' />
-          </div>
-          <span className='text-xl font-semibold text-text-primary group-hover:text-primary transition-colors duration-200'>
-            AI Foundations
-          </span>
-        </Link>
-      </header>
-
+    <div className='min-h-screen bg-gradient-to-br from-primary-50 via-background to-accent-50 pt-16'>
       {/* Main Content */}
       <div className='flex items-center justify-center min-h-screen px-4 py-12'>
         <div className='w-full max-w-md'>
@@ -109,7 +97,7 @@ const AuthenticationLoginRegister = () => {
             {/* Form Content */}
             <div className='p-6'>
               {/* Google Auth Button */}
-              <GoogleAuthButton isLoading={isLoading} disabled={isLoading} />
+              <GoogleAuthButton isLoading={isLoading} setIsLoading={setIsLoading} disabled={isLoading} />
 
               {/* Divider */}
               <div className='relative my-6'>
