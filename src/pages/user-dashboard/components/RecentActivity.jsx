@@ -106,6 +106,13 @@ const RecentActivity = ({ activities = [] }) => {
             </div>
           </div>
         );
+      case 'placeholder':
+        return (
+          <div className='flex-1'>
+            <h4 className='font-medium text-text-primary'>{activity.title}</h4>
+            <p className='text-sm text-text-secondary'>{activity.description}</p>
+          </div>
+        );
       default:
         return (
           <div className='flex-1'>
