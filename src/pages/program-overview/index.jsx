@@ -2,15 +2,12 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Icon from '../../components/AppIcon';
-
 import { fetchCourses } from '../../services/courseService';
-
 import CourseCard from './components/CourseCard';
 import FilterSidebar from './components/FilterSidebar';
 import CoursePathway from './components/CoursePathway';
 
 const ProgramOverview = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('popularity');
@@ -21,10 +18,9 @@ const ProgramOverview = () => {
     status: [],
   });
   const [showFilters, setShowFilters] = useState(false);
-  const [viewMode, setViewMode] = useState('grid'); // grid or pathway
+  const [viewMode, setViewMode] = useState('grid');
   const [loading, setLoading] = useState(true);
   const [courses, setCourses] = useState([]);
-
   const [page, setPage] = useState(1);
   const [totalCourses, setTotalCourses] = useState(0);
   const pageSize = 12;
@@ -62,55 +58,48 @@ const ProgramOverview = () => {
       id: course.id,
       title: course.title,
       description: course.description || '',
-      difficulty: 'Débutant', // Default value, could be stored in course data
-      duration: '4 semaines', // Default value, could be stored in course data
-      estimatedHours: 20, // Default value, could be stored in course data
-      category: 'Fondamentaux', // Default value, could be stored in course data
-      instructor: 'Dr. Marie Dubois', // Default value, could be stored in course data
-      rating: 4.8, // Default value, could be stored in course data
-      enrolledStudents: 500, // Default value, could be stored in course data
+      difficulty: 'Débutant',
+      duration: '4 semaines',
+      estimatedHours: 20,
+      category: 'Fondamentaux',
+      instructor: 'Dr. Marie Dubois',
+      rating: 4.8,
+      enrolledStudents: 500,
       prerequisites: [],
-      modules: 8, // Default value, could be calculated from actual modules
-      lessons: 32, // Default value, could be calculated from actual lessons
-      xpReward: 500, // Default value, could be stored in course data
+      modules: 8,
+      lessons: 32,
+      xpReward: 500,
       achievements: ['Premier Pas IA', 'Explorateur'],
-      image:
-        course.cover_image_url ||
-        'https://images.pexels.com/photos/373543/pexels-photo-373543.jpeg?w=400&h=250&fit=crop',
-      isEnrolled: false, // Default value, could be calculated from user enrollment
-      progress: 0, // Default value, could be calculated from user progress
-      isFree: true, // Default value, could be stored in course data
-      previewLessons: 3, // Default value, could be stored in course data
-      tags: ['Machine Learning', 'Algorithmes', 'Histoire IA'], // Default values, could be stored in course data
+      image: course.cover_image_url || 'https://images.pexels.com/photos/373543/pexels-photo-373543.jpeg?w=400&h=250&fit=crop',
+      isEnrolled: false,
+      progress: 0,
+      isFree: true,
+      previewLessons: 3,
+      tags: ['Machine Learning', 'Algorithmes', 'Histoire IA'],
     }));
   }, [courses]);
 
-
   const handleFilterChange = newFilters => {
     setFilters(newFilters);
+    setPage(1); // Reset to first page when filters change
   };
 
   return (
     <div className='min-h-screen bg-background'>
-      {/* Main Content */}
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-20'>
-        {/* Page Header */}
         <div className='mb-8'>
           <h1 className='text-3xl font-bold text-text-primary mb-4'>
             {user ? 'Catalogue de Formations' : 'Programmes de Formation IA'}
           </h1>
           <p className='text-lg text-text-secondary max-w-3xl'>
-            {user 
+            {user
               ? 'Découvrez nos formations spécialisées et enrichissez vos compétences en IA'
-              : 'Découvrez notre catalogue complet de formations en intelligence artificielle, conçues pour tous les niveaux et adaptées aux besoins professionnels.'
-            }
+              : 'Découvrez notre catalogue complet de formations en intelligence artificielle, conçues pour tous les niveaux et adaptées aux besoins professionnels.'}
           </p>
         </div>
 
-        {/* Search and Controls */}
         <div className='mb-8'>
           <div className='flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4'>
-            {/* Search Bar */}
             <div className='relative flex-1 max-w-md'>
               <Icon
                 name='Search'
@@ -126,16 +115,12 @@ const ProgramOverview = () => {
               />
             </div>
 
-            {/* Controls */}
             <div className='flex items-center gap-4'>
-              {/* View Mode Toggle */}
               <div className='flex items-center bg-secondary-100 rounded-lg p-1'>
                 <button
                   onClick={() => setViewMode('grid')}
                   className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    viewMode === 'grid'
-                      ? 'bg-surface text-primary shadow-sm'
-                      : 'text-text-secondary hover:text-text-primary'
+                    viewMode === 'grid' ? 'bg-surface text-primary shadow-sm' : 'text-text-secondary hover:text-text-primary'
                   }`}
                 >
                   <Icon name='Grid3X3' size={16} />
@@ -143,16 +128,13 @@ const ProgramOverview = () => {
                 <button
                   onClick={() => setViewMode('pathway')}
                   className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    viewMode === 'pathway'
-                      ? 'bg-surface text-primary shadow-sm'
-                      : 'text-text-secondary hover:text-text-primary'
+                    viewMode === 'pathway' ? 'bg-surface text-primary shadow-sm' : 'text-text-secondary hover:text-text-primary'
                   }`}
                 >
                   <Icon name='GitBranch' size={16} />
                 </button>
               </div>
 
-              {/* Sort Dropdown */}
               <select
                 value={sortBy}
                 onChange={e => setSortBy(e.target.value)}
@@ -165,7 +147,6 @@ const ProgramOverview = () => {
                 <option value='rating'>Note</option>
               </select>
 
-              {/* Filter Toggle (Mobile) */}
               <button
                 onClick={() => setShowFilters(!showFilters)}
                 className='lg:hidden px-4 py-2 border border-border rounded-lg flex items-center gap-2'
@@ -177,9 +158,7 @@ const ProgramOverview = () => {
           </div>
         </div>
 
-        {/* Content Layout */}
         <div className='flex flex-col lg:flex-row gap-8'>
-          {/* Sidebar Filters */}
           <div className={`lg:w-80 ${showFilters ? 'block' : 'hidden lg:block'}`}>
             <FilterSidebar
               filters={filters}
@@ -188,9 +167,7 @@ const ProgramOverview = () => {
             />
           </div>
 
-          {/* Main Content Area */}
           <div className='flex-1'>
-            {/* Loading State */}
             {loading ? (
               <div className='text-center py-12'>
                 <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4'></div>
@@ -198,16 +175,13 @@ const ProgramOverview = () => {
               </div>
             ) : (
               <>
-                {/* Results Count */}
                 <div className='mb-6'>
                   <p className='text-text-secondary'>
-                    {formattedCourses.length} cours trouvé
-                    {formattedCourses.length > 1 ? 's' : ''}
+                    {totalCourses} cours trouvé{totalCourses > 1 ? 's' : ''}
                     {searchQuery && ` pour "${searchQuery}"`}
                   </p>
                 </div>
 
-                {/* Course Display */}
                 {formattedCourses.length > 0 ? (
                   viewMode === 'grid' ? (
                     <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6'>
@@ -225,7 +199,7 @@ const ProgramOverview = () => {
                       Aucun cours disponible pour le moment
                     </h3>
                     <p className='text-text-secondary mb-6 max-w-lg mx-auto'>
-                      {searchQuery 
+                      {searchQuery
                         ? 'Aucun cours ne correspond à votre recherche. Essayez de modifier vos critères.'
                         : 'Notre catalogue de formations est en cours de préparation. Revenez bientôt pour découvrir nos cours sur l\'IA.'}
                     </p>
@@ -240,17 +214,8 @@ const ProgramOverview = () => {
                         <Icon name='RefreshCw' size={18} className='mr-2 inline-block' />
                         Réinitialiser les filtres
                       </button>
-                  )}
-                  {!user && !searchQuery && (
-                    <Link
-                      to='/register'
-                      className='px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors inline-flex items-center'
-                    >
-                      <Icon name='UserPlus' size={18} className='mr-2' />
-                      Créer un compte
-                    </Link>
-                  )}
-                </div>
+                    )}
+                  </div>
                 )}
 
                 {totalCourses > pageSize && (

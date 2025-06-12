@@ -15,7 +15,7 @@ const LessonViewer = lazy(() => import('./pages/lesson-viewer/index.jsx'));
 const AdminDashboard = lazy(() => import('./pages/admin-dashboard/index.jsx'));
 const UserManagementAdmin = lazy(() => import('./pages/user-management-admin/index.jsx'));
 const ContentManagementCoursesModulesLessons = lazy(() => import('./pages/cms/index.jsx'));
-const NotFound = lazy(() => import('./pages/NotFound.jsx'));
+const NotFound = lazy(() => import('./pages/not-found/index.jsx'));
 
 // --- Composant de chargement ---
 const PageLoader = () => (
