@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from './AuthContext';
+import { safeQuery } from '../utils/supabaseClient';
 
 const CourseContext = createContext();
 
@@ -17,13 +18,25 @@ export const CourseProvider = ({ children }) => {
 
     try {
       const [coursesResult, lessonsResult, modulesResult, progressResult] = await Promise.all([
-        supabase
-          .from('courses')
-          .select('id, title, cover_image_url, instructor, category, thumbnail_url')
-          .eq('is_published', true),
-        supabase.from('lessons').select('id, module_id, is_published').eq('is_published', true),
-        supabase.from('modules').select('id, course_id'),
-        supabase.from('user_progress').select('lesson_id, status').eq('user_id', userId),
+        safeQuery(() =>
+          supabase
+            .from('courses')
+            .select('id, title, cover_image_url, instructor, category, thumbnail_url')
+            .eq('is_published', true)
+        ),
+        safeQuery(() =>
+          supabase
+            .from('lessons')
+            .select('id, module_id, is_published')
+            .eq('is_published', true)
+        ),
+        safeQuery(() => supabase.from('modules').select('id, course_id')),
+        safeQuery(() =>
+          supabase
+            .from('user_progress')
+            .select('lesson_id, status')
+            .eq('user_id', userId)
+        ),
       ]);
 
       if (coursesResult.error) throw coursesResult.error;

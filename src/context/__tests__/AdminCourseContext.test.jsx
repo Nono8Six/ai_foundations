@@ -24,6 +24,12 @@ vi.mock('../../lib/supabase', () => {
   return { supabase: { from: fromMock } };
 });
 
+var safeQueryMock;
+vi.mock('../../utils/supabaseClient', () => {
+  safeQueryMock = vi.fn(async fn => fn());
+  return { safeQuery: safeQueryMock };
+});
+
 import { AdminCourseProvider, useAdminCourses } from '../AdminCourseContext.jsx';
 
 const wrapper = ({ children }) => <AdminCourseProvider>{children}</AdminCourseProvider>;
@@ -31,6 +37,7 @@ const wrapper = ({ children }) => <AdminCourseProvider>{children}</AdminCoursePr
 describe('AdminCourseContext', () => {
   beforeEach(() => {
     fromMock.mockClear();
+    safeQueryMock.mockClear();
   });
 
   it('creates, updates and deletes courses', async () => {
