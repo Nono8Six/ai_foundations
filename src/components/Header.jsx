@@ -16,27 +16,17 @@ const Header = () => {
   }
 
   const getInitials = () => {
-    try {
-      if (!user) return null;
-      const name = userProfile?.full_name || user.user_metadata?.full_name || '';
-      const [first = '', last = ''] = name.split(' ');
-      return `${first.charAt(0)}${last.charAt(0)}`.toUpperCase();
-    } catch (err) {
-      console.error('Erreur lors de la génération des initiales:', err);
-      return null;
-    }
+    const name =
+      userProfile?.full_name || user?.user_metadata?.full_name || '';
+    const [first, last] = name.split(' ');
+    const initials = `${first?.charAt(0) ?? ''}${last?.charAt(0) ?? ''}`.toUpperCase();
+    return initials || null;
   };
 
   const getFirstName = () => {
-    try {
-      if (!user) return 'Utilisateur';
-      const name = userProfile?.full_name || user.user_metadata?.full_name || '';
-      const [first = 'Utilisateur'] = name.split(' ');
-      return first;
-    } catch (err) {
-      console.error('Erreur lors de la récupération du prénom:', err);
-      return 'Utilisateur';
-    }
+    const name =
+      userProfile?.full_name || user?.user_metadata?.full_name || '';
+    return name.split(' ')[0] ?? 'Utilisateur';
   };
 
   const handleLogout = async () => {
