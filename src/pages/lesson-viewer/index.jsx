@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Icon from '../../components/AppIcon';
+import { supabase } from '../../lib/supabase';
 
 import VideoPlayer from './components/VideoPlayer';
 import TextContent from './components/TextContent';
@@ -21,122 +22,60 @@ const LessonViewer = () => {
   const [userNotes, setUserNotes] = useState([]);
   const [selectedText, setSelectedText] = useState('');
 
-  // Mock data for lesson content
-  const mockLessonData = {
-    id: 1,
-    title: 'Introduction aux Réseaux de Neurones',
-    type: 'video', // video, text, interactive
-    duration: '15 min',
-    xpReward: 50,
-    module: {
-      id: 1,
-      title: "Fondamentaux de l\'IA",
-      course: {
-        id: 1,
-        title: 'Intelligence Artificielle pour Débutants',
-      },
-    },
-    content: {
-      videoUrl:
-        'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-      transcript: `Les réseaux de neurones sont l'épine dorsale de l'intelligence artificielle moderne. Dans cette leçon, nous explorerons les concepts fondamentaux qui permettent aux machines d'apprendre et de prendre des décisions.
-
-Un réseau de neurones artificiel s'inspire du fonctionnement du cerveau humain. Tout comme notre cerveau contient des milliards de neurones interconnectés, un réseau de neurones artificiel est composé de nœuds (neurones artificiels) organisés en couches.
-
-Chaque neurone reçoit des signaux d'entrée, les traite selon une fonction mathématique, puis transmet le résultat aux neurones de la couche suivante. Ce processus permet au réseau d'identifier des motifs complexes dans les données.`,
-      textContent: `# Introduction aux Réseaux de Neurones
-
-Les réseaux de neurones représentent une révolution dans le domaine de l'intelligence artificielle. Cette technologie, inspirée du fonctionnement du cerveau humain, permet aux machines d'apprendre et de résoudre des problèmes complexes.
-
-## Qu'est-ce qu'un Réseau de Neurones ?
-
-Un réseau de neurones artificiel est un système informatique conçu pour imiter la façon dont le cerveau humain traite l'information. Il est composé de :
-
-- **Neurones artificiels** : Unités de traitement qui reçoivent, traitent et transmettent des informations
-- **Connexions pondérées** : Liens entre les neurones qui déterminent l'importance des signaux
-- **Couches** : Organisation hiérarchique des neurones (entrée, cachées, sortie)
-
-## Applications Pratiques
-
-Les réseaux de neurones sont utilisés dans de nombreux domaines :
-
-1. **Reconnaissance d'images** - Identification d'objets, visages, texte
-2. **Traitement du langage naturel** - Traduction, analyse de sentiment
-3. **Prédiction** - Analyse financière, météorologie
-4. **Automatisation** - Véhicules autonomes, robotique
-
-Cette technologie transforme notre façon de travailler et d'interagir avec la technologie au quotidien.`,
-    },
-    resources: [
-      {
-        id: 1,
-        title: 'Guide PDF - Réseaux de Neurones',
-        type: 'pdf',
-        url: '#',
-        size: '2.3 MB',
-      },
-      {
-        id: 2,
-        title: "Code d\'exemple - Python",
-        type: 'code',
-        url: '#',
-        size: '15 KB',
-      },
-    ],
-  };
-
-  const mockModuleStructure = [
-    {
-      id: 1,
-      title: "Fondamentaux de l\'IA",
-      lessons: [
-        {
-          id: 1,
-          title: 'Introduction aux Réseaux de Neurones',
-          duration: '15 min',
-          completed: false,
-          current: true,
-        },
-        {
-          id: 2,
-          title: 'Types de Réseaux de Neurones',
-          duration: '20 min',
-          completed: false,
-          current: false,
-        },
-        {
-          id: 3,
-          title: 'Entraînement des Modèles',
-          duration: '25 min',
-          completed: false,
-          current: false,
-        },
-      ],
-    },
-    {
-      id: 2,
-      title: 'Applications Pratiques',
-      lessons: [
-        {
-          id: 4,
-          title: 'IA dans la Comptabilité',
-          duration: '18 min',
-          completed: false,
-          current: false,
-        },
-        {
-          id: 5,
-          title: 'Automatisation des Processus',
-          duration: '22 min',
-          completed: false,
-          current: false,
-        },
-      ],
-    },
-  ];
+  const [moduleStructure, setModuleStructure] = useState([]);
 
   useEffect(() => {
-    setCurrentLesson(mockLessonData);
+    const fetchData = async () => {
+      const { data: lessonData, error: lessonError } = await supabase
+        .from('lessons')
+        .select('*')
+        .limit(1)
+        .single();
+
+      if (lessonError) {
+        console.error('Error fetching lesson:', lessonError);
+      } else if (lessonData) {
+        setCurrentLesson({
+          id: lessonData.id,
+          title: lessonData.title,
+          type: lessonData.type || 'video',
+          duration: lessonData.duration || '',
+          xpReward: lessonData.xp_reward || 0,
+          module: { id: lessonData.module_id, title: '', course: { id: '', title: '' } },
+          content: {
+            videoUrl: lessonData.video_url,
+            transcript: lessonData.transcript,
+            textContent: lessonData.text_content,
+          },
+          resources: lessonData.resources || [],
+        });
+      }
+
+      const { data: modulesData, error: modulesError } = await supabase
+        .from('modules')
+        .select('id, title, lessons(id, title, duration)')
+        .order('id');
+
+      if (modulesError) {
+        console.error('Error fetching modules:', modulesError);
+      } else if (modulesData) {
+        setModuleStructure(
+          modulesData.map(m => ({
+            id: m.id,
+            title: m.title,
+            lessons: (m.lessons || []).map(l => ({
+              id: l.id,
+              title: l.title,
+              duration: l.duration || '',
+              completed: false,
+              current: false,
+            })),
+          }))
+        );
+      }
+    };
+
+    fetchData();
   }, []);
 
   const handleLessonComplete = () => {
@@ -232,7 +171,7 @@ Cette technologie transforme notre façon de travailler et d'interagir avec la t
         <LessonNavigation
           isOpen={isSidebarOpen}
           onClose={() => setIsSidebarOpen(false)}
-          moduleStructure={mockModuleStructure}
+          moduleStructure={moduleStructure}
           currentLessonId={currentLesson.id}
         />
 
