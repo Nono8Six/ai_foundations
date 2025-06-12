@@ -14,7 +14,7 @@ const GeographicDistribution = () => {
       regions: [
         { name: 'Île-de-France', users: 1234, percentage: 27.0 },
         { name: 'Auvergne-Rhône-Alpes', users: 876, percentage: 19.2 },
-        { name: "Provence-Alpes-Côte d\'Azur", users: 654, percentage: 14.3 },
+        { name: "Provence-Alpes-Côte d'Azur", users: 654, percentage: 14.3 },
         { name: 'Nouvelle-Aquitaine', users: 543, percentage: 11.9 },
       ],
     },

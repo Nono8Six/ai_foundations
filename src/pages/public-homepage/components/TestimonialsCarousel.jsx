@@ -35,7 +35,7 @@ const TestimonialsCarousel = () => {
       content: `À 52 ans, je pensais qu'il était trop tard pour apprendre l'IA. AI Foundations m'a prouvé le contraire ! La formation est progressive et adaptée aux professionnels expérimentés. J'ai maintenant des chatbots qui gèrent 70% de nos demandes clients.`,
       rating: 5,
       course: 'IA et Commerce Digital',
-      results: "70% d\'automatisation client",
+      results: "70% d'automatisation client",
       beforeAfter: {
         before: 'Réponses manuelles 24h',
         after: 'Réponses instantanées 24/7',
@@ -70,7 +70,7 @@ const TestimonialsCarousel = () => {
       
       La maintenance prédictive nous a permis de réduire les pannes de 40% et d'optimiser nos coûts. Une formation accessible même pour les seniors !`,
       rating: 5,
-      course: "Maintenance Prédictive avec l\'IA",
+      course: "Maintenance Prédictive avec l'IA",
       results: '40% de réduction des pannes',
       beforeAfter: {
         before: 'Maintenance corrective',
@@ -86,7 +86,7 @@ const TestimonialsCarousel = () => {
       avatar: 'https://ui-avatars.com/api/?name=Amélie+Rousseau&background=ec4899&color=ffffff',
       content: `En tant que jeune entrepreneure, l'IA était essentielle pour rester compétitive. AI Foundations m'a donné les clés pour intégrer l'IA dans tous les aspects de mon business. De la relation client à l'optimisation des processus, tout est automatisé !`,
       rating: 5,
-      course: "Fondamentaux de l\'IA",
+      course: "Fondamentaux de l'IA",
       results: 'Business 100% optimisé',
       beforeAfter: {
         before: 'Gestion manuelle complète',

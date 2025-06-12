@@ -71,7 +71,7 @@ const AdminDashboard = () => {
       path: '/cms',
       icon: 'BookOpen',
     },
-    { name: "Vue d\'ensemble", path: '/programmes', icon: 'GraduationCap' },
+    { name: "Vue d'ensemble", path: '/programmes', icon: 'GraduationCap' },
     { name: 'Profil utilisateur', path: '/profile', icon: 'User' },
   ];
 

@@ -12,7 +12,7 @@ const RecentActivity = () => {
         avatar:
           'https://ui-avatars.com/api/?name=Marie+Dubois&background=3b82f6&color=ffffff',
       },
-      action: "s\'est inscrite sur la plateforme",
+      action: "s'est inscrite sur la plateforme",
       timestamp: 'Il y a 5 minutes',
       icon: 'UserPlus',
       iconColor: 'text-success',
@@ -25,7 +25,7 @@ const RecentActivity = () => {
         avatar:
           'https://ui-avatars.com/api/?name=Jean+Martin&background=10b981&color=ffffff',
       },
-      action: "a terminé le cours \'Introduction à l\'IA'",
+      action: "a terminé le cours 'Introduction à l'IA'",
       timestamp: 'Il y a 12 minutes',
       icon: 'CheckCircle',
       iconColor: 'text-primary',
@@ -38,7 +38,7 @@ const RecentActivity = () => {
         avatar:
           'https://ui-avatars.com/api/?name=Sophie+Laurent&background=8b5cf6&color=ffffff',
       },
-      action: "a créé un nouveau module \'Machine Learning Avancé'",
+      action: "a créé un nouveau module 'Machine Learning Avancé'",
       timestamp: 'Il y a 1 heure',
       icon: 'BookOpen',
       iconColor: 'text-accent',
@@ -51,7 +51,7 @@ const RecentActivity = () => {
         avatar:
           'https://ui-avatars.com/api/?name=Pierre+Moreau&background=f59e0b&color=ffffff',
       },
-      action: "a débloqué le badge \'Expert IA'",
+      action: "a débloqué le badge 'Expert IA'",
       timestamp: 'Il y a 2 heures',
       icon: 'Award',
       iconColor: 'text-warning',
@@ -89,7 +89,7 @@ const RecentActivity = () => {
         avatar:
           'https://ui-avatars.com/api/?name=Lucas+Bernard&background=6366f1&color=ffffff',
       },
-      action: "s\'est inscrit au cours \'Deep Learning Pratique'",
+      action: "s'est inscrit au cours 'Deep Learning Pratique'",
       timestamp: 'Il y a 5 heures',
       icon: 'BookMarked',
       iconColor: 'text-primary',
@@ -102,7 +102,7 @@ const RecentActivity = () => {
         avatar:
           'https://ui-avatars.com/api/?name=Camille+Petit&background=ef4444&color=ffffff',
       },
-      action: "s\'est connectée depuis un nouvel appareil",
+      action: "s'est connectée depuis un nouvel appareil",
       timestamp: 'Il y a 6 heures',
       icon: 'LogIn',
       iconColor: 'text-secondary-500',

@@ -200,7 +200,7 @@ const ProgramOverview = () => {
                     <p className='text-text-secondary mb-6 max-w-lg mx-auto'>
                       {searchQuery
                         ? 'Aucun cours ne correspond à votre recherche. Essayez de modifier vos critères.'
-                        : 'Notre catalogue de formations est en cours de préparation. Revenez bientôt pour découvrir nos cours sur l\'IA.'}
+                        : "Notre catalogue de formations est en cours de préparation. Revenez bientôt pour découvrir nos cours sur l'IA."}
                     </p>
                     {searchQuery && (
                       <button
