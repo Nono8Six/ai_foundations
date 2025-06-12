@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useMemo, useEffect } from 'react';
+import { supabase } from '../../lib/supabase';
 import Icon from '../../components/AppIcon';
 
 import UserTable from './components/UserTable';
@@ -14,6 +14,7 @@ const UserManagementAdmin = () => {
   const [showDetailsPanel, setShowDetailsPanel] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [users, setUsers] = useState([]);
   const [filters, setFilters] = useState({
     status: 'all',
     role: 'all',
@@ -23,129 +24,48 @@ const UserManagementAdmin = () => {
   });
   const [sortConfig, setSortConfig] = useState({ key: 'lastActivity', direction: 'desc' });
 
-  // Mock user data
-  const mockUsers = [
-    {
-      id: 1,
-      name: 'Marie Dubois',
-      email: 'marie.dubois@email.com',
-      avatar: 'https://ui-avatars.com/api/?name=Marie+Dubois&background=3b82f6&color=ffffff',
-      role: 'student',
-      status: 'active',
-      registrationDate: '2024-01-15',
-      lastActivity: '2024-12-15',
-      courseProgress: 75,
-      totalCourses: 4,
-      completedCourses: 3,
-      xpPoints: 2450,
-      level: 8,
-      streak: 12,
-      achievements: 15,
-      location: 'Paris, France',
-      phone: '+33 1 23 45 67 89',
-      notes: `Utilisatrice très active avec d'excellents résultats. Participe régulièrement aux discussions et aide les autres étudiants. Recommandée pour le programme avancé.`,
-      enrolledCourses: [
-        'IA Fondamentaux',
-        'Machine Learning',
-        'Deep Learning',
-        'Vision par Ordinateur',
-      ],
-    },
-    {
-      id: 2,
-      name: 'Jean Martin',
-      email: 'jean.martin@entreprise.fr',
-      avatar: 'https://ui-avatars.com/api/?name=Jean+Martin&background=10b981&color=ffffff',
-      role: 'admin',
-      status: 'active',
-      registrationDate: '2023-11-20',
-      lastActivity: '2024-12-14',
-      courseProgress: 100,
-      totalCourses: 6,
-      completedCourses: 6,
-      xpPoints: 4200,
-      level: 12,
-      streak: 45,
-      achievements: 28,
-      location: 'Lyon, France',
-      phone: '+33 4 56 78 90 12',
-      notes: `Administrateur expérimenté responsable de la gestion des contenus. Excellent feedback sur l'amélioration de la plateforme.`,
-      enrolledCourses: ['Tous les cours', 'Formation Admin', 'Gestion Plateforme'],
-    },
-    {
-      id: 3,
-      name: 'Sophie Laurent',
-      email: 'sophie.laurent@gmail.com',
-      avatar: 'https://ui-avatars.com/api/?name=Sophie+Laurent&background=8b5cf6&color=ffffff',
-      role: 'student',
-      status: 'inactive',
-      registrationDate: '2024-03-10',
-      lastActivity: '2024-11-20',
-      courseProgress: 35,
-      totalCourses: 2,
-      completedCourses: 0,
-      xpPoints: 850,
-      level: 3,
-      streak: 0,
-      achievements: 5,
-      location: 'Marseille, France',
-      phone: '+33 6 12 34 56 78',
-      notes: `Étudiante ayant besoin d'encouragement. Dernière connexion il y a 3 semaines. Candidat pour campagne de réengagement.`,
-      enrolledCourses: ['IA Fondamentaux', 'Python Basics'],
-    },
-    {
-      id: 4,
-      name: 'Pierre Moreau',
-      email: 'pierre.moreau@tech.com',
-      avatar: 'https://ui-avatars.com/api/?name=Pierre+Moreau&background=f59e0b&color=ffffff',
-      role: 'student',
-      status: 'active',
-      registrationDate: '2024-02-28',
-      lastActivity: '2024-12-15',
-      courseProgress: 90,
-      totalCourses: 5,
-      completedCourses: 4,
-      xpPoints: 3100,
-      level: 10,
-      streak: 23,
-      achievements: 22,
-      location: 'Toulouse, France',
-      phone: '+33 5 67 89 01 23',
-      notes: `Étudiant très motivé avec d'excellents résultats. Progression rapide et constante. Potentiel pour devenir mentor.`,
-      enrolledCourses: [
-        'IA Fondamentaux',
-        'Machine Learning',
-        'Data Science',
-        'NLP',
-        'Computer Vision',
-      ],
-    },
-    {
-      id: 5,
-      name: 'Camille Rousseau',
-      email: 'camille.rousseau@startup.fr',
-      avatar: 'https://ui-avatars.com/api/?name=Camille+Rousseau&background=ec4899&color=ffffff',
-      role: 'student',
-      status: 'pending',
-      registrationDate: '2024-12-10',
-      lastActivity: '2024-12-12',
-      courseProgress: 5,
-      totalCourses: 1,
-      completedCourses: 0,
-      xpPoints: 120,
-      level: 1,
-      streak: 2,
-      achievements: 1,
-      location: 'Nantes, France',
-      phone: '+33 2 34 56 78 90',
-      notes: `Nouvelle utilisatrice. Inscription récente, en cours d'exploration de la plateforme. Suivi nécessaire pour l'onboarding.`,
-      enrolledCourses: ['IA Fondamentaux'],
-    },
-  ];
+  // Users fetched from Supabase
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const { data, error } = await supabase.from('profiles').select('*');
+      if (error) {
+        console.error('Error fetching users:', error);
+        return;
+      }
+      const mapped = (data || []).map(p => ({
+        id: p.id,
+        name: p.full_name || 'Utilisateur',
+        email: p.email || '',
+        avatar:
+          p.avatar_url ||
+          `https://ui-avatars.com/api/?name=${encodeURIComponent(
+            p.full_name || 'User'
+          )}&background=1e40af&color=ffffff`,
+        role: p.is_admin ? 'admin' : 'student',
+        status: p.status || 'active',
+        registrationDate: p.created_at || new Date().toISOString(),
+        lastActivity: p.updated_at || p.created_at,
+        courseProgress: p.course_progress || 0,
+        totalCourses: p.total_courses || 0,
+        completedCourses: p.completed_courses || 0,
+        xpPoints: p.xp || 0,
+        level: p.level || 1,
+        streak: p.current_streak || 0,
+        achievements: p.achievements || 0,
+        location: p.location || '',
+        phone: p.phone || '',
+        notes: p.notes || '',
+        enrolledCourses: p.enrolled_courses || [],
+      }));
+      setUsers(mapped);
+    };
+
+    fetchUsers();
+  }, []);
 
   // Filter and search users
   const filteredUsers = useMemo(() => {
-    let filtered = mockUsers.filter(user => {
+    let filtered = users.filter(user => {
       const matchesSearch =
         user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         user.email.toLowerCase().includes(searchQuery.toLowerCase());
@@ -174,7 +94,7 @@ const UserManagementAdmin = () => {
     }
 
     return filtered;
-  }, [mockUsers, searchQuery, filters, sortConfig]);
+  }, [users, searchQuery, filters, sortConfig]);
 
   const handleSort = key => {
     setSortConfig(prev => ({
@@ -245,7 +165,7 @@ const UserManagementAdmin = () => {
               </div>
               <div className='ml-4'>
                 <p className='text-sm font-medium text-text-secondary'>Total Utilisateurs</p>
-                <p className='text-2xl font-bold text-text-primary'>{mockUsers.length}</p>
+                <p className='text-2xl font-bold text-text-primary'>{users.length}</p>
               </div>
             </div>
           </div>
@@ -260,7 +180,7 @@ const UserManagementAdmin = () => {
               <div className='ml-4'>
                 <p className='text-sm font-medium text-text-secondary'>Actifs</p>
                 <p className='text-2xl font-bold text-text-primary'>
-                  {mockUsers.filter(u => u.status === 'active').length}
+                  {users.filter(u => u.status === 'active').length}
                 </p>
               </div>
             </div>
@@ -276,7 +196,7 @@ const UserManagementAdmin = () => {
               <div className='ml-4'>
                 <p className='text-sm font-medium text-text-secondary'>En Attente</p>
                 <p className='text-2xl font-bold text-text-primary'>
-                  {mockUsers.filter(u => u.status === 'pending').length}
+                  {users.filter(u => u.status === 'pending').length}
                 </p>
               </div>
             </div>
@@ -292,7 +212,7 @@ const UserManagementAdmin = () => {
               <div className='ml-4'>
                 <p className='text-sm font-medium text-text-secondary'>Inactifs</p>
                 <p className='text-2xl font-bold text-text-primary'>
-                  {mockUsers.filter(u => u.status === 'inactive').length}
+                  {users.filter(u => u.status === 'inactive').length}
                 </p>
               </div>
             </div>
