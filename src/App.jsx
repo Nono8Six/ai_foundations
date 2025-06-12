@@ -4,6 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import AppRoutes from "./Routes"; // On utilise le composant qui contient les <Route>
 import { AuthProvider } from "./context/AuthContext";
 import { CourseProvider } from "./context/CourseContext";
+import { ToastProvider } from "./context/ToastContext";
 import Header from "./components/Header";
 
 function App() {
@@ -13,8 +14,10 @@ function App() {
       {/* AuthProvider est maintenant à l'intérieur et peut utiliser les hooks de routage. */}
       <AuthProvider>
         <CourseProvider>
-          <Header />
-          <AppRoutes />
+          <ToastProvider>
+            <Header />
+            <AppRoutes />
+          </ToastProvider>
         </CourseProvider>
       </AuthProvider>
     </BrowserRouter>
