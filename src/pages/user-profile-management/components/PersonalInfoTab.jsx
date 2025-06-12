@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../../../context/AuthContext';
+import { useToast } from '../../../context/ToastContext';
 import Icon from '../../../components/AppIcon';
 import Image from '../../../components/AppImage';
 
@@ -9,6 +10,7 @@ const PersonalInfoTab = ({ userData }) => {
   const [avatarPreview, setAvatarPreview] = useState(userData.avatar);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { updateProfile } = useAuth();
+  const { addToast } = useToast();
 
   const {
     register,
@@ -29,10 +31,13 @@ const PersonalInfoTab = ({ userData }) => {
   const onSubmit = async data => {
     try {
       setIsSubmitting(true);
-      
+
       // Prepare the update data
       const updates = {
         full_name: data.name,
+        phone: data.phone || null,
+        profession: data.profession || null,
+        company: data.company || null,
         // Add avatar_url if it was changed
         ...(avatarPreview !== userData.avatar && { avatar_url: avatarPreview }),
       };
@@ -41,12 +46,12 @@ const PersonalInfoTab = ({ userData }) => {
       
       // Update the profile in Supabase using RPC function
       await updateProfile(updates);
-      
+
       console.log('Profile updated successfully');
       setIsEditing(false);
-      
+
       // Show success message
-      alert('Profil mis à jour avec succès !');
+      addToast('Profil mis à jour avec succès !', 'success');
       
     } catch (error) {
       console.error('Error updating profile:', error);
@@ -64,13 +69,13 @@ const PersonalInfoTab = ({ userData }) => {
     if (file) {
       // Validate file size (max 2MB)
       if (file.size > 2 * 1024 * 1024) {
-        alert('La taille du fichier ne doit pas dépasser 2MB');
+        addToast('La taille du fichier ne doit pas dépasser 2MB', 'error');
         return;
       }
 
       // Validate file type
       if (!file.type.startsWith('image/')) {
-        alert('Veuillez sélectionner un fichier image valide');
+        addToast('Veuillez sélectionner un fichier image valide', 'error');
         return;
       }
 

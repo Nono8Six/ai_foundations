@@ -70,6 +70,11 @@ vite.config.*.ts
 
 # Fichiers spécifiques à Supabase
 supabase/
+!supabase/
+!supabase/migrations/
+!supabase/migrations/**
+!supabase/functions/
+!supabase/functions/**
 
 # Fichiers spécifiques à Windows
 [Dd]esktop.ini
