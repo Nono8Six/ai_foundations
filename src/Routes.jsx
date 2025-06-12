@@ -16,6 +16,7 @@ const AdminDashboard = lazy(() => import('./pages/admin-dashboard/index.jsx'));
 const UserManagementAdmin = lazy(() => import('./pages/user-management-admin/index.jsx'));
 const ContentManagementCoursesModulesLessons = lazy(() => import('./pages/cms/index.jsx'));
 const NotFound = lazy(() => import('./pages/not-found/index.jsx'));
+const VerifyEmail = lazy(() => import('./pages/verify-email/index.jsx'));
 
 // --- Composant de chargement ---
 const PageLoader = () => (
@@ -57,6 +58,7 @@ const AppRoutes = () => {
           <Route path='/user-management-admin' element={<ProtectedRoute requireAdmin={true}><UserManagementAdmin /></ProtectedRoute>} />
           <Route path='/cms' element={<ProtectedRoute requireAdmin={true}><ContentManagementCoursesModulesLessons /></ProtectedRoute>} />
           <Route path='/content-management' element={<ProtectedRoute requireAdmin={true}><ContentManagementCoursesModulesLessons /></ProtectedRoute>} />
+          <Route path='/verify-email' element={<VerifyEmail />} />
           <Route path='*' element={<NotFound />} />
         </RouterRoutes>
       </Suspense>
