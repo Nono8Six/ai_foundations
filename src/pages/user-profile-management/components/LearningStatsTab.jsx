@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { colors } from '../../../utils/theme';
 import {
   BarChart,
@@ -22,116 +22,107 @@ import Icon from '../../../components/AppIcon';
 
 const LearningStatsTab = ({ userData }) => {
   const { user, userProfile } = useAuth();
-  const { courses, userProgress } = useCourses();
+  const { coursesWithProgress, loading: coursesLoading } = useCourses();
   const { achievements } = useAchievements(user?.id);
   const { activities } = useRecentActivity(user?.id);
-  
-  const [weeklyData, setWeeklyData] = useState([]);
-  const [monthlyData, setMonthlyData] = useState([]);
-  const [subjectData, setSubjectData] = useState([]);
 
-  // Calculate real learning statistics
-  useEffect(() => {
-    if (!userProgress.length) {
-      // If no progress data, show empty charts
-      setWeeklyData([]);
-      setMonthlyData([]);
-      setSubjectData([]);
-      return;
+  const stats = useMemo(() => {
+    if (coursesLoading || !coursesWithProgress || coursesWithProgress.length === 0) {
+      return {
+        hasData: false,
+        completedLessonsCount: 0,
+        inProgressLessonsCount: 0,
+        totalLearningTime: 0,
+        coursesCompleted: 0,
+        weeklyData: [],
+        subjectData: [],
+      };
     }
 
-    // Calculate weekly progress based on actual completion dates
-    const weeklyStats = calculateWeeklyProgress();
-    setWeeklyData(weeklyStats);
+    const userProgress = coursesWithProgress.flatMap(course => 
+        course.lessons?.map(lesson => lesson.progress).filter(p => p) || []
+    );
 
-    // Calculate monthly progress
-    const monthlyStats = calculateMonthlyProgress();
-    setMonthlyData(monthlyStats);
+    const completedLessons = userProgress.filter(p => p?.status === 'completed');
+    const inProgressLessons = userProgress.filter(p => p?.status === 'in_progress');
 
-    // Calculate subject distribution based on enrolled courses
-    const subjectStats = calculateSubjectDistribution();
-    setSubjectData(subjectStats);
-  }, [userProgress, courses, activities]);
-
-  const calculateWeeklyProgress = () => {
+    // --- Weekly Progress ---
     const days = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
-    const weekData = days.map(day => ({ day, minutes: 0, xp: 0, lessons: 0 }));
-
-    // Get activities from the last 7 days
+    const weeklyData = days.map(day => ({ day, minutes: 0, xp: 0, lessons: 0 }));
     const lastWeek = new Date();
     lastWeek.setDate(lastWeek.getDate() - 7);
-
     activities.forEach(activity => {
       const activityDate = new Date(activity.created_at);
       if (activityDate >= lastWeek) {
-        const dayIndex = (activityDate.getDay() + 6) % 7; // Convert Sunday=0 to Monday=0
+        const dayIndex = (activityDate.getDay() + 6) % 7;
         if (activity.type === 'lesson_completed') {
-          weekData[dayIndex].lessons += 1;
-          weekData[dayIndex].minutes += 15; // Estimate 15 minutes per lesson
-          weekData[dayIndex].xp += 50; // Estimate 50 XP per lesson
+          weeklyData[dayIndex].lessons += 1;
+          weeklyData[dayIndex].minutes += 15;
+          weeklyData[dayIndex].xp += 50;
         }
       }
     });
-
-    return weekData;
-  };
-
-  const calculateMonthlyProgress = () => {
-    const months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun'];
-    const monthData = months.map(month => ({ month, completed: 0, started: 0 }));
-
-    // Calculate based on user progress
-    const completedLessons = userProgress.filter(p => p.status === 'completed');
-    const inProgressLessons = userProgress.filter(p => p.status === 'in_progress');
-
-    // Distribute across months (simplified - you might want to use actual dates)
-    if (completedLessons.length > 0) {
-      const monthIndex = new Date().getMonth();
-      if (monthIndex < monthData.length) {
-        monthData[monthIndex].completed = completedLessons.length;
-        monthData[monthIndex].started = inProgressLessons.length;
-      }
-    }
-
-    return monthData;
-  };
-
-  const calculateSubjectDistribution = () => {
-    if (!courses.length) return [];
-
-    // Group courses by category/subject
+    
+    // --- Subject Distribution ---
     const subjects = {};
-    courses.forEach(course => {
+    coursesWithProgress.forEach(course => {
       const category = course.category || 'IA Générale';
-      if (!subjects[category]) {
-        subjects[category] = 0;
-      }
-      subjects[category] += 1;
+      subjects[category] = (subjects[category] || 0) + 1;
     });
-
-        const chartColors = [
-      colors['primary-500'],
-      colors['accent-500'],
-      colors['warning-500'],
-      colors['error-500'],
-      colors['primary-700'],
-      colors['secondary-500'],
-    ];
-    return Object.entries(subjects).map(([name, value], index) => ({
+    const chartColors = [colors.primary, colors.accent, colors.warning, colors.error, colors.info, colors.secondary];
+    const subjectData = Object.entries(subjects).map(([name, value], index) => ({
       name,
       value,
       fill: chartColors[index % chartColors.length],
     }));
-  };
 
-  // Calculate real statistics
-  const totalLearningTime = Math.floor(userProgress.filter(p => p.status === 'completed').length * 0.25); // 15 min per lesson
-  const coursesCompleted = courses.filter(course => {
-    // Check if all lessons in course are completed
-    return userProgress.some(p => p.status === 'completed');
-  }).length;
+    // --- Overview Stats ---
+    const totalLearningTime = Math.floor(completedLessons.length * 0.25);
+    const coursesCompleted = coursesWithProgress.filter(course => course.progress?.completed === course.progress?.total).length;
+    
+    return {
+      hasData: userProgress.length > 0,
+      completedLessonsCount: completedLessons.length,
+      inProgressLessonsCount: inProgressLessons.length,
+      totalLearningTime,
+      coursesCompleted,
+      weeklyData,
+      subjectData,
+    };
+  }, [coursesWithProgress, activities, coursesLoading]);
+
   const currentStreak = userProfile?.current_streak || 0;
   const currentLevel = userProfile?.level || 1;
+
+  if (coursesLoading) {
+    return (
+      <div className='flex justify-center items-center h-64'>
+        <Icon name='Loader' className='animate-spin text-primary' size={40} />
+        <p className='ml-4 text-text-secondary'>Chargement de vos statistiques...</p>
+      </div>
+    );
+  }
+
+  if (!stats.hasData) {
+    return (
+        <div className='bg-surface rounded-lg border border-border p-12 text-center'>
+          <Icon name='BarChart3' size={64} className='mx-auto mb-6 text-secondary-300' />
+          <h3 className='text-xl font-semibold text-text-primary mb-2'>
+            Commencez votre parcours d'apprentissage
+          </h3>
+          <p className='text-text-secondary mb-6'>
+            Vos statistiques d'apprentissage apparaîtront ici une fois que vous aurez commencé des cours.
+          </p>
+          <a
+            href='/programmes'
+            className='inline-flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors'
+          >
+            <Icon name='BookOpen' size={20} className='mr-2' />
+            Découvrir les cours
+          </a>
+        </div>
+    );
+  }
 
   return (
     <div className='space-y-8'>
@@ -149,7 +140,7 @@ const LearningStatsTab = ({ userData }) => {
           <div className='flex items-center justify-between'>
             <div>
               <p className='text-primary-600 text-sm font-medium'>Temps total</p>
-              <p className='text-2xl font-bold text-primary-700'>{totalLearningTime}h</p>
+              <p className='text-2xl font-bold text-primary-700'>{stats.totalLearningTime}h</p>
             </div>
             <div className='w-12 h-12 bg-primary-500 rounded-lg flex items-center justify-center'>
               <Icon name='Clock' size={24} color='white' />
@@ -161,7 +152,7 @@ const LearningStatsTab = ({ userData }) => {
           <div className='flex items-center justify-between'>
             <div>
               <p className='text-accent-600 text-sm font-medium'>Cours terminés</p>
-              <p className='text-2xl font-bold text-accent-700'>{coursesCompleted}</p>
+              <p className='text-2xl font-bold text-accent-700'>{stats.coursesCompleted}</p>
             </div>
             <div className='w-12 h-12 bg-accent-500 rounded-lg flex items-center justify-center'>
               <Icon name='BookOpen' size={24} color='white' />
@@ -195,15 +186,14 @@ const LearningStatsTab = ({ userData }) => {
       </div>
 
       {/* Charts Section */}
-      {weeklyData.length > 0 || monthlyData.length > 0 ? (
         <div className='grid grid-cols-1 lg:grid-cols-2 gap-8'>
           {/* Weekly Progress */}
           <div className='bg-surface rounded-lg border border-border p-6'>
             <h4 className='text-base font-semibold text-text-primary mb-4'>Progrès hebdomadaire</h4>
-            {weeklyData.length > 0 ? (
+            {stats.weeklyData.length > 0 ? (
               <div className='h-64'>
                 <ResponsiveContainer width='100%' height='100%'>
-                  <BarChart data={weeklyData}>
+                  <BarChart data={stats.weeklyData}>
                     <CartesianGrid strokeDasharray='3 3' stroke={colors.border} />
                     <XAxis dataKey='day' stroke={colors.secondary} fontSize={12} />
                     <YAxis stroke={colors.secondary} fontSize={12} />
@@ -215,7 +205,7 @@ const LearningStatsTab = ({ userData }) => {
                         fontSize: '12px',
                       }}
                     />
-                    <Bar dataKey='minutes' fill={colors['primary-500']} radius={[4, 4, 0, 0]} />
+                    <Bar dataKey='minutes' fill={colors.primary} radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -233,10 +223,10 @@ const LearningStatsTab = ({ userData }) => {
           {/* XP Progress */}
           <div className='bg-surface rounded-lg border border-border p-6'>
             <h4 className='text-base font-semibold text-text-primary mb-4'>Évolution XP</h4>
-            {weeklyData.length > 0 && weeklyData.some(d => d.xp > 0) ? (
+            {stats.weeklyData.length > 0 && stats.weeklyData.some(d => d.xp > 0) ? (
               <div className='h-64'>
                 <ResponsiveContainer width='100%' height='100%'>
-                  <LineChart data={weeklyData}>
+                  <LineChart data={stats.weeklyData}>
                     <CartesianGrid strokeDasharray='3 3' stroke={colors.border} />
                     <XAxis dataKey='day' stroke={colors.secondary} fontSize={12} />
                     <YAxis stroke={colors.secondary} fontSize={12} />
@@ -274,13 +264,13 @@ const LearningStatsTab = ({ userData }) => {
             <h4 className='text-base font-semibold text-text-primary mb-4'>
               Répartition des cours
             </h4>
-            {subjectData.length > 0 ? (
+            {stats.subjectData.length > 0 ? (
               <>
                 <div className='h-64'>
                   <ResponsiveContainer width='100%' height='100%'>
                     <PieChart>
                       <Pie
-                        data={subjectData}
+                        data={stats.subjectData}
                         cx='50%'
                         cy='50%'
                         innerRadius={60}
@@ -288,7 +278,7 @@ const LearningStatsTab = ({ userData }) => {
                         paddingAngle={5}
                         dataKey='value'
                       >
-                        {subjectData.map((entry, index) => (
+                        {stats.subjectData.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={entry.fill} />
                         ))}
                       </Pie>
@@ -304,7 +294,7 @@ const LearningStatsTab = ({ userData }) => {
                   </ResponsiveContainer>
                 </div>
                 <div className='grid grid-cols-2 gap-2 mt-4'>
-                  {subjectData.map((subject, index) => (
+                  {stats.subjectData.map((subject, index) => (
                     <div key={index} className='flex items-center space-x-2'>
                       <div
                         className='w-3 h-3 rounded-full'
@@ -336,7 +326,7 @@ const LearningStatsTab = ({ userData }) => {
                   <span className='text-sm font-medium text-text-primary'>Leçons terminées</span>
                 </div>
                 <span className='text-lg font-bold text-primary'>
-                  {userProgress.filter(p => p.status === 'completed').length}
+                  {stats.completedLessonsCount}
                 </span>
               </div>
               
@@ -346,7 +336,7 @@ const LearningStatsTab = ({ userData }) => {
                   <span className='text-sm font-medium text-text-primary'>Leçons en cours</span>
                 </div>
                 <span className='text-lg font-bold text-accent'>
-                  {userProgress.filter(p => p.status === 'in_progress').length}
+                  {stats.inProgressLessonsCount}
                 </span>
               </div>
 
@@ -362,24 +352,6 @@ const LearningStatsTab = ({ userData }) => {
             </div>
           </div>
         </div>
-      ) : (
-        <div className='bg-surface rounded-lg border border-border p-12 text-center'>
-          <Icon name='BarChart3' size={64} className='mx-auto mb-6 text-secondary-300' />
-          <h3 className='text-xl font-semibold text-text-primary mb-2'>
-            Commencez votre parcours d'apprentissage
-          </h3>
-          <p className='text-text-secondary mb-6'>
-            Vos statistiques d'apprentissage apparaîtront ici une fois que vous aurez commencé des cours.
-          </p>
-          <a
-            href='/programmes'
-            className='inline-flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors'
-          >
-            <Icon name='BookOpen' size={20} className='mr-2' />
-            Découvrir les cours
-          </a>
-        </div>
-      )}
 
       {/* Achievements Gallery */}
       {achievements.length > 0 && (

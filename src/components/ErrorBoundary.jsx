@@ -19,7 +19,7 @@ class ErrorBoundary extends React.Component {
     if (this.state.hasError) {
       return (
         <div className='min-h-screen flex items-center justify-center bg-neutral-50'>
-          <div cl assName='text-center p-8 max-w-md'>
+          <div className='text-center p-8 max-w-md'>
             <div className='flex justify-center items-center mb-2'>
               <svg
                 xmlns='http://www.w3.org/2000/svg'
@@ -46,8 +46,8 @@ class ErrorBoundary extends React.Component {
                   d='M21 22.5C19.9625 20.7062 18.2213 19.5 16 19.5C13.7787 19.5 12.0375 20.7062 11 22.5'
                   stroke='#343330'
                   stroke-width='2'
-                  stroke-linecap='round'
-                  stroke-linejoin='round'
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
                 />
               </svg>
             </div>

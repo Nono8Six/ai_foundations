@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { colors } from '../../../utils/theme';
 import {
   LineChart,
@@ -68,11 +68,11 @@ const ProgressChart = ({ weeklyData = [], monthlyData = [], subjectData = [] }) 
 
     // Subject distribution
     const subjects = [
-            { name: 'IA Générale', value: 35, color: colors['primary-500'] },
-            { name: 'Machine Learning', value: 25, color: colors['accent-500'] },
-            { name: 'Deep Learning', value: 20, color: colors['warning-500'] },
-            { name: 'NLP', value: 15, color: colors['primary-700'] },
-            { name: 'Computer Vision', value: 5, color: colors['error-500'] }
+            { name: 'IA Générale', value: 35, color: colors.primary },
+            { name: 'Machine Learning', value: 25, color: colors.accent },
+            { name: 'Deep Learning', value: 20, color: colors.warning },
+            { name: 'NLP', value: 15, color: colors.secondary },
+            { name: 'Computer Vision', value: 5, color: colors.error }
     ];
 
     setChartData({
@@ -155,9 +155,9 @@ const ProgressChart = ({ weeklyData = [], monthlyData = [], subjectData = [] }) 
             <XAxis dataKey={getXAxisKey()} tick={{ fill: colors.secondary, fontSize: 12 }} />
             <YAxis tick={{ fill: colors.secondary, fontSize: 12 }} />
             <Tooltip content={<CustomTooltip />} />
-            <Line type='monotone' dataKey='hours' stroke={colors['primary-500']} strokeWidth={2} dot={false} />
-            <Line type='monotone' dataKey='lessons' stroke={colors['accent-500']} strokeWidth={2} dot={false} />
-            <Line type='monotone' dataKey='xp' stroke={colors['warning-500']} strokeWidth={2} dot={false} />
+            <Line type='monotone' dataKey='hours' stroke={colors.primary} strokeWidth={2} dot={false} />
+            <Line type='monotone' dataKey='lessons' stroke={colors.accent} strokeWidth={2} dot={false} />
+            <Line type='monotone' dataKey='xp' stroke={colors.warning} strokeWidth={2} dot={false} />
           </LineChart>
         </ResponsiveContainer>
       </div>
