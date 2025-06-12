@@ -1,0 +1,67 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import React from 'react';
+import { renderHook, act } from '@testing-library/react';
+
+var fromMock;
+vi.mock('../../lib/supabase', () => {
+  fromMock = vi.fn(table => ({
+    insert: vi.fn(() => ({
+      select: vi.fn(() => ({
+        single: vi.fn(() => Promise.resolve({ data: { id: 'new', table }, error: null }))
+      }))
+    })),
+    update: vi.fn(() => ({
+      eq: vi.fn(() => ({
+        select: vi.fn(() => ({
+          single: vi.fn(() => Promise.resolve({ data: { id: 'upd', table }, error: null }))
+        }))
+      }))
+    })),
+    delete: vi.fn(() => ({
+      eq: vi.fn(() => Promise.resolve({ error: null }))
+    }))
+  }));
+  return { supabase: { from: fromMock } };
+});
+
+import { AdminCourseProvider, useAdminCourses } from '../AdminCourseContext.jsx';
+
+const wrapper = ({ children }) => <AdminCourseProvider>{children}</AdminCourseProvider>;
+
+describe('AdminCourseContext', () => {
+  beforeEach(() => {
+    fromMock.mockClear();
+  });
+
+  it('creates, updates and deletes courses', async () => {
+    const { result } = renderHook(() => useAdminCourses(), { wrapper });
+
+    await act(async () => {
+      const newCourse = await result.current.createCourse({ title: 'c' });
+      expect(newCourse).toEqual({ id: 'new', table: 'courses' });
+
+      const updated = await result.current.updateCourse('1', { title: 'u' });
+      expect(updated).toEqual({ id: 'upd', table: 'courses' });
+
+      await result.current.deleteCourse('1');
+    });
+
+    expect(fromMock).toHaveBeenCalledWith('courses');
+  });
+
+  it('creates, updates and deletes modules', async () => {
+    const { result } = renderHook(() => useAdminCourses(), { wrapper });
+
+    await act(async () => {
+      const newModule = await result.current.createModule({ title: 'm' });
+      expect(newModule).toEqual({ id: 'new', table: 'modules' });
+
+      const updated = await result.current.updateModule('1', { title: 'u' });
+      expect(updated).toEqual({ id: 'upd', table: 'modules' });
+
+      await result.current.deleteModule('1');
+    });
+
+    expect(fromMock).toHaveBeenCalledWith('modules');
+  });
+});

@@ -8,7 +8,6 @@ const ContentTree = ({
   selectedItems,
   onContentSelect,
   onItemsSelect,
-  onReorder,
 }) => {
   const [expandedItems, setExpandedItems] = useState(new Set([1]));
   const [draggedItem, setDraggedItem] = useState(null);
@@ -87,7 +86,7 @@ const ContentTree = ({
     );
   };
 
-  const renderLessons = (lessons, moduleId) => {
+  const renderLessons = lessons => {
     if (!lessons || lessons.length === 0) return null;
 
     return (
@@ -149,7 +148,7 @@ const ContentTree = ({
     );
   };
 
-  const renderModules = (modules, courseId) => {
+  const renderModules = modules => {
     if (!modules || modules.length === 0) return null;
 
     return (

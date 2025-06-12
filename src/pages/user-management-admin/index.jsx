@@ -1,5 +1,4 @@
 import React, { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
 import Icon from '../../components/AppIcon';
 
 import UserTable from './components/UserTable';
