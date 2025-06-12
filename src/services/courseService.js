@@ -31,21 +31,26 @@ export async function fetchCourses({ search = '', filters = {}, sortBy = 'popula
 
   switch (sortBy) {
     case 'popularity':
-      query = query.order('enrolled_count', { ascending: false });
+      // Sort by creation date (newest first) as a proxy for popularity since enrolled_count doesn't exist
+      query = query.order('created_at', { ascending: false });
       break;
     case 'difficulty':
-      query = query.order('difficulty', { ascending: true });
+      // Sort by title since difficulty column doesn't exist in the schema
+      query = query.order('title', { ascending: true });
       break;
     case 'duration':
-      query = query.order('duration_weeks', { ascending: true });
+      // Sort by title since duration_weeks column doesn't exist in the schema
+      query = query.order('title', { ascending: true });
       break;
     case 'alphabetical':
       query = query.order('title', { ascending: true });
       break;
     case 'rating':
-      query = query.order('rating', { ascending: false });
+      // Sort by creation date since rating column doesn't exist in the schema
+      query = query.order('created_at', { ascending: false });
       break;
     default:
+      query = query.order('created_at', { ascending: false });
       break;
   }
 
