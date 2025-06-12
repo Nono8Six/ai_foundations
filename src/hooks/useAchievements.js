@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
+import { safeQuery } from '../utils/supabaseClient';
 
 const useAchievements = userId => {
   const [achievements, setAchievements] = useState([]);
@@ -10,20 +11,19 @@ const useAchievements = userId => {
     if (!userId) return;
 
     const fetchAchievements = async () => {
-      try {
-        const { data, error } = await supabase
+      const { data, error } = await safeQuery(() =>
+        supabase
           .from('achievements')
           .select('*')
           .eq('user_id', userId)
-          .order('created_at', { ascending: false });
-
-        if (error) throw error;
+          .order('created_at', { ascending: false })
+      );
+      if (error) {
+        setError(error);
+      } else {
         setAchievements(data || []);
-      } catch (err) {
-        setError(err);
-      } finally {
-        setLoading(false);
       }
+      setLoading(false);
     };
 
     fetchAchievements();
