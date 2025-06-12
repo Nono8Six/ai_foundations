@@ -73,30 +73,52 @@ export const AuthProvider = ({ children }) => {
 
   // Fetch user profile data
   const fetchUserProfile = async userId => {
-    console.log('🔍 Fetching profile for user:', userId);
-    const { data, error } = await safeQuery(() =>
-      supabase.from('profiles').select('*').eq('id', userId)
-    );
-    if (error) {
-      setError(error);
-      return;
-    }
-
-    if (!data || data.length === 0) {
-      console.log('⚠️ No profile found for user, creating default...');
-      const { data: newProfile, error: rpcError } = await safeQuery(() =>
-        supabase.rpc('create_default_profile')
+    try {
+      console.log('🔍 Fetching profile for user:', userId);
+      const { data, error } = await safeQuery(() =>
+        supabase.from('profiles').select('*').eq('id', userId)
       );
-      if (rpcError) {
-        setError(rpcError);
+      
+      if (error) {
+        console.error('❌ Error fetching profile:', error.message);
+        setError(error);
         return;
       }
-      setUserProfile(newProfile);
-      return;
-    }
 
-    console.log('✅ Profile fetched successfully:', data[0]);
-    setUserProfile(data[0]);
+      if (!data || data.length === 0) {
+        console.log('⚠️ No profile found for user, creating default...');
+        // Try to create a default profile
+        const { data: newProfile, error: createError } = await safeQuery(() =>
+          supabase.from('profiles').insert([
+            {
+              id: userId,
+              email: user?.email || '',
+              full_name: user?.user_metadata?.full_name || 'User',
+              level: 1,
+              xp: 0,
+              current_streak: 0,
+              is_admin: false
+            }
+          ]).select().single()
+        );
+        
+        if (createError) {
+          console.error('❌ Error creating profile:', createError.message);
+          setError(createError);
+          return;
+        }
+        
+        console.log('✅ Default profile created:', newProfile);
+        setUserProfile(newProfile);
+        return;
+      }
+
+      console.log('✅ Profile fetched successfully:', data[0]);
+      setUserProfile(data[0]);
+    } catch (error) {
+      console.error('❌ Unexpected error in fetchUserProfile:', error);
+      setError(error);
+    }
   };
 
   // Sign Up with email
@@ -115,6 +137,7 @@ export const AuthProvider = ({ children }) => {
     );
 
     if (error) {
+      console.error('❌ Sign up error:', error.message);
       setError(error);
       throw error;
     }
@@ -125,18 +148,41 @@ export const AuthProvider = ({ children }) => {
   // Sign In with email
   const signIn = async ({ email, password }) => {
     console.log('🔐 Signing in user:', email);
-    const { data, error } = await safeQuery(() =>
-      supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
-    );
-    if (error) {
-      setError(error);
+    
+    try {
+      const { data, error } = await safeQuery(() =>
+        supabase.auth.signInWithPassword({
+          email,
+          password,
+        })
+      );
+      
+      if (error) {
+        console.error('❌ Sign in error:', error.message);
+        
+        // Provide more specific error messages
+        let userFriendlyMessage = 'Email ou mot de passe incorrect';
+        
+        if (error.message.includes('Invalid login credentials')) {
+          userFriendlyMessage = 'Email ou mot de passe incorrect. Vérifiez vos identifiants et réessayez.';
+        } else if (error.message.includes('Email not confirmed')) {
+          userFriendlyMessage = 'Veuillez confirmer votre email avant de vous connecter.';
+        } else if (error.message.includes('Too many requests')) {
+          userFriendlyMessage = 'Trop de tentatives de connexion. Veuillez patienter avant de réessayer.';
+        }
+        
+        const enhancedError = new Error(userFriendlyMessage);
+        enhancedError.originalError = error;
+        setError(enhancedError);
+        throw enhancedError;
+      }
+      
+      console.log('✅ Sign in successful');
+      return data;
+    } catch (error) {
+      // Re-throw the error so it can be handled by the calling component
       throw error;
     }
-    console.log('✅ Sign in successful');
-    return data;
   };
 
   // Sign In with Google

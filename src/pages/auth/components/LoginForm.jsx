@@ -19,24 +19,29 @@ const LoginForm = ({ onSuccess, isLoading, setIsLoading }) => {
     setAuthError('');
 
     try {
-      const { session } = await signIn({
+      const result = await signIn({
         email: data.email,
         password: data.password,
       });
 
       // Call the onSuccess callback with the user data
-      if (session?.user) {
+      if (result?.session?.user) {
         onSuccess({
-          id: session.user.id,
-          email: session.user.email,
-          role: session.user.user_metadata?.role || 'student',
-          name: session.user.user_metadata?.full_name || 'User',
+          id: result.session.user.id,
+          email: result.session.user.email,
+          role: result.session.user.user_metadata?.role || 'student',
+          name: result.session.user.user_metadata?.full_name || 'User',
         });
       }
     } catch (error) {
       console.error('Login error:', error.message);
       setIsLoading(false);
-      setAuthError(error.message || 'Email ou mot de passe incorrect');
+      
+      // Use the enhanced error message from AuthContext
+      const errorMessage = error.message || 'Email ou mot de passe incorrect';
+      setAuthError(errorMessage);
+      
+      // Set form field errors
       setError('email', { type: 'manual' });
       setError('password', { type: 'manual' });
     }
@@ -118,11 +123,23 @@ const LoginForm = ({ onSuccess, isLoading, setIsLoading }) => {
 
       {/* Auth Error Message */}
       {authError && (
-        <div className='p-3 bg-error-50 border border-error-200 rounded-lg'>
-          <p className='text-sm text-error-700 flex items-center'>
-            <Icon name='AlertTriangle' size={16} className='mr-2 flex-shrink-0' />
-            {authError}
-          </p>
+        <div className='p-4 bg-error-50 border border-error-200 rounded-lg'>
+          <div className='flex items-start'>
+            <Icon name='AlertTriangle' size={20} className='mr-3 flex-shrink-0 text-error-600 mt-0.5' />
+            <div className='flex-1'>
+              <p className='text-sm text-error-700 font-medium mb-1'>
+                Erreur de connexion
+              </p>
+              <p className='text-sm text-error-600'>
+                {authError}
+              </p>
+              {authError.includes('Email ou mot de passe incorrect') && (
+                <p className='text-xs text-error-500 mt-2'>
+                  💡 Astuce : Assurez-vous d'avoir créé un compte ou contactez l'administrateur si le problème persiste.
+                </p>
+              )}
+            </div>
+          </div>
         </div>
       )}
 
