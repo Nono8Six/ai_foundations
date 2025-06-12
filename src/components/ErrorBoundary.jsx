@@ -1,6 +1,6 @@
 import React from 'react';
 import Icon from './AppIcon';
-import { ErrorContext } from '../context/ErrorContext';
+import ErrorContext from '../context/ErrorContext';
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
