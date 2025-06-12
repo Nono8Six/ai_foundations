@@ -55,6 +55,9 @@ export const AuthProvider = ({ children }) => {
       if (event === 'SIGNED_IN' && session?.user) {
         console.log('✅ User signed in, fetching profile...');
         await fetchUserProfile(session.user.id);
+        if (window.location.pathname === '/verify-email') {
+          navigate('/espace');
+        }
       } else if (event === 'SIGNED_OUT') {
         console.log('🚪 User signed out, clearing profile...');
         setUserProfile(null);
@@ -62,6 +65,9 @@ export const AuthProvider = ({ children }) => {
         console.log('🔄 Token refreshed');
       } else if (event === 'USER_UPDATED') {
         console.log('👤 User updated');
+        if (window.location.pathname === '/verify-email') {
+          navigate('/espace');
+        }
       }
     });
 
@@ -132,7 +138,7 @@ export const AuthProvider = ({ children }) => {
           data: {
             full_name: `${firstName} ${lastName}`,
           },
-          emailRedirectTo: `${window.location.origin}/login`,
+          emailRedirectTo: `${window.location.origin}/verify-email`,
         },
       })
     );
@@ -149,25 +155,43 @@ export const AuthProvider = ({ children }) => {
   // Sign In with email
   const signIn = async ({ email, password }) => {
     console.log('🔐 Signing in user:', email);
-    
-    try {
-      const { data, error } = await safeQuery(() =>
-        supabase.auth.signInWithPassword({
-          email,
-          password,
-        })
-      );
+
+    // Check if the email exists to distinguish errors
+    const { data: exists, error: existsError } = await safeQuery(() =>
+      supabase.rpc('email_exists', { search_email: email })
+    );
+
+    if (existsError) {
+      throw existsError;
+    }
+
+    if (!exists) {
+      const err = new Error("Aucun compte trouvé pour cette adresse email.");
+      err.code = 'email_not_found';
+      throw err;
+    }
+
+    const { data, error } = await safeQuery(() =>
+      supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+    );
       
       if (error) {
         // Provide more specific error messages based on what Supabase actually returns
         let userFriendlyMessage = 'Les identifiants fournis sont incorrects. Vérifiez votre email et mot de passe.';
+        const enhancedError = new Error(userFriendlyMessage);
+        enhancedError.originalError = error;
         
         // Note: Supabase intentionally returns generic "Invalid login credentials" 
         // for security reasons, so we can't distinguish between wrong email vs wrong password
         if (error.message.includes('Invalid login credentials')) {
-          userFriendlyMessage = 'Les identifiants fournis sont incorrects. Vérifiez votre email et mot de passe.';
+          userFriendlyMessage = 'Mot de passe incorrect.';
+          enhancedError.code = 'wrong_password';
         } else if (error.message.includes('Email not confirmed')) {
           userFriendlyMessage = 'Veuillez confirmer votre email avant de vous connecter. Vérifiez votre boîte de réception.';
+          enhancedError.code = 'email_not_confirmed';
         } else if (error.message.includes('Too many requests')) {
           userFriendlyMessage = 'Trop de tentatives de connexion. Veuillez patienter quelques minutes avant de réessayer.';
         } else if (error.message.includes('signup_disabled')) {
@@ -176,20 +200,15 @@ export const AuthProvider = ({ children }) => {
           userFriendlyMessage = 'L\'adresse email fournie n\'est pas valide.';
         }
         
-        const enhancedError = new Error(userFriendlyMessage);
-        enhancedError.originalError = error;
-        enhancedError.code = 'invalid_credentials';
+        enhancedError.message = userFriendlyMessage;
+        enhancedError.code = enhancedError.code || 'invalid_credentials';
         
         // Don't set global error state for sign in failures - let the form handle it
         throw enhancedError;
       }
       
-      console.log('✅ Sign in successful');
-      return data;
-    } catch (error) {
-      // Re-throw the error so it can be handled by the calling component
-      throw error;
-    }
+    console.log('✅ Sign in successful');
+    return data;
   };
 
   // Sign In with Google
@@ -319,6 +338,21 @@ export const AuthProvider = ({ children }) => {
     console.log('✅ Password reset email sent');
   };
 
+  const resendVerificationEmail = async email => {
+    console.log('🔄 Resending verification email for:', email);
+    const { error } = await safeQuery(() =>
+      supabase.auth.resend({
+        type: 'signup',
+        email,
+        options: { emailRedirectTo: `${window.location.origin}/verify-email` },
+      })
+    );
+    if (error) {
+      throw error;
+    }
+    console.log('✅ Verification email resent');
+  };
+
   const value = {
     signUp,
     signIn,
@@ -326,6 +360,7 @@ export const AuthProvider = ({ children }) => {
     signOut,
     logout,
     resetPassword,
+    resendVerificationEmail,
     updateProfile,
     updateUserSettings,
     getUserSettings,

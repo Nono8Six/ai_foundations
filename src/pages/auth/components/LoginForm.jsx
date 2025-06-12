@@ -10,9 +10,11 @@ const LoginForm = ({ onSuccess, isLoading, setIsLoading }) => {
     handleSubmit,
     formState: { errors },
     setError,
+    getValues,
   } = useForm();
-  const { signIn } = useAuth();
+  const { signIn, resendVerificationEmail } = useAuth();
   const [authError, setAuthError] = useState('');
+  const [authErrorCode, setAuthErrorCode] = useState('');
 
   const onSubmit = async data => {
     setIsLoading(true);
@@ -36,10 +38,10 @@ const LoginForm = ({ onSuccess, isLoading, setIsLoading }) => {
     } catch (error) {
       console.error('Login error:', error.message);
       setIsLoading(false);
-      
-      // Use the enhanced error message from AuthContext
+
       const errorMessage = error.message || 'Email ou mot de passe incorrect';
       setAuthError(errorMessage);
+      setAuthErrorCode(error.code || '');
       
       // Set form field errors
       setError('email', { type: 'manual' });
@@ -143,6 +145,15 @@ const LoginForm = ({ onSuccess, isLoading, setIsLoading }) => {
                   <li>• Vérifiez que votre mot de passe est correct</li>
                   <li>• Si vous avez oublié votre mot de passe, utilisez la fonction "Mot de passe oublié"</li>
                 </ul>
+                {authErrorCode === 'email_not_confirmed' && (
+                  <button
+                    type='button'
+                    onClick={() => resendVerificationEmail(getValues('email'))}
+                    className='mt-2 text-primary underline text-xs'
+                  >
+                    Renvoyer l'email de vérification
+                  </button>
+                )}
               </div>
             </div>
           </div>

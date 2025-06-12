@@ -122,7 +122,6 @@ const AuthenticationLoginRegister = () => {
                 />
               ) : (
                 <RegisterForm
-                  onSuccess={handleAuthSuccess}
                   isLoading={isLoading}
                   setIsLoading={setIsLoading}
                 />
