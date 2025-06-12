@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter } from "react-router-dom";
 import AppRoutes from "./Routes";
+import Header from './components/Header';
 import { AuthProvider } from "./context/AuthContext";
 import { CourseProvider } from "./context/CourseContext";
 import { ToastProvider, useToast } from "./context/ToastContext"; // Assurez-vous d'exporter useToast
