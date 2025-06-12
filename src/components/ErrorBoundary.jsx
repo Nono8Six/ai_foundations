@@ -1,5 +1,6 @@
 import React from 'react';
 import Icon from './AppIcon';
+import { ErrorContext } from '../context/ErrorContext';
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -7,12 +8,18 @@ class ErrorBoundary extends React.Component {
     this.state = { hasError: false };
   }
 
-  static getDerivedStateFromError(error) {
+  static contextType = ErrorContext;
+
+  static getDerivedStateFromError() {
     return { hasError: true };
   }
 
   componentDidCatch(error, errorInfo) {
-    console.log('Error caught by ErrorBoundary:', error, errorInfo);
+    if (this.context && this.context.reportError) {
+      this.context.reportError({ error, errorInfo });
+    } else {
+      console.error('Error caught by ErrorBoundary:', error, errorInfo);
+    }
   }
 
   render() {
@@ -31,8 +38,8 @@ class ErrorBoundary extends React.Component {
                 <path
                   d='M16 28.5C22.6274 28.5 28 23.1274 28 16.5C28 9.87258 22.6274 4.5 16 4.5C9.37258 4.5 4 9.87258 4 16.5C4 23.1274 9.37258 28.5 16 28.5Z'
                   stroke='#343330'
-                  stroke-width='2'
-                  stroke-miterlimit='10'
+                  strokeWidth='2'
+                  strokeMiterlimit='10'
                 />
                 <path
                   d='M11.5 15.5C12.3284 15.5 13 14.8284 13 14C13 13.1716 12.3284 12.5 11.5 12.5C10.6716 12.5 10 13.1716 10 14C10 14.8284 10.6716 15.5 11.5 15.5Z'
@@ -45,7 +52,7 @@ class ErrorBoundary extends React.Component {
                 <path
                   d='M21 22.5C19.9625 20.7062 18.2213 19.5 16 19.5C13.7787 19.5 12.0375 20.7062 11 22.5'
                   stroke='#343330'
-                  stroke-width='2'
+                  strokeWidth='2'
                   strokeLinecap='round'
                   strokeLinejoin='round'
                 />
