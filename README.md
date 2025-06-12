@@ -97,6 +97,29 @@ chmod +x scripts/check-env.sh
 ./scripts/check-env.sh
 ```
 
+## 🛠️ Supabase CLI et migrations
+
+Pour utiliser les migrations fournies dans `supabase/migrations`, installez la
+CLI Supabase puis liez ce dépôt à votre projet :
+
+```bash
+npm install -g supabase   # ou brew install supabase/tap/supabase
+supabase login            # connexion à votre compte Supabase
+supabase link --project-ref <votre-reference-projet>
+```
+
+Une fois le projet lié, appliquez toutes les migrations :
+
+```bash
+supabase db push
+```
+
+Les variables d'environnement nécessaires au fonctionnement local sont définies
+dans `.env`. Copiez le fichier exemple puis renseignez au minimum `VITE_SUPABASE_URL`
+et `VITE_SUPABASE_ANON_KEY`.
+Vous pouvez vérifier leur présence avec le script
+`./scripts/check-env.sh`.
+
 ## 🔧 Configuration avancée
 
 ### Variables d'environnement
