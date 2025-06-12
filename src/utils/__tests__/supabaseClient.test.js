@@ -9,11 +9,11 @@ describe('safeQuery', () => {
     expect(result).toEqual({ data: 'ok', error: null });
   });
 
-  it('logs and returns error when query returns error', async () => {
+  it('returns error without logging when query returns error', async () => {
     const err = { message: 'fail' };
     const spy = vi.spyOn(ErrorContext, 'logError').mockImplementation(() => {});
     const result = await safeQuery(() => Promise.resolve({ data: null, error: err }));
-    expect(spy).toHaveBeenCalledWith(err);
+    expect(spy).not.toHaveBeenCalled();
     expect(result).toEqual({ data: null, error: err });
   });
 

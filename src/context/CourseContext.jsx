@@ -2,7 +2,8 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from './AuthContext';
-import logger from '../utils/logger';
+import { safeQuery } from '../utils/supabaseClient'; // On garde safeQuery pour la sécurité
+import { logError } from './ErrorContext'; // On utilise le logger global
 
 const CourseContext = createContext();
 
@@ -12,19 +13,31 @@ export const CourseProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [userProgress, setUserProgress] = useState([]);
 
-  const fetchAllData = useCallback(async userId => {
-    logger.debug(`[CourseContext] Starting data fetch for user: ${userId}`);
+  const fetchAllData = useCallback(async (userId) => {
+    console.log(`[CourseContext] Starting data fetch for user: ${userId}`);
     setLoading(true);
 
     try {
       const [coursesResult, lessonsResult, modulesResult, progressResult] = await Promise.all([
-        supabase
-          .from('courses')
-          .select('id, title, cover_image_url, instructor, category, thumbnail_url')
-          .eq('is_published', true),
-        supabase.from('lessons').select('id, module_id, is_published').eq('is_published', true),
-        supabase.from('modules').select('id, course_id'),
-        supabase.from('user_progress').select('lesson_id, status').eq('user_id', userId),
+        safeQuery(() =>
+          supabase
+            .from('courses')
+            .select('id, title, cover_image_url, instructor, category, thumbnail_url')
+            .eq('is_published', true)
+        ),
+        safeQuery(() =>
+          supabase
+            .from('lessons')
+            .select('id, module_id, is_published')
+            .eq('is_published', true)
+        ),
+        safeQuery(() => supabase.from('modules').select('id, course_id')),
+        safeQuery(() =>
+          supabase
+            .from('user_progress')
+            .select('lesson_id, status')
+            .eq('user_id', userId)
+        ),
       ]);
 
       if (coursesResult.error) throw coursesResult.error;
@@ -39,8 +52,7 @@ export const CourseProvider = ({ children }) => {
 
       setUserProgress(progressData || []);
 
-      // Step 5: Process data
-      logger.debug('[CourseContext] 5. Processing all data...');
+      console.log('[CourseContext] Processing all data...');
       const completedLessonIds = new Set(
         (progressData || []).filter(p => p.status === 'completed').map(p => p.lesson_id)
       );
@@ -71,14 +83,13 @@ export const CourseProvider = ({ children }) => {
         return { ...course, progress };
       });
 
-      logger.debug('[CourseContext] 5. Data processed. Setting final state.');
+      console.log('[CourseContext] Data processed. Setting final state.');
       setCoursesWithProgress(coursesWithStats);
     } catch (error) {
-      // This outer catch might not be reached if inner catches return
-      console.error('[CourseContext] A critical error occurred in fetchAllData:', error.message);
+      logError(new Error(`[CourseContext] A critical error occurred in fetchAllData: ${error.message}`));
       setCoursesWithProgress([]);
     } finally {
-      logger.debug('[CourseContext] Fetch process finished. Setting loading to false.');
+      console.log('[CourseContext] Fetch process finished. Setting loading to false.');
       setLoading(false);
     }
   }, []);

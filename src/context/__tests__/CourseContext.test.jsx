@@ -61,6 +61,12 @@ vi.mock('../../lib/supabase', () => {
   };
 });
 
+var safeQueryMock;
+vi.mock('../../utils/supabaseClient', () => {
+  safeQueryMock = vi.fn(async fn => fn());
+  return { safeQuery: safeQueryMock };
+});
+
 import { CourseProvider, useCourses } from '../CourseContext.jsx';
 
 const Consumer = () => {
@@ -76,6 +82,7 @@ const Consumer = () => {
 describe('fetchAllData', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    safeQueryMock.mockClear();
   });
 
   it('calculates progress per course using modules', async () => {
