@@ -286,7 +286,7 @@ export const AuthProvider = ({ children }) => {
     console.log('📝 Updating user settings:', settings);
 
     const { data, error } = await safeQuery(() =>
-      supabase.rpc('update_user_settings_rpc', {
+      supabase.rpc('update_user_settings', {
         settings_data: settings,
       })
     );
@@ -304,7 +304,7 @@ export const AuthProvider = ({ children }) => {
   const getUserSettings = async () => {
     console.log('🔍 Getting user settings...');
 
-    const { data, error } = await safeQuery(() => supabase.rpc('get_user_settings_rpc'));
+    const { data, error } = await safeQuery(() => supabase.rpc('get_user_settings'));
 
     if (error) {
       setError(error);
