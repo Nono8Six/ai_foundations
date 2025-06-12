@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 import Icon from '../../components/AppIcon';
 
@@ -8,7 +9,6 @@ import FilterSidebar from './components/FilterSidebar';
 import CoursePathway from './components/CoursePathway';
 
 const ProgramOverview = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('popularity');
@@ -23,16 +23,24 @@ const ProgramOverview = () => {
   const [loading, setLoading] = useState(true);
   const [courses, setCourses] = useState([]);
 
-  // Simulate loading courses
+  // Load courses from Supabase
   useEffect(() => {
-    setLoading(true);
-    // Simulate API call delay
-    const timer = setTimeout(() => {
-      setCourses([]);
+    const fetchCourses = async () => {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('courses')
+        .select('*')
+        .eq('is_published', true);
+      if (error) {
+        console.error('Error fetching courses:', error);
+        setLoading(false);
+        return;
+      }
+      setCourses(data || []);
       setLoading(false);
-    }, 1000);
-    
-    return () => clearTimeout(timer);
+    };
+
+    fetchCourses();
   }, []);
 
   // Transform Supabase courses to match expected format
