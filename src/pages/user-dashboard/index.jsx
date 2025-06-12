@@ -19,8 +19,11 @@ const UserDashboard = () => {
 
   const { userProfile, user } = useAuth();
   const { coursesWithProgress, loading } = useCourses();
-  const { activities } = useRecentActivity(user?.id);
-  const { achievements } = useAchievements(user?.id);
+  const { activities } = useRecentActivity(user?.id, { limit: 5, order: 'desc' });
+  const { achievements } = useAchievements(user?.id, {
+    order: 'desc',
+    filters: { earned: true },
+  });
 
   useEffect(() => {
     const timer = setInterval(() => {
