@@ -158,8 +158,6 @@ export const AuthProvider = ({ children }) => {
       );
       
       if (error) {
-        console.error('❌ Supabase auth error:', error);
-        
         // Provide more specific error messages
         let userFriendlyMessage = 'Email ou mot de passe incorrect';
         
