@@ -1,7 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import Icon from '../../components/AppIcon';
-
 import UserTable from './components/UserTable';
 import UserDetailsPanel from './components/UserDetailsPanel';
 import UserFilters from './components/UserFilters';
@@ -24,7 +23,7 @@ const UserManagementAdmin = () => {
   });
   const [sortConfig, setSortConfig] = useState({ key: 'lastActivity', direction: 'desc' });
 
-  // Users fetched from Supabase
+  // Récupère les utilisateurs depuis Supabase au chargement du composant
   useEffect(() => {
     const fetchUsers = async () => {
       const { data, error } = await supabase.from('profiles').select('*');
@@ -32,6 +31,7 @@ const UserManagementAdmin = () => {
         console.error('Error fetching users:', error);
         return;
       }
+      // Transforme les données de la base pour les adapter au format de l'application
       const mapped = (data || []).map(p => ({
         id: p.id,
         name: p.full_name || 'Utilisateur',
@@ -63,30 +63,25 @@ const UserManagementAdmin = () => {
     fetchUsers();
   }, []);
 
-  // Filter and search users
+  // Filtre et trie les utilisateurs
   const filteredUsers = useMemo(() => {
     let filtered = users.filter(user => {
       const matchesSearch =
         user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         user.email.toLowerCase().includes(searchQuery.toLowerCase());
-
       const matchesStatus = filters.status === 'all' || user.status === filters.status;
       const matchesRole = filters.role === 'all' || user.role === filters.role;
-
       return matchesSearch && matchesStatus && matchesRole;
     });
 
-    // Sort users
     if (sortConfig.key) {
       filtered.sort((a, b) => {
         let aValue = a[sortConfig.key];
         let bValue = b[sortConfig.key];
-
         if (sortConfig.key === 'registrationDate' || sortConfig.key === 'lastActivity') {
           aValue = new Date(aValue);
           bValue = new Date(bValue);
         }
-
         if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
         if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
         return 0;
@@ -122,14 +117,12 @@ const UserManagementAdmin = () => {
 
   const handleBulkAction = action => {
     console.log(`Bulk action: ${action} for users:`, selectedUsers);
-    // Implement bulk actions here
     setSelectedUsers([]);
   };
 
   return (
     <div className='min-h-screen bg-background pt-16'>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
-        {/* Page Header */}
         <div className='mb-8'>
           <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between'>
             <div>
@@ -154,7 +147,6 @@ const UserManagementAdmin = () => {
           </div>
         </div>
 
-        {/* Stats Cards */}
         <div className='grid grid-cols-1 md:grid-cols-4 gap-6 mb-8'>
           <div className='bg-surface rounded-lg p-6 border border-border shadow-subtle'>
             <div className='flex items-center'>
@@ -220,11 +212,9 @@ const UserManagementAdmin = () => {
         </div>
 
         <div className='flex flex-col lg:flex-row gap-6'>
-          {/* Main Content */}
           <div
             className={`${showDetailsPanel ? 'lg:w-2/3' : 'w-full'} transition-all duration-300`}
           >
-            {/* Search and Filters */}
             <div className='bg-surface rounded-lg border border-border shadow-subtle mb-6'>
               <div className='p-6'>
                 <div className='flex flex-col sm:flex-row gap-4 mb-4'>
@@ -249,12 +239,10 @@ const UserManagementAdmin = () => {
                     Filtres
                   </button>
                 </div>
-
                 <UserFilters filters={filters} setFilters={setFilters} />
               </div>
             </div>
 
-            {/* Bulk Actions */}
             {selectedUsers.length > 0 && (
               <BulkActionsBar
                 selectedCount={selectedUsers.length}
@@ -263,7 +251,6 @@ const UserManagementAdmin = () => {
               />
             )}
 
-            {/* Users Table */}
             <UserTable
               users={filteredUsers}
               selectedUsers={selectedUsers}
@@ -275,14 +262,12 @@ const UserManagementAdmin = () => {
             />
           </div>
 
-          {/* User Details Panel */}
           {showDetailsPanel && (
             <UserDetailsPanel user={selectedUser} onClose={() => setShowDetailsPanel(false)} />
           )}
         </div>
       </div>
 
-      {/* Create User Modal */}
       {showCreateModal && (
         <CreateUserModal
           onClose={() => setShowCreateModal(false)}

@@ -1,6 +1,6 @@
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import React from 'react';
-import { render, waitFor, screen } from '@testing-library/react';
+import { render, waitForElementToBeRemoved, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 // Mock AuthContext to always return a user
@@ -85,7 +85,7 @@ describe('fetchAllData', () => {
       </CourseProvider>
     );
 
-    await waitFor(() => expect(screen.queryByTestId('loading')).not.toBeInTheDocument());
+    await waitForElementToBeRemoved(() => screen.queryByTestId('loading'));
 
     const courses = JSON.parse(screen.getByTestId('courses').textContent);
     const c1 = courses.find(c => c.id === 'c1');

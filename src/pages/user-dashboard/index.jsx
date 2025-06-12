@@ -17,7 +17,7 @@ const UserDashboard = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const navigate = useNavigate();
 
-  const { userProfile, user, logout } = useAuth();
+  const { userProfile, user } = useAuth();
   const { coursesWithProgress, loading } = useCourses();
   const { activities } = useRecentActivity(user?.id);
   const { achievements } = useAchievements(user?.id);
@@ -29,14 +29,6 @@ const UserDashboard = () => {
     return () => clearInterval(timer);
   }, []);
 
-  const handleLogout = async () => {
-    try {
-      await logout();
-      navigate('/login');
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
-  };
 
   const nextLessonToContinue = useMemo(() => {
     if (!coursesWithProgress || coursesWithProgress.length === 0) return null;

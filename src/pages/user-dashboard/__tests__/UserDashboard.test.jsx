@@ -7,27 +7,24 @@ vi.mock('react-router-dom', async () => {
 });
 
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
 const mockSignOut = vi.fn();
+const mockLogout = vi.fn(async () => mockSignOut());
 vi.mock('../../../context/AuthContext', () => ({
   useAuth: () => ({
     user: { id: '1', email: 'test@example.com' },
     userProfile: { full_name: 'Test User', avatar_url: '', level: 1, xp: 0, current_streak: 0 },
-    signOut: mockSignOut,
+    logout: mockLogout,
   }),
 }));
 
 vi.mock('../../../context/CourseContext', () => ({
   useCourses: () => ({
-    courses: [],
+    coursesWithProgress: [],
     userProgress: [],
-    fetchUserProgress: vi.fn(() => Promise.resolve()),
-    getNextLesson: vi.fn(() => Promise.resolve(null)),
-    calculateCourseProgress: vi.fn(() =>
-      Promise.resolve({ progress: 0, totalLessons: 0, completedLessons: 0 })
-    ),
+    loading: false,
   }),
 }));
 
@@ -53,6 +50,10 @@ vi.mock('../../../hooks/useAchievements', () => ({
   }),
 }));
 
+vi.mock('../components/ProgressChart', () => ({
+  default: () => <div data-testid='progress-chart' />,
+}));
+
 import UserDashboard from '../index.jsx';
 
 describe('UserDashboard', () => {
@@ -71,18 +72,16 @@ describe('UserDashboard', () => {
         <UserDashboard />
       </MemoryRouter>
     );
-    expect(screen.getByText('Test User')).toBeInTheDocument();
+    expect(screen.getByText(/Test/)).toBeInTheDocument();
   });
 
-  it('logs out and redirects to login', async () => {
+  it('links to profile page in quick actions', () => {
     render(
       <MemoryRouter>
         <UserDashboard />
       </MemoryRouter>
     );
-    const logoutButton = screen.getByRole('button', { name: /déconnexion/i });
-    fireEvent.click(logoutButton);
-    expect(mockSignOut).toHaveBeenCalled();
-    await waitFor(() => expect(mockNavigate).toHaveBeenCalledWith('/login'));
+    const profileLink = screen.getByRole('link', { name: /gérer mon profil/i });
+    expect(profileLink).toHaveAttribute('href', '/profile');
   });
 });

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { colors } from '../../../utils/theme';
 import {
   LineChart,
@@ -8,19 +8,14 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  BarChart,
-  Bar,
-  PieChart,
-  Pie,
-  Cell,
 } from 'recharts';
 import { useAuth } from '../../../context/AuthContext';
 import { useCourses } from '../../../context/CourseContext';
 import Icon from '../../../components/AppIcon';
 
-const ProgressChart = ({ weeklyData = [], monthlyData = [], subjectData = [] }) => {
+const ProgressChart = () => {
   const [activeTab, setActiveTab] = useState('weekly');
-  const { user, userProfile } = useAuth();
+  const { user } = useAuth();
   const { userProgress } = useCourses();
   const [hasData, setHasData] = useState(false);
   const [chartData, setChartData] = useState({
@@ -44,8 +39,6 @@ const ProgressChart = ({ weeklyData = [], monthlyData = [], subjectData = [] }) 
     const days = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
     const today = new Date().getDay(); // 0 = Sunday, 1 = Monday, etc.
     const weeklyData = days.map((day, index) => {
-      // Calculate if this day has passed this week
-      const dayIndex = (index + 1) % 7; // Convert to 1 = Monday, etc.
       const dayHasPassed = (today === 0 ? 6 : today - 1) >= index;
       
       // Only show activity for days that have passed

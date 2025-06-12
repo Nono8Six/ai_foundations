@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import { colors } from '../../../utils/theme';
 import {
   BarChart,
@@ -20,7 +20,7 @@ import useAchievements from '../../../hooks/useAchievements';
 import useRecentActivity from '../../../hooks/useRecentActivity';
 import Icon from '../../../components/AppIcon';
 
-const LearningStatsTab = ({ userData }) => {
+const LearningStatsTab = () => {
   const { user, userProfile } = useAuth();
   const { coursesWithProgress, loading: coursesLoading } = useCourses();
   const { achievements } = useAchievements(user?.id);
