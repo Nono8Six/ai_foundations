@@ -5,6 +5,7 @@ import AppRoutes from "./Routes"; // On utilise le composant qui contient les <R
 import { AuthProvider } from "./context/AuthContext";
 import { CourseProvider } from "./context/CourseContext";
 import { ToastProvider } from "./context/ToastContext";
+import { ErrorProvider } from "./context/ErrorContext";
 import Header from "./components/Header";
 
 function App() {
@@ -15,8 +16,10 @@ function App() {
       <AuthProvider>
         <CourseProvider>
           <ToastProvider>
-            <Header />
-            <AppRoutes />
+            <ErrorProvider>
+              <Header />
+              <AppRoutes />
+            </ErrorProvider>
           </ToastProvider>
         </CourseProvider>
       </AuthProvider>
