@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Icon from '../../components/AppIcon';
 
+import { fetchCourses } from '../../services/courseService';
+
 import CourseCard from './components/CourseCard';
 import FilterSidebar from './components/FilterSidebar';
 import CoursePathway from './components/CoursePathway';
@@ -23,17 +25,34 @@ const ProgramOverview = () => {
   const [loading, setLoading] = useState(true);
   const [courses, setCourses] = useState([]);
 
-  // Simulate loading courses
+  const [page, setPage] = useState(1);
+  const [totalCourses, setTotalCourses] = useState(0);
+  const pageSize = 12;
+
   useEffect(() => {
-    setLoading(true);
-    // Simulate API call delay
-    const timer = setTimeout(() => {
-      setCourses([]);
-      setLoading(false);
-    }, 1000);
-    
-    return () => clearTimeout(timer);
-  }, []);
+    const load = async () => {
+      setLoading(true);
+      try {
+        const { data, count } = await fetchCourses({
+          search: searchQuery,
+          filters,
+          sortBy,
+          page,
+          pageSize,
+        });
+        setCourses(data);
+        setTotalCourses(count);
+      } catch (error) {
+        console.error('Error loading courses', error);
+        setCourses([]);
+        setTotalCourses(0);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    load();
+  }, [searchQuery, sortBy, filters, page]);
 
   // Transform Supabase courses to match expected format
   const formattedCourses = useMemo(() => {
@@ -66,63 +85,6 @@ const ProgramOverview = () => {
     }));
   }, [courses]);
 
-  // Filter and sort courses
-  const filteredAndSortedCourses = useMemo(() => {
-    let filtered = formattedCourses.filter(course => {
-      const matchesSearch =
-        course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        course.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        course.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-
-      const matchesSkillLevel =
-        filters.skillLevel.length === 0 || filters.skillLevel.includes(course.difficulty);
-      const matchesDuration =
-        filters.duration.length === 0 ||
-        filters.duration.some(duration => {
-          const weeks = parseInt(course.duration);
-          if (duration === 'short') return weeks <= 3;
-          if (duration === 'medium') return weeks >= 4 && weeks <= 6;
-          if (duration === 'long') return weeks >= 7;
-          return true;
-        });
-      const matchesCategory =
-        filters.category.length === 0 || filters.category.includes(course.category);
-      const matchesStatus =
-        filters.status.length === 0 ||
-        filters.status.some(status => {
-          if (status === 'enrolled') return course.isEnrolled;
-          if (status === 'completed') return course.progress === 100;
-          if (status === 'in-progress') return course.progress > 0 && course.progress < 100;
-          if (status === 'not-started') return course.progress === 0;
-          return true;
-        });
-
-      return (
-        matchesSearch && matchesSkillLevel && matchesDuration && matchesCategory && matchesStatus
-      );
-    });
-
-    // Sort courses
-    filtered.sort((a, b) => {
-      switch (sortBy) {
-        case 'popularity':
-          return b.enrolledStudents - a.enrolledStudents;
-        case 'difficulty':
-          const difficultyOrder = { Débutant: 1, Intermédiaire: 2, Avancé: 3 };
-          return difficultyOrder[a.difficulty] - difficultyOrder[b.difficulty];
-        case 'duration':
-          return parseInt(a.duration) - parseInt(b.duration);
-        case 'alphabetical':
-          return a.title.localeCompare(b.title);
-        case 'rating':
-          return b.rating - a.rating;
-        default:
-          return 0;
-      }
-    });
-
-    return filtered;
-  }, [formattedCourses, searchQuery, sortBy, filters]);
 
   const handleFilterChange = newFilters => {
     setFilters(newFilters);
@@ -239,22 +201,22 @@ const ProgramOverview = () => {
                 {/* Results Count */}
                 <div className='mb-6'>
                   <p className='text-text-secondary'>
-                    {filteredAndSortedCourses.length} cours trouvé
-                    {filteredAndSortedCourses.length > 1 ? 's' : ''}
+                    {formattedCourses.length} cours trouvé
+                    {formattedCourses.length > 1 ? 's' : ''}
                     {searchQuery && ` pour "${searchQuery}"`}
                   </p>
                 </div>
 
                 {/* Course Display */}
-                {filteredAndSortedCourses.length > 0 ? (
+                {formattedCourses.length > 0 ? (
                   viewMode === 'grid' ? (
                     <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6'>
-                      {filteredAndSortedCourses.map(course => (
+                      {formattedCourses.map(course => (
                         <CourseCard key={course.id} course={course} />
                       ))}
                     </div>
                   ) : (
-                    <CoursePathway courses={filteredAndSortedCourses} />
+                    <CoursePathway courses={formattedCourses} />
                   )
                 ) : (
                   <div className='text-center py-12 bg-surface rounded-xl border border-border p-8'>
@@ -278,16 +240,38 @@ const ProgramOverview = () => {
                         <Icon name='RefreshCw' size={18} className='mr-2 inline-block' />
                         Réinitialiser les filtres
                       </button>
-                    )}
-                    {!user && !searchQuery && (
-                      <Link
-                        to='/register'
-                        className='px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors inline-flex items-center'
-                      >
-                        <Icon name='UserPlus' size={18} className='mr-2' />
-                        Créer un compte
-                      </Link>
-                    )}
+                  )}
+                  {!user && !searchQuery && (
+                    <Link
+                      to='/register'
+                      className='px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors inline-flex items-center'
+                    >
+                      <Icon name='UserPlus' size={18} className='mr-2' />
+                      Créer un compte
+                    </Link>
+                  )}
+                </div>
+                )}
+
+                {totalCourses > pageSize && (
+                  <div className='mt-8 flex justify-center gap-4'>
+                    <button
+                      onClick={() => setPage(p => Math.max(1, p - 1))}
+                      disabled={page === 1}
+                      className='px-4 py-2 border border-border rounded-lg disabled:opacity-50'
+                    >
+                      Précédent
+                    </button>
+                    <span className='px-2 py-2 text-sm'>
+                      Page {page} / {Math.ceil(totalCourses / pageSize)}
+                    </span>
+                    <button
+                      onClick={() => setPage(p => p + 1)}
+                      disabled={page >= Math.ceil(totalCourses / pageSize)}
+                      className='px-4 py-2 border border-border rounded-lg disabled:opacity-50'
+                    >
+                      Suivant
+                    </button>
                   </div>
                 )}
               </>
