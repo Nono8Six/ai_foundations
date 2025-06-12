@@ -238,13 +238,21 @@ export const AuthProvider = ({ children }) => {
   const getUserSettings = async () => {
     try {
       console.log('🔍 Getting user settings...');
-      
+
       const { data, error } = await supabase.rpc('get_user_settings_rpc');
 
       if (error) throw error;
-      
-      console.log('✅ Settings retrieved successfully:', data);
-      return data;
+
+      const settings = data
+        ? {
+            notification_settings: data.notification_settings,
+            privacy_settings: data.privacy_settings,
+            learning_preferences: data.learning_preferences,
+          }
+        : null;
+
+      console.log('✅ Settings retrieved successfully:', settings);
+      return settings;
     } catch (error) {
       console.error('❌ Error getting settings:', error.message);
       setError(error);
