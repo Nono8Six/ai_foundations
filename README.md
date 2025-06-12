@@ -110,6 +110,15 @@ Toutes les variables d'environnement sont configurées dans le fichier `.env` :
 - `VITE_APP_VERSION` : Version de l'application
 - `VITE_DEBUG` : Activer le mode debug (true/false)
 
+### Variables d'environnement requises
+
+L'application ne démarre pas si les variables suivantes sont absentes :
+
+```env
+VITE_SUPABASE_URL=<votre_url_supabase>
+VITE_SUPABASE_ANON_KEY=<votre_cle_anon_supabase>
+```
+
 ### Variables d'environnement manquantes
 
 Assurez-vous que votre fichier `.env` contient les variables requises :
