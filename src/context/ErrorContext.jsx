@@ -1,27 +1,20 @@
-import React, { createContext, useState, useContext } from 'react';
-import { useToast } from './ToastContext';
+// src/context/ErrorContext.jsx
 
-export const ErrorContext = createContext();
+import React, { createContext, useContext } from 'react';
 
-export const ErrorProvider = ({ children }) => {
-  const [errors, setErrors] = useState([]);
-  const { addToast } = useToast();
+const ErrorContext = createContext(() => {});
 
-  const reportError = error => {
-    setErrors(prev => [...prev, error]);
-    if (error?.message) {
-      addToast(error.message, 'error');
-    } else {
-      addToast('An unexpected error occurred', 'error');
-    }
-    console.error(error);
-  };
+let externalLogger = console.error;
 
-  return (
-    <ErrorContext.Provider value={{ errors, reportError }}>
-      {children}
-    </ErrorContext.Provider>
-  );
+export const ErrorProvider = ({ children, logger = console.error }) => {
+  externalLogger = logger;
+  return <ErrorContext.Provider value={logger}>{children}</ErrorContext.Provider>;
 };
 
-export const useError = () => useContext(ErrorContext);
+export const useErrorLogger = () => useContext(ErrorContext);
+
+export const logError = error => {
+  externalLogger(error);
+};
+
+export default ErrorContext;
