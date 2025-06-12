@@ -1,6 +1,7 @@
 import React from 'react';
 import Icon from '../../../components/AppIcon';
 import Image from '../../../components/AppImage';
+import logger from '../../../utils/logger';
 
 const UserTable = ({
   users,
@@ -208,7 +209,7 @@ const UserTable = ({
                       <button
                         onClick={e => {
                           e.stopPropagation();
-                          console.log('Edit user:', user.id);
+                          logger.info('Edit user:', user.id);
                         }}
                         className='text-primary hover:text-primary-700 transition-colors'
                       >
@@ -217,7 +218,7 @@ const UserTable = ({
                       <button
                         onClick={e => {
                           e.stopPropagation();
-                          console.log('Message user:', user.id);
+                          logger.info('Message user:', user.id);
                         }}
                         className='text-text-secondary hover:text-primary transition-colors'
                       >
@@ -226,7 +227,7 @@ const UserTable = ({
                       <button
                         onClick={e => {
                           e.stopPropagation();
-                          console.log('More actions for user:', user.id);
+                          logger.info('More actions for user:', user.id);
                         }}
                         className='text-text-secondary hover:text-primary transition-colors'
                       >

@@ -3,6 +3,7 @@ import React, { createContext, useState, useEffect, useContext } from 'react';
 import { supabase } from '../lib/supabase';
 import { safeQuery } from '../utils/supabaseClient';
 import { useNavigate } from 'react-router-dom';
+import logger from '../utils/logger';
 
 const AuthContext = createContext();
 
@@ -18,16 +19,16 @@ export const AuthProvider = ({ children }) => {
     // Get session on initial load
     const getInitialSession = async () => {
       try {
-        console.log('🔍 Getting initial session...');
+        logger.debug('🔍 Getting initial session...');
         const { data, error } = await safeQuery(() => supabase.auth.getSession());
         if (error) throw error;
         const { session } = data;
-        console.log('📋 Initial session:', session);
+        logger.debug('📋 Initial session:', session);
         setSession(session);
         setUser(session?.user ?? null);
 
         if (session?.user) {
-          console.log('👤 User found, fetching profile...');
+          logger.debug('👤 User found, fetching profile...');
           await fetchUserProfile(session.user.id);
         }
       } catch (error) {
@@ -44,27 +45,27 @@ export const AuthProvider = ({ children }) => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('🔄 Auth state change event:', event);
-      console.log('📋 Auth state change session:', session);
-      console.log('⏰ Timestamp:', new Date().toISOString());
+      logger.debug('🔄 Auth state change event:', event);
+      logger.debug('📋 Auth state change session:', session);
+      logger.debug('⏰ Timestamp:', new Date().toISOString());
 
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
 
       if (event === 'SIGNED_IN' && session?.user) {
-        console.log('✅ User signed in, fetching profile...');
+        logger.debug('✅ User signed in, fetching profile...');
         await fetchUserProfile(session.user.id);
         if (window.location.pathname === '/verify-email') {
           navigate('/espace');
         }
       } else if (event === 'SIGNED_OUT') {
-        console.log('🚪 User signed out, clearing profile...');
+        logger.debug('🚪 User signed out, clearing profile...');
         setUserProfile(null);
       } else if (event === 'TOKEN_REFRESHED') {
-        console.log('🔄 Token refreshed');
+        logger.debug('🔄 Token refreshed');
       } else if (event === 'USER_UPDATED') {
-        console.log('👤 User updated');
+        logger.debug('👤 User updated');
         if (window.location.pathname === '/verify-email') {
           navigate('/espace');
         }
@@ -72,7 +73,7 @@ export const AuthProvider = ({ children }) => {
     });
 
     return () => {
-      console.log('🧹 Cleaning up auth subscription...');
+      logger.debug('🧹 Cleaning up auth subscription...');
       subscription.unsubscribe();
     };
   }, []);
@@ -80,7 +81,7 @@ export const AuthProvider = ({ children }) => {
   // Fetch user profile data
   const fetchUserProfile = async userId => {
     try {
-      console.log('🔍 Fetching profile for user:', userId);
+      logger.debug('🔍 Fetching profile for user:', userId);
       const { data, error } = await safeQuery(() =>
         supabase.from('profiles').select('*').eq('id', userId)
       );
@@ -92,7 +93,7 @@ export const AuthProvider = ({ children }) => {
       }
 
       if (!data || data.length === 0) {
-        console.log('⚠️ No profile found for user, creating default...');
+        logger.debug('⚠️ No profile found for user, creating default...');
         // Try to create a default profile
         const { data: newProfile, error: createError } = await safeQuery(() =>
           supabase.from('profiles').insert([
@@ -114,12 +115,12 @@ export const AuthProvider = ({ children }) => {
           return;
         }
         
-        console.log('✅ Default profile created:', newProfile);
+        logger.info('✅ Default profile created:', newProfile);
         setUserProfile(newProfile);
         return;
       }
 
-      console.log('✅ Profile fetched successfully:', data[0]);
+      logger.debug('✅ Profile fetched successfully:', data[0]);
       setUserProfile(data[0]);
     } catch (error) {
       console.error('❌ Unexpected error in fetchUserProfile:', error);
@@ -129,7 +130,7 @@ export const AuthProvider = ({ children }) => {
 
   // Sign Up with email
   const signUp = async ({ email, password, firstName, lastName }) => {
-    console.log('📝 Signing up user:', email);
+    logger.debug('📝 Signing up user:', email);
     const { data, error } = await safeQuery(() =>
       supabase.auth.signUp({
         email,
@@ -148,13 +149,13 @@ export const AuthProvider = ({ children }) => {
       // Don't set global error state for sign up failures - let the form handle it
       throw error;
     }
-    console.log('✅ Sign up successful');
+    logger.info('✅ Sign up successful');
     return data;
   };
 
   // Sign In with email
   const signIn = async ({ email, password }) => {
-    console.log('🔐 Signing in user:', email);
+    logger.debug('🔐 Signing in user:', email);
 
     // Check if the email exists to distinguish errors
     const { data: exists, error: existsError } = await safeQuery(() =>
@@ -207,13 +208,13 @@ export const AuthProvider = ({ children }) => {
         throw enhancedError;
       }
       
-    console.log('✅ Sign in successful');
+    logger.info('✅ Sign in successful');
     return data;
   };
 
   // Sign In with Google
   const signInWithGoogle = async () => {
-    console.log('🔐 Signing in with Google...');
+    logger.debug('🔐 Signing in with Google...');
     const { data, error } = await safeQuery(() =>
       supabase.auth.signInWithOAuth({
         provider: 'google',
@@ -227,41 +228,41 @@ export const AuthProvider = ({ children }) => {
       setError(error);
       throw error;
     }
-    console.log('✅ Google sign in initiated');
+    logger.info('✅ Google sign in initiated');
     return data;
   };
 
   // Sign Out
   const signOut = async () => {
-    console.log('🚪 Signing out user...');
+    logger.debug('🚪 Signing out user...');
     const { error } = await safeQuery(() => supabase.auth.signOut());
     if (error) {
       setError(error);
       throw error;
     }
-    console.log('✅ Sign out successful');
+    logger.info('✅ Sign out successful');
   };
 
   // Logout helper used by UI
   const logout = async () => {
     try {
-      console.log('🚪 Logout initiated...');
+      logger.debug('🚪 Logout initiated...');
       await signOut();
     } catch (err) {
       console.error('❌ Erreur lors de la déconnexion:', err);
     } finally {
-      console.log('🧹 Cleaning up user state...');
+      logger.debug('🧹 Cleaning up user state...');
       setUser(null);
       setUserProfile(null);
       localStorage.removeItem('authToken');
-      console.log('🏠 Navigating to home...');
+      logger.debug('🏠 Navigating to home...');
       navigate('/');
     }
   };
 
   // Update user profile using RPC function
   const updateProfile = async updates => {
-    console.log('📝 Updating profile:', updates);
+    logger.debug('📝 Updating profile:', updates);
 
     const { data, error } = await safeQuery(() =>
       supabase.rpc('update_user_profile', {
@@ -274,7 +275,7 @@ export const AuthProvider = ({ children }) => {
       throw error;
     }
 
-    console.log('✅ Profile updated successfully:', data);
+    logger.info('✅ Profile updated successfully:', data);
 
     setUserProfile(data);
 
@@ -283,10 +284,10 @@ export const AuthProvider = ({ children }) => {
 
   // Update user settings using RPC function
   const updateUserSettings = async settings => {
-    console.log('📝 Updating user settings:', settings);
+    logger.debug('📝 Updating user settings:', settings);
 
     const { data, error } = await safeQuery(() =>
-      supabase.rpc('update_user_settings_rpc', {
+      supabase.rpc('update_user_settings', {
         settings_data: settings,
       })
     );
@@ -296,15 +297,15 @@ export const AuthProvider = ({ children }) => {
       throw error;
     }
 
-    console.log('✅ Settings updated successfully:', data);
+    logger.info('✅ Settings updated successfully:', data);
     return data;
   };
 
   // Get user settings using RPC function
   const getUserSettings = async () => {
-    console.log('🔍 Getting user settings...');
+    logger.debug('🔍 Getting user settings...');
 
-    const { data, error } = await safeQuery(() => supabase.rpc('get_user_settings_rpc'));
+    const { data, error } = await safeQuery(() => supabase.rpc('get_user_settings'));
 
     if (error) {
       setError(error);
@@ -319,13 +320,13 @@ export const AuthProvider = ({ children }) => {
         }
       : null;
 
-    console.log('✅ Settings retrieved successfully:', settings);
+    logger.debug('✅ Settings retrieved successfully:', settings);
     return settings;
   };
 
   // Reset password
   const resetPassword = async email => {
-    console.log('🔄 Resetting password for:', email);
+    logger.debug('🔄 Resetting password for:', email);
     const { error } = await safeQuery(() =>
       supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/reset-password`,
@@ -335,11 +336,11 @@ export const AuthProvider = ({ children }) => {
       setError(error);
       throw error;
     }
-    console.log('✅ Password reset email sent');
+    logger.info('✅ Password reset email sent');
   };
 
   const resendVerificationEmail = async email => {
-    console.log('🔄 Resending verification email for:', email);
+    logger.debug('🔄 Resending verification email for:', email);
     const { error } = await safeQuery(() =>
       supabase.auth.resend({
         type: 'signup',
@@ -350,7 +351,7 @@ export const AuthProvider = ({ children }) => {
     if (error) {
       throw error;
     }
-    console.log('✅ Verification email resent');
+    logger.info('✅ Verification email resent');
   };
 
   const value = {

@@ -2,7 +2,8 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from './AuthContext';
-import { safeQuery } from '../utils/supabaseClient';
+import { safeQuery } from '../utils/supabaseClient'; // On garde safeQuery pour la sécurité
+import { logError } from './ErrorContext'; // On utilise le logger global
 
 const CourseContext = createContext();
 
@@ -12,7 +13,7 @@ export const CourseProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [userProgress, setUserProgress] = useState([]);
 
-  const fetchAllData = useCallback(async userId => {
+  const fetchAllData = useCallback(async (userId) => {
     console.log(`[CourseContext] Starting data fetch for user: ${userId}`);
     setLoading(true);
 
@@ -51,8 +52,7 @@ export const CourseProvider = ({ children }) => {
 
       setUserProgress(progressData || []);
 
-      // Step 5: Process data
-      console.log('[CourseContext] 5. Processing all data...');
+      console.log('[CourseContext] Processing all data...');
       const completedLessonIds = new Set(
         (progressData || []).filter(p => p.status === 'completed').map(p => p.lesson_id)
       );
@@ -83,11 +83,10 @@ export const CourseProvider = ({ children }) => {
         return { ...course, progress };
       });
 
-      console.log('[CourseContext] 5. Data processed. Setting final state.');
+      console.log('[CourseContext] Data processed. Setting final state.');
       setCoursesWithProgress(coursesWithStats);
     } catch (error) {
-      // This outer catch might not be reached if inner catches return
-      console.error('[CourseContext] A critical error occurred in fetchAllData:', error.message);
+      logError(new Error(`[CourseContext] A critical error occurred in fetchAllData: ${error.message}`));
       setCoursesWithProgress([]);
     } finally {
       console.log('[CourseContext] Fetch process finished. Setting loading to false.');

@@ -109,6 +109,7 @@ Toutes les variables d'environnement sont configurées dans le fichier `.env` :
 - `VITE_APP_NAME` : Nom de l'application
 - `VITE_APP_VERSION` : Version de l'application
 - `VITE_DEBUG` : Activer le mode debug (true/false)
+- `VITE_LOG_LEVEL` : Niveau de log (debug/info/warn/error)
 
 ### Variables d'environnement requises
 
@@ -130,6 +131,7 @@ VITE_APP_NAME="Votre Application"
 VITE_APP_ENV=development
 VITE_APP_VERSION=0.1.0
 VITE_DEBUG=true
+VITE_LOG_LEVEL=debug
 ```
 
 ## 🔒 Sécurité
@@ -138,6 +140,12 @@ VITE_DEBUG=true
 - Les secrets ne sont jamais inclus dans l'image Docker
 - Configuration de sécurité renforcée pour Nginx en production
 - Headers de sécurité HTTP activés
+
+### Politiques RLS
+
+La table `user_settings` est protégée par la Row Level Security. Deux politiques
+`SELECT` et `UPDATE` autorisent un utilisateur authentifié à consulter et mettre
+à jour uniquement son propre enregistrement (`auth.uid() = user_id`).
 
 ## 📦 Structure du projet
 
@@ -187,7 +195,7 @@ Cette erreur se produit lorsque les migrations de base de données n'ont pas ét
 
 1. Vérifiez que la CLI Supabase est installée et que vous êtes connecté
 2. Liez votre projet : `supabase link --project-ref votre-reference-projet`
-3. Appliquez les migrations : `supabase db push`
+3. Appliquez la migration consolidée : `supabase db push`
 4. Vérifiez que les tables existent dans le tableau de bord Supabase
 
 ## 📚 Documentation supplémentaire

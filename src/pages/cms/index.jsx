@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import logger from '../../utils/logger';
 
 import Icon from '../../components/AppIcon';
 import ContentTree from './components/ContentTree';
@@ -109,18 +110,18 @@ const ContentManagementCoursesModulesLessons = () => {
 
   const handleSaveContent = updatedContent => {
     // Mock save functionality
-    console.log('Saving content:', updatedContent);
+    logger.info('Saving content:', updatedContent);
     setSelectedContent(updatedContent);
   };
 
   const handleDeleteContent = contentId => {
     // Mock delete functionality
-    console.log('Deleting content:', contentId);
+    logger.info('Deleting content:', contentId);
     setSelectedContent(null);
   };
 
   const handleBulkOperation = (operation, items) => {
-    console.log('Bulk operation:', operation, items);
+    logger.info('Bulk operation:', operation, items);
     setSelectedItems([]);
     setShowBulkOperations(false);
   };
@@ -235,7 +236,7 @@ const ContentManagementCoursesModulesLessons = () => {
         <MediaLibrary
           onClose={() => setShowMediaLibrary(false)}
           onSelectMedia={media => {
-            console.log('Selected media:', media);
+            logger.info('Selected media:', media);
             setShowMediaLibrary(false);
           }}
         />
