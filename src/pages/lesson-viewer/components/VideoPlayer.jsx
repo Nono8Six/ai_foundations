@@ -10,7 +10,6 @@ const VideoPlayer = ({ videoUrl, transcript, onProgress }) => {
   const [playbackRate, setPlaybackRate] = useState(1);
   const [showControls, setShowControls] = useState(true);
   const [showTranscript, setShowTranscript] = useState(false);
-  const [quality, setQuality] = useState('auto');
   const [showCaptions, setShowCaptions] = useState(false);
 
   useEffect(() => {

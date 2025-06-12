@@ -1,5 +1,4 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Icon from '../../components/AppIcon';
 import { fetchCourses } from '../../services/courseService';
