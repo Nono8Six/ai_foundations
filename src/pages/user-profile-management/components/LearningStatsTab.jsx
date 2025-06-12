@@ -23,8 +23,8 @@ import Icon from '../../../components/AppIcon';
 const LearningStatsTab = () => {
   const { user, userProfile } = useAuth();
   const { coursesWithProgress, loading: coursesLoading } = useCourses();
-  const { achievements } = useAchievements(user?.id);
-  const { activities } = useRecentActivity(user?.id);
+  const { achievements } = useAchievements(user?.id, { order: 'desc' });
+  const { activities } = useRecentActivity(user?.id, { limit: 50, order: 'desc' });
 
   const stats = useMemo(() => {
     if (coursesLoading || !coursesWithProgress || coursesWithProgress.length === 0) {
