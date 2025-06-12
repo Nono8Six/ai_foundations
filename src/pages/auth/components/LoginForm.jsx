@@ -133,11 +133,17 @@ const LoginForm = ({ onSuccess, isLoading, setIsLoading }) => {
               <p className='text-sm text-error-600'>
                 {authError}
               </p>
-              {authError.includes('Email ou mot de passe incorrect') && (
-                <p className='text-xs text-error-500 mt-2'>
-                  💡 Astuce : Assurez-vous d'avoir créé un compte ou contactez l'administrateur si le problème persiste.
+              <div className='mt-3 p-3 bg-blue-50 border border-blue-200 rounded-md'>
+                <p className='text-xs text-blue-700 font-medium mb-1'>
+                  💡 Besoin d'aide ?
                 </p>
-              )}
+                <ul className='text-xs text-blue-600 space-y-1'>
+                  <li>• Vérifiez que votre compte a été créé</li>
+                  <li>• Assurez-vous d'utiliser la bonne adresse email</li>
+                  <li>• Vérifiez que votre mot de passe est correct</li>
+                  <li>• Si vous avez oublié votre mot de passe, utilisez la fonction "Mot de passe oublié"</li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
@@ -156,6 +162,19 @@ const LoginForm = ({ onSuccess, isLoading, setIsLoading }) => {
           <label htmlFor='remember' className='ml-2 block text-sm text-text-secondary'>
             Se souvenir de moi
           </label>
+        </div>
+        <div className='text-sm'>
+          <button
+            type='button'
+            className='font-medium text-primary hover:text-primary-700 transition-colors duration-200'
+            disabled={isLoading}
+            onClick={() => {
+              // This would typically open a forgot password modal or navigate to a forgot password page
+              console.log('Forgot password clicked');
+            }}
+          >
+            Mot de passe oublié ?
+          </button>
         </div>
       </div>
 

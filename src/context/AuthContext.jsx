@@ -158,19 +158,27 @@ export const AuthProvider = ({ children }) => {
       );
       
       if (error) {
+        console.error('❌ Supabase auth error:', error);
+        
         // Provide more specific error messages
         let userFriendlyMessage = 'Email ou mot de passe incorrect';
         
         if (error.message.includes('Invalid login credentials')) {
-          userFriendlyMessage = 'Email ou mot de passe incorrect. Vérifiez vos identifiants et réessayez.';
+          userFriendlyMessage = 'Les identifiants fournis sont incorrects. Vérifiez votre email et mot de passe.';
         } else if (error.message.includes('Email not confirmed')) {
-          userFriendlyMessage = 'Veuillez confirmer votre email avant de vous connecter.';
+          userFriendlyMessage = 'Veuillez confirmer votre email avant de vous connecter. Vérifiez votre boîte de réception.';
         } else if (error.message.includes('Too many requests')) {
-          userFriendlyMessage = 'Trop de tentatives de connexion. Veuillez patienter avant de réessayer.';
+          userFriendlyMessage = 'Trop de tentatives de connexion. Veuillez patienter quelques minutes avant de réessayer.';
+        } else if (error.message.includes('User not found')) {
+          userFriendlyMessage = 'Aucun compte trouvé avec cette adresse email. Vérifiez l\'email ou créez un nouveau compte.';
+        } else if (error.message.includes('Invalid password')) {
+          userFriendlyMessage = 'Mot de passe incorrect. Vérifiez votre mot de passe ou utilisez "Mot de passe oublié".';
         }
         
         const enhancedError = new Error(userFriendlyMessage);
         enhancedError.originalError = error;
+        enhancedError.code = error.code || 'auth_error';
+        
         // Don't set global error state for sign in failures - let the form handle it
         throw enhancedError;
       }
