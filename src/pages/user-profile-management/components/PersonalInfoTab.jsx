@@ -4,6 +4,7 @@ import { useAuth } from '../../../context/AuthContext';
 import { useToast } from '../../../context/ToastContext';
 import Icon from '../../../components/AppIcon';
 import Image from '../../../components/AppImage';
+import logger from '../../../utils/logger';
 
 const PersonalInfoTab = ({ userData }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -42,12 +43,12 @@ const PersonalInfoTab = ({ userData }) => {
         ...(avatarPreview !== userData.avatar && { avatar_url: avatarPreview }),
       };
       
-      console.log('Submitting profile updates:', updates);
+      logger.debug('Submitting profile updates:', updates);
       
       // Update the profile in Supabase using RPC function
       await updateProfile(updates);
 
-      console.log('Profile updated successfully');
+      logger.info('Profile updated successfully');
       setIsEditing(false);
 
       // Show success message

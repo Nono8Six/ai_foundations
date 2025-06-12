@@ -109,6 +109,7 @@ Toutes les variables d'environnement sont configurées dans le fichier `.env` :
 - `VITE_APP_NAME` : Nom de l'application
 - `VITE_APP_VERSION` : Version de l'application
 - `VITE_DEBUG` : Activer le mode debug (true/false)
+- `VITE_LOG_LEVEL` : Niveau de log (debug/info/warn/error)
 
 ### Variables d'environnement requises
 
@@ -130,6 +131,7 @@ VITE_APP_NAME="Votre Application"
 VITE_APP_ENV=development
 VITE_APP_VERSION=0.1.0
 VITE_DEBUG=true
+VITE_LOG_LEVEL=debug
 ```
 
 ## 🔒 Sécurité

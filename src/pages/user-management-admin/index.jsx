@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import Icon from '../../components/AppIcon';
+import logger from '../../utils/logger';
 import UserTable from './components/UserTable';
 import UserDetailsPanel from './components/UserDetailsPanel';
 import UserFilters from './components/UserFilters';
@@ -116,7 +117,7 @@ const UserManagementAdmin = () => {
   };
 
   const handleBulkAction = action => {
-    console.log(`Bulk action: ${action} for users:`, selectedUsers);
+    logger.info(`Bulk action: ${action} for users:`, selectedUsers);
     setSelectedUsers([]);
   };
 
@@ -272,7 +273,7 @@ const UserManagementAdmin = () => {
         <CreateUserModal
           onClose={() => setShowCreateModal(false)}
           onUserCreated={newUser => {
-            console.log('New user created:', newUser);
+            logger.info('New user created:', newUser);
             setShowCreateModal(false);
           }}
         />

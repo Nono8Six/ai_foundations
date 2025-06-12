@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Icon from '../../components/AppIcon';
 import { supabase } from '../../lib/supabase';
+import logger from '../../utils/logger';
 
 import VideoPlayer from './components/VideoPlayer';
 import TextContent from './components/TextContent';
@@ -86,12 +87,12 @@ const LessonViewer = () => {
 
   const handleNextLesson = () => {
     // Navigate to next lesson logic
-    console.log('Navigating to next lesson');
+    logger.debug('Navigating to next lesson');
   };
 
   const handlePreviousLesson = () => {
     // Navigate to previous lesson logic
-    console.log('Navigating to previous lesson');
+    logger.debug('Navigating to previous lesson');
   };
 
   const handleAddNote = note => {

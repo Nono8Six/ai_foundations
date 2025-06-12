@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Icon from '../../../components/AppIcon';
 import { useAuth } from '../../../context/AuthContext';
+import logger from '../../../utils/logger';
 
 const LoginForm = ({ onSuccess, isLoading, setIsLoading }) => {
   const {
@@ -181,7 +182,7 @@ const LoginForm = ({ onSuccess, isLoading, setIsLoading }) => {
             disabled={isLoading}
             onClick={() => {
               // This would typically open a forgot password modal or navigate to a forgot password page
-              console.log('Forgot password clicked');
+              logger.info('Forgot password clicked');
             }}
           >
             Mot de passe oublié ?
