@@ -154,6 +154,17 @@ VITE_DEBUG=true
 └── .env.example           # Exemple de configuration d'environnement
 ```
 
+## 🤖 Intégration Continue
+
+Un workflow GitHub Actions situé dans `.github/workflows/nodeci.yml` vérifie le projet à chaque `push` :
+
+1. `npm install`
+2. `npm run lint`
+3. `npm run test:run`
+4. `npm run build`
+
+Le workflow échoue automatiquement si l'une de ces étapes rencontre une erreur.
+
 ## 🔄 Mise à jour
 
 Pour mettre à jour l'application :
