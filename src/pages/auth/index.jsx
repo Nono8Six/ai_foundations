@@ -34,16 +34,18 @@ const AuthenticationLoginRegister = () => {
   const handleAuthSuccess = userData => {
     setIsLoading(true);
 
-    // Simulate API call delay
-    setTimeout(() => {
-      setIsLoading(false);
+    // For login success, redirect to dashboard
+    if (activeTab === 'login') {
       // Redirect based on user role
       if (userData.role === 'admin') {
         navigate('/admin-dashboard');
       } else {
         navigate('/espace');
       }
-    }, 1000);
+    }
+    // For registration, the success UI is handled in RegisterForm component
+    
+    setIsLoading(false);
   };
 
   return (

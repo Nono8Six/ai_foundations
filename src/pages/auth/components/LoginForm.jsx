@@ -23,7 +23,7 @@ const LoginForm = ({ onSuccess, isLoading, setIsLoading }) => {
         email: data.email,
         password: data.password,
       });
-
+      
       // Call the onSuccess callback with the user data
       if (result?.session?.user) {
         onSuccess({

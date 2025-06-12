@@ -1,4 +1,3 @@
-// src/pages/authentication-login-register/components/RegisterForm.jsx
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Icon from '../../../components/AppIcon';
@@ -13,6 +12,7 @@ const RegisterForm = ({ onSuccess, isLoading, setIsLoading }) => {
   } = useForm();
   const { signUp } = useAuth();
   const [authError, setAuthError] = useState('');
+  const [registrationComplete, setRegistrationComplete] = useState(false);
 
   const password = watch('password');
 
@@ -21,25 +21,17 @@ const RegisterForm = ({ onSuccess, isLoading, setIsLoading }) => {
     setAuthError('');
 
     try {
-      const { user } = await signUp({
+      const result = await signUp({
         email: data.email,
         password: data.password,
         firstName: data.firstName,
         lastName: data.lastName,
       });
 
-      // Call the onSuccess callback with the user data
-      if (user) {
-        onSuccess({
-          id: user.id,
-          email: user.email,
-          role: 'student',
-          name: `${data.firstName} ${data.lastName}`,
-        });
-      } else {
-        // Handle email confirmation flow
-        setAuthError("Veuillez confirmer votre email pour compléter l'inscription");
-        setIsLoading(false);
+      // Handle successful registration
+      if (result) {
+        setRegistrationComplete(true);
+        // Don't call onSuccess here as we want to show the verification message
       }
     } catch (error) {
       console.error('Registration error:', error.message);
@@ -47,6 +39,30 @@ const RegisterForm = ({ onSuccess, isLoading, setIsLoading }) => {
       setAuthError(error.message || "Erreur lors de l'inscription");
     }
   };
+
+  if (registrationComplete) {
+    return (
+      <div className="p-6 bg-success-50 border border-success-200 rounded-lg">
+        <div className="flex items-center mb-4">
+          <Icon name="CheckCircle" size={24} className="text-success mr-3" />
+          <h3 className="text-lg font-medium text-success-700">Inscription réussie !</h3>
+        </div>
+        <p className="text-success-600 mb-4">
+          Votre compte a été créé avec succès. Veuillez vérifier votre boîte de réception pour confirmer votre adresse email.
+        </p>
+        <p className="text-success-600 mb-4">
+          Une fois votre email confirmé, vous pourrez vous connecter à votre compte.
+        </p>
+        <button
+          onClick={() => window.location.href = '/login'}
+          className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-subtle text-sm font-medium text-white bg-success hover:bg-success-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-success transition-all duration-200"
+        >
+          <Icon name="LogIn" size={18} className="mr-2" />
+          Aller à la page de connexion
+        </button>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
