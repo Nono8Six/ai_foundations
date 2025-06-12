@@ -65,7 +65,7 @@ const PerformanceMetrics = ({ metrics }) => {
       value: '0.02%',
       status: 'excellent',
       icon: 'AlertTriangle',
-      description: "Taux d\'erreur",
+      description: "Taux d'erreur",
     },
   ];
 

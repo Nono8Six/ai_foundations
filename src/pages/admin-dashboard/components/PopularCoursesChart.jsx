@@ -5,7 +5,7 @@ import Icon from '../../../components/AppIcon';
 const PopularCoursesChart = () => {
   const coursesData = [
     {
-      name: "Introduction à l\'IA",
+      name: "Introduction à l'IA",
       enrollments: 2847,
       completions: 2234,
       rating: 4.8,

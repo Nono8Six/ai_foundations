@@ -8,9 +8,9 @@ const ProgramOverview = () => {
   const courses = [
     {
       id: 1,
-      title: "Fondamentaux de l\'IA",
+      title: "Fondamentaux de l'IA",
       description:
-        "Découvrez les concepts de base de l\'intelligence artificielle et ses applications pratiques dans le monde professionnel.",
+        "Découvrez les concepts de base de l'intelligence artificielle et ses applications pratiques dans le monde professionnel.",
       difficulty: 'Débutant',
       duration: '4 semaines',
       modules: 12,
@@ -25,7 +25,7 @@ const ProgramOverview = () => {
       id: 2,
       title: 'IA pour la Comptabilité',
       description:
-        "Automatisez vos processus comptables avec l\'IA. Apprenez à utiliser des outils d\'automatisation pour optimiser votre productivité.",
+        "Automatisez vos processus comptables avec l'IA. Apprenez à utiliser des outils d'automatisation pour optimiser votre productivité.",
       difficulty: 'Intermédiaire',
       duration: '6 semaines',
       modules: 18,
@@ -40,7 +40,7 @@ const ProgramOverview = () => {
       id: 3,
       title: 'IA et Commerce Digital',
       description:
-        "Révolutionnez votre stratégie commerciale avec l\'IA. Personnalisation, prédiction des ventes et optimisation des prix.",
+        "Révolutionnez votre stratégie commerciale avec l'IA. Personnalisation, prédiction des ventes et optimisation des prix.",
       difficulty: 'Intermédiaire',
       duration: '5 semaines',
       modules: 15,
@@ -55,7 +55,7 @@ const ProgramOverview = () => {
       id: 4,
       title: 'IA Avancée et Deep Learning',
       description:
-        "Maîtrisez les techniques avancées d\'apprentissage profond et développez vos propres modèles d\'IA.",
+        "Maîtrisez les techniques avancées d'apprentissage profond et développez vos propres modèles d'IA.",
       difficulty: 'Avancé',
       duration: '8 semaines',
       modules: 24,
@@ -70,7 +70,7 @@ const ProgramOverview = () => {
       id: 5,
       title: 'IA pour la Finance',
       description:
-        "Utilisez l\'IA pour l\'analyse financière, la détection de fraudes et la gestion des risques.",
+        "Utilisez l'IA pour l'analyse financière, la détection de fraudes et la gestion des risques.",
       difficulty: 'Intermédiaire',
       duration: '6 semaines',
       modules: 20,
@@ -83,9 +83,9 @@ const ProgramOverview = () => {
     },
     {
       id: 6,
-      title: "Maintenance Prédictive avec l\'IA",
+      title: "Maintenance Prédictive avec l'IA",
       description:
-        "Optimisez la maintenance industrielle grâce aux algorithmes prédictifs et à l\'IoT.",
+        "Optimisez la maintenance industrielle grâce aux algorithmes prédictifs et à l'IoT.",
       difficulty: 'Intermédiaire',
       duration: '5 semaines',
       modules: 16,
