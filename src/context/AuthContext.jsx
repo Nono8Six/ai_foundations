@@ -46,7 +46,7 @@ export const AuthProvider = ({ children }) => {
       console.log('🔄 Auth state change event:', event);
       console.log('📋 Auth state change session:', session);
       console.log('⏰ Timestamp:', new Date().toISOString());
-      
+
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
@@ -77,15 +77,15 @@ export const AuthProvider = ({ children }) => {
       const { data, error } = await supabase.from('profiles').select('*').eq('id', userId);
 
       if (error) throw error;
-      
-      // Handle case where no profile exists yet
+
       if (!data || data.length === 0) {
-        console.log('⚠️ No profile found for user, it will be created automatically');
-        setUserProfile(null);
+        console.log('⚠️ No profile found for user, creating default...');
+        const { data: newProfile, error: rpcError } = await supabase.rpc('create_default_profile');
+        if (rpcError) throw rpcError;
+        setUserProfile(newProfile);
         return;
       }
-      
-      // Use the first profile if multiple exist (shouldn't happen due to unique constraint)
+
       console.log('✅ Profile fetched successfully:', data[0]);
       setUserProfile(data[0]);
     } catch (error) {
@@ -193,19 +193,19 @@ export const AuthProvider = ({ children }) => {
   const updateProfile = async updates => {
     try {
       console.log('📝 Updating profile:', updates);
-      
+
       // Use the RPC function to update profile
       const { data, error } = await supabase.rpc('update_user_profile', {
-        profile_data: updates
+        profile_data: updates,
       });
 
       if (error) throw error;
-      
+
       console.log('✅ Profile updated successfully:', data);
-      
+
       // Update local state with the returned data
       setUserProfile(data);
-      
+
       return data;
     } catch (error) {
       console.error('❌ Error updating profile:', error.message);
@@ -218,13 +218,13 @@ export const AuthProvider = ({ children }) => {
   const updateUserSettings = async settings => {
     try {
       console.log('📝 Updating user settings:', settings);
-      
+
       const { data, error } = await supabase.rpc('update_user_settings_rpc', {
-        settings_data: settings
+        settings_data: settings,
       });
 
       if (error) throw error;
-      
+
       console.log('✅ Settings updated successfully:', data);
       return data;
     } catch (error) {

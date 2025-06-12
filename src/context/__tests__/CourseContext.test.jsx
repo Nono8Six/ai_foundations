@@ -1,50 +1,63 @@
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import React from 'react';
 import { render, waitFor, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
 
 // Mock AuthContext to always return a user
 vi.mock('../AuthContext', () => ({
-  useAuth: () => ({ user: { id: 'u1' } })
+  useAuth: () => ({ user: { id: 'u1' } }),
 }));
 
 const coursesData = [
-  { id: 'c1', title: 'Course 1', cover_image_url: '', instructor: '', category: '', thumbnail_url: '' },
-  { id: 'c2', title: 'Course 2', cover_image_url: '', instructor: '', category: '', thumbnail_url: '' }
+  {
+    id: 'c1',
+    title: 'Course 1',
+    cover_image_url: '',
+    instructor: '',
+    category: '',
+    thumbnail_url: '',
+  },
+  {
+    id: 'c2',
+    title: 'Course 2',
+    cover_image_url: '',
+    instructor: '',
+    category: '',
+    thumbnail_url: '',
+  },
 ];
 const lessonsData = [
   { id: 'l1', module_id: 1, is_published: true },
   { id: 'l2', module_id: 2, is_published: true },
-  { id: 'l3', module_id: 3, is_published: true }
+  { id: 'l3', module_id: 3, is_published: true },
 ];
 const modulesData = [
   { id: 1, course_id: 'c1' },
   { id: 2, course_id: 'c1' },
-  { id: 3, course_id: 'c2' }
+  { id: 3, course_id: 'c2' },
 ];
-const progressData = [
-  { lesson_id: 'l1', status: 'completed' }
-];
+const progressData = [{ lesson_id: 'l1', status: 'completed' }];
 
 const dataMap = {
   courses: coursesData,
   lessons: lessonsData,
   modules: modulesData,
-  user_progress: progressData
+  user_progress: progressData,
 };
 
 vi.mock('../../lib/supabase', () => {
   return {
     supabase: {
-      from: (table) => ({
+      from: table => ({
         select: () => {
           const baseResult = { data: dataMap[table], error: null };
           const promise = Promise.resolve(baseResult);
           return Object.assign(promise, {
-            eq: async () => baseResult
+            eq: async () => baseResult,
           });
-        }
-      })
-    }
+        },
+      }),
+    },
   };
 });
 
@@ -54,8 +67,8 @@ const Consumer = () => {
   const { coursesWithProgress, loading } = useCourses();
   return (
     <div>
-      {loading && <span data-testid="loading">loading</span>}
-      <pre data-testid="courses">{JSON.stringify(coursesWithProgress)}</pre>
+      {loading && <span data-testid='loading'>loading</span>}
+      <pre data-testid='courses'>{JSON.stringify(coursesWithProgress)}</pre>
     </div>
   );
 };
