@@ -34,11 +34,6 @@ node_modules/
 *.sw?
 
 # Fichiers de dépendances
-# Le lockfile npm peut provoquer des erreurs entre environnements,
-# on l'ignore pour laisser chaque machine en générer un.
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
 
 # Fichiers de cache
 .cache/
@@ -69,7 +64,6 @@ vite.config.*.ts
 *.dockerignore
 
 # Fichiers spécifiques à Supabase
-supabase/
 !supabase/
 !supabase/migrations/
 !supabase/migrations/**
