@@ -138,7 +138,7 @@ export const AuthProvider = ({ children }) => {
 
     if (error) {
       console.error('❌ Sign up error:', error.message);
-      setError(error);
+      // Don't set global error state for sign up failures - let the form handle it
       throw error;
     }
     console.log('✅ Sign up successful');
@@ -171,7 +171,7 @@ export const AuthProvider = ({ children }) => {
         
         const enhancedError = new Error(userFriendlyMessage);
         enhancedError.originalError = error;
-        setError(enhancedError);
+        // Don't set global error state for sign in failures - let the form handle it
         throw enhancedError;
       }
       
