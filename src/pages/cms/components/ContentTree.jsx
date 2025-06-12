@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Icon from '../../../components/AppIcon';
+import logger from '../../../utils/logger';
 
 const ContentTree = ({
   contentData,
@@ -47,7 +48,7 @@ const ContentTree = ({
   const handleDrop = (e, targetItem) => {
     e.preventDefault();
     if (draggedItem && draggedItem.id !== targetItem.id) {
-      console.log('Reordering:', draggedItem, 'to', targetItem);
+      logger.debug('Reordering:', draggedItem, 'to', targetItem);
       // Mock reorder logic
     }
     setDraggedItem(null);

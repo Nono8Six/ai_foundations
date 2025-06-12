@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Icon from '../../../components/AppIcon';
 import Image from '../../../components/AppImage';
+import logger from '../../../utils/logger';
 
 const MediaLibrary = ({ onClose, onSelectMedia }) => {
   const [activeTab, setActiveTab] = useState('images');
@@ -103,7 +104,7 @@ const MediaLibrary = ({ onClose, onSelectMedia }) => {
       // Mock upload process
       setTimeout(() => {
         setIsUploading(false);
-        console.log('Files uploaded:', files);
+        logger.info('Files uploaded:', files);
       }, 2000);
     }
   };

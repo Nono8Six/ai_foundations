@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import Icon from '../../../components/AppIcon';
+import logger from '../../../utils/logger';
 
 const SettingsTab = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -105,7 +106,7 @@ const SettingsTab = () => {
 
   const handleDeleteAccount = () => {
     // Simulate account deletion
-    console.log('Account deletion requested');
+    logger.info('Account deletion requested');
     setShowDeleteConfirm(false);
   };
 
