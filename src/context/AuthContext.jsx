@@ -1,6 +1,7 @@
 // src/context/AuthContext.jsx
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { supabase } from '../lib/supabase';
+import { safeQuery } from '../utils/supabaseClient';
 import { useNavigate } from 'react-router-dom';
 
 const AuthContext = createContext();
@@ -18,9 +19,9 @@ export const AuthProvider = ({ children }) => {
     const getInitialSession = async () => {
       try {
         console.log('🔍 Getting initial session...');
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
+        const { data, error } = await safeQuery(() => supabase.auth.getSession());
+        if (error) throw error;
+        const { session } = data;
         console.log('📋 Initial session:', session);
         setSession(session);
         setUser(session?.user ?? null);
@@ -72,33 +73,37 @@ export const AuthProvider = ({ children }) => {
 
   // Fetch user profile data
   const fetchUserProfile = async userId => {
-    try {
-      console.log('🔍 Fetching profile for user:', userId);
-      const { data, error } = await supabase.from('profiles').select('*').eq('id', userId);
+    console.log('🔍 Fetching profile for user:', userId);
+    const { data, error } = await safeQuery(() =>
+      supabase.from('profiles').select('*').eq('id', userId)
+    );
+    if (error) {
+      setError(error);
+      return;
+    }
 
-      if (error) throw error;
-
-      if (!data || data.length === 0) {
-        console.log('⚠️ No profile found for user, creating default...');
-        const { data: newProfile, error: rpcError } = await supabase.rpc('create_default_profile');
-        if (rpcError) throw rpcError;
-        setUserProfile(newProfile);
+    if (!data || data.length === 0) {
+      console.log('⚠️ No profile found for user, creating default...');
+      const { data: newProfile, error: rpcError } = await safeQuery(() =>
+        supabase.rpc('create_default_profile')
+      );
+      if (rpcError) {
+        setError(rpcError);
         return;
       }
-
-      console.log('✅ Profile fetched successfully:', data[0]);
-      setUserProfile(data[0]);
-    } catch (error) {
-      console.error('❌ Error fetching user profile:', error.message);
-      setError(error);
+      setUserProfile(newProfile);
+      return;
     }
+
+    console.log('✅ Profile fetched successfully:', data[0]);
+    setUserProfile(data[0]);
   };
 
   // Sign Up with email
   const signUp = async ({ email, password, firstName, lastName }) => {
-    try {
-      console.log('📝 Signing up user:', email);
-      const { data, error } = await supabase.auth.signUp({
+    console.log('📝 Signing up user:', email);
+    const { data, error } = await safeQuery(() =>
+      supabase.auth.signUp({
         email,
         password,
         options: {
@@ -106,70 +111,63 @@ export const AuthProvider = ({ children }) => {
             full_name: `${firstName} ${lastName}`,
           },
         },
-      });
+      })
+    );
 
-      if (error) throw error;
-      console.log('✅ Sign up successful');
-      return data;
-    } catch (error) {
-      console.error('❌ Error signing up:', error.message);
+    if (error) {
       setError(error);
       throw error;
     }
+    console.log('✅ Sign up successful');
+    return data;
   };
 
   // Sign In with email
   const signIn = async ({ email, password }) => {
-    try {
-      console.log('🔐 Signing in user:', email);
-      const { data, error } = await supabase.auth.signInWithPassword({
+    console.log('🔐 Signing in user:', email);
+    const { data, error } = await safeQuery(() =>
+      supabase.auth.signInWithPassword({
         email,
         password,
-      });
-
-      if (error) throw error;
-      console.log('✅ Sign in successful');
-      return data;
-    } catch (error) {
-      console.error('❌ Error signing in:', error.message);
+      })
+    );
+    if (error) {
       setError(error);
       throw error;
     }
+    console.log('✅ Sign in successful');
+    return data;
   };
 
   // Sign In with Google
   const signInWithGoogle = async () => {
-    try {
-      console.log('🔐 Signing in with Google...');
-      const { data, error } = await supabase.auth.signInWithOAuth({
+    console.log('🔐 Signing in with Google...');
+    const { data, error } = await safeQuery(() =>
+      supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: `${window.location.origin}/user-dashboard`,
         },
-      });
+      })
+    );
 
-      if (error) throw error;
-      console.log('✅ Google sign in initiated');
-      return data;
-    } catch (error) {
-      console.error('❌ Error signing in with Google:', error.message);
+    if (error) {
       setError(error);
       throw error;
     }
+    console.log('✅ Google sign in initiated');
+    return data;
   };
 
   // Sign Out
   const signOut = async () => {
-    try {
-      console.log('🚪 Signing out user...');
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      console.log('✅ Sign out successful');
-    } catch (error) {
-      console.error('❌ Error signing out:', error.message);
+    console.log('🚪 Signing out user...');
+    const { error } = await safeQuery(() => supabase.auth.signOut());
+    if (error) {
       setError(error);
       throw error;
     }
+    console.log('✅ Sign out successful');
   };
 
   // Logout helper used by UI
@@ -191,89 +189,81 @@ export const AuthProvider = ({ children }) => {
 
   // Update user profile using RPC function
   const updateProfile = async updates => {
-    try {
-      console.log('📝 Updating profile:', updates);
+    console.log('📝 Updating profile:', updates);
 
-      // Use the RPC function to update profile
-      const { data, error } = await supabase.rpc('update_user_profile', {
+    const { data, error } = await safeQuery(() =>
+      supabase.rpc('update_user_profile', {
         profile_data: updates,
-      });
+      })
+    );
 
-      if (error) throw error;
-
-      console.log('✅ Profile updated successfully:', data);
-
-      // Update local state with the returned data
-      setUserProfile(data);
-
-      return data;
-    } catch (error) {
-      console.error('❌ Error updating profile:', error.message);
+    if (error) {
       setError(error);
       throw error;
     }
+
+    console.log('✅ Profile updated successfully:', data);
+
+    setUserProfile(data);
+
+    return data;
   };
 
   // Update user settings using RPC function
   const updateUserSettings = async settings => {
-    try {
-      console.log('📝 Updating user settings:', settings);
+    console.log('📝 Updating user settings:', settings);
 
-      const { data, error } = await supabase.rpc('update_user_settings_rpc', {
+    const { data, error } = await safeQuery(() =>
+      supabase.rpc('update_user_settings_rpc', {
         settings_data: settings,
-      });
+      })
+    );
 
-      if (error) throw error;
-
-      console.log('✅ Settings updated successfully:', data);
-      return data;
-    } catch (error) {
-      console.error('❌ Error updating settings:', error.message);
+    if (error) {
       setError(error);
       throw error;
     }
+
+    console.log('✅ Settings updated successfully:', data);
+    return data;
   };
 
   // Get user settings using RPC function
   const getUserSettings = async () => {
-    try {
-      console.log('🔍 Getting user settings...');
+    console.log('🔍 Getting user settings...');
 
-      const { data, error } = await supabase.rpc('get_user_settings_rpc');
+    const { data, error } = await safeQuery(() => supabase.rpc('get_user_settings_rpc'));
 
-      if (error) throw error;
-
-      const settings = data
-        ? {
-            notification_settings: data.notification_settings,
-            privacy_settings: data.privacy_settings,
-            learning_preferences: data.learning_preferences,
-          }
-        : null;
-
-      console.log('✅ Settings retrieved successfully:', settings);
-      return settings;
-    } catch (error) {
-      console.error('❌ Error getting settings:', error.message);
+    if (error) {
       setError(error);
       throw error;
     }
+
+    const settings = data
+      ? {
+          notification_settings: data.notification_settings,
+          privacy_settings: data.privacy_settings,
+          learning_preferences: data.learning_preferences,
+        }
+      : null;
+
+    console.log('✅ Settings retrieved successfully:', settings);
+    return settings;
   };
 
   // Reset password
   const resetPassword = async email => {
-    try {
-      console.log('🔄 Resetting password for:', email);
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    console.log('🔄 Resetting password for:', email);
+    const { error } = await safeQuery(() =>
+      supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/reset-password`,
-      });
-      if (error) throw error;
-      console.log('✅ Password reset email sent');
-    } catch (error) {
-      console.error('❌ Error resetting password:', error.message);
+      })
+    );
+    if (error) {
       setError(error);
       throw error;
     }
+    console.log('✅ Password reset email sent');
   };
 
   const value = {
