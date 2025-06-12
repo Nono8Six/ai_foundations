@@ -35,7 +35,6 @@ export const CourseProvider = ({ children }) => {
       } catch (error) {
         console.error('[CourseContext] CRITICAL: Exception during course fetch.', error);
         setCoursesWithProgress([]);
-        setLoading(false);
         return;
       }
 
@@ -45,7 +44,7 @@ export const CourseProvider = ({ children }) => {
         console.log('[CourseContext] 2. Fetching lessons...');
         const { data, error } = await supabase
           .from('lessons')
-          .select('id, course_id, is_published')
+          .select('id, module_id, is_published')
           .eq('is_published', true);
 
         if (error) {
@@ -57,14 +56,33 @@ export const CourseProvider = ({ children }) => {
       } catch (error) {
         console.error('[CourseContext] CRITICAL: Exception during lesson fetch.', error);
         setCoursesWithProgress([]);
-        setLoading(false);
         return;
       }
 
-      // Step 3: Fetch User Progress
+      // Step 3: Fetch Modules
+      let modulesData;
+      try {
+        console.log('[CourseContext] 3. Fetching modules...');
+        const { data, error } = await supabase
+          .from('modules')
+          .select('id, course_id');
+
+        if (error) {
+          console.error('[CourseContext] Error fetching modules:', error);
+          throw new Error(`Failed to fetch modules: ${error.message}`);
+        }
+        modulesData = data;
+        console.log('[CourseContext] 3. Fetched modules successfully.', modulesData);
+      } catch (error) {
+        console.error('[CourseContext] CRITICAL: Exception during module fetch.', error);
+        setCoursesWithProgress([]);
+        return;
+      }
+
+      // Step 4: Fetch User Progress
       let progressData;
       try {
-        console.log('[CourseContext] 3. Fetching user progress...');
+        console.log('[CourseContext] 4. Fetching user progress...');
         const { data, error } = await supabase
           .from('user_progress')
           .select('lesson_id, status')
@@ -75,26 +93,34 @@ export const CourseProvider = ({ children }) => {
           throw new Error(`Failed to fetch user progress: ${error.message}`);
         }
         progressData = data;
-        console.log('[CourseContext] 3. Fetched user progress successfully.', progressData);
+        console.log('[CourseContext] 4. Fetched user progress successfully.', progressData);
         setUserProgress(progressData || []);
       } catch (error) {
         console.error('[CourseContext] CRITICAL: Exception during user progress fetch.', error);
         setCoursesWithProgress([]);
-        setLoading(false);
         return;
       }
 
-      // Step 4: Process data
-      console.log('[CourseContext] 4. Processing all data...');
+      // Step 5: Process data
+      console.log('[CourseContext] 5. Processing all data...');
       const completedLessonIds = new Set(
         (progressData || []).filter((p) => p.status === 'completed').map((p) => p.lesson_id)
       );
 
+      const moduleCourseMap = (modulesData || []).reduce((acc, module) => {
+        acc[module.id] = module.course_id;
+        return acc;
+      }, {});
+
       const lessonsByCourse = (lessonsData || []).reduce((acc, lesson) => {
-        if (!acc[lesson.course_id]) {
-          acc[lesson.course_id] = [];
+        const courseId = moduleCourseMap[lesson.module_id];
+        if (!courseId) {
+          return acc;
         }
-        acc[lesson.course_id].push(lesson.id);
+        if (!acc[courseId]) {
+          acc[courseId] = [];
+        }
+        acc[courseId].push(lesson.id);
         return acc;
       }, {});
 
@@ -107,7 +133,7 @@ export const CourseProvider = ({ children }) => {
         return { ...course, progress };
       });
 
-      console.log('[CourseContext] 4. Data processed. Setting final state.');
+      console.log('[CourseContext] 5. Data processed. Setting final state.');
       setCoursesWithProgress(coursesWithStats);
     } catch (error) {
       // This outer catch might not be reached if inner catches return
