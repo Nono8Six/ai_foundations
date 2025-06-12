@@ -28,12 +28,16 @@ vi.mock('../../../context/CourseContext', () => ({
   }),
 }));
 
-vi.mock('../../../hooks/useRecentActivity', () => ({
-  default: () => ({ activities: [] }),
-}));
+var mockUseRecentActivity;
+var mockUseAchievements;
 
-vi.mock('../../../hooks/useAchievements', () => ({
-  default: () => ({
+vi.mock('../../../hooks/useRecentActivity', () => {
+  mockUseRecentActivity = vi.fn(() => ({ activities: [] }));
+  return { default: mockUseRecentActivity };
+});
+
+vi.mock('../../../hooks/useAchievements', () => {
+  mockUseAchievements = vi.fn(() => ({
     achievements: [
       {
         id: 'a1',
@@ -47,8 +51,9 @@ vi.mock('../../../hooks/useAchievements', () => ({
     ],
     loading: false,
     error: null,
-  }),
-}));
+  }));
+  return { default: mockUseAchievements };
+});
 
 vi.mock('../components/ProgressChart', () => ({
   default: () => <div data-testid='progress-chart' />,
@@ -63,6 +68,14 @@ describe('UserDashboard', () => {
         <UserDashboard />
       </MemoryRouter>
     );
+    expect(mockUseRecentActivity).toHaveBeenCalledWith('1', {
+      limit: 5,
+      order: 'desc',
+    });
+    expect(mockUseAchievements).toHaveBeenCalledWith('1', {
+      order: 'desc',
+      filters: { earned: true },
+    });
     expect(screen.getAllByText(/Succès/i)[0]).toBeInTheDocument();
   });
 

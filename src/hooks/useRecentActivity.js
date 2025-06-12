@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 
-const useRecentActivity = userId => {
+const useRecentActivity = (
+  userId,
+  { limit = 10, order = 'desc', filters = {} } = {}
+) => {
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -11,12 +14,18 @@ const useRecentActivity = userId => {
 
     const fetchActivities = async () => {
       try {
-        const { data, error } = await supabase
-          .from('activity_log')
-          .select('*')
-          .eq('user_id', userId)
-          .order('created_at', { ascending: false })
-          .limit(10);
+        let query = supabase.from('activity_log').select('*');
+        query = query.eq('user_id', userId);
+        Object.entries(filters).forEach(([column, value]) => {
+          query = query.eq(column, value);
+        });
+        if (order) {
+          query = query.order('created_at', { ascending: order === 'asc' });
+        }
+        if (limit) {
+          query = query.limit(limit);
+        }
+        const { data, error } = await query;
 
         if (error) throw error;
         setActivities(data || []);
@@ -28,7 +37,7 @@ const useRecentActivity = userId => {
     };
 
     fetchActivities();
-  }, [userId]);
+  }, [userId, limit, order, filters]);
 
   return { activities, loading, error };
 };
