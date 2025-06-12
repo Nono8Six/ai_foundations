@@ -4,7 +4,7 @@ import AppRoutes from "./Routes";
 import Header from './components/Header';
 import { AuthProvider } from "./context/AuthContext";
 import { CourseProvider } from "./context/CourseContext";
-import { ToastProvider, useToast } from "./context/ToastContext"; // Assurez-vous d'exporter useToast
+import { ToastProvider, useToast } from "./context/ToastContext";
 import { ErrorProvider } from "./context/ErrorContext";
 
 // Un composant pour lier les deux contextes
@@ -13,20 +13,35 @@ const AppWithErrorToasts = () => {
 
   // Créer un logger personnalisé qui affiche un toast
   const errorLoggerWithToast = (error) => {
-    // Ne pas logger les erreurs d'authentification attendues dans la console
-    const isExpectedAuthError = error?.code === 'invalid_credentials' || 
-                               error?.message?.includes('Invalid login credentials') ||
-                               error?.message?.includes('Les identifiants fournis sont incorrects');
+    // Liste complète des erreurs d'authentification attendues à ne pas logger
+    const isExpectedAuthError = 
+      error?.code === 'invalid_credentials' || 
+      error?.code === 'auth_error' ||
+      error?.originalError?.code === 'invalid_credentials' ||
+      error?.message?.includes('Invalid login credentials') ||
+      error?.message?.includes('Les identifiants fournis sont incorrects') ||
+      error?.message?.includes('Email ou mot de passe incorrect') ||
+      error?.message?.includes('Aucun compte trouvé') ||
+      error?.message?.includes('Mot de passe incorrect') ||
+      error?.message?.includes('User not found') ||
+      error?.message?.includes('Invalid password') ||
+      error?.message?.includes('Email not confirmed') ||
+      error?.message?.includes('Too many requests') ||
+      error?.message?.includes('Trop de tentatives') ||
+      error?.message?.includes('Veuillez confirmer votre email') ||
+      // Vérifier aussi dans l'URL de la requête Supabase
+      (error?.url && error?.url.includes('/auth/v1/token')) ||
+      (error?.requestUrl && error?.requestUrl.includes('/auth/v1/token'));
     
     if (!isExpectedAuthError) {
-      console.error("Error logged:", error); // Log seulement les erreurs inattendues
+      console.error("Error logged:", error);
     }
     
-    // Toujours afficher le toast pour informer l'utilisateur
-    if (error?.message) {
+    // Toujours afficher le toast pour informer l'utilisateur (sauf si c'est une erreur technique)
+    if (error?.message && !error?.message.includes('Supabase request failed')) {
       addToast(error.message, 'error');
-    } else {
-      addToast('An unexpected error occurred', 'error');
+    } else if (!isExpectedAuthError) {
+      addToast('Une erreur inattendue s\'est produite', 'error');
     }
   };
 
@@ -38,13 +53,11 @@ const AppWithErrorToasts = () => {
   )
 }
 
-
 function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
         <CourseProvider>
-          {/* ToastProvider doit englober ce qui utilise les toasts */}
           <ToastProvider>
             <AppWithErrorToasts />
           </ToastProvider>

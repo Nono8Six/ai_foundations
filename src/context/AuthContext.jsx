@@ -158,24 +158,26 @@ export const AuthProvider = ({ children }) => {
       );
       
       if (error) {
-        // Provide more specific error messages
-        let userFriendlyMessage = 'Email ou mot de passe incorrect';
+        // Provide more specific error messages based on what Supabase actually returns
+        let userFriendlyMessage = 'Les identifiants fournis sont incorrects. Vérifiez votre email et mot de passe.';
         
+        // Note: Supabase intentionally returns generic "Invalid login credentials" 
+        // for security reasons, so we can't distinguish between wrong email vs wrong password
         if (error.message.includes('Invalid login credentials')) {
           userFriendlyMessage = 'Les identifiants fournis sont incorrects. Vérifiez votre email et mot de passe.';
         } else if (error.message.includes('Email not confirmed')) {
           userFriendlyMessage = 'Veuillez confirmer votre email avant de vous connecter. Vérifiez votre boîte de réception.';
         } else if (error.message.includes('Too many requests')) {
           userFriendlyMessage = 'Trop de tentatives de connexion. Veuillez patienter quelques minutes avant de réessayer.';
-        } else if (error.message.includes('User not found')) {
-          userFriendlyMessage = 'Aucun compte trouvé avec cette adresse email. Vérifiez l\'email ou créez un nouveau compte.';
-        } else if (error.message.includes('Invalid password')) {
-          userFriendlyMessage = 'Mot de passe incorrect. Vérifiez votre mot de passe ou utilisez "Mot de passe oublié".';
+        } else if (error.message.includes('signup_disabled')) {
+          userFriendlyMessage = 'Les inscriptions sont temporairement désactivées. Contactez l\'administrateur.';
+        } else if (error.message.includes('email_address_invalid')) {
+          userFriendlyMessage = 'L\'adresse email fournie n\'est pas valide.';
         }
         
         const enhancedError = new Error(userFriendlyMessage);
         enhancedError.originalError = error;
-        enhancedError.code = error.code || 'auth_error';
+        enhancedError.code = 'invalid_credentials';
         
         // Don't set global error state for sign in failures - let the form handle it
         throw enhancedError;
