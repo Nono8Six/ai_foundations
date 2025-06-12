@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+
 import Icon from '../../components/AppIcon';
-import Image from '../../components/AppImage';
 import ContentTree from './components/ContentTree';
 import CourseEditor from './components/CourseEditor';
 import ModuleEditor from './components/ModuleEditor';
@@ -11,7 +10,6 @@ import ContentSearch from './components/ContentSearch';
 import MediaLibrary from './components/MediaLibrary';
 
 const ContentManagementCoursesModulesLessons = () => {
-  const navigate = useNavigate();
   const [selectedContent, setSelectedContent] = useState(null);
   const [contentType, setContentType] = useState('course');
   const [showMediaLibrary, setShowMediaLibrary] = useState(false);
@@ -103,17 +101,6 @@ const ContentManagementCoursesModulesLessons = () => {
 
   const [contentData, setContentData] = useState(mockContentData);
 
-  // Navigation items
-  const navigationItems = [
-    { path: '/', label: 'Accueil', icon: 'Home' },
-    { path: '/programmes', label: 'Programmes', icon: 'BookOpen' },
-    { path: '/espace', label: 'Mon Espace', icon: 'LayoutDashboard' },
-    { path: '/lesson-viewer', label: 'Leçons', icon: 'Play' },
-    { path: '/profile', label: 'Profil', icon: 'User' },
-    { path: '/admin-dashboard', label: 'Admin', icon: 'Settings' },
-    { path: '/cms', label: 'Contenu', icon: 'FileText', active: true },
-    { path: '/user-management-admin', label: 'Utilisateurs', icon: 'Users' },
-  ];
 
   const handleContentSelect = content => {
     setSelectedContent(content);

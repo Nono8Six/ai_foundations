@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../../context/AuthContext';
-import Icon from '../../../components/AppIcon';
 
 const GoogleAuthButton = ({ isLoading, setIsLoading, disabled }) => {
   const { signInWithGoogle } = useAuth();
