@@ -1,4 +1,4 @@
-// src/pages/authentication-login-register/components/LoginForm.jsx
+// src/pages/auth/components/LoginForm.jsx
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Icon from '../../../components/AppIcon';
