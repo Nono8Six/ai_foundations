@@ -139,6 +139,12 @@ VITE_DEBUG=true
 - Configuration de sécurité renforcée pour Nginx en production
 - Headers de sécurité HTTP activés
 
+### Politiques RLS
+
+La table `user_settings` est protégée par la Row Level Security. Deux politiques
+`SELECT` et `UPDATE` autorisent un utilisateur authentifié à consulter et mettre
+à jour uniquement son propre enregistrement (`auth.uid() = user_id`).
+
 ## 📦 Structure du projet
 
 ```
