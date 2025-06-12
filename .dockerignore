@@ -1,0 +1,42 @@
+# Dependencies
+node_modules
+
+# Version control
+.git
+.github
+
+# Development environments
+.vscode
+.idea
+.husky
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Test files and coverage
+**/__tests__/
+**/*.test.*
+**/*.spec.*
+coverage/
+
+# Documentation and plans
+docs/
+README.md
+PROJECT_PROGRESS.md
+REFACTORING_PLAN.md
+AGENTS.md
+
+# Sample and local env files
+.env*
+!.env.production
+env.production.example
+
+# Docker compose and other local config
+docker-compose.yml
+scripts/
+clean.bat
+supabase/
+
