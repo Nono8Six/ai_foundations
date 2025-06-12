@@ -13,7 +13,16 @@ const AppWithErrorToasts = () => {
 
   // Créer un logger personnalisé qui affiche un toast
   const errorLoggerWithToast = (error) => {
-    console.error("Error logged:", error); // Log original
+    // Ne pas logger les erreurs d'authentification attendues dans la console
+    const isExpectedAuthError = error?.code === 'invalid_credentials' || 
+                               error?.message?.includes('Invalid login credentials') ||
+                               error?.message?.includes('Les identifiants fournis sont incorrects');
+    
+    if (!isExpectedAuthError) {
+      console.error("Error logged:", error); // Log seulement les erreurs inattendues
+    }
+    
+    // Toujours afficher le toast pour informer l'utilisateur
     if (error?.message) {
       addToast(error.message, 'error');
     } else {
