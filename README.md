@@ -187,7 +187,7 @@ Cette erreur se produit lorsque les migrations de base de données n'ont pas ét
 
 1. Vérifiez que la CLI Supabase est installée et que vous êtes connecté
 2. Liez votre projet : `supabase link --project-ref votre-reference-projet`
-3. Appliquez les migrations : `supabase db push`
+3. Appliquez la migration consolidée : `supabase db push`
 4. Vérifiez que les tables existent dans le tableau de bord Supabase
 
 ## 📚 Documentation supplémentaire
