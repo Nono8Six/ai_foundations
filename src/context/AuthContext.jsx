@@ -273,6 +273,7 @@ export const AuthProvider = ({ children }) => {
     const { data, error } = await safeQuery(() =>
       supabase.rpc('update_user_profile', {
         profile_data: updates,
+        user_id: user.id,
       })
     );
 

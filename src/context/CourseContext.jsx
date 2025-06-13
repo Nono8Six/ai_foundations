@@ -22,7 +22,7 @@ export const CourseProvider = ({ children }) => {
         safeQuery(() =>
           supabase
             .from('courses')
-            .select('id, title, cover_image_url, instructor, category, thumbnail_url')
+            .select('id, title, cover_image_url, category, thumbnail_url')
             .eq('is_published', true)
         ),
         safeQuery(() =>
