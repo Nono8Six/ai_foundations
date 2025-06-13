@@ -188,7 +188,9 @@ const CourseCard = ({ course }) => {
               <Icon name='User' size={14} color='white' />
             </div>
             <div>
-              <p className='text-sm font-medium text-text-primary'>{course.instructor}</p>
+              <p className='text-sm font-medium text-text-primary'>
+                {course.instructor || 'Équipe IA Foundations'}
+              </p>
               <p className='text-xs text-text-secondary'>Instructeur</p>
             </div>
           </div>

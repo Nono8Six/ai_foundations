@@ -79,7 +79,9 @@ const RecentActivity = ({ activities = [] }) => {
               <div className='flex-1'>
                 <h4 className='font-medium text-text-primary'>{activity.title}</h4>
                 <p className='text-sm text-text-secondary'>{activity.description}</p>
-                <p className='text-xs text-text-secondary mt-1'>Par {activity.instructor}</p>
+                <p className='text-xs text-text-secondary mt-1'>
+                  Par {activity.instructor || 'Équipe IA Foundations'}
+                </p>
               </div>
               <div className='w-12 h-8 rounded overflow-hidden flex-shrink-0'>
                 <Image
