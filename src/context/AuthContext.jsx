@@ -1,5 +1,11 @@
 // src/context/AuthContext.jsx
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React, {
+  createContext,
+  useState,
+  useEffect,
+  useContext,
+  useCallback,
+} from 'react';
 import { supabase } from '../lib/supabase';
 import { safeQuery } from '../utils/supabaseClient';
 import { useNavigate } from 'react-router-dom';
@@ -261,7 +267,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Update user profile using RPC function
-  const updateProfile = async updates => {
+  const updateProfile = useCallback(async updates => {
     logger.debug('📝 Updating profile:', updates);
 
     const { data, error } = await safeQuery(() =>
@@ -281,10 +287,10 @@ export const AuthProvider = ({ children }) => {
     setUserProfile(data);
 
     return data;
-  };
+  }, []);
 
   // Update user settings using RPC function
-  const updateUserSettings = async settings => {
+  const updateUserSettings = useCallback(async settings => {
     logger.debug('📝 Updating user settings:', settings);
 
     const { data, error } = await safeQuery(() =>
@@ -300,10 +306,10 @@ export const AuthProvider = ({ children }) => {
 
     logger.info('✅ Settings updated successfully:', data);
     return data;
-  };
+  }, []);
 
   // Get user settings using RPC function
-  const getUserSettings = async () => {
+  const getUserSettings = useCallback(async () => {
     logger.debug('🔍 Getting user settings...');
 
     const { data, error } = await safeQuery(() => supabase.rpc('get_user_settings'));
@@ -323,7 +329,7 @@ export const AuthProvider = ({ children }) => {
 
     logger.debug('✅ Settings retrieved successfully:', settings);
     return settings;
-  };
+  }, []);
 
   // Reset password
   const resetPassword = async email => {
