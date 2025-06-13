@@ -1,5 +1,5 @@
 const LEVELS = ['debug', 'info', 'warn', 'error'];
-const envLevel = (import.meta?.env?.VITE_LOG_LEVEL || process.env.VITE_LOG_LEVEL || 'info').toLowerCase();
+const envLevel = (import.meta.env?.VITE_LOG_LEVEL || 'info').toLowerCase();
 const currentIndex = LEVELS.indexOf(envLevel);
 
 const shouldLog = level => {
