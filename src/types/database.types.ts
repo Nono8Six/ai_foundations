@@ -1,2 +1,4 @@
-Need to install the following packages:
-supabase@2.24.3
+export type Json = unknown;
+export interface Database {
+  public: Record<string, unknown>;
+}
