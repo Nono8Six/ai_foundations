@@ -106,8 +106,9 @@ BEGIN
         SELECT 1 FROM public.profiles p
         WHERE p.id = auth.uid() AND p.is_admin = true
       )
-    );
-END $$;
+  );
+END;
+$$;
 
 -- Drop obsolete helper
-DROP FUNCTION IF EXISTS public.is_admin();
+DROP FUNCTION IF EXISTS public.is_admin() CASCADE;
