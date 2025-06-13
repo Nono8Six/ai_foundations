@@ -4,7 +4,7 @@ This file tracks all stored procedures and trigger functions in the project. Use
  | --- | --- | --- | --- |
  | `create_default_profile()` | Tracked | `supabase/functions/create_default_profile.sql` and migration `20250612115418_light_cell.sql` | Trigger for new users |
  | `create_user_settings()` | Tracked | `supabase/functions/create_user_settings.sql` and migration `20250612115418_light_cell.sql` | Trigger for profile creation |
- | `email_exists(text)` | Tracked | `supabase/functions/email_exists.sql` and migration `20250612144325_email_exists.sql` | Helper to check if email exists |
+ | `email_exists(text)` | Tracked | `supabase/functions/email_exists.sql` and migration `20250612144325_email_exists.sql` | Internal helper, execution restricted to `service_role` |
 -| `get_course_stats()` | Drop | – | Not referenced in code |
 +| `get_course_stats()` | Dropped | migration `20250613120000_drop_unused_functions.sql` | Not referenced in code |
  | `get_user_settings(uuid)` | Tracked | `supabase/functions/get_user_settings.sql` | Returns settings for a user |
