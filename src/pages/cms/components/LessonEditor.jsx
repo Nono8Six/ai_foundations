@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import Icon from '../../../components/AppIcon';
+import { uploadToBucket, BUCKETS } from '../../../services/storageService';
+import logger from '../../../utils/logger';
 
 const LessonEditor = ({ lesson, onSave, onDelete }) => {
   const [formData, setFormData] = useState({
@@ -50,16 +52,17 @@ const LessonEditor = ({ lesson, onSave, onDelete }) => {
     }
   };
 
-  const handleVideoUpload = event => {
+  const handleVideoUpload = async event => {
     const file = event.target.files[0];
     if (file) {
       setIsUploading(true);
-      // Mock upload process
-      setTimeout(() => {
-        const mockUrl = `https://example.com/video-${Date.now()}.mp4`;
-        handleInputChange('videoUrl', mockUrl);
-        setIsUploading(false);
-      }, 3000);
+      try {
+        const { url } = await uploadToBucket(BUCKETS.videos, file);
+        handleInputChange('videoUrl', url);
+      } catch (err) {
+        logger.error('Video upload failed', err);
+      }
+      setIsUploading(false);
     }
   };
 

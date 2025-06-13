@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import Icon from '../../../components/AppIcon';
 import Image from '../../../components/AppImage';
+import { uploadToBucket, BUCKETS } from '../../../services/storageService';
+import logger from '../../../utils/logger';
 
 const CourseEditor = ({ course, onSave, onDelete }) => {
   const [formData, setFormData] = useState({
@@ -51,16 +53,17 @@ const CourseEditor = ({ course, onSave, onDelete }) => {
     }
   };
 
-  const handleThumbnailUpload = event => {
+  const handleThumbnailUpload = async event => {
     const file = event.target.files[0];
     if (file) {
       setIsUploading(true);
-      // Mock upload process
-      setTimeout(() => {
-        const mockUrl = `https://images.unsplash.com/photo-${Date.now()}?w=400`;
-        handleInputChange('thumbnail', mockUrl);
-        setIsUploading(false);
-      }, 2000);
+      try {
+        const { url } = await uploadToBucket(BUCKETS.images, file);
+        handleInputChange('thumbnail', url);
+      } catch (err) {
+        logger.error('Thumbnail upload failed', err);
+      }
+      setIsUploading(false);
     }
   };
 
