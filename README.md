@@ -166,11 +166,12 @@ VITE_LOG_LEVEL=debug
 
 ### Politiques RLS
 
-La table `user_settings` est protégée par la Row Level Security. Deux politiques
-`SELECT` et `UPDATE` autorisent un utilisateur authentifié à consulter et mettre
-à jour uniquement son propre enregistrement (`auth.uid() = user_id`). La clé
-primaire de cette table est `user_id`, ce qui associe directement chaque ligne à
-l'utilisateur correspondant.
+Toutes les tables sensibles utilisent la Row Level Security. La liste complète des politiques se trouve dans [`docs/rls_policies.md`](docs/rls_policies.md). En résumé :
+
+- `profiles` : chaque utilisateur peut lire et modifier uniquement son profil, tandis que les administrateurs peuvent gérer tous les profils.
+- `user_settings` : lecture et mise à jour limitées à l'utilisateur connecté.
+- `courses`, `modules` et `lessons` : consultation publique des éléments publiés, gestion réservée aux administrateurs.
+- `rgpd_requests` : chaque utilisateur gère ses propres requêtes RGPD, les administrateurs ont un accès complet.
 
 ## 📦 Structure du projet
 
