@@ -1,111 +1,65 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Icon from '../../../components/AppIcon';
 import Image from '../../../components/AppImage';
 import logger from '../../../utils/logger';
+import {
+  BUCKETS,
+  listBucketFiles,
+  uploadToBucket,
+  getPublicUrl,
+} from '../../../services/storageService';
 
 const MediaLibrary = ({ onClose, onSelectMedia }) => {
   const [activeTab, setActiveTab] = useState('images');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedItems, setSelectedItems] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
-
-  // Mock media data
-  const mockMedia = {
-    images: [
-      {
-        id: 1,
-        name: 'ai-concept.jpg',
-        url: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400',
-        size: '2.4 MB',
-        dimensions: '1920x1080',
-        uploadDate: '2024-01-15',
-        type: 'image',
-      },
-      {
-        id: 2,
-        name: 'machine-learning.jpg',
-        url: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=400',
-        size: '1.8 MB',
-        dimensions: '1600x900',
-        uploadDate: '2024-01-14',
-        type: 'image',
-      },
-      {
-        id: 3,
-        name: 'data-visualization.jpg',
-        url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400',
-        size: '3.1 MB',
-        dimensions: '2048x1152',
-        uploadDate: '2024-01-13',
-        type: 'image',
-      },
-      {
-        id: 4,
-        name: 'neural-network.jpg',
-        url: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=400',
-        size: '2.7 MB',
-        dimensions: '1920x1080',
-        uploadDate: '2024-01-12',
-        type: 'image',
-      },
-    ],
-    videos: [
-      {
-        id: 5,
-        name: 'intro-ai.mp4',
-        url: 'https://example.com/intro-ai.mp4',
-        size: '45.2 MB',
-        duration: '5:32',
-        uploadDate: '2024-01-15',
-        type: 'video',
-      },
-      {
-        id: 6,
-        name: 'ml-basics.mp4',
-        url: 'https://example.com/ml-basics.mp4',
-        size: '67.8 MB',
-        duration: '8:15',
-        uploadDate: '2024-01-14',
-        type: 'video',
-      },
-    ],
-    documents: [
-      {
-        id: 7,
-        name: 'ai-guide.pdf',
-        url: 'https://example.com/ai-guide.pdf',
-        size: '12.5 MB',
-        pages: 45,
-        uploadDate: '2024-01-15',
-        type: 'document',
-      },
-      {
-        id: 8,
-        name: 'ml-cheatsheet.pdf',
-        url: 'https://example.com/ml-cheatsheet.pdf',
-        size: '3.2 MB',
-        pages: 8,
-        uploadDate: '2024-01-13',
-        type: 'document',
-      },
-    ],
-  };
+  const [mediaData, setMediaData] = useState([]);
+  const [tabCounts, setTabCounts] = useState({ images: 0, videos: 0, documents: 0 });
 
   const tabs = [
-    { id: 'images', label: 'Images', icon: 'Image', count: mockMedia.images.length },
-    { id: 'videos', label: 'Vidéos', icon: 'Video', count: mockMedia.videos.length },
-    { id: 'documents', label: 'Documents', icon: 'FileText', count: mockMedia.documents.length },
+    { id: 'images', label: 'Images', icon: 'Image', count: tabCounts.images },
+    { id: 'videos', label: 'Vidéos', icon: 'Video', count: tabCounts.videos },
+    { id: 'documents', label: 'Documents', icon: 'FileText', count: tabCounts.documents },
   ];
 
-  const handleFileUpload = event => {
+  const fetchMedia = async tab => {
+    try {
+      const files = await listBucketFiles(BUCKETS[tab]);
+      const items = (files || []).map(f => ({
+        id: f.id || f.name,
+        name: f.name,
+        url: getPublicUrl(BUCKETS[tab], f.name),
+        size: f.metadata?.size || f.size || 0,
+        uploadDate: f.updated_at,
+        type: tab.slice(0, -1),
+      }));
+      setMediaData(items);
+      setTabCounts(prev => ({ ...prev, [tab]: items.length }));
+    } catch (err) {
+      logger.error('Failed to load media', err);
+      setMediaData([]);
+      setTabCounts(prev => ({ ...prev, [tab]: 0 }));
+    }
+  };
+
+  useEffect(() => {
+    fetchMedia(activeTab);
+  }, [activeTab]);
+
+  const handleFileUpload = async event => {
     const files = Array.from(event.target.files);
-    if (files.length > 0) {
+    if (files.length) {
       setIsUploading(true);
-      // Mock upload process
-      setTimeout(() => {
-        setIsUploading(false);
-        logger.info('Files uploaded:', files);
-      }, 2000);
+      try {
+        await Promise.all(
+          files.map(file => uploadToBucket(BUCKETS[activeTab], file))
+        );
+        fetchMedia(activeTab);
+      } catch (err) {
+        logger.error('Upload failed', err);
+      }
+      setIsUploading(false);
     }
   };
 
@@ -118,11 +72,11 @@ const MediaLibrary = ({ onClose, onSelectMedia }) => {
   };
 
   const handleSelectMedia = () => {
-    const selectedMedia = mockMedia[activeTab].filter(item => selectedItems.includes(item.id));
+    const selectedMedia = mediaData.filter(item => selectedItems.includes(item.id));
     onSelectMedia(selectedMedia);
   };
 
-  const filteredMedia = mockMedia[activeTab].filter(item =>
+  const filteredMedia = mediaData.filter(item =>
     item.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -167,7 +121,9 @@ const MediaLibrary = ({ onClose, onSelectMedia }) => {
         <div className='p-3'>
           <h4 className='font-medium text-text-primary text-sm truncate mb-1'>{item.name}</h4>
           <div className='text-xs text-text-secondary space-y-1'>
-            <div>{item.size}</div>
+            {item.size && (
+              <div>{(item.size / 1024 / 1024).toFixed(2)} MB</div>
+            )}
             {item.dimensions && <div>{item.dimensions}</div>}
             {item.duration && <div>{item.duration}</div>}
             {item.pages && <div>{item.pages} pages</div>}
