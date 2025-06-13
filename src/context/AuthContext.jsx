@@ -163,20 +163,6 @@ export const AuthProvider = ({ children }) => {
   const signIn = async ({ email, password }) => {
     logger.debug('🔐 Signing in user:', email);
 
-    // Check if the email exists to distinguish errors
-    const { data: exists, error: existsError } = await safeQuery(() =>
-      supabase.rpc('email_exists', { search_email: email })
-    );
-
-    if (existsError) {
-      throw existsError;
-    }
-
-    if (!exists) {
-      const err = new Error("Aucun compte trouvé pour cette adresse email.");
-      err.code = 'email_not_found';
-      throw err;
-    }
 
     const { data, error } = await safeQuery(() =>
       supabase.auth.signInWithPassword({
