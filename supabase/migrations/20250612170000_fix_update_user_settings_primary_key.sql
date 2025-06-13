@@ -1,5 +1,4 @@
--- Function: public.update_user_settings(settings_data jsonb, user_id uuid DEFAULT auth.uid())
-
+-- Update update_user_settings function to use user_id column
 CREATE OR REPLACE FUNCTION public.update_user_settings(
     settings_data jsonb,
     user_id uuid DEFAULT auth.uid()
