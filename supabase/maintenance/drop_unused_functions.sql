@@ -3,6 +3,8 @@ DROP FUNCTION IF EXISTS public.get_course_stats();
 DROP FUNCTION IF EXISTS public.get_user_stats();
 DROP FUNCTION IF EXISTS public.handle_lesson_completion(uuid, uuid);
 DROP FUNCTION IF EXISTS public.handle_new_user();
+-- Remove trigger first to avoid dependency errors
+DROP TRIGGER IF EXISTS user_notes_updated_at ON public.user_notes;
 DROP FUNCTION IF EXISTS public.handle_user_notes_updated_at();
 DROP FUNCTION IF EXISTS public.is_admin();
 DROP FUNCTION IF EXISTS public.is_admin(uuid);
