@@ -1,3 +1,13 @@
+-- Re-création de la fonction de mise à jour du timestamp (handle_updated_at)
+-- Assurez-vous que cette fonction existe avant de l'assigner aux triggers.
+CREATE OR REPLACE FUNCTION public.handle_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = now();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
 -- Create base tables for initial setup
 
 -- Profiles table
@@ -19,6 +29,7 @@ CREATE TABLE IF NOT EXISTS profiles (
 
 CREATE INDEX IF NOT EXISTS idx_profiles_created_at ON profiles(created_at);
 
+DROP TRIGGER IF EXISTS profiles_updated_at ON profiles;
 CREATE TRIGGER profiles_updated_at
 BEFORE UPDATE ON profiles
 FOR EACH ROW EXECUTE FUNCTION handle_updated_at();
@@ -33,6 +44,7 @@ CREATE TABLE IF NOT EXISTS user_settings (
   updated_at timestamptz NOT NULL DEFAULT now()
 );
 
+DROP TRIGGER IF EXISTS user_settings_updated_at ON user_settings;
 CREATE TRIGGER user_settings_updated_at
 BEFORE UPDATE ON user_settings
 FOR EACH ROW EXECUTE FUNCTION handle_updated_at();
@@ -50,9 +62,13 @@ CREATE TABLE IF NOT EXISTS courses (
   updated_at timestamptz NOT NULL DEFAULT now()
 );
 
+-- Correction : Assurer l'existence de la colonne AVANT de créer l'index
+ALTER TABLE public.courses ADD COLUMN IF NOT EXISTS category text;
+
 CREATE INDEX IF NOT EXISTS idx_courses_category ON courses(category);
 CREATE INDEX IF NOT EXISTS idx_courses_is_published ON courses(is_published);
 
+DROP TRIGGER IF EXISTS courses_updated_at ON courses;
 CREATE TRIGGER courses_updated_at
 BEFORE UPDATE ON courses
 FOR EACH ROW EXECUTE FUNCTION handle_updated_at();
@@ -70,6 +86,7 @@ CREATE TABLE IF NOT EXISTS modules (
 
 CREATE INDEX IF NOT EXISTS idx_modules_course_id ON modules(course_id);
 
+DROP TRIGGER IF EXISTS modules_updated_at ON modules;
 CREATE TRIGGER modules_updated_at
 BEFORE UPDATE ON modules
 FOR EACH ROW EXECUTE FUNCTION handle_updated_at();
@@ -91,6 +108,7 @@ CREATE TABLE IF NOT EXISTS lessons (
 CREATE INDEX IF NOT EXISTS idx_lessons_module_id ON lessons(module_id);
 CREATE INDEX IF NOT EXISTS idx_lessons_is_published ON lessons(is_published);
 
+DROP TRIGGER IF EXISTS lessons_updated_at ON lessons;
 CREATE TRIGGER lessons_updated_at
 BEFORE UPDATE ON lessons
 FOR EACH ROW EXECUTE FUNCTION handle_updated_at();
@@ -112,6 +130,7 @@ CREATE TABLE IF NOT EXISTS user_progress (
   PRIMARY KEY (user_id, lesson_id)
 );
 
+DROP TRIGGER IF EXISTS user_progress_updated_at ON user_progress;
 CREATE TRIGGER user_progress_updated_at
 BEFORE UPDATE ON user_progress
 FOR EACH ROW EXECUTE FUNCTION handle_updated_at();
@@ -140,6 +159,7 @@ CREATE TABLE IF NOT EXISTS achievements (
 
 CREATE INDEX IF NOT EXISTS idx_achievements_user_id ON achievements(user_id);
 
+DROP TRIGGER IF EXISTS achievements_updated_at ON achievements;
 CREATE TRIGGER achievements_updated_at
 BEFORE UPDATE ON achievements
 FOR EACH ROW EXECUTE FUNCTION handle_updated_at();
@@ -155,5 +175,3 @@ CREATE TABLE IF NOT EXISTS activity_log (
 
 CREATE INDEX IF NOT EXISTS idx_activity_log_user_id ON activity_log(user_id);
 CREATE INDEX IF NOT EXISTS idx_activity_log_created_at ON activity_log(created_at);
-
-
