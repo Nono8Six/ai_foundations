@@ -23,5 +23,5 @@ This file tracks all stored procedures and trigger functions in the project. Use
 | `update_user_profile(profile_data jsonb, user_id uuid)` | Tracked | `supabase/functions/update_user_profile.sql` | Main profile update function |
 | `update_user_profile(profile_data jsonb)` | Dropped | migration `20250612160000_drop_legacy_update_user_profile.sql` | Legacy version, should not exist |
 | `update_user_settings(uuid, jsonb, jsonb, jsonb)` | Drop | – | Alternative signature not used |
-| `update_user_settings(settings_data jsonb, user_id uuid)` | Tracked | `supabase/functions/update_user_settings.sql` | Main settings update function |
+| `update_user_settings(settings_data jsonb, user_id uuid)` | Tracked | `supabase/functions/update_user_settings.sql` and migration `20250612170000_fix_update_user_settings_primary_key.sql` | Main settings update function (primary key on `user_id`) |
 | `update_user_settings_rpc(settings_data jsonb)` | Drop | – | Deprecated |

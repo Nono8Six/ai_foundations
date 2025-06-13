@@ -168,7 +168,9 @@ VITE_LOG_LEVEL=debug
 
 La table `user_settings` est protégée par la Row Level Security. Deux politiques
 `SELECT` et `UPDATE` autorisent un utilisateur authentifié à consulter et mettre
-à jour uniquement son propre enregistrement (`auth.uid() = user_id`).
+à jour uniquement son propre enregistrement (`auth.uid() = user_id`). La clé
+primaire de cette table est `user_id`, ce qui associe directement chaque ligne à
+l'utilisateur correspondant.
 
 ## 📦 Structure du projet
 
