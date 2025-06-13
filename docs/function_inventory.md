@@ -15,7 +15,7 @@ This file tracks all stored procedures and trigger functions in the project. Use
 | `handle_new_user()` | Drop | – | Replaced by `create_default_profile()` |
 | `handle_updated_at()` | Tracked | `supabase/functions/handle_updated_at.sql` and migration `20250612120816_young_heart.sql` | Generic updated_at trigger |
 | `handle_user_notes_updated_at()` | Drop | – | Not implemented |
-| `is_admin()` | Drop | – | Duplicate of `is_admin(uuid)` |
+| `is_admin()` | Removed | migration `20250612161000_policy_cleanup_admin.sql` | Policies now check `profiles.is_admin`; see migration for details |
 | `is_admin(uuid)` | Drop | – | Unused |
 | `test_auth_rpc()` | Drop | – | Development helper |
 | `test_rpc()` | Drop | – | Development helper |
