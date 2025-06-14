@@ -8,7 +8,7 @@ export const ToastProvider = ({ children }) => {
   const removeToast = id => setToasts(prev => prev.filter(t => t.id !== id));
 
   const addToast = useCallback((message, type = 'success') => {
-    const id = Date.now();
+    const id = crypto.randomUUID();
     setToasts(prev => [...prev, { id, message, type }]);
     setTimeout(() => removeToast(id), 3000);
   }, []);
