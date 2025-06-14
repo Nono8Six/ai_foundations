@@ -27,7 +27,7 @@ BEGIN
       USING (auth.uid() = id)
       WITH CHECK (
         auth.uid() = id AND
-        is_admin = (SELECT is_admin FROM public.profiles WHERE id = auth.uid())
+        is_admin = current_user_is_admin()
       );
   END IF;
 
@@ -41,10 +41,7 @@ BEGIN
       FOR SELECT
       TO authenticated
       USING (
-        EXISTS (
-          SELECT 1 FROM public.profiles p
-          WHERE p.id = auth.uid() AND p.is_admin = true
-        )
+        current_user_is_admin()
       );
   END IF;
 
@@ -58,16 +55,10 @@ BEGIN
       FOR UPDATE
       TO authenticated
       USING (
-        EXISTS (
-          SELECT 1 FROM public.profiles p
-          WHERE p.id = auth.uid() AND p.is_admin = true
-        )
+        current_user_is_admin()
       )
       WITH CHECK (
-        EXISTS (
-          SELECT 1 FROM public.profiles p
-          WHERE p.id = auth.uid() AND p.is_admin = true
-        )
+        current_user_is_admin()
       );
   END IF;
 END $$;

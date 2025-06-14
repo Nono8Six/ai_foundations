@@ -1,8 +1,9 @@
 /*
-  # Switch admin policies to column check
+  # Switch admin policies to helper function
 
-  This migration updates policies that previously depended on the
-  `is_admin()` function to instead use the `profiles.is_admin` column.
+  This migration introduces the `current_user_is_admin()` helper
+  and recreates policies that previously queried `public.profiles`
+  directly.
   The following policies are recreated:
     - "Admins can view all profiles" on `public.profiles`
     - "Enable all for admins" on `courses`, `modules`, and `lessons`
@@ -10,6 +11,15 @@
   After updating the policies, the now unused `is_admin()` function
   is dropped.
 */
+
+-- Helper used by admin policies
+CREATE OR REPLACE FUNCTION public.current_user_is_admin()
+RETURNS boolean
+LANGUAGE sql
+SECURITY DEFINER
+AS $$
+  SELECT is_admin FROM public.profiles WHERE id = auth.uid();
+$$;
 
 -- Recreate admin policies using profiles.is_admin
 DO $$
@@ -27,10 +37,7 @@ BEGIN
     ON public.profiles FOR SELECT
     TO authenticated
     USING (
-      EXISTS (
-        SELECT 1 FROM public.profiles p
-        WHERE p.id = auth.uid() AND p.is_admin = true
-      )
+      current_user_is_admin()
     );
 
   -- Courses policy
@@ -46,16 +53,10 @@ BEGIN
     ON courses FOR ALL
     TO authenticated
     USING (
-      EXISTS (
-        SELECT 1 FROM public.profiles p
-        WHERE p.id = auth.uid() AND p.is_admin = true
-      )
+      current_user_is_admin()
     )
     WITH CHECK (
-      EXISTS (
-        SELECT 1 FROM public.profiles p
-        WHERE p.id = auth.uid() AND p.is_admin = true
-      )
+      current_user_is_admin()
     );
 
   -- Modules policy
@@ -71,16 +72,10 @@ BEGIN
     ON modules FOR ALL
     TO authenticated
     USING (
-      EXISTS (
-        SELECT 1 FROM public.profiles p
-        WHERE p.id = auth.uid() AND p.is_admin = true
-      )
+      current_user_is_admin()
     )
     WITH CHECK (
-      EXISTS (
-        SELECT 1 FROM public.profiles p
-        WHERE p.id = auth.uid() AND p.is_admin = true
-      )
+      current_user_is_admin()
     );
 
   -- Lessons policy
@@ -96,16 +91,10 @@ BEGIN
     ON lessons FOR ALL
     TO authenticated
     USING (
-      EXISTS (
-        SELECT 1 FROM public.profiles p
-        WHERE p.id = auth.uid() AND p.is_admin = true
-      )
+      current_user_is_admin()
     )
     WITH CHECK (
-      EXISTS (
-        SELECT 1 FROM public.profiles p
-        WHERE p.id = auth.uid() AND p.is_admin = true
-      )
+      current_user_is_admin()
   );
 END;
 $$;
