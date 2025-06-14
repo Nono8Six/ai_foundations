@@ -5,7 +5,7 @@ services:
       target: builder
     container_name: ia-foundations-dev
     
-    # --- MODIFIEZ CETTE LIGNE ---
+    # On exécute le script simplifié, puis on lance le serveur de développement
     command: sh -c "./scripts/setup.sh && npm run dev -- --host"
     
     volumes:
