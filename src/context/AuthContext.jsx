@@ -298,23 +298,17 @@ export const AuthProvider = ({ children }) => {
   const getUserSettings = useCallback(async () => {
     logger.debug('🔍 Getting user settings...');
 
-    const { data, error } = await safeQuery(() => supabase.rpc('get_user_settings'));
+    const { data, error } = await safeQuery(() =>
+      supabase.rpc('get_user_settings').single()
+    );
 
     if (error) {
       setError(error);
       throw error;
     }
 
-    const settings = data
-      ? {
-          notification_settings: data.notification_settings,
-          privacy_settings: data.privacy_settings,
-          learning_preferences: data.learning_preferences,
-        }
-      : null;
-
-    logger.debug('✅ Settings retrieved successfully:', settings);
-    return settings;
+    logger.debug('✅ Settings retrieved successfully:', data);
+    return data;
   }, []);
 
   // Reset password
