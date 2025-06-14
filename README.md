@@ -112,6 +112,9 @@ Une fois le projet lié, appliquez toutes les migrations :
 
 ```bash
 supabase db push
+# ou
+pnpm migrate
+# qui exécute `./scripts/migrate.sh`
 ```
 
 Les variables d'environnement nécessaires au fonctionnement local sont définies
@@ -182,7 +185,8 @@ Toutes les tables sensibles utilisent la Row Level Security. La liste complète 
 ├── nginx/                 # Configuration Nginx pour la production
 │   └── nginx.conf
 ├── scripts/               # Scripts utilitaires
-│   └── check-env.sh
+│   ├── check-env.sh
+│   └── migrate.sh
 ├── public/                # Fichiers statiques
 ├── src/                   # Code source de l'application
 └── .env.example           # Exemple de configuration d'environnement
@@ -221,7 +225,7 @@ Cette erreur se produit lorsque les migrations de base de données n'ont pas ét
 
 1. Vérifiez que la CLI Supabase est installée et que vous êtes connecté
 2. Liez votre projet : `supabase link --project-ref votre-reference-projet`
-3. Appliquez la migration consolidée : `supabase db push`
+3. Appliquez la migration consolidée : `supabase db push` (ou `pnpm migrate`)
 4. Vérifiez que les tables existent dans le tableau de bord Supabase
 
 ### Colonne `thumbnail_url` manquante
@@ -234,6 +238,7 @@ base locale ou distante :
 2. Rejouez toutes les migrations :
    ```bash
    supabase db push
+   # ou pnpm migrate
    ```
 3. Vérifiez ensuite dans le tableau de bord que la colonne est bien créée
 
