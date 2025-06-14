@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "displayName": "IA Foundations",
+  "type": "module",
   "dependencies": {
     "@supabase/supabase-js": "^2.50.0",
     "framer-motion": "^10.16.4",
@@ -21,24 +22,19 @@
     "type-check": "tsc --noEmit",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx --fix",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
-    "test": "vitest",
-    "test:run": "vitest run --watch=false --reporter=verbose",
+    "test": "vitest run --coverage --passWithNoTests",
     "test:watch": "vitest watch",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "migrate": "bash -c 'if [ -n \"$SUPABASE_PROJECT_REF\" ]; then supabase db push --project-id \"$SUPABASE_PROJECT_REF\"; else supabase db push; fi'"
   },
   "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
+    "production": [">0.2%", "not dead", "not op_mini all"],
     "development": [
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"
     ]
   },
-  "type": "module",
   "devDependencies": {
     "@eslint/js": "^9.27.0",
     "@tailwindcss/forms": "^0.5.7",
@@ -66,8 +62,6 @@
     "vite": "^6.3.5",
     "vitest": "^1.0.0"
   },
-  "resolutions": {
-    "esbuild": "0.25.5"
-  },
+  "resolutions": { "esbuild": "0.25.5" },
   "packageManager": "npm@10.8.2"
 }
