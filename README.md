@@ -224,6 +224,20 @@ Cette erreur se produit lorsque les migrations de base de données n'ont pas ét
 3. Appliquez la migration consolidée : `supabase db push`
 4. Vérifiez que les tables existent dans le tableau de bord Supabase
 
+### Colonne `thumbnail_url` manquante
+
+Si l'attribut `thumbnail_url` n'apparaît pas dans la table `courses` de votre
+base locale ou distante :
+
+1. Assurez-vous d'être connecté et que votre projet est lié avec
+   `supabase link --project-ref <votre-reference-projet>`
+2. Rejouez toutes les migrations :
+   ```bash
+   supabase db push
+   ```
+3. Vérifiez ensuite dans le tableau de bord que la colonne est bien créée
+
+
 ## 📚 Documentation supplémentaire
 
 - [Documentation Supabase](https://supabase.com/docs)
