@@ -15,10 +15,17 @@
 -- Helper used by admin policies
 CREATE OR REPLACE FUNCTION public.current_user_is_admin()
 RETURNS boolean
-LANGUAGE sql
+LANGUAGE plpgsql
 SECURITY DEFINER
 AS $$
-  SELECT is_admin FROM public.profiles WHERE id = auth.uid();
+DECLARE
+  result boolean;
+BEGIN
+  -- Temporarily escalate privileges to bypass RLS on profiles
+  PERFORM set_config('role', 'service_role', true);
+  SELECT is_admin INTO result FROM public.profiles WHERE id = auth.uid();
+  RETURN result;
+END;
 $$;
 
 -- Recreate admin policies using profiles.is_admin
