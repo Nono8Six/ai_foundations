@@ -39,6 +39,7 @@ node_modules/
 .cache/
 .parcel-cache/
 .turbo/
+package-lock.json
 
 # Fichiers de logs
 npm-debug.log*
