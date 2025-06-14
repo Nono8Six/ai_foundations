@@ -194,7 +194,7 @@ Un workflow GitHub Actions situé dans `.github/workflows/nodeci.yml` vérifie l
 
 1. `npm install`
 2. `npm run lint`
-3. `npm run test:run`
+3. `npm test`
 4. `npm run build`
 
 Le workflow échoue automatiquement si l'une de ces étapes rencontre une erreur.
