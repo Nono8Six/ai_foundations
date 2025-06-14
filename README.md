@@ -237,6 +237,23 @@ base locale ou distante :
    ```
 3. Vérifiez ensuite dans le tableau de bord que la colonne est bien créée
 
+### Erreur "infinite recursion detected in policy for relation 'profiles'"
+
+Cette erreur provient de l'utilisation de la fonction `current_user_is_admin()`
+dans les politiques RLS de la table `profiles`. Les anciennes migrations
+déclenchent une récursion infinie lorsque cette fonction interroge de nouveau
+`profiles`.
+
+Pour corriger la situation :
+
+1. Assurez-vous d'avoir récupéré la migration mise à jour dans ce dépôt
+2. Vérifiez que la CLI Supabase est installée et connectée
+3. Liez votre projet : `supabase link --project-ref <votre-reference-projet>`
+4. Appliquez les migrations corrigées :
+   ```bash
+   supabase db push
+   ```
+
 
 ## 📚 Documentation supplémentaire
 
