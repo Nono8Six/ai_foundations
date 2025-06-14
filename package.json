@@ -25,7 +25,7 @@
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",
-    "migrate": "bash -c 'if [ -n \"$SUPABASE_PROJECT_REF\" ]; then supabase db push --project-id \"$SUPABASE_PROJECT_REF\"; else supabase db push; fi'"
+    "migrate": "./scripts/migrate.sh"
   },
   "browserslist": {
     "production": [">0.2%", "not dead", "not op_mini all"],
