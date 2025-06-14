@@ -22,7 +22,7 @@
     "type-check": "tsc --noEmit",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx --fix",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
-    "test": "vitest run --coverage --passWithNoTests",
+    "test": "vitest run --passWithNoTests",
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",
     "migrate": "bash -c 'if [ -n \"$SUPABASE_PROJECT_REF\" ]; then supabase db push --project-id \"$SUPABASE_PROJECT_REF\"; else supabase db push; fi'"
