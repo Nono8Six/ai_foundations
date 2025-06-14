@@ -20,16 +20,10 @@ BEGIN
     ON courses FOR ALL
     TO authenticated
     USING (
-      EXISTS (
-        SELECT 1 FROM public.profiles p
-        WHERE p.id = auth.uid() AND p.is_admin = true
-      )
+      current_user_is_admin()
     )
     WITH CHECK (
-      EXISTS (
-        SELECT 1 FROM public.profiles p
-        WHERE p.id = auth.uid() AND p.is_admin = true
-      )
+      current_user_is_admin()
     );
 
   IF NOT EXISTS (
@@ -56,16 +50,10 @@ BEGIN
     ON modules FOR ALL
     TO authenticated
     USING (
-      EXISTS (
-        SELECT 1 FROM public.profiles p
-        WHERE p.id = auth.uid() AND p.is_admin = true
-      )
+      current_user_is_admin()
     )
     WITH CHECK (
-      EXISTS (
-        SELECT 1 FROM public.profiles p
-        WHERE p.id = auth.uid() AND p.is_admin = true
-      )
+      current_user_is_admin()
     );
 
   IF NOT EXISTS (
@@ -92,16 +80,10 @@ BEGIN
     ON lessons FOR ALL
     TO authenticated
     USING (
-      EXISTS (
-        SELECT 1 FROM public.profiles p
-        WHERE p.id = auth.uid() AND p.is_admin = true
-      )
+      current_user_is_admin()
     )
     WITH CHECK (
-      EXISTS (
-        SELECT 1 FROM public.profiles p
-        WHERE p.id = auth.uid() AND p.is_admin = true
-      )
+      current_user_is_admin()
     );
 
   IF NOT EXISTS (
