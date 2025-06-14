@@ -2,9 +2,12 @@ services:
   app:
     build:
       context: .
-      target: builder  # Utilise l'étape builder du Dockerfile
+      target: builder
     container_name: ia-foundations-dev
-    command: npm run dev -- --host
+    
+    # --- MODIFIEZ CETTE LIGNE ---
+    command: sh -c "./scripts/setup.sh && npm run dev -- --host"
+    
     volumes:
       - .:/app
       - /app/node_modules
