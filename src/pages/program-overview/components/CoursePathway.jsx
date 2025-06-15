@@ -6,14 +6,15 @@ import Image from '../../../components/AppImage';
 const CoursePathway = ({ courses }) => {
   // Group courses by difficulty level for pathway visualization
   const groupedCourses = courses.reduce((acc, course) => {
-    if (!acc[course.difficulty]) {
-      acc[course.difficulty] = [];
+    const level = course.difficulty || 'Autre';
+    if (!acc[level]) {
+      acc[level] = [];
     }
-    acc[course.difficulty].push(course);
+    acc[level].push(course);
     return acc;
   }, {});
 
-  const difficultyOrder = ['Débutant', 'Intermédiaire', 'Avancé'];
+  const difficultyOrder = ['Débutant', 'Intermédiaire', 'Avancé', 'Autre'];
   const orderedGroups = difficultyOrder.filter(level => groupedCourses[level]);
 
   const getDifficultyColor = difficulty => {
@@ -119,20 +120,28 @@ const CoursePathway = ({ courses }) => {
                           <h3 className='text-lg font-semibold text-text-primary mb-1'>
                             {course.title}
                           </h3>
-                          <div className='flex items-center gap-4 text-sm text-text-secondary'>
-                            <div className='flex items-center gap-1'>
-                              <Icon name='Clock' size={14} />
-                              <span>{course.duration}</span>
+                          {(course.duration || course.modules || course.xpReward) && (
+                            <div className='flex items-center gap-4 text-sm text-text-secondary'>
+                              {course.duration && (
+                                <div className='flex items-center gap-1'>
+                                  <Icon name='Clock' size={14} />
+                                  <span>{course.duration}</span>
+                                </div>
+                              )}
+                              {course.modules && (
+                                <div className='flex items-center gap-1'>
+                                  <Icon name='BookOpen' size={14} />
+                                  <span>{course.modules} modules</span>
+                                </div>
+                              )}
+                              {course.xpReward && (
+                                <div className='flex items-center gap-1'>
+                                  <Icon name='Award' size={14} />
+                                  <span>{course.xpReward} XP</span>
+                                </div>
+                              )}
                             </div>
-                            <div className='flex items-center gap-1'>
-                              <Icon name='BookOpen' size={14} />
-                              <span>{course.modules} modules</span>
-                            </div>
-                            <div className='flex items-center gap-1'>
-                              <Icon name='Award' size={14} />
-                              <span>{course.xpReward} XP</span>
-                            </div>
-                          </div>
+                          )}
                         </div>
 
                         {/* Course Badges */}
@@ -174,7 +183,7 @@ const CoursePathway = ({ courses }) => {
                       )}
 
                       {/* Prerequisites */}
-                      {course.prerequisites.length > 0 && (
+                      {course.prerequisites?.length > 0 && (
                         <div className='mb-4'>
                           <p className='text-xs text-text-secondary mb-2'>Prérequis:</p>
                           <div className='flex flex-wrap gap-1'>
@@ -215,15 +224,17 @@ const CoursePathway = ({ courses }) => {
                         )}
 
                         {/* Rating */}
-                        <div className='flex items-center gap-1 ml-auto'>
-                          <Icon name='Star' size={14} className='text-warning fill-current' />
-                          <span className='text-sm font-medium text-text-primary'>
-                            {course.rating}
-                          </span>
-                          <span className='text-sm text-text-secondary'>
-                            ({course.enrolledStudents})
-                          </span>
-                        </div>
+                        {course.rating !== undefined && (
+                          <div className='flex items-center gap-1 ml-auto'>
+                            <Icon name='Star' size={14} className='text-warning fill-current' />
+                            <span className='text-sm font-medium text-text-primary'>
+                              {course.rating}
+                            </span>
+                            <span className='text-sm text-text-secondary'>
+                              ({course.enrolledStudents || 0})
+                            </span>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>

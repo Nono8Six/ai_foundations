@@ -35,11 +35,13 @@ const CourseCard = ({ course }) => {
 
         {/* Overlay Badges */}
         <div className='absolute top-4 left-4 flex flex-wrap gap-2'>
-          <span
-            className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(course.difficulty)}`}
-          >
-            {course.difficulty}
-          </span>
+          {course.difficulty && (
+            <span
+              className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(course.difficulty)}`}
+            >
+              {course.difficulty}
+            </span>
+          )}
           {course.isFree && (
             <span className='px-2 py-1 rounded-full text-xs font-medium bg-accent-100 text-accent-700'>
               Gratuit
@@ -71,57 +73,71 @@ const CourseCard = ({ course }) => {
           <h3 className='text-lg font-semibold text-text-primary mb-2 line-clamp-2'>
             {course.title}
           </h3>
-          <div className='flex items-center gap-2'>
-            <div className='flex items-center'>
-              {[...Array(5)].map((_, i) => (
-                <Icon
-                  key={i}
-                  name='Star'
-                  size={14}
-                  className={
-                    i < Math.floor(course.rating)
-                      ? 'text-warning fill-current'
-                      : 'text-secondary-300'
-                  }
-                />
-              ))}
+          {course.rating !== undefined && (
+            <div className='flex items-center gap-2'>
+              <div className='flex items-center'>
+                {[...Array(5)].map((_, i) => (
+                  <Icon
+                    key={i}
+                    name='Star'
+                    size={14}
+                    className={
+                      i < Math.floor(course.rating)
+                        ? 'text-warning fill-current'
+                        : 'text-secondary-300'
+                    }
+                  />
+                ))}
+              </div>
+              <span className='text-sm text-text-secondary'>
+                {course.rating} ({course.enrolledStudents || 0} étudiants)
+              </span>
             </div>
-            <span className='text-sm text-text-secondary'>
-              {course.rating} ({course.enrolledStudents} étudiants)
-            </span>
-          </div>
+          )}
         </div>
 
         {/* Description */}
         <p className='text-text-secondary text-sm mb-4 line-clamp-3'>{course.description}</p>
 
         {/* Course Meta */}
-        <div className='space-y-2 mb-4'>
-          <div className='flex items-center gap-4 text-sm text-text-secondary'>
-            <div className='flex items-center gap-1'>
-              <Icon name='Clock' size={14} />
-              <span>{course.duration}</span>
+        {(course.duration || course.modules || course.xpReward || course.lessons) && (
+          <div className='space-y-2 mb-4'>
+            <div className='flex items-center gap-4 text-sm text-text-secondary'>
+              {course.duration && (
+                <div className='flex items-center gap-1'>
+                  <Icon name='Clock' size={14} />
+                  <span>{course.duration}</span>
+                </div>
+              )}
+              {course.modules && (
+                <div className='flex items-center gap-1'>
+                  <Icon name='BookOpen' size={14} />
+                  <span>{course.modules} modules</span>
+                </div>
+              )}
             </div>
-            <div className='flex items-center gap-1'>
-              <Icon name='BookOpen' size={14} />
-              <span>{course.modules} modules</span>
-            </div>
-          </div>
 
-          <div className='flex items-center gap-4 text-sm text-text-secondary'>
-            <div className='flex items-center gap-1'>
-              <Icon name='Award' size={14} />
-              <span>{course.xpReward} XP</span>
-            </div>
-            <div className='flex items-center gap-1'>
-              <Icon name='Users' size={14} />
-              <span>{course.lessons} leçons</span>
-            </div>
+            {(course.xpReward || course.lessons) && (
+              <div className='flex items-center gap-4 text-sm text-text-secondary'>
+                {course.xpReward && (
+                  <div className='flex items-center gap-1'>
+                    <Icon name='Award' size={14} />
+                    <span>{course.xpReward} XP</span>
+                  </div>
+                )}
+                {course.lessons && (
+                  <div className='flex items-center gap-1'>
+                    <Icon name='Users' size={14} />
+                    <span>{course.lessons} leçons</span>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
-        </div>
+        )}
 
         {/* Prerequisites */}
-        {course.prerequisites.length > 0 && (
+        {course.prerequisites?.length > 0 && (
           <div className='mb-4'>
             <p className='text-xs text-text-secondary mb-1'>Prérequis:</p>
             <div className='flex flex-wrap gap-1'>
@@ -138,23 +154,25 @@ const CourseCard = ({ course }) => {
         )}
 
         {/* Tags */}
-        <div className='mb-4'>
-          <div className='flex flex-wrap gap-1'>
-            {course.tags.slice(0, 3).map((tag, index) => (
-              <span
-                key={index}
-                className='px-2 py-1 bg-primary-50 text-primary-700 text-xs rounded'
-              >
-                {tag}
-              </span>
-            ))}
-            {course.tags.length > 3 && (
-              <span className='px-2 py-1 bg-secondary-100 text-secondary-700 text-xs rounded'>
-                +{course.tags.length - 3}
-              </span>
-            )}
+        {course.tags?.length > 0 && (
+          <div className='mb-4'>
+            <div className='flex flex-wrap gap-1'>
+              {course.tags.slice(0, 3).map((tag, index) => (
+                <span
+                  key={index}
+                  className='px-2 py-1 bg-primary-50 text-primary-700 text-xs rounded'
+                >
+                  {tag}
+                </span>
+              ))}
+              {course.tags.length > 3 && (
+                <span className='px-2 py-1 bg-secondary-100 text-secondary-700 text-xs rounded'>
+                  +{course.tags.length - 3}
+                </span>
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Action Buttons */}
         <div className='space-y-2'>

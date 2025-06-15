@@ -53,29 +53,13 @@ const ProgramOverview = () => {
   const formattedCourses = useMemo(() => {
     if (!courses?.length) return [];
 
-    return courses.map(course => ({
-      id: course.id,
-      title: course.title,
-      description: course.description || '',
-      difficulty: 'Débutant',
-      duration: '4 semaines',
-      estimatedHours: 20,
-      category: 'Fondamentaux',
-      instructor: 'Dr. Marie Dubois',
-      rating: 4.8,
-      enrolledStudents: 500,
-      prerequisites: [],
-      modules: 8,
-      lessons: 32,
-      xpReward: 500,
-      achievements: ['Premier Pas IA', 'Explorateur'],
-      image: course.cover_image_url || 'https://images.pexels.com/photos/373543/pexels-photo-373543.jpeg?w=400&h=250&fit=crop',
-      isEnrolled: false,
-      progress: 0,
-      isFree: true,
-      previewLessons: 3,
-      tags: ['Machine Learning', 'Algorithmes', 'Histoire IA'],
-    }));
+      return courses.map(course => ({
+        id: course.id,
+        title: course.title,
+        description: course.description || "",
+        category: course.category || "Non classé",
+        image: course.cover_image_url || "https://images.pexels.com/photos/373543/pexels-photo-373543.jpeg?w=400&h=250&fit=crop",
+      }));
   }, [courses]);
 
   const handleFilterChange = newFilters => {

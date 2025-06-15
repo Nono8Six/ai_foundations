@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import logger from '../../utils/logger';
+import React, { useState, useEffect } from 'react';
 import { useAdminCourses } from '../../context/AdminCourseContext';
 import { useToast } from '../../context/ToastContext';
+import { fetchCoursesWithContent } from '../../services/courseService';
+import logger from '../../utils/logger';
 
 import Icon from '../../components/AppIcon';
 import ContentTree from './components/ContentTree';
@@ -19,103 +20,39 @@ const ContentManagementCoursesModulesLessons = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedItems, setSelectedItems] = useState([]);
   const [showBulkOperations, setShowBulkOperations] = useState(false);
+  
+  const [contentData, setContentData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const { createCourse, updateCourse, deleteCourse } = useAdminCourses();
   const { addToast } = useToast();
 
-  // Mock data for content hierarchy
-  const mockContentData = [
-    {
-      id: 1,
-      type: 'course',
-      title: "Introduction à l'Intelligence Artificielle",
-      description:
-        "Découvrez les fondamentaux de l'IA et ses applications pratiques dans le monde professionnel.",
-      status: 'published',
-      thumbnail: 'https://images.pexels.com/photos/373543/pexels-photo-373543.jpeg?w=400',
-      price: 299,
-      enrollments: 1247,
-      rating: 4.8,
-      modules: [
-        {
-          id: 11,
-          type: 'module',
-          title: "Concepts de base de l'IA",
-          description: "Comprenez les principes fondamentaux de l'intelligence artificielle.",
-          order: 1,
-          lessons: [
-            {
-              id: 111,
-              type: 'lesson',
-              title: "Qu'est-ce que l'Intelligence Artificielle ?",
-              content: `L'Intelligence Artificielle (IA) représente l'une des révolutions technologiques les plus importantes de notre époque. Cette discipline vise à créer des machines capables de simuler l'intelligence humaine pour résoudre des problèmes complexes.L'IA englobe plusieurs domaines comme l'apprentissage automatique, le traitement du langage naturel, la vision par ordinateur et la robotique. Ces technologies transforment déjà notre quotidien professionnel et personnel.`,
-              duration: 15,
-              videoUrl: 'https://example.com/video1.mp4',
-              status: 'published',
-              order: 1,
-              completions: 892,
-            },
-            {
-              id: 112,
-              type: 'lesson',
-              title: "Histoire et évolution de l'IA",
-              content: `L'histoire de l'IA remonte aux années 1950 avec les travaux pionniers d'Alan Turing et John McCarthy. Depuis, cette discipline a connu plusieurs phases d'évolution marquées par des avancées technologiques majeures. Des premiers programmes de jeu d'échecs aux réseaux de neurones modernes, l'IA a progressé de manière exponentielle, particulièrement avec l'émergence du deep learning et des modèles de langage comme GPT.`,
-              duration: 20,
-              videoUrl: 'https://example.com/video2.mp4',
-              status: 'published',
-              order: 2,
-              completions: 756,
-            },
-          ],
-        },
-        {
-          id: 12,
-          type: 'module',
-          title: "Applications pratiques de l'IA",
-          description: "Explorez les cas d'usage concrets de l'IA dans différents secteurs.",
-          order: 2,
-          lessons: [
-            {
-              id: 121,
-              type: 'lesson',
-              title: 'IA dans la finance et comptabilité',
-              content: `L'intelligence artificielle révolutionne le secteur financier en automatisant les tâches répétitives et en améliorant la précision des analyses. Les algorithmes d'IA peuvent traiter des milliers de transactions en quelques secondes. Dans la comptabilité, l'IA aide à la détection de fraudes, à l'automatisation de la saisie comptable et à l'analyse prédictive des flux de trésorerie. Ces outils permettent aux professionnels de se concentrer sur des tâches à plus haute valeur ajoutée.`,
-              duration: 25,
-              videoUrl: 'https://example.com/video3.mp4',
-              status: 'draft',
-              order: 1,
-              completions: 234,
-            },
-          ],
-        },
-      ],
-    },
-    {
-      id: 2,
-      type: 'course',
-      title: 'Machine Learning pour Débutants',
-      description:
-        'Apprenez les bases du machine learning avec des exemples pratiques et des exercices interactifs.',
-      status: 'draft',
-      thumbnail: 'https://images.pexels.com/photos/8386434/pexels-photo-8386434.jpeg?w=400',
-      price: 399,
-      enrollments: 0,
-      rating: 0,
-      modules: [],
-    },
-  ];
-
-  const [contentData, setContentData] = useState(mockContentData);
-
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true);
+      try {
+        const courses = await fetchCoursesWithContent();
+        setContentData(courses);
+      } catch (err) {
+        logger.error('Failed to fetch courses', err);
+        addToast("Erreur lors du chargement du contenu", 'error');
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, [addToast]);
 
   const handleContentSelect = content => {
     setSelectedContent(content);
     setContentType(content.type);
   };
 
-  const handleSaveContent = async updatedContent => {
+  const handleSaveContent = async (updatedContent) => {
+    // Note: This logic currently only handles the 'course' type.
+    // It should be expanded to handle modules and lessons.
     if (contentType !== 'course') {
-      logger.info('Saving content:', updatedContent);
+      logger.info('Saving non-course content (local state only):', updatedContent);
       setSelectedContent(updatedContent);
       return;
     }
@@ -138,9 +75,9 @@ const ContentManagementCoursesModulesLessons = () => {
     }
   };
 
-  const handleDeleteContent = async contentId => {
+  const handleDeleteContent = async (contentId) => {
     if (contentType !== 'course') {
-      logger.info('Deleting content:', contentId);
+      logger.info('Deleting non-course content (local state only):', contentId);
       setSelectedContent(null);
       return;
     }
@@ -155,6 +92,7 @@ const ContentManagementCoursesModulesLessons = () => {
       addToast("Erreur lors de la suppression du cours", 'error');
     }
   };
+
 
   const handleBulkOperation = (operation, items) => {
     logger.info('Bulk operation:', operation, items);
@@ -209,19 +147,24 @@ const ContentManagementCoursesModulesLessons = () => {
     }
   };
 
+  if (loading) {
+    return (
+        <div className='min-h-screen bg-background pt-16 flex items-center justify-center'>
+            <Icon name="Loader" className="animate-spin text-primary" size={48} />
+        </div>
+    )
+  }
+
   return (
     <div className='min-h-screen bg-background pt-16'>
       <div className='flex h-[calc(100vh-4rem)]'>
-        {/* Content Tree Sidebar */}
         <div className='w-80 bg-surface border-r border-border flex flex-col'>
-          {/* Search and Actions */}
           <div className='p-4 border-b border-border'>
             <ContentSearch
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
               onCreateNew={() => setSelectedContent({ type: 'course', title: '', description: '' })}
             />
-
             {selectedItems.length > 0 && (
               <button
                 onClick={() => setShowBulkOperations(true)}
@@ -232,8 +175,6 @@ const ContentManagementCoursesModulesLessons = () => {
               </button>
             )}
           </div>
-
-          {/* Content Tree */}
           <div className='flex-1 overflow-y-auto'>
             <ContentTree
               contentData={contentData}
@@ -242,11 +183,9 @@ const ContentManagementCoursesModulesLessons = () => {
               selectedItems={selectedItems}
               onContentSelect={handleContentSelect}
               onItemsSelect={setSelectedItems}
-              onReorder={newOrder => setContentData(newOrder)}
+              onReorder={(newOrder) => setContentData(newOrder)}
             />
           </div>
-
-          {/* Stats */}
           <div className='p-4 border-t border-border bg-secondary-50'>
             <div className='grid grid-cols-2 gap-4 text-center'>
               <div>
@@ -262,23 +201,17 @@ const ContentManagementCoursesModulesLessons = () => {
             </div>
           </div>
         </div>
-
-        {/* Main Content Editor */}
         <div className='flex-1 flex flex-col'>{renderContentEditor()}</div>
       </div>
-
-      {/* Media Library Modal */}
       {showMediaLibrary && (
         <MediaLibrary
           onClose={() => setShowMediaLibrary(false)}
-          onSelectMedia={media => {
+          onSelectMedia={(media) => {
             logger.info('Selected media:', media);
             setShowMediaLibrary(false);
           }}
         />
       )}
-
-      {/* Bulk Operations Modal */}
       {showBulkOperations && (
         <BulkOperations
           selectedItems={selectedItems}
