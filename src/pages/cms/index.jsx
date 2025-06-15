@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import logger from '../../utils/logger';
+import { useAdminCourses } from '../../context/AdminCourseContext';
+import { useToast } from '../../context/ToastContext';
 
 import Icon from '../../components/AppIcon';
 import ContentTree from './components/ContentTree';
@@ -17,6 +19,9 @@ const ContentManagementCoursesModulesLessons = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedItems, setSelectedItems] = useState([]);
   const [showBulkOperations, setShowBulkOperations] = useState(false);
+
+  const { createCourse, updateCourse, deleteCourse } = useAdminCourses();
+  const { addToast } = useToast();
 
   // Mock data for content hierarchy
   const mockContentData = [
@@ -108,16 +113,47 @@ const ContentManagementCoursesModulesLessons = () => {
     setContentType(content.type);
   };
 
-  const handleSaveContent = updatedContent => {
-    // Mock save functionality
-    logger.info('Saving content:', updatedContent);
-    setSelectedContent(updatedContent);
+  const handleSaveContent = async updatedContent => {
+    if (contentType !== 'course') {
+      logger.info('Saving content:', updatedContent);
+      setSelectedContent(updatedContent);
+      return;
+    }
+
+    try {
+      let savedCourse;
+      if (updatedContent.id) {
+        savedCourse = await updateCourse(updatedContent.id, updatedContent);
+        setContentData(prev => prev.map(c => (c.id === savedCourse.id ? savedCourse : c)));
+        addToast('Cours mis à jour avec succès !', 'success');
+      } else {
+        savedCourse = await createCourse(updatedContent);
+        setContentData(prev => [...prev, savedCourse]);
+        addToast('Cours créé avec succès !', 'success');
+      }
+      setSelectedContent(savedCourse);
+    } catch (error) {
+      logger.error('Erreur lors de la sauvegarde du cours:', error);
+      addToast("Erreur lors de la sauvegarde du cours", 'error');
+    }
   };
 
-  const handleDeleteContent = contentId => {
-    // Mock delete functionality
-    logger.info('Deleting content:', contentId);
-    setSelectedContent(null);
+  const handleDeleteContent = async contentId => {
+    if (contentType !== 'course') {
+      logger.info('Deleting content:', contentId);
+      setSelectedContent(null);
+      return;
+    }
+
+    try {
+      await deleteCourse(contentId);
+      setContentData(prev => prev.filter(c => c.id !== contentId));
+      setSelectedContent(null);
+      addToast('Cours supprimé avec succès !', 'success');
+    } catch (error) {
+      logger.error('Erreur lors de la suppression du cours:', error);
+      addToast("Erreur lors de la suppression du cours", 'error');
+    }
   };
 
   const handleBulkOperation = (operation, items) => {
