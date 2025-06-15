@@ -14,7 +14,7 @@ import BulkOperations from './components/BulkOperations';
 import ContentSearch from './components/ContentSearch';
 import MediaLibrary from './components/MediaLibrary';
 
-const ContentManagementCoursesModulesLessons = () => {
+const ContentManagementCoursesModulesLessonsContent = () => {
   const { setSidebarOpen } = useAdminSidebar();
   const [selectedContent, setSelectedContent] = useState(null);
   const [contentType, setContentType] = useState('course');
@@ -236,8 +236,14 @@ const ContentManagementCoursesModulesLessons = () => {
         />
       )}
       </main>
-    </AdminLayout>
+    </>
   );
 };
+
+const ContentManagementCoursesModulesLessons = () => (
+  <AdminLayout>
+    <ContentManagementCoursesModulesLessonsContent />
+  </AdminLayout>
+);
 
 export default ContentManagementCoursesModulesLessons;
