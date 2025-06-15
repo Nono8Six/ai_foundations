@@ -32,7 +32,7 @@ export const CourseProvider = ({ children }) => {
         safeQuery(() =>
           supabase
             .from('lessons')
-            .select('id, module_id, is_published, estimated_duration') // MODIFIED
+            .select('id, module_id, is_published, duration')
             .eq('is_published', true)
         ),
         safeQuery(() => supabase.from('modules').select('id, course_id')),
@@ -118,7 +118,7 @@ export const CourseProvider = ({ children }) => {
   const value = {
     coursesWithProgress,
     userProgress, // Contains completed_at from user_progress table
-    lessons,      // Contains estimated_duration from lessons table
+    lessons,      // Contains duration from lessons table
     modules,      // Contains module data
     loading,
     refetchCourses: () => user?.id && fetchAllData(user.id),

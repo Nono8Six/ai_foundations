@@ -1,14 +1,14 @@
 // src/hooks/useProgressChartData.test.js
-import { renderHook } from '@testing-library/react-hooks'; // Or @testing-library/react if using a newer setup
+import { renderHook } from '@testing-library/react';
 import useProgressChartData from './useProgressChartData';
 import { subDays, format } from 'date-fns';
 
 // Mock data
 const mockLessons = [
-  { id: 'l1', module_id: 'm1', estimated_duration: 30 }, // 0.5 hours
-  { id: 'l2', module_id: 'm1', estimated_duration: 60 }, // 1 hour
-  { id: 'l3', module_id: 'm2', estimated_duration: 45 }, // 0.75 hours
-  { id: 'l4', module_id: 'm3', estimated_duration: null }, // No duration
+  { id: 'l1', module_id: 'm1', duration: 30 }, // 0.5 hours
+  { id: 'l2', module_id: 'm1', duration: 60 }, // 1 hour
+  { id: 'l3', module_id: 'm2', duration: 45 }, // 0.75 hours
+  { id: 'l4', module_id: 'm3', duration: null }, // No duration
 ];
 
 const mockCourses = [
@@ -128,10 +128,10 @@ describe('useProgressChartData', () => {
     expect(scienceData.value).toBe(1); // l3
   });
 
-  it('should handle lessons with no estimated_duration', () => {
+  it('should handle lessons with no duration', () => {
     const today = new Date();
     const mockUserProgress = [
-      { lesson_id: 'l4', status: 'completed', completed_at: today.toISOString() }, // m3 -> c3 (Math), estimated_duration is null
+      { lesson_id: 'l4', status: 'completed', completed_at: today.toISOString() }, // m3 -> c3 (Math), duration is null
     ];
     const { result } = renderHook(() => useProgressChartData(mockUserProgress, mockLessons, mockCourses, mockModules));
 
