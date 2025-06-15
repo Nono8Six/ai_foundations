@@ -10,8 +10,11 @@ RETURNS TABLE(
 ) LANGUAGE plpgsql AS $$
 BEGIN
   RETURN QUERY
-  SELECT us.notification_settings, us.privacy_settings, us.learning_preferences
+  SELECT
+    us.notification_settings AS notification_settings,
+    us.privacy_settings AS privacy_settings,
+    us.learning_preferences AS learning_preferences
     FROM user_settings AS us
-    WHERE us.user_id = user_id;
+    WHERE us.user_id = get_user_settings.user_id;
 END;
 $$;

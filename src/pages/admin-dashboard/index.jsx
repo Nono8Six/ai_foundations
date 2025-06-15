@@ -171,7 +171,7 @@ const AdminDashboard = () => {
 
       {/* Sidebar */}
       <div
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-surface shadow-medium transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} top-16`}
+        className={`fixed top-16 left-0 z-50 w-64 bg-surface shadow-medium transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:static lg:translate-x-0 lg:inset-0 flex flex-col h-[calc(100vh-4rem)]`}
       >
         <div className='flex items-center justify-between h-16 px-6 border-b border-border'>
           <div className='flex items-center space-x-3'>

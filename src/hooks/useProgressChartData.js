@@ -26,8 +26,8 @@ const useProgressChartData = (userProgress, lessons, courses, modules) => {
         ...lesson,
         courseId: courseId,
         category: course ? course.category : 'Unknown',
-        // Ensure estimated_duration is a number, default to 0 if not provided or invalid
-        estimated_duration: typeof lesson.estimated_duration === 'number' ? lesson.estimated_duration : 0,
+        // Ensure duration is a number, default to 0 if not provided or invalid
+        duration: typeof lesson.duration === 'number' ? lesson.duration : 0,
       };
     });
     return lessonMap;
@@ -55,8 +55,8 @@ const useProgressChartData = (userProgress, lessons, courses, modules) => {
         if (p.completed_at && format(parseISO(p.completed_at), 'yyyy-MM-dd') === format(dayDate, 'yyyy-MM-dd')) {
           lessonsCompletedThisDay++;
           const lessonDetails = enrichedLessons[p.lesson_id];
-          if (lessonDetails && lessonDetails.estimated_duration) {
-            hoursSpentThisDay += (lessonDetails.estimated_duration / 60); // Convert minutes to hours
+          if (lessonDetails && lessonDetails.duration) {
+            hoursSpentThisDay += lessonDetails.duration / 60; // Convert minutes to hours
           }
         }
       });
@@ -80,8 +80,8 @@ const useProgressChartData = (userProgress, lessons, courses, modules) => {
         if (p.completed_at && format(parseISO(p.completed_at), 'yyyy-MM') === format(monthDate, 'yyyy-MM')) {
           lessonsCompletedThisMonth++;
           const lessonDetails = enrichedLessons[p.lesson_id];
-          if (lessonDetails && lessonDetails.estimated_duration) {
-            hoursSpentThisMonth += (lessonDetails.estimated_duration / 60);
+          if (lessonDetails && lessonDetails.duration) {
+            hoursSpentThisMonth += lessonDetails.duration / 60;
           }
         }
       });
