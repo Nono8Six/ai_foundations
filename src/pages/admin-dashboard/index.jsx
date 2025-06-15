@@ -285,7 +285,7 @@ const AdminDashboard = () => {
         </header>
 
         {/* Dashboard content */}
-        <main className='p-6 pt-36'>
+        <main className='p-6 pt-32'>
           {loading ? (
             <div className="flex justify-center items-center h-64">
               <p className="text-xl text-text-secondary">Chargement des données...</p>
