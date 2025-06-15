@@ -154,14 +154,6 @@ const FilterSidebar = ({ filters, onFilterChange, courses }) => {
             <span>Total des cours</span>
             <span className='font-medium'>{courses.length}</span>
           </div>
-          <div className='flex justify-between'>
-            <span>Cours gratuits</span>
-            <span className='font-medium'>{courses.filter(c => c.isFree).length}</span>
-          </div>
-          <div className='flex justify-between'>
-            <span>Cours inscrits</span>
-            <span className='font-medium'>{courses.filter(c => c.isEnrolled).length}</span>
-          </div>
         </div>
       </div>
     </div>
