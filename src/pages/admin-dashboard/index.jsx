@@ -9,7 +9,7 @@ import PopularCoursesChart from './components/PopularCoursesChart';
 import GeographicDistribution from './components/GeographicDistribution';
 import PerformanceMetrics from './components/PerformanceMetrics';
 
-const AdminDashboard = () => {
+const AdminDashboardContent = () => {
   const { setSidebarOpen } = useAdminSidebar();
   const [selectedTimeRange, setSelectedTimeRange] = useState('7d');
   const [dashboardData, setDashboardData] = useState({
@@ -147,7 +147,7 @@ const AdminDashboard = () => {
   ];
 
   return (
-    <AdminLayout>
+    <>
         {/* Top navigation */}
         <header className='bg-surface shadow-subtle border-b border-border fixed top-16 left-0 right-0 z-30 lg:left-64'>
           <div className='flex items-center justify-between h-16 px-6'>
@@ -288,8 +288,14 @@ const AdminDashboard = () => {
         </>
         )}
         </main>
-    </AdminLayout>
+    </>
   );
 };
+
+const AdminDashboard = () => (
+  <AdminLayout>
+    <AdminDashboardContent />
+  </AdminLayout>
+);
 
 export default AdminDashboard;

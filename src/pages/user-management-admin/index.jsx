@@ -9,7 +9,7 @@ import UserFilters from './components/UserFilters';
 import CreateUserModal from './components/CreateUserModal';
 import BulkActionsBar from './components/BulkActionsBar';
 
-const UserManagementAdmin = () => {
+const UserManagementAdminContent = () => {
   const { setSidebarOpen } = useAdminSidebar();
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -293,8 +293,14 @@ const UserManagementAdmin = () => {
         />
       )}
       </main>
-    </AdminLayout>
+    </>
   );
 };
+
+const UserManagementAdmin = () => (
+  <AdminLayout>
+    <UserManagementAdminContent />
+  </AdminLayout>
+);
 
 export default UserManagementAdmin;
