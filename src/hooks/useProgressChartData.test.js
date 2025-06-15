@@ -1,7 +1,7 @@
 // src/hooks/useProgressChartData.test.js
 import { renderHook } from '@testing-library/react-hooks'; // Or @testing-library/react if using a newer setup
 import useProgressChartData from './useProgressChartData';
-import { subDays, format, parseISO } from 'date-fns';
+import { subDays, format } from 'date-fns';
 
 // Mock data
 const mockLessons = [
