@@ -13,6 +13,9 @@ export const CourseProvider = ({ children }) => {
   const [coursesWithProgress, setCoursesWithProgress] = useState([]);
   const [loading, setLoading] = useState(true);
   const [userProgress, setUserProgress] = useState([]);
+  // Add state for raw lessons and modules if they need to be exposed directly and not just via fetchAllData's scope
+  const [lessons, setLessons] = useState([]);
+  const [modules, setModules] = useState([]);
 
   const fetchAllData = useCallback(async (userId) => {
     logger.debug(`[CourseContext] Starting data fetch for user: ${userId}`);
@@ -29,14 +32,14 @@ export const CourseProvider = ({ children }) => {
         safeQuery(() =>
           supabase
             .from('lessons')
-            .select('id, module_id, is_published')
+            .select('id, module_id, is_published, estimated_duration') // MODIFIED
             .eq('is_published', true)
         ),
         safeQuery(() => supabase.from('modules').select('id, course_id')),
         safeQuery(() =>
           supabase
             .from('user_progress')
-            .select('lesson_id, status')
+            .select('lesson_id, status, completed_at') // MODIFIED
             .eq('user_id', userId)
         ),
       ]);
@@ -47,15 +50,17 @@ export const CourseProvider = ({ children }) => {
       if (progressResult.error) throw progressResult.error;
 
       const coursesData = coursesResult.data;
-      const lessonsData = lessonsResult.data;
-      const modulesData = modulesResult.data;
-      const progressData = progressResult.data;
+      const lessonsData = lessonsResult.data || []; // Use temporary variables before setting state
+      const modulesData = modulesResult.data || [];
+      const progressData = progressResult.data || [];
 
-      setUserProgress(progressData || []);
+      setLessons(lessonsData); // Set state for context
+      setModules(modulesData); // Set state for context
+      setUserProgress(progressData); // Set state for context
 
       logger.debug('[CourseContext] Processing all data...');
       const completedLessonIds = new Set(
-        (progressData || []).filter(p => p.status === 'completed').map(p => p.lesson_id)
+        progressData.filter(p => p.status === 'completed').map(p => p.lesson_id)
       );
 
       const moduleCourseMap = (modulesData || []).reduce((acc, module) => {
@@ -89,6 +94,9 @@ export const CourseProvider = ({ children }) => {
     } catch (error) {
       logError(new Error(`[CourseContext] A critical error occurred in fetchAllData: ${error.message}`));
       setCoursesWithProgress([]);
+      setLessons([]); // Reset on error
+      setModules([]); // Reset on error
+      setUserProgress([]); // Reset on error
     } finally {
       logger.debug('[CourseContext] Fetch process finished. Setting loading to false.');
       setLoading(false);
@@ -102,12 +110,16 @@ export const CourseProvider = ({ children }) => {
       setLoading(false);
       setCoursesWithProgress([]);
       setUserProgress([]);
+      setLessons([]); // Reset on user logout/no user
+      setModules([]); // Reset on user logout/no user
     }
   }, [user, fetchAllData]);
 
   const value = {
     coursesWithProgress,
-    userProgress,
+    userProgress, // Contains completed_at from user_progress table
+    lessons,      // Contains estimated_duration from lessons table
+    modules,      // Contains module data
     loading,
     refetchCourses: () => user?.id && fetchAllData(user.id),
   };
