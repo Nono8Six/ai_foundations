@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useAdminCourses } from '../../context/AdminCourseContext';
+import { useToast } from '../../context/ToastContext';
+import { fetchCoursesWithContent } from '../../services/courseService';
 import logger from '../../utils/logger';
 
 import Icon from '../../components/AppIcon';
@@ -9,8 +12,6 @@ import LessonEditor from './components/LessonEditor';
 import BulkOperations from './components/BulkOperations';
 import ContentSearch from './components/ContentSearch';
 import MediaLibrary from './components/MediaLibrary';
-import { useAdminCourses } from '../../context/AdminCourseContext';
-import { fetchCoursesWithContent } from '../../services/courseService';
 
 const ContentManagementCoursesModulesLessons = () => {
   const [selectedContent, setSelectedContent] = useState(null);
@@ -19,62 +20,79 @@ const ContentManagementCoursesModulesLessons = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedItems, setSelectedItems] = useState([]);
   const [showBulkOperations, setShowBulkOperations] = useState(false);
-
+  
   const [contentData, setContentData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const { createCourse, updateCourse, deleteCourse } = useAdminCourses();
+  const { addToast } = useToast();
 
   useEffect(() => {
     const load = async () => {
+      setLoading(true);
       try {
         const courses = await fetchCoursesWithContent();
         setContentData(courses);
       } catch (err) {
         logger.error('Failed to fetch courses', err);
+        addToast("Erreur lors du chargement du contenu", 'error');
+      } finally {
+        setLoading(false);
       }
     };
     load();
-  }, []);
-
+  }, [addToast]);
 
   const handleContentSelect = content => {
     setSelectedContent(content);
     setContentType(content.type);
   };
 
-  const handleSaveContent = async updatedContent => {
+  const handleSaveContent = async (updatedContent) => {
+    // Note: This logic currently only handles the 'course' type.
+    // It should be expanded to handle modules and lessons.
+    if (contentType !== 'course') {
+      logger.info('Saving non-course content (local state only):', updatedContent);
+      setSelectedContent(updatedContent);
+      return;
+    }
+
     try {
-      if (updatedContent.type === 'course') {
-        let saved;
-        if (updatedContent.id) {
-          saved = await updateCourse(updatedContent.id, updatedContent);
-          setContentData(prev =>
-            prev.map(c => (c.id === saved.id ? { ...saved, modules: c.modules } : c))
-          );
-        } else {
-          saved = await createCourse(updatedContent);
-          setContentData(prev => [...prev, { ...saved, modules: [] }]);
-        }
-        setSelectedContent(saved);
+      let savedCourse;
+      if (updatedContent.id) {
+        savedCourse = await updateCourse(updatedContent.id, updatedContent);
+        setContentData(prev => prev.map(c => (c.id === savedCourse.id ? savedCourse : c)));
+        addToast('Cours mis à jour avec succès !', 'success');
       } else {
-        setSelectedContent(updatedContent);
+        savedCourse = await createCourse(updatedContent);
+        setContentData(prev => [...prev, savedCourse]);
+        addToast('Cours créé avec succès !', 'success');
       }
-    } catch (err) {
-      logger.error('Failed to save content', err);
+      setSelectedContent(savedCourse);
+    } catch (error) {
+      logger.error('Erreur lors de la sauvegarde du cours:', error);
+      addToast("Erreur lors de la sauvegarde du cours", 'error');
     }
   };
 
-  const handleDeleteContent = async contentId => {
-    try {
-      if (selectedContent?.type === 'course') {
-        await deleteCourse(contentId);
-        setContentData(prev => prev.filter(c => c.id !== contentId));
-      }
+  const handleDeleteContent = async (contentId) => {
+    if (contentType !== 'course') {
+      logger.info('Deleting non-course content (local state only):', contentId);
       setSelectedContent(null);
-    } catch (err) {
-      logger.error('Failed to delete content', err);
+      return;
+    }
+
+    try {
+      await deleteCourse(contentId);
+      setContentData(prev => prev.filter(c => c.id !== contentId));
+      setSelectedContent(null);
+      addToast('Cours supprimé avec succès !', 'success');
+    } catch (error) {
+      logger.error('Erreur lors de la suppression du cours:', error);
+      addToast("Erreur lors de la suppression du cours", 'error');
     }
   };
+
 
   const handleBulkOperation = (operation, items) => {
     logger.info('Bulk operation:', operation, items);
@@ -129,19 +147,24 @@ const ContentManagementCoursesModulesLessons = () => {
     }
   };
 
+  if (loading) {
+    return (
+        <div className='min-h-screen bg-background pt-16 flex items-center justify-center'>
+            <Icon name="Loader" className="animate-spin text-primary" size={48} />
+        </div>
+    )
+  }
+
   return (
     <div className='min-h-screen bg-background pt-16'>
       <div className='flex h-[calc(100vh-4rem)]'>
-        {/* Content Tree Sidebar */}
         <div className='w-80 bg-surface border-r border-border flex flex-col'>
-          {/* Search and Actions */}
           <div className='p-4 border-b border-border'>
             <ContentSearch
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
               onCreateNew={() => setSelectedContent({ type: 'course', title: '', description: '' })}
             />
-
             {selectedItems.length > 0 && (
               <button
                 onClick={() => setShowBulkOperations(true)}
@@ -152,8 +175,6 @@ const ContentManagementCoursesModulesLessons = () => {
               </button>
             )}
           </div>
-
-          {/* Content Tree */}
           <div className='flex-1 overflow-y-auto'>
             <ContentTree
               contentData={contentData}
@@ -162,11 +183,9 @@ const ContentManagementCoursesModulesLessons = () => {
               selectedItems={selectedItems}
               onContentSelect={handleContentSelect}
               onItemsSelect={setSelectedItems}
-              onReorder={newOrder => setContentData(newOrder)}
+              onReorder={(newOrder) => setContentData(newOrder)}
             />
           </div>
-
-          {/* Stats */}
           <div className='p-4 border-t border-border bg-secondary-50'>
             <div className='grid grid-cols-2 gap-4 text-center'>
               <div>
@@ -182,23 +201,17 @@ const ContentManagementCoursesModulesLessons = () => {
             </div>
           </div>
         </div>
-
-        {/* Main Content Editor */}
         <div className='flex-1 flex flex-col'>{renderContentEditor()}</div>
       </div>
-
-      {/* Media Library Modal */}
       {showMediaLibrary && (
         <MediaLibrary
           onClose={() => setShowMediaLibrary(false)}
-          onSelectMedia={media => {
+          onSelectMedia={(media) => {
             logger.info('Selected media:', media);
             setShowMediaLibrary(false);
           }}
         />
       )}
-
-      {/* Bulk Operations Modal */}
       {showBulkOperations && (
         <BulkOperations
           selectedItems={selectedItems}

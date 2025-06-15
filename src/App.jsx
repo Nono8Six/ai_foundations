@@ -4,6 +4,7 @@ import AppRoutes from "./Routes";
 import Header from './components/Header';
 import { AuthProvider } from "./context/AuthContext";
 import { CourseProvider } from "./context/CourseContext";
+import { AdminCourseProvider } from './context/AdminCourseContext';
 import { ToastProvider, useToast } from "./context/ToastContext";
 import { ErrorProvider } from "./context/ErrorContext";
 
@@ -58,9 +59,11 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <CourseProvider>
-          <ToastProvider>
-            <AppWithErrorToasts />
-          </ToastProvider>
+          <AdminCourseProvider>
+            <ToastProvider>
+              <AppWithErrorToasts />
+            </ToastProvider>
+          </AdminCourseProvider>
         </CourseProvider>
       </AuthProvider>
     </BrowserRouter>
