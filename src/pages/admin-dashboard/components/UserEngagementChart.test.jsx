@@ -1,12 +1,13 @@
 import React from 'react';
-import { render, screen, waitFor, act } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { vi } from 'vitest';
 import UserEngagementChart from './UserEngagementChart';
 import { supabase } from '../../../lib/supabase'; // Mocked
 
 // Mock Recharts
-jest.mock('recharts', () => {
-  const ActualRecharts = jest.requireActual('recharts');
+vi.mock('recharts', () => {
+  const ActualRecharts = vi.importActual('recharts');
   return {
     ...ActualRecharts,
     ResponsiveContainer: ({ children }) => <div data-testid="responsive-container">{children}</div>,
@@ -21,8 +22,8 @@ jest.mock('recharts', () => {
     stop: () => <stop></stop>,
   };
 });
-jest.mock('../../../components/AppIcon', () => ({ name }) => <svg data-testid={`icon-${name}`}></svg>);
-jest.mock('../../../lib/supabase');
+vi.mock('../../../components/AppIcon', () => ({ default: ({ name }) => <svg data-testid={`icon-${name}`}></svg> }));
+vi.mock('../../../lib/supabase');
 
 describe('UserEngagementChart', () => {
   const setupSupabaseUserSessionsMock = (sessionsData = [], sessionsError = null) => {
@@ -49,7 +50,7 @@ describe('UserEngagementChart', () => {
             return builderInstance;
         }
         // Fallback for other tables if any were called unexpectedly
-        const fallbackBuilder = jest.requireActual('../../../lib/supabase').supabase.from(tableName);
+        const fallbackBuilder = vi.importActual('../../../lib/supabase').supabase.from(tableName);
         fallbackBuilder.mockResolvedValueOnce({data: [], error: 'Unexpected table call'});
         return fallbackBuilder;
     });

@@ -1,16 +1,17 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { vi } from 'vitest';
 import { MemoryRouter } from 'react-router-dom'; // If any Links are present
 import RecentActivity from './RecentActivity';
 import { supabase } from '../../../lib/supabase'; // Mocked
 
 // Mock AppIcon and AppImage if they are complex or cause issues
-jest.mock('../../../components/AppIcon', () => ({ name, size, className }) => <svg data-testid={`icon-${name}`} className={className} width={size} height={size}></svg>);
-jest.mock('../../../components/AppImage', () => ({ src, alt, className }) => <img src={src} alt={alt} className={className} />);
+vi.mock('../../../components/AppIcon', () => ({ default: ({ name, size, className }) => <svg data-testid={`icon-${name}`} className={className} width={size} height={size}></svg> }));
+vi.mock('../../../components/AppImage', () => ({ default: ({ src, alt, className }) => <img src={src} alt={alt} className={className} /> }));
 
 // Tell Jest to use the mock
-jest.mock('../../../lib/supabase');
+vi.mock('../../../lib/supabase');
 
 describe('RecentActivity', () => {
   beforeEach(() => {

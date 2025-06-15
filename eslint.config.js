@@ -16,6 +16,14 @@ export default [
       }
     }
   },
+  {
+    files: ["src/lib/__mocks__/**"],
+    languageOptions: {
+      globals: {
+        ...globals.jest
+      }
+    }
+  },
 
   // Importe les règles recommandées par ESLint et TypeScript
   js.configs.recommended,
@@ -52,6 +60,18 @@ export default [
   {
     rules: {
         "no-unused-vars": "warn"
+    }
+  },
+  {
+    files: ["**/*.test.{js,jsx,ts,tsx}"],
+    languageOptions: {
+      globals: {
+        ...globals.vitest,
+        ...globals.jest
+      }
+    },
+    rules: {
+      'react/display-name': 'off'
     }
   }
 ];
