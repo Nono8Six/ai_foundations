@@ -242,6 +242,22 @@ base locale ou distante :
    ```
 3. Vérifiez ensuite dans le tableau de bord que la colonne est bien créée
 
+### Erreur "column lessons.duration does not exist"
+
+Cette erreur indique que les migrations n'ont pas été appliquées et que la
+colonne `duration` de la table `lessons` est absente :
+
+1. Vérifiez que votre projet est bien lié à Supabase avec
+   `supabase link --project-ref <votre-reference-projet>`
+2. Appliquez les migrations disponibles :
+   ```bash
+   supabase db push
+   # ou
+   pnpm migrate
+   ```
+3. Contrôlez dans le tableau de bord Supabase que la colonne est maintenant
+   présente
+
 ### Erreur "infinite recursion detected in policy for relation 'profiles'"
 
 Cette erreur provient de l'utilisation de la fonction `current_user_is_admin()`
