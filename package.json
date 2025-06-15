@@ -6,9 +6,9 @@
   "type": "module",
   "dependencies": {
     "@supabase/supabase-js": "^2.50.0",
+    "date-fns": "^4.1.0",
     "framer-motion": "^10.16.4",
     "lucide-react": "^0.484.0",
-    "date-fns": "^4.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.55.0",
@@ -26,10 +26,21 @@
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",
-    "migrate": "./scripts/migrate.sh"
+    "migrate": "./scripts/migrate.sh",
+    "supabase:login": "supabase login",
+    "supabase:link": "supabase link",
+    "supabase:status": "supabase status",
+    "db:reset": "supabase db reset",
+    "db:push": "supabase db push",
+    "db:pull": "supabase db pull",
+    "gen:types": "supabase gen types typescript --local > src/types/database.types.ts"
   },
   "browserslist": {
-    "production": [">0.2%", "not dead", "not op_mini all"],
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
     "development": [
       "last 1 chrome version",
       "last 1 firefox version",
@@ -47,6 +58,7 @@
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",
     "@vitejs/plugin-react": "^4.5.1",
+    "@vitest/coverage-v8": "^1.0.0",
     "autoprefixer": "^10.4.17",
     "eslint": "^9.27.0",
     "eslint-config-prettier": "^8.8.0",
@@ -57,13 +69,15 @@
     "postcss-import": "^16.1.0",
     "postcss-nesting": "^12.0.2",
     "prettier": "^3.0.0",
+    "supabase": "^2.24.3",
     "tailwindcss": "^3.4.3",
     "typescript": "^5.0.0",
     "typescript-eslint": "^8.0.0",
     "vite": "^6.3.5",
-    "@vitest/coverage-v8": "^1.0.0",
     "vitest": "^1.0.0"
   },
-  "resolutions": { "esbuild": "0.25.5" },
+  "resolutions": {
+    "esbuild": "0.25.5"
+  },
   "packageManager": "npm@10.8.2"
 }
