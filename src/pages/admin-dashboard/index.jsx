@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Icon from '../../components/AppIcon';
+import { supabase } from '../../lib/supabase';
 import Image from '../../components/AppImage';
 import RecentActivity from './components/RecentActivity';
 import UserEngagementChart from './components/UserEngagementChart';
@@ -11,25 +12,101 @@ import PerformanceMetrics from './components/PerformanceMetrics';
 const AdminDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedTimeRange, setSelectedTimeRange] = useState('7d');
+  const [dashboardData, setDashboardData] = useState({
+    totalUsers: 0,
+    activeUsers: 0,
+    completionRate: 0, // Placeholder
+    revenue: "N/A", // Placeholder
+    newUsersToday: 0,
+    coursesCompleted: 0, // Placeholder
+    averageSessionTime: '0m 0s',
+    systemUptime: "N/A", // Placeholder
+  });
+  const [loading, setLoading] = useState(true);
 
-  // Mock data for dashboard metrics
-  const dashboardMetrics = {
-    totalUsers: 12847,
-    activeUsers: 8932,
-    completionRate: 78.5,
-    revenue: 245680,
-    newUsersToday: 156,
-    coursesCompleted: 2341,
-    averageSessionTime: '24m 32s',
-    systemUptime: '99.8%',
-  };
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        // Fetch Total Users
+        const { count: totalUsersCount, error: totalUsersError } = await supabase
+          .from('profiles')
+          .select('*', { count: 'exact', head: true });
+        if (totalUsersError) throw totalUsersError;
+
+        // Fetch Active Users (last 7 days)
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+        const { data: activeUsersData, error: activeUsersError } = await supabase
+          .from('activity_log')
+          .select('user_id', { count: 'distinct' })
+          .gte('created_at', sevenDaysAgo.toISOString());
+        if (activeUsersError) throw activeUsersError;
+        const activeUsersCount = activeUsersData ? activeUsersData.length : 0;
+
+
+        // Fetch New Users Today
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const { count: newUsersTodayCount, error: newUsersTodayError } = await supabase
+          .from('profiles')
+          .select('*', { count: 'exact', head: true })
+          .gte('created_at', today.toISOString())
+          .lt('created_at', tomorrow.toISOString());
+        if (newUsersTodayError) throw newUsersTodayError;
+
+        // Fetch Average Session Time
+        const { data: sessionData, error: sessionError } = await supabase
+          .from('user_sessions')
+          .select('duration_minutes');
+        if (sessionError) throw sessionError;
+        const validSessions = sessionData.filter(s => s.duration_minutes !== null);
+        const avgSessionTime = validSessions.length > 0
+          ? validSessions.reduce((acc, curr) => acc + curr.duration_minutes, 0) / validSessions.length
+          : 0;
+
+        setDashboardData({
+          totalUsers: totalUsersCount || 0,
+          activeUsers: activeUsersCount || 0,
+          newUsersToday: newUsersTodayCount || 0,
+          averageSessionTime: `${Math.round(avgSessionTime)}m 0s`, // Simplified display
+          completionRate: 0, // Placeholder
+          revenue: "N/A", // Placeholder
+          coursesCompleted: 0, // Placeholder
+          systemUptime: "N/A", // Placeholder
+        });
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+        // Set default/error state for dashboardData if needed
+        setDashboardData({
+          totalUsers: 0,
+          activeUsers: 0,
+          completionRate: 0,
+          revenue: "N/A",
+          newUsersToday: 0,
+          coursesCompleted: 0,
+          averageSessionTime: 'Error',
+          systemUptime: "N/A",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // dashboardMetrics will now be derived from dashboardData state
+  const dashboardMetrics = dashboardData;
 
   const quickStats = [
     {
       id: 1,
       title: 'Utilisateurs totaux',
       value: dashboardMetrics.totalUsers.toLocaleString('fr-FR'),
-      change: '+12.5%',
+      change: '+12.5%', // Placeholder - will need logic for change %
       changeType: 'positive',
       icon: 'Users',
       color: 'bg-blue-500',
@@ -38,7 +115,7 @@ const AdminDashboard = () => {
       id: 2,
       title: 'Apprenants actifs',
       value: dashboardMetrics.activeUsers.toLocaleString('fr-FR'),
-      change: '+8.2%',
+      change: '+8.2%', // Placeholder
       changeType: 'positive',
       icon: 'UserCheck',
       color: 'bg-emerald-500',
@@ -46,8 +123,8 @@ const AdminDashboard = () => {
     {
       id: 3,
       title: 'Taux de completion',
-      value: `${dashboardMetrics.completionRate}%`,
-      change: '+3.1%',
+      value: `${dashboardMetrics.completionRate}%`, // Placeholder
+      change: '+3.1%', // Placeholder
       changeType: 'positive',
       icon: 'TrendingUp',
       color: 'bg-purple-500',
@@ -55,8 +132,8 @@ const AdminDashboard = () => {
     {
       id: 4,
       title: 'Revenus',
-      value: `€${dashboardMetrics.revenue.toLocaleString('fr-FR')}`,
-      change: '+15.7%',
+      value: dashboardMetrics.revenue === "N/A" ? "N/A" : `€${dashboardMetrics.revenue.toLocaleString('fr-FR')}`, // Placeholder
+      change: '+15.7%', // Placeholder
       changeType: 'positive',
       icon: 'Euro',
       color: 'bg-amber-500',
@@ -209,10 +286,16 @@ const AdminDashboard = () => {
 
         {/* Dashboard content */}
         <main className='p-6 pt-36'>
-          {/* Quick stats */}
-          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8'>
-            {quickStats.map(stat => (
-              <div
+          {loading ? (
+            <div className="flex justify-center items-center h-64">
+              <p className="text-xl text-text-secondary">Chargement des données...</p>
+            </div>
+          ) : (
+            <>
+              {/* Quick stats */}
+              <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8'>
+                {quickStats.map(stat => (
+                  <div
                 key={stat.id}
                 className='bg-surface rounded-lg p-6 shadow-subtle border border-border'
               >
@@ -237,11 +320,11 @@ const AdminDashboard = () => {
                     <Icon name={stat.icon} size={24} color='white' />
                   </div>
                 </div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
 
-          {/* Charts section */}
+              {/* Charts section */}
           <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8'>
             <UserEngagementChart timeRange={selectedTimeRange} />
             <PopularCoursesChart />
@@ -286,6 +369,8 @@ const AdminDashboard = () => {
               </button>
             </div>
           </div>
+        </>
+        )}
         </main>
       </div>
     </div>

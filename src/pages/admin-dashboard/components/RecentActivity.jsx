@@ -1,127 +1,170 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Icon from '../../../components/AppIcon';
 import Image from '../../../components/AppImage';
+import { supabase } from '../../../lib/supabase';
+
+// Helper function to format time since date
+const timeSince = date => {
+  const seconds = Math.floor((new Date() - new Date(date)) / 1000);
+  let interval = seconds / 31536000;
+  if (interval > 1) return `Il y a ${Math.floor(interval)} an(s)`;
+  interval = seconds / 2592000;
+  if (interval > 1) return `Il y a ${Math.floor(interval)} mois`;
+  interval = seconds / 86400;
+  if (interval > 1) return `Il y a ${Math.floor(interval)} jour(s)`;
+  interval = seconds / 3600;
+  if (interval > 1) return `Il y a ${Math.floor(interval)} heure(s)`;
+  interval = seconds / 60;
+  if (interval > 1) return `Il y a ${Math.floor(interval)} minute(s)`;
+  return `Il y a ${Math.floor(seconds)} seconde(s)`;
+};
+
+// Helper function to get activity type properties (icon, color, label)
+const getActivityTypeProps = type => {
+  const defaultAvatar = 'https://ui-avatars.com/api/?name=User&background=random&color=ffffff';
+  switch (type) {
+    case 'user_registration':
+      return {
+        label: 'Inscription',
+        icon: 'UserPlus',
+        iconColor: 'text-success',
+        defaultUser: { name: 'Nouvel utilisateur', avatar: defaultAvatar },
+      };
+    case 'course_completion':
+      return {
+        label: 'Cours terminé',
+        icon: 'CheckCircle',
+        iconColor: 'text-primary',
+        defaultUser: { name: 'Apprenant', avatar: defaultAvatar },
+      };
+    case 'content_creation':
+      return {
+        label: 'Contenu créé',
+        icon: 'BookOpen',
+        iconColor: 'text-accent',
+        defaultUser: { name: 'Auteur', avatar: defaultAvatar },
+      };
+    case 'achievement_unlock':
+      return {
+        label: 'Badge débloqué',
+        icon: 'Award',
+        iconColor: 'text-warning',
+        defaultUser: { name: 'Apprenant', avatar: defaultAvatar },
+      };
+    case 'system_update':
+      return {
+        label: 'Système',
+        icon: 'Shield',
+        iconColor: 'text-secondary-500',
+        defaultUser: { name: 'Système', avatar: null },
+      };
+    case 'payment_received':
+       return {
+        label: 'Paiement',
+        icon: 'CreditCard',
+        iconColor: 'text-success',
+        defaultUser: { name: 'Client', avatar: defaultAvatar },
+      };
+    case 'course_enrollment':
+      return {
+        label: 'Inscription cours',
+        icon: 'BookMarked',
+        iconColor: 'text-primary',
+        defaultUser: { name: 'Apprenant', avatar: defaultAvatar },
+      };
+    case 'user_login':
+      return {
+        label: 'Connexion',
+        icon: 'LogIn',
+        iconColor: 'text-secondary-500',
+        defaultUser: { name: 'Utilisateur', avatar: defaultAvatar },
+      };
+    default:
+      return {
+        label: 'Activité',
+        icon: 'Activity',
+        iconColor: 'text-text-secondary',
+        defaultUser: { name: 'Utilisateur', avatar: defaultAvatar },
+      };
+  }
+};
+
 
 const RecentActivity = () => {
-  const activities = [
-    {
-      id: 1,
-      type: 'user_registration',
-      user: {
-        name: 'Marie Dubois',
-        avatar:
-          'https://ui-avatars.com/api/?name=Marie+Dubois&background=3b82f6&color=ffffff',
-      },
-      action: "s'est inscrite sur la plateforme",
-      timestamp: 'Il y a 5 minutes',
-      icon: 'UserPlus',
-      iconColor: 'text-success',
-    },
-    {
-      id: 2,
-      type: 'course_completion',
-      user: {
-        name: 'Jean Martin',
-        avatar:
-          'https://ui-avatars.com/api/?name=Jean+Martin&background=10b981&color=ffffff',
-      },
-      action: "a terminé le cours 'Introduction à l'IA'",
-      timestamp: 'Il y a 12 minutes',
-      icon: 'CheckCircle',
-      iconColor: 'text-primary',
-    },
-    {
-      id: 3,
-      type: 'content_creation',
-      user: {
-        name: 'Sophie Laurent',
-        avatar:
-          'https://ui-avatars.com/api/?name=Sophie+Laurent&background=8b5cf6&color=ffffff',
-      },
-      action: "a créé un nouveau module 'Machine Learning Avancé'",
-      timestamp: 'Il y a 1 heure',
-      icon: 'BookOpen',
-      iconColor: 'text-accent',
-    },
-    {
-      id: 4,
-      type: 'achievement_unlock',
-      user: {
-        name: 'Pierre Moreau',
-        avatar:
-          'https://ui-avatars.com/api/?name=Pierre+Moreau&background=f59e0b&color=ffffff',
-      },
-      action: "a débloqué le badge 'Expert IA'",
-      timestamp: 'Il y a 2 heures',
-      icon: 'Award',
-      iconColor: 'text-warning',
-    },
-    {
-      id: 5,
-      type: 'system_update',
-      user: {
-        name: 'Système',
-        avatar: null,
-      },
-      action: 'Mise à jour de sécurité appliquée',
-      timestamp: 'Il y a 3 heures',
-      icon: 'Shield',
-      iconColor: 'text-secondary-500',
-    },
-    {
-      id: 6,
-      type: 'payment_received',
-      user: {
-        name: 'Emma Rousseau',
-        avatar:
-          'https://ui-avatars.com/api/?name=Emma+Rousseau&background=ec4899&color=ffffff',
-      },
-      action: 'a effectué un paiement de €299',
-      timestamp: 'Il y a 4 heures',
-      icon: 'CreditCard',
-      iconColor: 'text-success',
-    },
-    {
-      id: 7,
-      type: 'course_enrollment',
-      user: {
-        name: 'Lucas Bernard',
-        avatar:
-          'https://ui-avatars.com/api/?name=Lucas+Bernard&background=6366f1&color=ffffff',
-      },
-      action: "s'est inscrit au cours 'Deep Learning Pratique'",
-      timestamp: 'Il y a 5 heures',
-      icon: 'BookMarked',
-      iconColor: 'text-primary',
-    },
-    {
-      id: 8,
-      type: 'user_login',
-      user: {
-        name: 'Camille Petit',
-        avatar:
-          'https://ui-avatars.com/api/?name=Camille+Petit&background=ef4444&color=ffffff',
-      },
-      action: "s'est connectée depuis un nouvel appareil",
-      timestamp: 'Il y a 6 heures',
-      icon: 'LogIn',
-      iconColor: 'text-secondary-500',
-    },
-  ];
+  const [activitiesData, setActivitiesData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const getActivityTypeLabel = type => {
-    const labels = {
-      user_registration: 'Inscription',
-      course_completion: 'Cours terminé',
-      content_creation: 'Contenu créé',
-      achievement_unlock: 'Badge débloqué',
-      system_update: 'Système',
-      payment_received: 'Paiement',
-      course_enrollment: 'Inscription cours',
-      user_login: 'Connexion',
-    };
-    return labels[type] || 'Activité';
+  const fetchRecentActivity = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('activity_log')
+        .select(`
+          id,
+          type,
+          action,
+          details,
+          created_at,
+          profiles (
+            full_name,
+            avatar_url
+          )
+        `)
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      if (error) {
+        console.error('Error fetching recent activity:', error);
+        setActivitiesData([]);
+      } else {
+        const transformedData = data.map(activity => {
+          const typeProps = getActivityTypeProps(activity.type);
+          const user = activity.profiles
+            ? { name: activity.profiles.full_name, avatar: activity.profiles.avatar_url }
+            : typeProps.defaultUser;
+
+          return {
+            id: activity.id,
+            type: activity.type,
+            user: user,
+            action: activity.action || typeProps.label, // Use Supabase action or default label
+            timestamp: timeSince(activity.created_at),
+            icon: typeProps.icon,
+            iconColor: typeProps.iconColor,
+            label: typeProps.label, // Adding label for consistency
+          };
+        });
+        setActivitiesData(transformedData);
+      }
+    } catch (err) {
+      console.error('Unexpected error in fetchRecentActivity:', err);
+      setActivitiesData([]);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    fetchRecentActivity();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className='bg-surface rounded-lg p-6 shadow-subtle border border-border mb-8'>
+        <h3 className='text-lg font-semibold text-text-primary mb-6'>Activité récente</h3>
+        <p className="text-text-secondary">Chargement des activités...</p>
+      </div>
+    );
+  }
+
+  if (!activitiesData || activitiesData.length === 0) {
+    return (
+      <div className='bg-surface rounded-lg p-6 shadow-subtle border border-border mb-8'>
+        <h3 className='text-lg font-semibold text-text-primary mb-6'>Activité récente</h3>
+        <p className="text-text-secondary">Aucune activité récente.</p>
+      </div>
+    );
+  }
 
   return (
     <div className='bg-surface rounded-lg p-6 shadow-subtle border border-border mb-8'>
@@ -138,21 +181,21 @@ const RecentActivity = () => {
       </div>
 
       <div className='space-y-4 max-h-96 overflow-y-auto'>
-        {activities.map(activity => (
+        {activitiesData.map(activity => (
           <div
             key={activity.id}
             className='flex items-start space-x-4 p-3 rounded-lg hover:bg-secondary-50 transition-colors'
           >
             <div className='flex-shrink-0'>
-              {activity.user.avatar ? (
+              {activity.user && activity.user.avatar ? (
                 <Image
                   src={activity.user.avatar}
-                  alt={activity.user.name}
+                  alt={activity.user.name || 'Utilisateur'}
                   className='w-10 h-10 rounded-full object-cover'
                 />
               ) : (
                 <div className='w-10 h-10 bg-secondary-200 rounded-full flex items-center justify-center'>
-                  <Icon name='Settings' size={20} className='text-secondary-500' />
+                  <Icon name={activity.user && activity.user.name === 'Système' ? 'Settings' : 'User'} size={20} className='text-secondary-500' />
                 </div>
               )}
             </div>
@@ -161,11 +204,11 @@ const RecentActivity = () => {
               <div className='flex items-center space-x-2 mb-1'>
                 <Icon name={activity.icon} size={16} className={activity.iconColor} />
                 <span className='text-xs font-medium text-text-secondary bg-secondary-100 px-2 py-1 rounded-full'>
-                  {getActivityTypeLabel(activity.type)}
+                  {activity.label}
                 </span>
               </div>
               <p className='text-sm text-text-primary'>
-                <span className='font-medium'>{activity.user.name}</span> {activity.action}
+                <span className='font-medium'>{activity.user ? activity.user.name : 'Utilisateur inconnu'}</span> {activity.action}
               </p>
               <p className='text-xs text-text-secondary mt-1'>{activity.timestamp}</p>
             </div>
@@ -181,9 +224,13 @@ const RecentActivity = () => {
 
       <div className='mt-4 pt-4 border-t border-border'>
         <div className='flex items-center justify-between text-sm'>
-          <span className='text-text-secondary'>{activities.length} activités récentes</span>
-          <button className='text-primary hover:text-primary-700 transition-colors font-medium'>
-            Actualiser
+          <span className='text-text-secondary'>{activitiesData.length} activités récentes</span>
+          <button
+            onClick={fetchRecentActivity}
+            className='text-primary hover:text-primary-700 transition-colors font-medium'
+            disabled={loading}
+          >
+            {loading ? 'Actualisation...' : 'Actualiser'}
           </button>
         </div>
       </div>
