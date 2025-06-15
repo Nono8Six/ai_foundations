@@ -1,10 +1,11 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { vi } from 'vitest';
 import PerformanceMetrics from './PerformanceMetrics';
 
 // Mock AppIcon
-jest.mock('../../../components/AppIcon', () => ({ name, size, className }) => <svg data-testid={`icon-${name}`} className={className} width={size} height={size}></svg>);
+vi.mock('../../../components/AppIcon', () => ({ default: ({ name, size, className }) => <svg data-testid={`icon-${name}`} className={className} width={size} height={size}></svg> }));
 
 describe('PerformanceMetrics', () => {
   test('renders available metrics correctly when props are provided', () => {

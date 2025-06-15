@@ -1,16 +1,17 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { vi } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import AdminDashboard from './index';
 import { supabase } from '../../lib/supabase'; // This will be the mock
 
 // Mock child components that might make their own Supabase calls or are complex
-jest.mock('./components/RecentActivity', () => () => <div>RecentActivityMock</div>);
-jest.mock('./components/UserEngagementChart', () => () => <div>UserEngagementChartMock</div>);
-jest.mock('./components/PopularCoursesChart', () => () => <div>PopularCoursesChartMock</div>);
-jest.mock('./components/GeographicDistribution', () => () => <div>GeographicDistributionMock</div>);
-jest.mock('./components/PerformanceMetrics', () => ({ metrics }) => <div>PerformanceMetricsMock ({metrics.activeUsers} active users, {metrics.systemUptime} uptime)</div>);
+vi.mock('./components/RecentActivity', () => ({ default: () => <div>RecentActivityMock</div> }));
+vi.mock('./components/UserEngagementChart', () => ({ default: () => <div>UserEngagementChartMock</div> }));
+vi.mock('./components/PopularCoursesChart', () => ({ default: () => <div>PopularCoursesChartMock</div> }));
+vi.mock('./components/GeographicDistribution', () => ({ default: () => <div>GeographicDistributionMock</div> }));
+vi.mock('./components/PerformanceMetrics', () => ({ default: ({ metrics }) => <div>PerformanceMetricsMock ({metrics.activeUsers} active users, {metrics.systemUptime} uptime)</div> }));
 
 
 describe('AdminDashboard', () => {
@@ -87,7 +88,8 @@ describe('AdminDashboard', () => {
                 select: jest.fn((cols, opts) => {
                     if (opts && opts.head === true && cols === '*') { // Total Users
                         return Promise.resolve(totalUsersMock);
-                    } else if (cols === '*' && opts && opts.head === true) { // New Users Today (has gte/lt)
+                    } // eslint-disable-next-line no-dupe-else-if
+                    else if (cols === '*' && opts && opts.head === true) { // New Users Today (has gte/lt)
                          // This is still not perfect, as gte/lt are chained after select
                         const self = {
                             gte: jest.fn().mockReturnThis(),

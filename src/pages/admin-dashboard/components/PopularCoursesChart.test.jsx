@@ -1,12 +1,13 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { vi } from 'vitest';
 import PopularCoursesChart from './PopularCoursesChart';
 import { supabase } from '../../../lib/supabase'; // Mocked
 
 // Mock Recharts components to avoid complex rendering in tests
-jest.mock('recharts', () => {
-  const ActualRecharts = jest.requireActual('recharts');
+vi.mock('recharts', () => {
+  const ActualRecharts = vi.importActual('recharts');
   return {
     ...ActualRecharts,
     ResponsiveContainer: ({ children }) => <div data-testid="responsive-container">{children}</div>,
@@ -19,53 +20,19 @@ jest.mock('recharts', () => {
   };
 });
 
-jest.mock('../../../components/AppIcon', () => ({ name }) => <svg data-testid={`icon-${name}`}></svg>);
+vi.mock('../../../components/AppIcon', () => ({ default: ({ name }) => <svg data-testid={`icon-${name}`}></svg> }));
 
 // Tell Jest to use the mock for supabase
-jest.mock('../../../lib/supabase');
+vi.mock('../../../lib/supabase');
+
 
 describe('PopularCoursesChart', () => {
-  const setupSupabaseCourseMocks = (coursesData, userProgressData, coursesError = null, progressError = null) => {
-    const coursesBuilder = {
-      select: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      then: jest.fn(callback => callback({ data: coursesData, error: coursesError }))
-    };
-    coursesBuilder.mockResolvedValueOnce = function(value) { this.then = cb => cb(value); return this;};
-
-
-    const progressBuilder = {
-      select: jest.fn().mockReturnThis(),
-      then: jest.fn(callback => callback({ data: userProgressData, error: progressError }))
-    };
-    progressBuilder.mockResolvedValueOnce = function(value) { this.then = cb => cb(value); return this;};
-
-
-    supabase.from.mockImplementation(tableName => {
-      if (tableName === 'courses') {
-        // The actual global mock returns a builder that has mockResolvedValueOnce
-        const builder = jest.requireActual('../../../lib/supabase').supabase.from(tableName);
-        builder.mockResolvedValueOnce({data: coursesData, error: coursesError});
-        return builder;
-      }
-      if (tableName === 'user_progress') {
-        const builder = jest.requireActual('../../../lib/supabase').supabase.from(tableName);
-        builder.mockResolvedValueOnce({data: userProgressData, error: progressError});
-        return builder;
-      }
-      return {
-        select: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockReturnThis(),
-        mockResolvedValueOnce: jest.fn().mockReturnThis(), // Fallback
-      };
-    });
-  };
 
   beforeEach(() => {
     jest.clearAllMocks();
      // Default mock implementation for supabase.from calls
      // This ensures that each call to supabase.from returns a fresh mock builder instance.
-     supabase.from.mockImplementation((tableName) => {
+     supabase.from.mockImplementation(() => {
         const builderInstance = {
             select: jest.fn().mockReturnThis(),
             eq: jest.fn().mockReturnThis(),
