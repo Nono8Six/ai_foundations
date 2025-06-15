@@ -1,70 +1,173 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import Icon from '../../../components/AppIcon';
+import { supabase } from '../../../lib/supabase';
+
+const CustomTooltip = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload;
+    const completionRate = data.enrollments > 0 ? Math.round((data.completions / data.enrollments) * 100) : 0;
+    return (
+      <div className='bg-surface p-3 border border-border rounded-lg shadow-medium'>
+        <p className='text-sm font-medium text-text-primary mb-2'>{label}</p>
+        <div className='space-y-1'>
+          <p className='text-sm text-primary'>
+            Inscriptions: {data.enrollments.toLocaleString('fr-FR')}
+          </p>
+          <p className='text-sm text-accent'>
+            Complétions: {data.completions.toLocaleString('fr-FR')}
+          </p>
+          {data.rating !== "N/A" && (
+            <p className='text-sm text-warning'>Note: {data.rating}/5</p>
+          )}
+          <p className='text-xs text-text-secondary'>
+            Taux de complétion: {completionRate}%
+          </p>
+        </div>
+      </div>
+    );
+  }
+  return null;
+};
 
 const PopularCoursesChart = () => {
-  const coursesData = [
-    {
-      name: "Introduction à l'IA",
-      enrollments: 2847,
-      completions: 2234,
-      rating: 4.8,
-    },
-    {
-      name: 'Machine Learning',
-      enrollments: 2156,
-      completions: 1678,
-      rating: 4.7,
-    },
-    {
-      name: 'Deep Learning',
-      enrollments: 1923,
-      completions: 1456,
-      rating: 4.9,
-    },
-    {
-      name: 'NLP Avancé',
-      enrollments: 1654,
-      completions: 1234,
-      rating: 4.6,
-    },
-    {
-      name: 'Computer Vision',
-      enrollments: 1432,
-      completions: 1098,
-      rating: 4.5,
-    },
-    {
-      name: 'IA Éthique',
-      enrollments: 1287,
-      completions: 987,
-      rating: 4.4,
-    },
-  ];
+  const [chartData, setChartData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [totalEnrollments, setTotalEnrollments] = useState(0);
+  const [totalCompletions, setTotalCompletions] = useState(0);
 
-  const CustomTooltip = ({ active, payload, label }) => {
-    if (active && payload && payload.length) {
-      const data = payload[0].payload;
-      return (
-        <div className='bg-surface p-3 border border-border rounded-lg shadow-medium'>
-          <p className='text-sm font-medium text-text-primary mb-2'>{label}</p>
-          <div className='space-y-1'>
-            <p className='text-sm text-primary'>
-              Inscriptions: {data.enrollments.toLocaleString('fr-FR')}
-            </p>
-            <p className='text-sm text-accent'>
-              Complétions: {data.completions.toLocaleString('fr-FR')}
-            </p>
-            <p className='text-sm text-warning'>Note: {data.rating}/5</p>
-            <p className='text-xs text-text-secondary'>
-              Taux: {Math.round((data.completions / data.enrollments) * 100)}%
-            </p>
-          </div>
-        </div>
-      );
-    }
-    return null;
-  };
+  useEffect(() => {
+    const fetchPopularCoursesData = async () => {
+      setLoading(true);
+      try {
+        const { data: courses, error: coursesError } = await supabase
+          .from('courses')
+          .select('id, title, modules!inner(id, lessons!inner(id))')
+          .eq('is_published', true);
+
+        if (coursesError) {
+          console.error('Error fetching courses:', coursesError);
+          throw coursesError;
+        }
+
+        if (!courses || courses.length === 0) {
+          setChartData([]);
+          setLoading(false);
+          return;
+        }
+
+        const { data: userProgress, error: progressError } = await supabase
+          .from('user_progress')
+          .select('user_id, lesson_id, status');
+
+        if (progressError) {
+          console.error('Error fetching user progress:', progressError);
+          throw progressError;
+        }
+
+        const completedLessonsByUser = new Map(); // Map<userId, Set<lessonId>>
+        const startedLessonsByUser = new Map();   // Map<userId, Set<lessonId>>
+
+        userProgress.forEach(progress => {
+          if (!startedLessonsByUser.has(progress.user_id)) {
+            startedLessonsByUser.set(progress.user_id, new Set());
+          }
+          startedLessonsByUser.get(progress.user_id).add(progress.lesson_id);
+
+          if (progress.status === 'completed') {
+            if (!completedLessonsByUser.has(progress.user_id)) {
+              completedLessonsByUser.set(progress.user_id, new Set());
+            }
+            completedLessonsByUser.get(progress.user_id).add(progress.lesson_id);
+          }
+        });
+
+        let processedCourses = courses.map(course => {
+          const lessonsInCourseSet = new Set();
+          course.modules.forEach(module => {
+            module.lessons.forEach(lesson => {
+              lessonsInCourseSet.add(lesson.id);
+            });
+          });
+
+          if (lessonsInCourseSet.size === 0) { // Skip courses with no lessons
+            return {
+              name: course.title,
+              enrollments: 0,
+              completions: 0,
+              rating: "N/A",
+            };
+          }
+
+          let enrollmentsCount = 0;
+          startedLessonsByUser.forEach(startedLessons => {
+            for (const lessonId of lessonsInCourseSet) {
+              if (startedLessons.has(lessonId)) {
+                enrollmentsCount++;
+                break;
+              }
+            }
+          });
+
+          let completionsCount = 0;
+          completedLessonsByUser.forEach(completedLessons => {
+            let allCourseLessonsCompleted = true;
+            for (const lessonId of lessonsInCourseSet) {
+              if (!completedLessons.has(lessonId)) {
+                allCourseLessonsCompleted = false;
+                break;
+              }
+            }
+            if (allCourseLessonsCompleted) {
+              completionsCount++;
+            }
+          });
+
+          return {
+            name: course.title,
+            enrollments: enrollmentsCount,
+            completions: completionsCount,
+            rating: "N/A", // Rating not available from current schema
+          };
+        });
+
+        processedCourses.sort((a, b) => b.enrollments - a.enrollments);
+        const topCourses = processedCourses.slice(0, 6);
+
+        setChartData(topCourses);
+
+        // Calculate totals for summary
+        const currentTotalEnrollments = topCourses.reduce((acc, course) => acc + course.enrollments, 0);
+        const currentTotalCompletions = topCourses.reduce((acc, course) => acc + course.completions, 0);
+        setTotalEnrollments(currentTotalEnrollments);
+        setTotalCompletions(currentTotalCompletions);
+
+      } catch (error) {
+        console.error('Failed to process popular courses data:', error);
+        setChartData([]); // Set to empty on error
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPopularCoursesData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className='bg-surface rounded-lg p-6 shadow-subtle border border-border h-[400px] flex items-center justify-center'>
+        <p className='text-text-secondary'>Chargement des données du graphique...</p>
+      </div>
+    );
+  }
+
+  if (chartData.length === 0) {
+    return (
+      <div className='bg-surface rounded-lg p-6 shadow-subtle border border-border h-[400px] flex items-center justify-center'>
+        <p className='text-text-secondary'>Aucune donnée disponible pour les cours populaires.</p>
+      </div>
+    );
+  }
 
   return (
     <div className='bg-surface rounded-lg p-6 shadow-subtle border border-border'>
@@ -88,9 +191,9 @@ const PopularCoursesChart = () => {
         </div>
       </div>
 
-      <div className='h-64'>
+      <div className='h-64'> {/* Ensure this height is appropriate */}
         <ResponsiveContainer width='100%' height='100%'>
-          <BarChart data={coursesData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+          <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray='3 3' stroke='var(--color-border)' />
             <XAxis
               dataKey='name'
@@ -98,7 +201,8 @@ const PopularCoursesChart = () => {
               fontSize={11}
               angle={-45}
               textAnchor='end'
-              height={80}
+              height={80} // Adjusted for angled labels
+              interval={0} // Show all labels
             />
             <YAxis
               stroke='var(--color-text-secondary)'
@@ -122,31 +226,23 @@ const PopularCoursesChart = () => {
         </ResponsiveContainer>
       </div>
 
-      <div className='mt-4 grid grid-cols-3 gap-4'>
+      <div className='mt-4 grid grid-cols-2 md:grid-cols-3 gap-4'> {/* Changed to 2 cols for smaller screens, 3 for md and up */}
         <div className='text-center p-3 bg-primary-50 rounded-lg'>
           <p className='text-sm text-text-secondary'>Total inscriptions</p>
           <p className='text-lg font-semibold text-primary'>
-            {coursesData
-              .reduce((acc, course) => acc + course.enrollments, 0)
-              .toLocaleString('fr-FR')}
+            {totalEnrollments.toLocaleString('fr-FR')}
           </p>
         </div>
         <div className='text-center p-3 bg-accent-50 rounded-lg'>
           <p className='text-sm text-text-secondary'>Total complétions</p>
           <p className='text-lg font-semibold text-accent'>
-            {coursesData
-              .reduce((acc, course) => acc + course.completions, 0)
-              .toLocaleString('fr-FR')}
+            {totalCompletions.toLocaleString('fr-FR')}
           </p>
         </div>
-        <div className='text-center p-3 bg-warning-50 rounded-lg'>
+        {/* Removing average rating as it's not available */}
+        <div className='text-center p-3 bg-secondary-50 rounded-lg md:col-span-1 col-span-2'>
           <p className='text-sm text-text-secondary'>Note moyenne</p>
-          <p className='text-lg font-semibold text-warning'>
-            {(
-              coursesData.reduce((acc, course) => acc + course.rating, 0) / coursesData.length
-            ).toFixed(1)}
-            /5
-          </p>
+          <p className='text-lg font-semibold text-text-secondary'>N/A</p>
         </div>
       </div>
     </div>
