@@ -5,6 +5,7 @@ import { fetchCoursesWithContent } from '../../services/courseService';
 import logger from '../../utils/logger';
 
 import Icon from '../../components/AppIcon';
+import AdminLayout, { useAdminSidebar } from "../../components/AdminLayout";
 import ContentTree from './components/ContentTree';
 import CourseEditor from './components/CourseEditor';
 import ModuleEditor from './components/ModuleEditor';
@@ -14,6 +15,7 @@ import ContentSearch from './components/ContentSearch';
 import MediaLibrary from './components/MediaLibrary';
 
 const ContentManagementCoursesModulesLessons = () => {
+  const { setSidebarOpen } = useAdminSidebar();
   const [selectedContent, setSelectedContent] = useState(null);
   const [contentType, setContentType] = useState('course');
   const [showMediaLibrary, setShowMediaLibrary] = useState(false);
@@ -149,15 +151,29 @@ const ContentManagementCoursesModulesLessons = () => {
 
   if (loading) {
     return (
-        <div className='min-h-screen bg-background pt-16 flex items-center justify-center'>
-            <Icon name="Loader" className="animate-spin text-primary" size={48} />
+      <AdminLayout>
+        <div className='min-h-screen flex items-center justify-center'>
+          <Icon name="Loader" className="animate-spin text-primary" size={48} />
         </div>
-    )
+      </AdminLayout>
+    );
   }
 
   return (
-    <div className='min-h-screen bg-background pt-16'>
-      <div className='flex h-[calc(100vh-4rem)]'>
+    <AdminLayout>
+      <header className='bg-surface shadow-subtle border-b border-border fixed top-16 left-0 right-0 z-30 lg:left-64'>
+        <div className='flex items-center h-16 px-6'>
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className='lg:hidden p-2 rounded-md hover:bg-secondary-100 transition-colors'
+          >
+            <Icon name='Menu' size={20} />
+          </button>
+          <h1 className='text-xl font-semibold text-text-primary ml-4'>Gestion du Contenu</h1>
+        </div>
+      </header>
+      <main className='p-6 pt-32'>
+        <div className='flex h-[calc(100vh-4rem)]'>
         <div className='w-80 bg-surface border-r border-border flex flex-col'>
           <div className='p-4 border-b border-border'>
             <ContentSearch
@@ -219,7 +235,8 @@ const ContentManagementCoursesModulesLessons = () => {
           onExecute={handleBulkOperation}
         />
       )}
-    </div>
+      </main>
+    </AdminLayout>
   );
 };
 
