@@ -191,7 +191,7 @@ const UserDashboard = () => {
                           className='bg-surface rounded-xl border border-border overflow-hidden transform hover:-translate-y-1 transition-transform duration-300'
                         >
                           <Image
-                            src={course.thumbnail_url || '/placeholder-image.jpg'}
+                            src={course.thumbnail_url || '/assets/images/no_image.png'}
                             alt={`Vignette de ${course.title}`}
                             className='w-full h-40 object-cover'
                           />

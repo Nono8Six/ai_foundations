@@ -151,16 +151,14 @@ const ContentManagementCoursesModulesLessonsContent = () => {
 
   if (loading) {
     return (
-      <AdminLayout>
-        <div className='min-h-screen flex items-center justify-center'>
-          <Icon name="Loader" className="animate-spin text-primary" size={48} />
-        </div>
-      </AdminLayout>
+      <div className='min-h-screen flex items-center justify-center'>
+        <Icon name="Loader" className="animate-spin text-primary" size={48} />
+      </div>
     );
   }
 
   return (
-    <AdminLayout>
+    <>
       <header className='bg-surface shadow-subtle border-b border-border fixed top-16 left-0 right-0 z-30 lg:left-64'>
         <div className='flex items-center h-16 px-6'>
           <button
@@ -172,7 +170,7 @@ const ContentManagementCoursesModulesLessonsContent = () => {
           <h1 className='text-xl font-semibold text-text-primary ml-4'>Gestion du Contenu</h1>
         </div>
       </header>
-      <main className='p-6 pt-32'>
+        <main className='p-6 pt-16'>
         <div className='flex h-[calc(100vh-4rem)]'>
         <div className='w-80 bg-surface border-r border-border flex flex-col'>
           <div className='p-4 border-b border-border'>
@@ -234,11 +232,11 @@ const ContentManagementCoursesModulesLessonsContent = () => {
           onClose={() => setShowBulkOperations(false)}
           onExecute={handleBulkOperation}
         />
-      )}
-      </main>
-    </>
-  );
-};
+        )}
+        </main>
+      </>
+    );
+  };
 
 const ContentManagementCoursesModulesLessons = () => (
   <AdminLayout>

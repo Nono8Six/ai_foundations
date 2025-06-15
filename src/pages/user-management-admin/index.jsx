@@ -124,7 +124,7 @@ const UserManagementAdminContent = () => {
   };
 
   return (
-    <AdminLayout>
+    <>
       <header className='bg-surface shadow-subtle border-b border-border fixed top-16 left-0 right-0 z-30 lg:left-64'>
         <div className='flex items-center h-16 px-6'>
           <button
@@ -136,7 +136,7 @@ const UserManagementAdminContent = () => {
           <h1 className='text-xl font-semibold text-text-primary ml-4'>Gestion des Utilisateurs</h1>
         </div>
       </header>
-      <main className='p-6 pt-32'>
+      <main className='p-6 pt-16'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
         <div className='mb-8'>
           <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between'>
