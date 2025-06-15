@@ -1,3 +1,4 @@
+// src/pages/user-dashboard/components/ProgressChart.jsx
 import React, { useState, useEffect } from 'react';
 import { colors } from '../../../utils/theme';
 import {
@@ -9,73 +10,31 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import { useAuth } from '../../../context/AuthContext';
 import { useCourses } from '../../../context/CourseContext';
+import useProgressChartData from '../../../hooks/useProgressChartData';
 import Icon from '../../../components/AppIcon';
 
 const ProgressChart = () => {
   const [activeTab, setActiveTab] = useState('weekly');
-  const { user } = useAuth();
-  const { userProgress } = useCourses();
+  const { userProgress, lessons, coursesWithProgress, modules, loading: coursesLoading } = useCourses();
+
+  // Call the new hook to get aggregated chart data
+  const chartData = useProgressChartData(userProgress, lessons, coursesWithProgress, modules);
+
   const [hasData, setHasData] = useState(false);
-  const [chartData, setChartData] = useState({
-    weekly: [],
-    monthly: [],
-    subjects: []
-  });
 
   useEffect(() => {
-    // Generate realistic data based on user progress
-    if (user && userProgress.length > 0) {
-      generateChartData();
+    // Determine if there's meaningful data to display
+    // Consider loading state as well. Data is only truly absent if not loading and chart data arrays are empty.
+    if (!coursesLoading && chartData && (chartData.weekly?.length > 0 || chartData.monthly?.length > 0)) {
       setHasData(true);
-    } else {
+    } else if (!coursesLoading) {
       setHasData(false);
     }
-  }, [user, userProgress]);
+    // If still loading, hasData might remain false until data is processed.
+  }, [chartData, coursesLoading]);
 
-  const generateChartData = () => {
-    // Weekly data - last 7 days
-    const days = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
-    const today = new Date().getDay(); // 0 = Sunday, 1 = Monday, etc.
-    const weeklyData = days.map((day, index) => {
-      const dayHasPassed = (today === 0 ? 6 : today - 1) >= index;
-      
-      // Only show activity for days that have passed
-      return {
-        day,
-        hours: dayHasPassed ? Math.random() * 2 : 0,
-        lessons: dayHasPassed ? Math.floor(Math.random() * 3) : 0,
-        xp: dayHasPassed ? Math.floor(Math.random() * 100) : 0
-      };
-    });
-
-    // Monthly data - last 6 months
-    const months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun'];
-    const monthlyData = months.map(month => ({
-      month,
-      hours: Math.random() * 30 + 5,
-      lessons: Math.floor(Math.random() * 20 + 5),
-      xp: Math.floor(Math.random() * 1000 + 200)
-    }));
-
-    // Subject distribution
-    const subjects = [
-            { name: 'IA Générale', value: 35, color: colors.primary },
-            { name: 'Machine Learning', value: 25, color: colors.accent },
-            { name: 'Deep Learning', value: 20, color: colors.warning },
-            { name: 'NLP', value: 15, color: colors.secondary },
-            { name: 'Computer Vision', value: 5, color: colors.error }
-    ];
-
-    setChartData({
-      weekly: weeklyData,
-      monthly: monthlyData,
-      subjects
-    });
-  };
-
-  const getCurrentData = () => (activeTab === 'weekly' ? chartData.weekly : chartData.monthly);
+  const getCurrentData = () => (activeTab === 'weekly' ? chartData.weekly || [] : chartData.monthly || []);
   const getXAxisKey = () => (activeTab === 'weekly' ? 'day' : 'month');
 
   const CustomTooltip = ({ active, payload, label }) => {
@@ -97,9 +56,19 @@ const ProgressChart = () => {
   };
 
   const tabs = [
-    { id: 'weekly', label: 'Cette semaine', icon: 'Calendar' },
+    { id: 'weekly', label: 'Cette semaine', icon: 'CalendarDays' }, // Updated icon name
     { id: 'monthly', label: 'Ces 6 mois', icon: 'TrendingUp' },
   ];
+
+  // Display loading indicator if coursesLoading is true
+  if (coursesLoading) {
+     return (
+      <div className='bg-surface rounded-xl border border-border p-6 text-center'>
+        <Icon name='Loader' size={32} className='mx-auto animate-spin text-primary mb-4' />
+        <p className='text-text-secondary'>Chargement des données de progression...</p>
+      </div>
+    );
+  }
 
   if (!hasData) {
     return (
@@ -112,14 +81,20 @@ const ProgressChart = () => {
         
         <div className='text-center py-8'>
           <Icon name='BarChart3' size={48} className='mx-auto text-secondary-300 mb-4' />
-          <h3 className='text-lg font-medium text-text-primary mb-2'>Aucune donnée disponible</h3>
+          <h3 className='text-lg font-medium text-text-primary mb-2'>Aucune donnée de progression disponible</h3>
           <p className='text-text-secondary mb-4'>
-            Commencez à apprendre pour voir votre progression ici
+            Commencez à apprendre pour voir votre progression ici.
           </p>
         </div>
       </div>
     );
   }
+
+  // Calculate totals for summary cards from the new chartData
+  const currentDataSet = getCurrentData();
+  const totalHours = currentDataSet.reduce((acc, item) => acc + (item.hours || 0), 0).toFixed(1);
+  const totalLessons = currentDataSet.reduce((acc, item) => acc + (item.lessons || 0), 0);
+  const totalXP = currentDataSet.reduce((acc, item) => acc + (item.xp || 0), 0); // Will be 0 for now
 
   return (
     <div className='bg-surface rounded-xl border border-border p-6'>
@@ -132,7 +107,7 @@ const ProgressChart = () => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ${activeTab === tab.id ? 'bg-white shadow-sm' : 'text-text-secondary hover:text-primary'}`}
+              className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ${activeTab === tab.id ? 'bg-white shadow-sm text-primary' : 'text-text-secondary hover:text-primary'}`}
             >
               <Icon name={tab.icon} size={16} />
               <span>{tab.label}</span>
@@ -141,44 +116,33 @@ const ProgressChart = () => {
         </div>
       </div>
 
-      <div className='w-full h-60'>
+      <div className='w-full h-60 sm:h-72 md:h-80'> {/* Adjusted height for responsiveness */}
         <ResponsiveContainer width='100%' height='100%'>
-          <LineChart data={getCurrentData()} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
+          <LineChart data={getCurrentData()} margin={{ top: 5, right: 5, left: -25, bottom: 5 }}> {/* Adjusted margins */}
             <CartesianGrid strokeDasharray='3 3' stroke={colors.border} />
-            <XAxis dataKey={getXAxisKey()} tick={{ fill: colors.secondary, fontSize: 12 }} />
-            <YAxis tick={{ fill: colors.secondary, fontSize: 12 }} />
+            <XAxis dataKey={getXAxisKey()} tick={{ fill: colors.textSecondary, fontSize: 12 }} dy={10} /> {/* Adjusted tick properties */}
+            <YAxis tick={{ fill: colors.textSecondary, fontSize: 12 }} dx={-5} /> {/* Adjusted tick properties */}
             <Tooltip content={<CustomTooltip />} />
-            <Line type='monotone' dataKey='hours' stroke={colors.primary} strokeWidth={2} dot={false} />
-            <Line type='monotone' dataKey='lessons' stroke={colors.accent} strokeWidth={2} dot={false} />
-            <Line type='monotone' dataKey='xp' stroke={colors.warning} strokeWidth={2} dot={false} />
+            <Line type='monotone' dataKey='hours' stroke={colors.primary[500]} strokeWidth={2.5} dot={false} activeDot={{ r: 6 }} name="Heures" />
+            <Line type='monotone' dataKey='lessons' stroke={colors.accent[500]} strokeWidth={2.5} dot={false} activeDot={{ r: 6 }} name="Leçons" />
+            {/* XP Line is commented out as it's always 0 for now, can be re-enabled later */}
+            {/* <Line type='monotone' dataKey='xp' stroke={colors.warning[500]} strokeWidth={2.5} dot={false} activeDot={{ r: 6 }} name="XP" /> */}
           </LineChart>
         </ResponsiveContainer>
       </div>
 
-      <div className='mt-6 grid grid-cols-1 md:grid-cols-3 gap-4'>
-        <div className='text-center p-3 bg-primary-50 rounded-lg'>
-          <p className='text-sm text-text-secondary'>Temps d'étude</p>
-          <p className='text-lg font-semibold text-primary'>
-            {activeTab === 'weekly' 
-              ? `${chartData.weekly.reduce((acc, day) => acc + day.hours, 0).toFixed(1)}h` 
-              : `${chartData.monthly.reduce((acc, month) => acc + month.hours, 0).toFixed(1)}h`}
-          </p>
+      <div className='mt-8 grid grid-cols-1 md:grid-cols-3 gap-4'> {/* Increased mt for spacing */}
+        <div className='text-center p-4 bg-primary-50 rounded-lg border border-primary-100'> {/* Added border */}
+          <p className='text-sm text-text-secondary mb-1'>Temps d'étude ({activeTab === 'weekly' ? 'semaine' : '6 mois'})</p>
+          <p className='text-2xl font-semibold text-primary'>{totalHours}h</p>
         </div>
-        <div className='text-center p-3 bg-accent-50 rounded-lg'>
-          <p className='text-sm text-text-secondary'>Leçons terminées</p>
-          <p className='text-lg font-semibold text-accent'>
-            {activeTab === 'weekly' 
-              ? chartData.weekly.reduce((acc, day) => acc + day.lessons, 0)
-              : chartData.monthly.reduce((acc, month) => acc + month.lessons, 0)}
-          </p>
+        <div className='text-center p-4 bg-accent-50 rounded-lg border border-accent-100'> {/* Added border */}
+          <p className='text-sm text-text-secondary mb-1'>Leçons terminées ({activeTab === 'weekly' ? 'semaine' : '6 mois'})</p>
+          <p className='text-2xl font-semibold text-accent'>{totalLessons}</p>
         </div>
-        <div className='text-center p-3 bg-warning-50 rounded-lg'>
-          <p className='text-sm text-text-secondary'>XP gagnés</p>
-          <p className='text-lg font-semibold text-warning'>
-            {activeTab === 'weekly' 
-              ? chartData.weekly.reduce((acc, day) => acc + day.xp, 0)
-              : chartData.monthly.reduce((acc, month) => acc + month.xp, 0)}
-          </p>
+        <div className='text-center p-4 bg-warning-50 rounded-lg border border-warning-100'> {/* Added border */}
+          <p className='text-sm text-text-secondary mb-1'>XP gagnés ({activeTab === 'weekly' ? 'semaine' : '6 mois'})</p>
+          <p className='text-2xl font-semibold text-warning'>{totalXP}</p>
         </div>
       </div>
     </div>
