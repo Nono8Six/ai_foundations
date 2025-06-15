@@ -62,3 +62,12 @@ export async function fetchCourses({ search = '', filters = {}, sortBy = 'popula
   if (error) throw error;
   return { data: data || [], count: count || 0 };
 }
+
+export async function fetchCoursesWithContent() {
+  const { data, error } = await supabase
+    .from('courses')
+    .select('*, modules(*, lessons(*))')
+    .order('created_at');
+  if (error) throw error;
+  return data || [];
+}

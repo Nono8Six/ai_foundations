@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import logger from '../../utils/logger';
 
 import Icon from '../../components/AppIcon';
@@ -9,6 +9,8 @@ import LessonEditor from './components/LessonEditor';
 import BulkOperations from './components/BulkOperations';
 import ContentSearch from './components/ContentSearch';
 import MediaLibrary from './components/MediaLibrary';
+import { useAdminCourses } from '../../context/AdminCourseContext';
+import { fetchCoursesWithContent } from '../../services/courseService';
 
 const ContentManagementCoursesModulesLessons = () => {
   const [selectedContent, setSelectedContent] = useState(null);
@@ -18,89 +20,21 @@ const ContentManagementCoursesModulesLessons = () => {
   const [selectedItems, setSelectedItems] = useState([]);
   const [showBulkOperations, setShowBulkOperations] = useState(false);
 
-  // Mock data for content hierarchy
-  const mockContentData = [
-    {
-      id: 1,
-      type: 'course',
-      title: "Introduction à l'Intelligence Artificielle",
-      description:
-        "Découvrez les fondamentaux de l'IA et ses applications pratiques dans le monde professionnel.",
-      status: 'published',
-      thumbnail: 'https://images.pexels.com/photos/373543/pexels-photo-373543.jpeg?w=400',
-      price: 299,
-      enrollments: 1247,
-      rating: 4.8,
-      modules: [
-        {
-          id: 11,
-          type: 'module',
-          title: "Concepts de base de l'IA",
-          description: "Comprenez les principes fondamentaux de l'intelligence artificielle.",
-          order: 1,
-          lessons: [
-            {
-              id: 111,
-              type: 'lesson',
-              title: "Qu'est-ce que l'Intelligence Artificielle ?",
-              content: `L'Intelligence Artificielle (IA) représente l'une des révolutions technologiques les plus importantes de notre époque. Cette discipline vise à créer des machines capables de simuler l'intelligence humaine pour résoudre des problèmes complexes.L'IA englobe plusieurs domaines comme l'apprentissage automatique, le traitement du langage naturel, la vision par ordinateur et la robotique. Ces technologies transforment déjà notre quotidien professionnel et personnel.`,
-              duration: 15,
-              videoUrl: 'https://example.com/video1.mp4',
-              status: 'published',
-              order: 1,
-              completions: 892,
-            },
-            {
-              id: 112,
-              type: 'lesson',
-              title: "Histoire et évolution de l'IA",
-              content: `L'histoire de l'IA remonte aux années 1950 avec les travaux pionniers d'Alan Turing et John McCarthy. Depuis, cette discipline a connu plusieurs phases d'évolution marquées par des avancées technologiques majeures. Des premiers programmes de jeu d'échecs aux réseaux de neurones modernes, l'IA a progressé de manière exponentielle, particulièrement avec l'émergence du deep learning et des modèles de langage comme GPT.`,
-              duration: 20,
-              videoUrl: 'https://example.com/video2.mp4',
-              status: 'published',
-              order: 2,
-              completions: 756,
-            },
-          ],
-        },
-        {
-          id: 12,
-          type: 'module',
-          title: "Applications pratiques de l'IA",
-          description: "Explorez les cas d'usage concrets de l'IA dans différents secteurs.",
-          order: 2,
-          lessons: [
-            {
-              id: 121,
-              type: 'lesson',
-              title: 'IA dans la finance et comptabilité',
-              content: `L'intelligence artificielle révolutionne le secteur financier en automatisant les tâches répétitives et en améliorant la précision des analyses. Les algorithmes d'IA peuvent traiter des milliers de transactions en quelques secondes. Dans la comptabilité, l'IA aide à la détection de fraudes, à l'automatisation de la saisie comptable et à l'analyse prédictive des flux de trésorerie. Ces outils permettent aux professionnels de se concentrer sur des tâches à plus haute valeur ajoutée.`,
-              duration: 25,
-              videoUrl: 'https://example.com/video3.mp4',
-              status: 'draft',
-              order: 1,
-              completions: 234,
-            },
-          ],
-        },
-      ],
-    },
-    {
-      id: 2,
-      type: 'course',
-      title: 'Machine Learning pour Débutants',
-      description:
-        'Apprenez les bases du machine learning avec des exemples pratiques et des exercices interactifs.',
-      status: 'draft',
-      thumbnail: 'https://images.pexels.com/photos/8386434/pexels-photo-8386434.jpeg?w=400',
-      price: 399,
-      enrollments: 0,
-      rating: 0,
-      modules: [],
-    },
-  ];
+  const [contentData, setContentData] = useState([]);
 
-  const [contentData, setContentData] = useState(mockContentData);
+  const { createCourse, updateCourse, deleteCourse } = useAdminCourses();
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const courses = await fetchCoursesWithContent();
+        setContentData(courses);
+      } catch (err) {
+        logger.error('Failed to fetch courses', err);
+      }
+    };
+    load();
+  }, []);
 
 
   const handleContentSelect = content => {
@@ -108,16 +42,38 @@ const ContentManagementCoursesModulesLessons = () => {
     setContentType(content.type);
   };
 
-  const handleSaveContent = updatedContent => {
-    // Mock save functionality
-    logger.info('Saving content:', updatedContent);
-    setSelectedContent(updatedContent);
+  const handleSaveContent = async updatedContent => {
+    try {
+      if (updatedContent.type === 'course') {
+        let saved;
+        if (updatedContent.id) {
+          saved = await updateCourse(updatedContent.id, updatedContent);
+          setContentData(prev =>
+            prev.map(c => (c.id === saved.id ? { ...saved, modules: c.modules } : c))
+          );
+        } else {
+          saved = await createCourse(updatedContent);
+          setContentData(prev => [...prev, { ...saved, modules: [] }]);
+        }
+        setSelectedContent(saved);
+      } else {
+        setSelectedContent(updatedContent);
+      }
+    } catch (err) {
+      logger.error('Failed to save content', err);
+    }
   };
 
-  const handleDeleteContent = contentId => {
-    // Mock delete functionality
-    logger.info('Deleting content:', contentId);
-    setSelectedContent(null);
+  const handleDeleteContent = async contentId => {
+    try {
+      if (selectedContent?.type === 'course') {
+        await deleteCourse(contentId);
+        setContentData(prev => prev.filter(c => c.id !== contentId));
+      }
+      setSelectedContent(null);
+    } catch (err) {
+      logger.error('Failed to delete content', err);
+    }
   };
 
   const handleBulkOperation = (operation, items) => {
