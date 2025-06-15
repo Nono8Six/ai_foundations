@@ -2,22 +2,39 @@ services:
   app:
     build:
       context: .
-      target: builder
+      target: development
+      cache_from:
+        - ${DOCKER_REGISTRY:-}ai_foundations_lms:development
     container_name: ia-foundations-dev
     
-    # On exécute le script simplifié, puis on lance le serveur de développement
-    command: sh -c "./scripts/setup.sh && npm run dev -- --host"
-    
+    # Volumes pour le développement
     volumes:
       - .:/app
       - /app/node_modules
+      - /app/.next
       - /app/build
+    
+    # Ports exposés
     ports:
       - "3000:3000"
+      - "9229:9229"  # Pour le débogage Node.js
+    
+    # Variables d'environnement
     env_file:
       - .env
     environment:
       - NODE_ENV=development
-      - CHOKIDAR_USEPOLLING=true
+      - CHOKIDAR_USEPOLLING=true  # Pour le rechargement à chaud sous Docker
       - VITE_PORT=3000
+    
+    # Configuration du redémarrage
     restart: unless-stopped
+    
+    # Configuration du réseau
+    networks:
+      - app-network
+
+# Réseau personnalisé pour une meilleure isolation
+networks:
+  app-network:
+    driver: bridge
