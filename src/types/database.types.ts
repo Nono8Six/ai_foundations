@@ -114,9 +114,11 @@ export type Database = {
           cover_image_url: string | null
           created_at: string | null
           description: string | null
+          difficulty: string | null
           id: string
           is_published: boolean | null
           slug: string
+          thumbnail_url: string | null
           title: string
           updated_at: string | null
         }
@@ -125,9 +127,11 @@ export type Database = {
           cover_image_url?: string | null
           created_at?: string | null
           description?: string | null
+          difficulty?: string | null
           id?: string
           is_published?: boolean | null
           slug: string
+          thumbnail_url?: string | null
           title: string
           updated_at?: string | null
         }
@@ -136,9 +140,11 @@ export type Database = {
           cover_image_url?: string | null
           created_at?: string | null
           description?: string | null
+          difficulty?: string | null
           id?: string
           is_published?: boolean | null
           slug?: string
+          thumbnail_url?: string | null
           title?: string
           updated_at?: string | null
         }
@@ -189,6 +195,7 @@ export type Database = {
         Row: {
           content: Json | null
           created_at: string | null
+          duration: number | null
           id: string
           is_published: boolean | null
           lesson_order: number
@@ -199,6 +206,7 @@ export type Database = {
         Insert: {
           content?: Json | null
           created_at?: string | null
+          duration?: number | null
           id?: string
           is_published?: boolean | null
           lesson_order: number
@@ -209,6 +217,7 @@ export type Database = {
         Update: {
           content?: Json | null
           created_at?: string | null
+          duration?: number | null
           id?: string
           is_published?: boolean | null
           lesson_order?: number
@@ -320,6 +329,7 @@ export type Database = {
           level: number | null
           phone: string | null
           profession: string | null
+          updated_at: string | null
           xp: number | null
         }
         Insert: {
@@ -335,6 +345,7 @@ export type Database = {
           level?: number | null
           phone?: string | null
           profession?: string | null
+          updated_at?: string | null
           xp?: number | null
         }
         Update: {
@@ -350,6 +361,7 @@ export type Database = {
           level?: number | null
           phone?: string | null
           profession?: string | null
+          updated_at?: string | null
           xp?: number | null
         }
         Relationships: []
@@ -537,6 +549,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      current_user_is_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
       email_exists: {
         Args: { search_email: string }
         Returns: boolean
