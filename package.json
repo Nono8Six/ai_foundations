@@ -4,6 +4,14 @@
   "private": true,
   "displayName": "IA Foundations",
   "type": "module",
+  "pnpm": {
+    "overrides": {
+      "allow-scripts": {
+        "esbuild": true,
+        "supabase": true
+      }
+    }
+  },
   "dependencies": {
     "@supabase/supabase-js": "^2.50.0",
     "date-fns": "^4.1.0",

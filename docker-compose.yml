@@ -2,39 +2,39 @@ services:
   app:
     build:
       context: .
+      # On cible l'étape "builder" qui contient toutes nos dépendances.
       target: builder
       cache_from:
         - ${DOCKER_REGISTRY:-}ai_foundations_lms:builder
     container_name: ai-foundations-dev
-    
-    # Volumes pour le développement
+
+    # AJOUT : C'est ICI qu'on lance le serveur de développement.
+    # Cette commande écrase le CMD du Dockerfile et s'exécute au démarrage du conteneur.
+    command: pnpm run dev
+
+    # Volumes pour le développement (on retire .next qui est inutile pour Vite)
     volumes:
       - .:/app
       - /app/node_modules
-      - /app/.next
+      # - /app/.next  <- Ligne retirée
       - /app/build
-    
+
     # Ports exposés
     ports:
       - "3000:3000"
-      - "9229:9229"  # Pour le débogage Node.js
-    
-    # Variables d'environnement
+      - "9229:9229"
+
+    # ... le reste de votre fichier est parfait et ne change pas ...
     env_file:
       - .env
     environment:
       - NODE_ENV=development
-      - CHOKIDAR_USEPOLLING=true  # Pour le rechargement à chaud sous Docker
+      - CHOKIDAR_USEPOLLING=true
       - VITE_PORT=3000
-    
-    # Configuration du redémarrage
     restart: unless-stopped
-    
-    # Configuration du réseau
     networks:
       - app-network
 
-# Réseau personnalisé pour une meilleure isolation
 networks:
   app-network:
     driver: bridge
