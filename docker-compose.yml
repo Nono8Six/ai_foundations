@@ -2,10 +2,10 @@ services:
   app:
     build:
       context: .
-      target: development
+      target: builder
       cache_from:
-        - ${DOCKER_REGISTRY:-}ai_foundations_lms:development
-    container_name: ia-foundations-dev
+        - ${DOCKER_REGISTRY:-}ai_foundations_lms:builder
+    container_name: ai-foundations-dev
     
     # Volumes pour le développement
     volumes:
