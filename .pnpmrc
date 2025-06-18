@@ -1,1 +1,1 @@
-allow-build = (pkg) => pkg.name === 'esbuild' || pkg.name === 'supabase'
+allow-build = (pkg) => pkg.name === 'esbuild'
