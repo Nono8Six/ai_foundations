@@ -78,6 +78,5 @@
   },
   "resolutions": {
     "esbuild": "0.25.5"
-  },
-  "packageManager": "npm@10.8.2"
+  }
 }
