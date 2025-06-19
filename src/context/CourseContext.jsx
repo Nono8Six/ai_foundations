@@ -1,127 +1,40 @@
 // src/context/CourseContext.jsx
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { supabase } from '../lib/supabase';
+import React, { createContext, useContext } from 'react';
+import { useQuery } from '@tanstack/react-query'; // Assurez-vous d'avoir installé @tanstack/react-query
 import { useAuth } from './AuthContext';
-import { safeQuery } from '../utils/supabaseClient'; // On garde safeQuery pour la sécurité
-import { logError } from './ErrorContext'; // On utilise le logger global
-import logger from '../utils/logger';
+import { logError } from './ErrorContext';
+import { fetchCoursesFromSupabase } from '../services/courseService'; // Assurez-vous que cette fonction existe et est correcte
 
 const CourseContext = createContext();
 
 export const CourseProvider = ({ children }) => {
   const { user } = useAuth();
-  const [coursesWithProgress, setCoursesWithProgress] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [userProgress, setUserProgress] = useState([]);
-  // Add state for raw lessons and modules if they need to be exposed directly and not just via fetchAllData's scope
-  const [lessons, setLessons] = useState([]);
-  const [modules, setModules] = useState([]);
 
-  const fetchAllData = useCallback(async (userId) => {
-    logger.debug(`[CourseContext] Starting data fetch for user: ${userId}`);
-    setLoading(true);
+  const queryResult = useQuery({
+    queryKey: ['courses', user?.id],
+    queryFn: () => {
+      if (!user?.id) return Promise.resolve(null); // Ne rien faire si l'utilisateur n'est pas connecté
+      return fetchCoursesFromSupabase(user.id);
+    },
+    enabled: !!user?.id, // La requête ne s'exécute que si user.id existe
+    onError: error =>
+      logError(new Error(`[CourseContext] A critical error occurred: ${error.message}`)),
+  });
 
-    try {
-      const [coursesResult, lessonsResult, modulesResult, progressResult] = await Promise.all([
-        safeQuery(() =>
-          supabase
-            .from('courses')
-            .select('id, title, cover_image_url, category, thumbnail_url')
-            .eq('is_published', true)
-        ),
-        safeQuery(() =>
-          supabase
-            .from('lessons')
-            .select('id, module_id, is_published, duration')
-            .eq('is_published', true)
-        ),
-        safeQuery(() => supabase.from('modules').select('id, course_id')),
-        safeQuery(() =>
-          supabase
-            .from('user_progress')
-            .select('lesson_id, status, completed_at') // MODIFIED
-            .eq('user_id', userId)
-        ),
-      ]);
+  // Extraction des données avec des valeurs par défaut
+  const courses = queryResult.data?.courses || [];
+  const lessons = queryResult.data?.lessons || [];
+  const modules = queryResult.data?.modules || [];
+  const userProgress = queryResult.data?.userProgress || [];
 
-      if (coursesResult.error) throw coursesResult.error;
-      if (lessonsResult.error) throw lessonsResult.error;
-      if (modulesResult.error) throw modulesResult.error;
-      if (progressResult.error) throw progressResult.error;
-
-      const coursesData = coursesResult.data;
-      const lessonsData = lessonsResult.data || []; // Use temporary variables before setting state
-      const modulesData = modulesResult.data || [];
-      const progressData = progressResult.data || [];
-
-      setLessons(lessonsData); // Set state for context
-      setModules(modulesData); // Set state for context
-      setUserProgress(progressData); // Set state for context
-
-      logger.debug('[CourseContext] Processing all data...');
-      const completedLessonIds = new Set(
-        progressData.filter(p => p.status === 'completed').map(p => p.lesson_id)
-      );
-
-      const moduleCourseMap = (modulesData || []).reduce((acc, module) => {
-        acc[module.id] = module.course_id;
-        return acc;
-      }, {});
-
-      const lessonsByCourse = (lessonsData || []).reduce((acc, lesson) => {
-        const courseId = moduleCourseMap[lesson.module_id];
-        if (!courseId) {
-          return acc;
-        }
-        if (!acc[courseId]) {
-          acc[courseId] = [];
-        }
-        acc[courseId].push(lesson.id);
-        return acc;
-      }, {});
-
-      const coursesWithStats = (coursesData || []).map(course => {
-        const courseLessonIds = lessonsByCourse[course.id] || [];
-        const progress = {
-          completed: courseLessonIds.filter(id => completedLessonIds.has(id)).length,
-          total: courseLessonIds.length,
-        };
-        return { ...course, progress };
-      });
-
-      logger.debug('[CourseContext] Data processed. Setting final state.');
-      setCoursesWithProgress(coursesWithStats);
-    } catch (error) {
-      logError(new Error(`[CourseContext] A critical error occurred in fetchAllData: ${error.message}`));
-      setCoursesWithProgress([]);
-      setLessons([]); // Reset on error
-      setModules([]); // Reset on error
-      setUserProgress([]); // Reset on error
-    } finally {
-      logger.debug('[CourseContext] Fetch process finished. Setting loading to false.');
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (user?.id) {
-      fetchAllData(user.id);
-    } else {
-      setLoading(false);
-      setCoursesWithProgress([]);
-      setUserProgress([]);
-      setLessons([]); // Reset on user logout/no user
-      setModules([]); // Reset on user logout/no user
-    }
-  }, [user, fetchAllData]);
-
+  // La valeur du contexte utilise directement les résultats de useQuery
   const value = {
-    coursesWithProgress,
-    userProgress, // Contains completed_at from user_progress table
-    lessons,      // Contains duration from lessons table
-    modules,      // Contains module data
-    loading,
-    refetchCourses: () => user?.id && fetchAllData(user.id),
+    courses,
+    userProgress,
+    lessons,
+    modules,
+    isLoading: queryResult.isLoading,
+    refetchCourses: queryResult.refetch,
   };
 
   return <CourseContext.Provider value={value}>{children}</CourseContext.Provider>;

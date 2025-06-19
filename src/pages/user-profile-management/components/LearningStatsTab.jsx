@@ -23,12 +23,14 @@ import Icon from '../../../components/AppIcon';
 
 const LearningStatsTab = () => {
   const { user, userProfile } = useAuth();
-  const { coursesWithProgress, loading: isLoading } = useCourses();
+  // On utilise la version corrigée et cohérente des variables
+  const { coursesWithProgress: courses, isLoading: coursesLoading } = useCourses();
   const { achievements } = useAchievements(user?.id, { order: 'desc' });
   const { activities } = useRecentActivity(user?.id, { limit: 50, order: 'desc' });
 
   const stats = useMemo(() => {
-    if (isLoading || !coursesWithProgress || coursesWithProgress.length === 0) {
+    // On utilise les bonnes variables ici
+    if (coursesLoading || !courses || courses.length === 0) {
       return {
         hasData: false,
         completedLessonsCount: 0,
@@ -40,7 +42,7 @@ const LearningStatsTab = () => {
       };
     }
 
-    const userProgress = coursesWithProgress.flatMap(course => 
+    const userProgress = courses.flatMap(course =>
         course.lessons?.map(lesson => lesson.progress).filter(p => p) || []
     );
 
@@ -66,7 +68,7 @@ const LearningStatsTab = () => {
     
     // --- Subject Distribution ---
     const subjects = {};
-    coursesWithProgress.forEach(course => {
+    courses.forEach(course => {
       const category = course.category || 'IA Générale';
       subjects[category] = (subjects[category] || 0) + 1;
     });
@@ -79,7 +81,7 @@ const LearningStatsTab = () => {
 
     // --- Overview Stats ---
     const totalLearningTime = Math.floor(completedLessons.length * 0.25);
-    const coursesCompleted = coursesWithProgress.filter(course => course.progress?.completed === course.progress?.total).length;
+    const coursesCompleted = courses.filter(course => course.progress?.completed === course.progress?.total).length;
     
     return {
       hasData: userProgress.length > 0,
@@ -90,12 +92,14 @@ const LearningStatsTab = () => {
       weeklyData,
       subjectData,
     };
-  }, [coursesWithProgress, activities, isLoading]);
+  // On s'assure que les dépendances du hook sont correctes
+  }, [courses, activities, coursesLoading]);
 
   const currentStreak = userProfile?.current_streak || 0;
   const currentLevel = userProfile?.level || 1;
 
-  if (isLoading) {
+  // On utilise la bonne variable pour l'état de chargement
+  if (coursesLoading) {
     return (
       <div className='flex justify-center items-center h-64'>
         <Icon name='Loader' className='animate-spin text-primary' size={40} />
