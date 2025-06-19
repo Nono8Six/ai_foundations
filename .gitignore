@@ -1,1 +1,8 @@
 node_modules
+
+# Environment files
+.env
+
+# Supabase directories
+supabase/.temp/
+supabase/.branches/
