@@ -23,11 +23,13 @@ import Icon from '../../../components/AppIcon';
 
 const LearningStatsTab = () => {
   const { user, userProfile } = useAuth();
-  const { courses, isLoading: coursesLoading } = useCourses();
+  // On utilise la version corrigée et cohérente des variables
+  const { coursesWithProgress: courses, isLoading: coursesLoading } = useCourses();
   const { achievements } = useAchievements(user?.id, { order: 'desc' });
   const { activities } = useRecentActivity(user?.id, { limit: 50, order: 'desc' });
 
   const stats = useMemo(() => {
+    // On utilise les bonnes variables ici
     if (coursesLoading || !courses || courses.length === 0) {
       return {
         hasData: false,
@@ -90,11 +92,13 @@ const LearningStatsTab = () => {
       weeklyData,
       subjectData,
     };
+  // On s'assure que les dépendances du hook sont correctes
   }, [courses, activities, coursesLoading]);
 
   const currentStreak = userProfile?.current_streak || 0;
   const currentLevel = userProfile?.level || 1;
 
+  // On utilise la bonne variable pour l'état de chargement
   if (coursesLoading) {
     return (
       <div className='flex justify-center items-center h-64'>

@@ -16,23 +16,23 @@ import Icon from '../../../components/AppIcon';
 
 const ProgressChart = () => {
   const [activeTab, setActiveTab] = useState('weekly');
-  const { userProgress, lessons, courses, modules, isLoading: coursesLoading } = useCourses();
+  
+  // On choisit la version de la branche "main", qui est la plus à jour
+  const { userProgress, lessons, courses, modules, isLoading } = useCourses();
 
-  // Call the new hook to get aggregated chart data
+  // On passe les données brutes au hook qui se charge des calculs
   const chartData = useProgressChartData(userProgress, lessons, courses, modules);
 
   const [hasData, setHasData] = useState(false);
 
   useEffect(() => {
-    // Determine if there's meaningful data to display
-    // Consider loading state as well. Data is only truly absent if not loading and chart data arrays are empty.
-    if (!coursesLoading && chartData && (chartData.weekly?.length > 0 || chartData.monthly?.length > 0)) {
+    // On s'assure que le useEffect utilise la bonne variable "isLoading"
+    if (!isLoading && chartData && (chartData.weekly?.length > 0 || chartData.monthly?.length > 0)) {
       setHasData(true);
-    } else if (!coursesLoading) {
+    } else if (!isLoading) {
       setHasData(false);
     }
-    // If still loading, hasData might remain false until data is processed.
-  }, [chartData, coursesLoading]);
+  }, [chartData, isLoading]);
 
   const getCurrentData = () => (activeTab === 'weekly' ? chartData.weekly || [] : chartData.monthly || []);
   const getXAxisKey = () => (activeTab === 'weekly' ? 'day' : 'month');
@@ -56,12 +56,11 @@ const ProgressChart = () => {
   };
 
   const tabs = [
-    { id: 'weekly', label: 'Cette semaine', icon: 'CalendarDays' }, // Updated icon name
+    { id: 'weekly', label: 'Cette semaine', icon: 'CalendarDays' },
     { id: 'monthly', label: 'Ces 6 mois', icon: 'TrendingUp' },
   ];
 
-  // Display loading indicator if coursesLoading is true
-  if (coursesLoading) {
+  if (isLoading) {
      return (
       <div className='bg-surface rounded-xl border border-border p-6 text-center'>
         <Icon name='Loader' size={32} className='mx-auto animate-spin text-primary mb-4' />
@@ -90,11 +89,10 @@ const ProgressChart = () => {
     );
   }
 
-  // Calculate totals for summary cards from the new chartData
   const currentDataSet = getCurrentData();
   const totalHours = currentDataSet.reduce((acc, item) => acc + (item.hours || 0), 0).toFixed(1);
   const totalLessons = currentDataSet.reduce((acc, item) => acc + (item.lessons || 0), 0);
-  const totalXP = currentDataSet.reduce((acc, item) => acc + (item.xp || 0), 0); // Will be 0 for now
+  const totalXP = currentDataSet.reduce((acc, item) => acc + (item.xp || 0), 0);
 
   return (
     <div className='bg-surface rounded-xl border border-border p-6'>
@@ -116,31 +114,29 @@ const ProgressChart = () => {
         </div>
       </div>
 
-      <div className='w-full h-60 sm:h-72 md:h-80'> {/* Adjusted height for responsiveness */}
+      <div className='w-full h-60 sm:h-72 md:h-80'>
         <ResponsiveContainer width='100%' height='100%'>
-          <LineChart data={getCurrentData()} margin={{ top: 5, right: 5, left: -25, bottom: 5 }}> {/* Adjusted margins */}
+          <LineChart data={getCurrentData()} margin={{ top: 5, right: 5, left: -25, bottom: 5 }}>
             <CartesianGrid strokeDasharray='3 3' stroke={colors.border} />
-            <XAxis dataKey={getXAxisKey()} tick={{ fill: colors.textSecondary, fontSize: 12 }} dy={10} /> {/* Adjusted tick properties */}
-            <YAxis tick={{ fill: colors.textSecondary, fontSize: 12 }} dx={-5} /> {/* Adjusted tick properties */}
+            <XAxis dataKey={getXAxisKey()} tick={{ fill: colors.textSecondary, fontSize: 12 }} dy={10} />
+            <YAxis tick={{ fill: colors.textSecondary, fontSize: 12 }} dx={-5} />
             <Tooltip content={<CustomTooltip />} />
             <Line type='monotone' dataKey='hours' stroke={colors.primary[500]} strokeWidth={2.5} dot={false} activeDot={{ r: 6 }} name="Heures" />
             <Line type='monotone' dataKey='lessons' stroke={colors.accent[500]} strokeWidth={2.5} dot={false} activeDot={{ r: 6 }} name="Leçons" />
-            {/* XP Line is commented out as it's always 0 for now, can be re-enabled later */}
-            {/* <Line type='monotone' dataKey='xp' stroke={colors.warning[500]} strokeWidth={2.5} dot={false} activeDot={{ r: 6 }} name="XP" /> */}
           </LineChart>
         </ResponsiveContainer>
       </div>
 
-      <div className='mt-8 grid grid-cols-1 md:grid-cols-3 gap-4'> {/* Increased mt for spacing */}
-        <div className='text-center p-4 bg-primary-50 rounded-lg border border-primary-100'> {/* Added border */}
+      <div className='mt-8 grid grid-cols-1 md:grid-cols-3 gap-4'>
+        <div className='text-center p-4 bg-primary-50 rounded-lg border border-primary-100'>
           <p className='text-sm text-text-secondary mb-1'>Temps d'étude ({activeTab === 'weekly' ? 'semaine' : '6 mois'})</p>
           <p className='text-2xl font-semibold text-primary'>{totalHours}h</p>
         </div>
-        <div className='text-center p-4 bg-accent-50 rounded-lg border border-accent-100'> {/* Added border */}
+        <div className='text-center p-4 bg-accent-50 rounded-lg border border-accent-100'>
           <p className='text-sm text-text-secondary mb-1'>Leçons terminées ({activeTab === 'weekly' ? 'semaine' : '6 mois'})</p>
           <p className='text-2xl font-semibold text-accent'>{totalLessons}</p>
         </div>
-        <div className='text-center p-4 bg-warning-50 rounded-lg border border-warning-100'> {/* Added border */}
+        <div className='text-center p-4 bg-warning-50 rounded-lg border border-warning-100'>
           <p className='text-sm text-text-secondary mb-1'>XP gagnés ({activeTab === 'weekly' ? 'semaine' : '6 mois'})</p>
           <p className='text-2xl font-semibold text-warning'>{totalXP}</p>
         </div>
