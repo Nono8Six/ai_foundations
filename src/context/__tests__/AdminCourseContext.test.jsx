@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import React from 'react';
 import { renderHook, act } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 var fromMock;
 vi.mock('../../lib/supabase', () => {
@@ -30,9 +31,17 @@ vi.mock('../../utils/supabaseClient', () => {
   return { safeQuery: safeQueryMock };
 });
 
+vi.mock('../AuthContext', () => ({
+  useAuth: () => ({ user: { id: 'u1' } }),
+}));
+
 import { AdminCourseProvider, useAdminCourses } from '../AdminCourseContext.jsx';
 
-const wrapper = ({ children }) => <AdminCourseProvider>{children}</AdminCourseProvider>;
+const wrapper = ({ children }) => (
+  <QueryClientProvider client={new QueryClient()}>
+    <AdminCourseProvider>{children}</AdminCourseProvider>
+  </QueryClientProvider>
+);
 
 describe('AdminCourseContext', () => {
   beforeEach(() => {
