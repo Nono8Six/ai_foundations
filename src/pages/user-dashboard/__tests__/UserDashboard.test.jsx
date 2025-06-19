@@ -22,9 +22,9 @@ vi.mock('../../../context/AuthContext', () => ({
 
 vi.mock('../../../context/CourseContext', () => ({
   useCourses: () => ({
-    coursesWithProgress: [],
+    courses: [],
     userProgress: [],
-    loading: false,
+    isLoading: false,
   }),
 }));
 

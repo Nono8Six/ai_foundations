@@ -1,4 +1,5 @@
 import { supabase } from '../lib/supabase';
+import { safeQuery } from '../utils/supabaseClient';
 
 export async function fetchCourses({ search = '', filters = {}, sortBy = 'popularity', page = 1, pageSize = 12 } = {}) {
   let query = supabase
@@ -70,4 +71,76 @@ export async function fetchCoursesWithContent() {
     .order('created_at');
   if (error) throw error;
   return data || [];
+}
+
+export async function fetchCoursesFromSupabase(userId) {
+  const [coursesResult, lessonsResult, modulesResult, progressResult] =
+    await Promise.all([
+      safeQuery(() =>
+        supabase
+          .from('courses')
+          .select('id, title, cover_image_url, category, thumbnail_url')
+          .eq('is_published', true)
+      ),
+      safeQuery(() =>
+        supabase
+          .from('lessons')
+          .select('id, module_id, is_published, duration')
+          .eq('is_published', true)
+      ),
+      safeQuery(() => supabase.from('modules').select('id, course_id')),
+      safeQuery(() =>
+        supabase
+          .from('user_progress')
+          .select('lesson_id, status, completed_at')
+          .eq('user_id', userId)
+      ),
+    ]);
+
+  if (coursesResult.error) throw coursesResult.error;
+  if (lessonsResult.error) throw lessonsResult.error;
+  if (modulesResult.error) throw modulesResult.error;
+  if (progressResult.error) throw progressResult.error;
+
+  const coursesData = coursesResult.data || [];
+  const lessonsData = lessonsResult.data || [];
+  const modulesData = modulesResult.data || [];
+  const progressData = progressResult.data || [];
+
+  const completedLessonIds = new Set(
+    progressData.filter(p => p.status === 'completed').map(p => p.lesson_id)
+  );
+
+  const moduleCourseMap = modulesData.reduce((acc, module) => {
+    acc[module.id] = module.course_id;
+    return acc;
+  }, {});
+
+  const lessonsByCourse = lessonsData.reduce((acc, lesson) => {
+    const courseId = moduleCourseMap[lesson.module_id];
+    if (!courseId) {
+      return acc;
+    }
+    if (!acc[courseId]) {
+      acc[courseId] = [];
+    }
+    acc[courseId].push(lesson.id);
+    return acc;
+  }, {});
+
+  const coursesWithStats = coursesData.map(course => {
+    const courseLessonIds = lessonsByCourse[course.id] || [];
+    const progress = {
+      completed: courseLessonIds.filter(id => completedLessonIds.has(id)).length,
+      total: courseLessonIds.length,
+    };
+    return { ...course, progress };
+  });
+
+  return {
+    courses: coursesWithStats,
+    lessons: lessonsData,
+    modules: modulesData,
+    userProgress: progressData,
+  };
 }

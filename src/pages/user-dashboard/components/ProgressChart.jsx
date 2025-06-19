@@ -16,10 +16,10 @@ import Icon from '../../../components/AppIcon';
 
 const ProgressChart = () => {
   const [activeTab, setActiveTab] = useState('weekly');
-  const { userProgress, lessons, coursesWithProgress, modules, loading: coursesLoading } = useCourses();
+  const { userProgress, lessons, courses, modules, isLoading: coursesLoading } = useCourses();
 
   // Call the new hook to get aggregated chart data
-  const chartData = useProgressChartData(userProgress, lessons, coursesWithProgress, modules);
+  const chartData = useProgressChartData(userProgress, lessons, courses, modules);
 
   const [hasData, setHasData] = useState(false);
 
