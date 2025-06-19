@@ -10,7 +10,7 @@ export default defineConfig({
     include: ['**/*.test.{js,jsx}'],
     threads: false,
     poolOptions: {
-      threads: {
+      vmThreads: {
         memoryLimit: 256
       }
     }
