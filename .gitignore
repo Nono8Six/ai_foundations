@@ -10,3 +10,6 @@ supabase/.branches/
 # Removed docs
 AGENTS.md
 REFACTORING_PLAN.md
+
+/docs/bundle/*.html
+*.map
