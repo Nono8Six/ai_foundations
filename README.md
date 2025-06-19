@@ -23,7 +23,7 @@ Une plateforme complète pour les cours sur les Fondations de l'IA, construite a
 
 1. **Installer les dépendances**
    ```bash
-   npm install
+   pnpm install
    ```
 
 2. **Configurer les variables d'environnement**
@@ -40,7 +40,7 @@ Une plateforme complète pour les cours sur les Fondations de l'IA, construite a
 
 4. **Démarrer le serveur de développement**
    ```bash
-   npm run dev
+   pnpm dev
    ```
 
 ## 🛠 Commandes Docker utiles
@@ -196,7 +196,7 @@ Toutes les tables sensibles utilisent la Row Level Security. La liste complète 
 
 Un workflow GitHub Actions situé dans `.github/workflows/nodeci.yml` vérifie le projet à chaque `push` :
 
-1. `npm install`
+1. `pnpm install`
 2. `npm run lint`
 3. `npm test`
 4. `npm run build`
