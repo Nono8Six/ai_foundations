@@ -7,6 +7,31 @@ export type Json =
   | Json[]
 
 export type Database = {
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          query?: string
+          extensions?: Json
+          operationName?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
       achievements: {
@@ -580,9 +605,9 @@ export type Database = {
       update_user_settings: {
         Args: { settings_data: Json; user_id?: string }
         Returns: {
-          notification_settings: Json
           privacy_settings: Json
           learning_preferences: Json
+          notification_settings: Json
         }[]
       }
     }
@@ -705,6 +730,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       achievement_rarity: ["common", "uncommon", "rare", "epic", "legendary"],
@@ -715,3 +743,4 @@ export const Constants = {
     },
   },
 } as const
+

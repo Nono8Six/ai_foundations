@@ -1,0 +1,135 @@
+# 🏆 Supabase x GitHub x Types – Le Workflow MASTERCLASS
+
+Ce guide est votre source de vérité pour garder votre projet `ai_foundations` parfaitement synchronisé entre votre machine locale, votre dépôt GitHub et votre base de données Supabase en ligne. Suivez ces workflows pour éviter les conflits et travailler de manière professionnelle.
+
+### 📖 Principes Fondamentaux (Les 3 Règles d'Or)
+
+1.  **Le Code est Roi** : Les fichiers dans votre dossier `/supabase/migrations` sont la **seule source de vérité** pour la structure de votre base de données. La base de données en ligne (sur supabase.com) n'est qu'un reflet de ce code.
+2.  **Les Types Suivent le Schéma** : Le fichier `src/types/database.types.ts` doit **TOUJOURS** être mis à jour après la moindre modification du schéma (une nouvelle table, une colonne, une `policy`...). C'est le pont entre votre base de données et votre code React.
+3.  **Tout est Versionné** : Chaque modification de schéma (un nouveau fichier de migration) et chaque mise à jour des types **doit être commitée sur Git**. Il ne doit jamais y avoir de changement "caché" sur le cloud ou oublié sur une machine.
+
+---
+
+### 🛠️ Les Commandes Essentielles à Connaître
+
+| Commande                                                                 | Quand l'utiliser ?                                                                |
+| ------------------------------------------------------------------------ | --------------------------------------------------------------------------------- |
+| `supabase start`                                                         | Pour démarrer l'environnement Supabase complet sur votre machine (via Docker).    |
+| `supabase db reset`                                                      | Pour détruire et recréer votre base de données locale en appliquant **toutes** les migrations. Idéal après un `git pull` ou pour tester une migration. |
+| `supabase migration new <nom_descriptif>`                                | Pour créer un nouveau fichier de migration SQL vide.                            |
+| `supabase db push`                                                       | Pour appliquer les nouvelles migrations (celles qui ne sont pas déjà sur le cloud) sur votre **vraie base de données Supabase en ligne**. |
+| `supabase db pull`                                                       | Pour détecter les changements faits sur le **tableau de bord en ligne** et créer automatiquement un fichier de migration local correspondant. |
+| `pnpm gen:types`                                                         | Votre script qui lance `supabase gen types typescript --local ...`. À utiliser après tout changement de schéma local. |
+
+---
+
+### ⚡ Scénarios Concrets : Le Workflow Idéal pour Chaque Situation
+
+Voici le guide pas à pas pour les cas de figure que vous allez rencontrer.
+
+#### A. Le Cas Standard : Développement "Local-First"
+* **Quand ?** Vous voulez ajouter une nouvelle table, une fonction, une RLS policy. C'est la méthode la plus sûre et la plus professionnelle.
+
+1.  **Démarrez l'environnement local** (si ce n'est pas déjà fait) :
+    ```sh
+    supabase start
+    ```
+2.  **Créez un fichier de migration** avec un nom clair :
+    ```sh
+    supabase migration new add_bio_to_profiles
+    ```
+3.  **Écrivez votre code SQL** dans le nouveau fichier créé dans `/supabase/migrations`.
+4.  **Appliquez et testez** en réinitialisant votre base locale. C'est le test ultime pour vérifier que votre migration fonctionne sur une base propre :
+    ```sh
+    supabase db reset
+    ```
+5.  **Mettez vos types à jour** pour que TypeScript connaisse la nouvelle structure :
+    ```sh
+    pnpm gen:types
+    ```
+6.  **Déployez sur le cloud** quand vous êtes sûr de vous :
+    ```sh
+    supabase db push
+    ```
+7.  **Commitez votre travail** :
+    ```sh
+    git add .
+    git commit -m "feat(db): add bio column to profiles table"
+    git push
+    ```
+
+---
+
+#### B. Le Cas "Modification Rapide" : via le Tableau de Bord Supabase
+* **Quand ?** Vous avez la flemme et vous ajoutez une colonne directement depuis l'interface web de supabase.com.
+
+1.  Faites votre modification sur l'interface de Supabase.
+2.  **IMMÉDIATEMENT APRÈS**, retournez sur votre terminal et synchronisez votre code local :
+    ```sh
+    supabase db pull
+    ```
+    *(Cette commande magique crée le fichier de migration pour vous !)*
+3.  Mettez à jour les types pour refléter ce changement :
+    ```sh
+    pnpm gen:types
+    ```
+4.  **Commitez immédiatement** pour garder votre historique Git propre :
+    ```sh
+    git add .
+    git commit -m "chore(db): sync new column added via dashboard"
+    git push
+    ```
+
+---
+
+#### C. Le Cas "Codex" : Collaboration via une IA et GitHub
+* **Quand ?** OpenAI Codex (ou un autre développeur) a fait un `push` sur GitHub avec de nouveaux fichiers de migration, mais n'a **pas** lancé `supabase db push`. La base cloud n'est donc pas à jour.
+
+1.  **Récupérez les changements** depuis GitHub :
+    ```sh
+    git pull origin main
+    ```
+2.  **Appliquez les nouvelles migrations** sur votre base de données locale pour vérifier que tout fonctionne et que votre environnement est à jour. C'est une étape de validation cruciale.
+    ```sh
+    supabase db reset
+    ```
+3.  **Générez les types** pour que votre code React soit synchronisé :
+    ```sh
+    pnpm gen:types
+    ```
+4.  **Déployez les migrations sur le cloud**. C'est votre rôle de finaliser le travail de l'IA/du collaborateur.
+    ```sh
+    supabase db push
+    ```
+5.  (Optionnel mais recommandé) Commitez les types mis à jour si `pnpm gen:types` a détecté des changements.
+    ```sh
+    git add src/types/database.types.ts
+    git commit -m "chore: regenerate types after applying new migrations"
+    git push
+    ```
+
+---
+
+#### D. Le Cas "Classique" : Après un `git pull` d'un collègue
+* **Quand ?** Vous récupérez du code et vous voyez que de nouveaux fichiers de migration sont arrivés.
+
+1.  **Mettez votre environnement local à jour** en ré-appliquant TOUTES les migrations. C'est la seule façon d'être certain que votre base locale reflète 100% du code.
+    ```sh
+    git pull
+    supabase db reset
+    ```
+2.  **Mettez vos types à jour** :
+    ```sh
+    pnpm gen:types
+    ```
+
+---
+
+### ❗ Ce qu’il ne faut JAMAIS faire
+
+* **Modifier la base cloud ET la base locale en même temps sans synchroniser**. C'est la recette pour un désastre et des conflits de migration.
+* **Modifier un ancien fichier de migration**. Une fois qu'une migration est écrite et partagée, considérez-la comme immuable. Si vous devez annuler un changement, créez une *nouvelle* migration qui le fait.
+* **Oublier de commiter le fichier `pnpm-lock.yaml` ou `database.types.ts`**. Ces fichiers sont aussi importants que votre code source pour la reproductibilité.
+* **Laisser Codex ou un bot créer et merger des migrations sans les vérifier et les `push` sur Supabase vous-même**. L'IA propose, le développeur dispose (et déploie).
+
+En suivant ce guide, Arnaud, vous devriez pouvoir gérer votre projet avec la rigueur d'un lead dev, même en collaborant avec des IA. Bon codage !
