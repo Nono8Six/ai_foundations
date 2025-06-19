@@ -24,6 +24,9 @@ const mockModules = [
 ];
 
 describe('useProgressChartData', () => {
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
   it('should return empty arrays when userProgress is empty', () => {
     const { result } = renderHook(() => useProgressChartData([], mockLessons, mockCourses, mockModules));
     expect(result.current.weekly).toEqual([]);

@@ -38,6 +38,9 @@ vi.mock('../../../../context/AuthContext', () => ({
 import SettingsTab from '../SettingsTab.jsx';
 
 describe('SettingsTab', () => {
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
   it('loads and displays user settings', async () => {
     render(<SettingsTab userData={{}} />);
     await waitFor(() => expect(mockGetUserSettings).toHaveBeenCalled());

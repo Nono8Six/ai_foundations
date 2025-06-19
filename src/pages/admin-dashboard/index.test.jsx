@@ -30,6 +30,10 @@ describe('AdminDashboard', () => {
     vi.clearAllMocks();
   });
 
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
   test('renders loading state initially and then displays fetched data', async () => {
     supabase.from
       .mockReturnValueOnce(createBuilder({ count: 100, error: null }))

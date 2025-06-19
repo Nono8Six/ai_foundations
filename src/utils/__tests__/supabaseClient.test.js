@@ -3,6 +3,9 @@ import { safeQuery } from '../supabaseClient';
 import * as ErrorContext from '../../context/ErrorContext';
 
 describe('safeQuery', () => {
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
   it('returns data when query succeeds', async () => {
     vi.spyOn(ErrorContext, 'logError').mockImplementation(() => {});
     const result = await safeQuery(() => Promise.resolve({ data: 'ok', error: null }));

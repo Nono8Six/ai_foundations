@@ -7,6 +7,12 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: './src/setupTests.ts',
-    include: ['**/*.test.{js,jsx,ts,tsx}']
+    include: ['**/*.test.{js,jsx,ts,tsx}'],
+    threads: false,
+    poolOptions: {
+      threads: {
+        memoryLimit: 256
+      }
+    }
   }
 });

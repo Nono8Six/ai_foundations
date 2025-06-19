@@ -39,6 +39,7 @@ describe('UserEngagementChart', () => {
   });
 
   afterEach(() => {
+    vi.clearAllMocks();
     vi.useRealTimers(); // Restore real timers
   });
 

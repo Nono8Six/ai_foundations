@@ -8,6 +8,9 @@ import GeographicDistribution from './GeographicDistribution';
 vi.mock('../../../components/AppIcon', () => ({ default: ({ name, size, className }) => <svg data-testid={`icon-${name}`} className={className} width={size} height={size}></svg> }));
 
 describe('GeographicDistribution', () => {
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
   test('renders "data unavailable" message', () => {
     render(<GeographicDistribution />);
 

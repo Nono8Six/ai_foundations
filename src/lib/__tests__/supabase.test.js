@@ -15,6 +15,7 @@ describe('supabase client initialization', () => {
     process.env.VITE_SUPABASE_ANON_KEY = originalKey;
     vi.unstubAllEnvs();
     vi.resetModules();
+    vi.clearAllMocks();
   });
 
   it('throws an error when required env vars are missing', async () => {

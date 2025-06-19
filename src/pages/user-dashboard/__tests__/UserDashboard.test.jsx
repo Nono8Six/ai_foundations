@@ -62,6 +62,9 @@ vi.mock('../components/ProgressChart', () => ({
 import UserDashboard from '../index.jsx';
 
 describe('UserDashboard', () => {
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
   it('renders achievement carousel', () => {
     render(
       <MemoryRouter>
