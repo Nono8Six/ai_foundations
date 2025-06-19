@@ -1,26 +1,27 @@
 // src/lib/__mocks__/supabase.js
+import { vi } from 'vitest';
 
 // Define a flexible mock for the Supabase query builder chain
 const mockQueryBuilder = (resolveData = { data: null, error: null, count: null }) => ({
-  select: jest.fn().mockReturnThis(),
-  insert: jest.fn().mockResolvedValue(resolveData), // Assuming insert might be used elsewhere
-  update: jest.fn().mockResolvedValue(resolveData), // Assuming update might be used elsewhere
-  delete: jest.fn().mockResolvedValue(resolveData), // Assuming delete might be used elsewhere
-  eq: jest.fn().mockReturnThis(),
-  neq: jest.fn().mockReturnThis(),
-  gt: jest.fn().mockReturnThis(),
-  gte: jest.fn().mockReturnThis(),
-  lt: jest.fn().mockReturnThis(),
-  lte: jest.fn().mockReturnThis(),
-  in: jest.fn().mockReturnThis(),
-  is: jest.fn().mockReturnThis(),
-  order: jest.fn().mockReturnThis(),
-  limit: jest.fn().mockReturnThis(),
-  range: jest.fn().mockReturnThis(),
-  single: jest.fn().mockResolvedValue(resolveData), // For queries expecting a single row
+  select: vi.fn().mockReturnThis(),
+  insert: vi.fn().mockResolvedValue(resolveData), // Assuming insert might be used elsewhere
+  update: vi.fn().mockResolvedValue(resolveData), // Assuming update might be used elsewhere
+  delete: vi.fn().mockResolvedValue(resolveData), // Assuming delete might be used elsewhere
+  eq: vi.fn().mockReturnThis(),
+  neq: vi.fn().mockReturnThis(),
+  gt: vi.fn().mockReturnThis(),
+  gte: vi.fn().mockReturnThis(),
+  lt: vi.fn().mockReturnThis(),
+  lte: vi.fn().mockReturnThis(),
+  in: vi.fn().mockReturnThis(),
+  is: vi.fn().mockReturnThis(),
+  order: vi.fn().mockReturnThis(),
+  limit: vi.fn().mockReturnThis(),
+  range: vi.fn().mockReturnThis(),
+  single: vi.fn().mockResolvedValue(resolveData), // For queries expecting a single row
   // Mock the promise resolution for general select queries
   // This allows us to use await supabase.from(...).select(...)
-  then: jest.fn(function (onFulfilled, onRejected) {
+  then: vi.fn(function (onFulfilled, onRejected) {
     // If this.mockResolvedValueOnce has been called, use its value
     if (this.mockResolvedValue) {
         return Promise.resolve(this.mockResolvedValue).then(onFulfilled, onRejected);
@@ -37,9 +38,9 @@ const mockQueryBuilder = (resolveData = { data: null, error: null, count: null }
 
 // The main Supabase client mock
 export const supabase = {
-  from: jest.fn(() => mockQueryBuilder()), // Default behavior
+  from: vi.fn(() => mockQueryBuilder()), // Default behavior
   // Mock rpc if needed
-  // rpc: jest.fn().mockResolvedValue({ data: null, error: null }),
+  // rpc: vi.fn().mockResolvedValue({ data: null, error: null }),
 };
 
 // Helper to reset mocks and set specific resolutions for chained calls
