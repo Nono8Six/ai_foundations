@@ -63,7 +63,7 @@
     "eslint": "^9.27.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-react": "^7.33.0",
-    "globals": "^16.2.0",
+    "globals": "16.2.0",
     "jsdom": "^22.1.0",
     "postcss": "^8.4.38",
     "postcss-import": "^16.1.0",

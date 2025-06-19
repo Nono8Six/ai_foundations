@@ -82,7 +82,7 @@ importers:
         specifier: ^7.33.0
         version: 7.37.5(eslint@9.29.0(jiti@1.21.7))
       globals:
-        specifier: ^16.2.0
+        specifier: 16.2.0
         version: 16.2.0
       jsdom:
         specifier: ^22.1.0
