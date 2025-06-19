@@ -42,7 +42,7 @@ const UserDashboard = () => {
     if (inProgressCourse) {
       return {
         title: `Continuer ${inProgressCourse.title}`,
-        href: `/parcours/${inProgressCourse.id}`,
+        href: `/programmes/${inProgressCourse.id}`,
       };
     }
 
@@ -50,14 +50,14 @@ const UserDashboard = () => {
     if (unstartedCourse) {
       return {
         title: `Commencer ${unstartedCourse.title}`,
-        href: `/parcours/${unstartedCourse.id}`,
+        href: `/programmes/${unstartedCourse.id}`,
       };
     }
     
     if (coursesWithProgress.length > 0) {
         return {
           title: `Revoir ${coursesWithProgress[0].title}`,
-          href: `/parcours/${coursesWithProgress[0].id}`,
+          href: `/programmes/${coursesWithProgress[0].id}`,
         };
     }
     return null;
@@ -211,7 +211,7 @@ const UserDashboard = () => {
                               </div>
                             </div>
                             <Link
-                              to={`/parcours/${course.id}`}
+                              to={`/programmes/${course.id}`}
                               className='mt-4 w-full text-center bg-primary-500 text-white rounded-lg py-2 px-4 inline-block hover:bg-primary-600 transition-colors'
                             >
                               {progressPercentage === 100 ? 'Revoir' : 'Continuer'}
