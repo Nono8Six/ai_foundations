@@ -6,3 +6,7 @@ node_modules
 # Supabase directories
 supabase/.temp/
 supabase/.branches/
+
+# Removed docs
+AGENTS.md
+REFACTORING_PLAN.md
