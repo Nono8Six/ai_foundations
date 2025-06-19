@@ -1,4 +1,4 @@
-// src/context/AuthContext.jsx
+// src/context/AuthContext.tsx
 import React, {
   createContext,
   useState,
@@ -6,6 +6,7 @@ import React, {
   useContext,
   useCallback,
 } from 'react';
+import type { UserProfile } from '../types/user';
 import { supabase } from '../lib/supabase';
 import { safeQuery } from '../utils/supabaseClient';
 import { useNavigate } from 'react-router-dom';
@@ -17,7 +18,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [userProfile, setUserProfile] = useState(null);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
