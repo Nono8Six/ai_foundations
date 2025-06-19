@@ -83,6 +83,12 @@ const UserEngagementChart = ({ timeRange }) => {
           throw error;
         }
 
+        if (!sessions || sessions.length === 0) {
+          setEngagementData([]);
+          setSummaryStats({ peakUsers: 0, averageSessions: 0 });
+          return;
+        }
+
         let processedData = [];
         // Initialize buckets
         if (currentTimeRange === '24h') {
