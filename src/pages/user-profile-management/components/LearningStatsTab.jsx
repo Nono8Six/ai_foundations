@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { colors } from '../../../utils/theme';
 import {
   BarChart,
@@ -113,13 +114,13 @@ const LearningStatsTab = () => {
           <p className='text-text-secondary mb-6'>
             Vos statistiques d'apprentissage apparaîtront ici une fois que vous aurez commencé des cours.
           </p>
-          <a
-            href='/programmes'
+          <Link
+            to='/programmes'
             className='inline-flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors'
           >
             <Icon name='BookOpen' size={20} className='mr-2' />
             Découvrir les cours
-          </a>
+          </Link>
         </div>
     );
   }
