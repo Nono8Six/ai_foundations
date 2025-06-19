@@ -34,6 +34,7 @@ class ErrorBoundary extends React.Component {
                 height='42px'
                 viewBox='0 0 32 33'
                 fill='none'
+                aria-hidden='true'
               >
                 <path
                   d='M16 28.5C22.6274 28.5 28 23.1274 28 16.5C28 9.87258 22.6274 4.5 16 4.5C9.37258 4.5 4 9.87258 4 16.5C4 23.1274 9.37258 28.5 16 28.5Z'

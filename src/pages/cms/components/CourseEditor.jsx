@@ -4,6 +4,7 @@ import Image from '../../../components/AppImage';
 import Button from '../../../components/ui/Button';
 import TextInput from '../../../components/ui/TextInput';
 import Card from '../../../components/ui/Card';
+import Spinner from '../../../components/ui/Spinner';
 import { uploadToBucket, BUCKETS } from '../../../services/storageService';
 import logger from '../../../utils/logger';
 
@@ -23,6 +24,7 @@ const CourseEditor = ({ course, onSave, onDelete }) => {
 
   const [errors, setErrors] = useState({});
   const [isUploading, setIsUploading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -50,9 +52,13 @@ const CourseEditor = ({ course, onSave, onDelete }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSave = () => {
-    if (validateForm()) {
-      onSave({ ...course, ...formData });
+  const handleSave = async () => {
+    if (!validateForm()) return;
+    setIsSaving(true);
+    try {
+      await onSave({ ...course, ...formData });
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -110,9 +116,13 @@ const CourseEditor = ({ course, onSave, onDelete }) => {
               {formData.status === 'published' ? 'Publié' : 'Brouillon'}
             </Button>
 
-            <Button onClick={handleSave} className='px-6 py-2'>
-              <Icon name='Save' size={16} className='mr-2' />
-              Enregistrer
+            <Button onClick={handleSave} disabled={isSaving} className='px-6 py-2'>
+              {isSaving ? (
+                <Spinner size={16} className='mr-2' />
+              ) : (
+                <Icon name='Save' size={16} className='mr-2' />
+              )}
+              {isSaving ? 'Enregistrement...' : 'Enregistrer'}
             </Button>
           </div>
         </div>

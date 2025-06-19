@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import Icon from '../../../components/AppIcon';
+import Button from '../../../components/ui/Button';
+import Spinner from '../../../components/ui/Spinner';
 
 const ModuleEditor = ({ module, onSave, onDelete }) => {
   const [formData, setFormData] = useState({
@@ -12,6 +14,7 @@ const ModuleEditor = ({ module, onSave, onDelete }) => {
   });
 
   const [errors, setErrors] = useState({});
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -35,9 +38,13 @@ const ModuleEditor = ({ module, onSave, onDelete }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSave = () => {
-    if (validateForm()) {
-      onSave({ ...module, ...formData });
+  const handleSave = async () => {
+    if (!validateForm()) return;
+    setIsSaving(true);
+    try {
+      await onSave({ ...module, ...formData });
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -56,13 +63,14 @@ const ModuleEditor = ({ module, onSave, onDelete }) => {
           </div>
 
           <div className='flex items-center space-x-3'>
-            <button
-              onClick={handleSave}
-              className='px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors duration-200 font-medium'
-            >
-              <Icon name='Save' size={16} className='mr-2' />
-              Enregistrer
-            </button>
+            <Button onClick={handleSave} disabled={isSaving} className='px-6 py-2 bg-primary text-white hover:bg-primary-700'>
+              {isSaving ? (
+                <Spinner size={16} className='mr-2' />
+              ) : (
+                <Icon name='Save' size={16} className='mr-2' />
+              )}
+              {isSaving ? 'Enregistrement...' : 'Enregistrer'}
+            </Button>
           </div>
         </div>
 
