@@ -143,30 +143,25 @@ function Icon({
   color = 'currentColor',
   className = '',
   strokeWidth = 2,
+  'aria-label': ariaLabel,
   ...props
 }) {
   const IconComponent = icons[name];
 
+  const commonProps = {
+    size,
+    color,
+    strokeWidth,
+    className,
+    'aria-label': ariaLabel,
+    'aria-hidden': ariaLabel ? undefined : true,
+    ...props,
+  };
+
   if (!IconComponent) {
-    return (
-      <HelpCircle
-        size={size}
-        color='gray'
-        strokeWidth={strokeWidth}
-        className={className}
-        {...props}
-      />
-    );
+    return <HelpCircle {...commonProps} color='gray' />;
   }
 
-  return (
-    <IconComponent
-      size={size}
-      color={color}
-      strokeWidth={strokeWidth}
-      className={className}
-      {...props}
-    />
-  );
+  return <IconComponent {...commonProps} />;
 }
 export default Icon;
