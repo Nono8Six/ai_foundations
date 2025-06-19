@@ -153,7 +153,7 @@ describe('UserEngagementChart', () => {
 
   test('handles error during Supabase fetch', async () => {
     supabase.from.mockReturnValueOnce(createBuilder({ data: null, error: { message: 'DB error' } }));
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     render(<UserEngagementChart timeRange="24h" />);
 

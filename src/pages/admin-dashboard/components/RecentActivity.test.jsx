@@ -20,11 +20,11 @@ describe('RecentActivity', () => {
     // Ensure each call to `from` returns a new chainable mock with its own resolution capability
     // This setup relies on the global __mocks__/supabase.js structure
     const mockBuilderInstance = {
-        select: jest.fn().mockReturnThis(),
-        order: jest.fn().mockReturnThis(),
-        limit: jest.fn().mockReturnThis(),
+        select: vi.fn().mockReturnThis(),
+        order: vi.fn().mockReturnThis(),
+        limit: vi.fn().mockReturnThis(),
         // This 'then' function will be called when the promise resolves
-        then: jest.fn(function(callback) {
+        then: vi.fn(function(callback) {
             // Access the mockResolvedValue that was set on this instance
             if (this.mockResolvedValue) {
                 return Promise.resolve(this.mockResolvedValue).then(callback);
