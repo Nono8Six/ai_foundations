@@ -1,7 +1,10 @@
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import React from 'react';
 import { render, waitForElementToBeRemoved, screen } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
+
+const queryClient = new QueryClient();
 
 // Mock AuthContext to always return a user
 vi.mock('../AuthContext', () => ({
@@ -67,13 +70,22 @@ vi.mock('../../utils/supabaseClient', () => {
   return { safeQuery: safeQueryMock };
 });
 
+vi.mock('../fetchCoursesFromSupabase', () => ({
+  fetchCoursesFromSupabase: vi.fn(async () => ({
+    courses: coursesData,
+    lessons: lessonsData,
+    modules: modulesData,
+    user_progress: progressData,
+  })),
+}));
+
 import { CourseProvider, useCourses } from '../CourseContext.jsx';
 
 const Consumer = () => {
-  const { coursesWithProgress, loading } = useCourses();
+  const { coursesWithProgress, isLoading } = useCourses();
   return (
     <div>
-      {loading && <span data-testid='loading'>loading</span>}
+      {isLoading && <span data-testid='loading'>loading</span>}
       <pre data-testid='courses'>{JSON.stringify(coursesWithProgress)}</pre>
     </div>
   );
@@ -91,9 +103,11 @@ describe('fetchAllData', () => {
 
   it('calculates progress per course using modules', async () => {
     render(
-      <CourseProvider>
-        <Consumer />
-      </CourseProvider>
+      <QueryClientProvider client={queryClient}>
+        <CourseProvider>
+          <Consumer />
+        </CourseProvider>
+      </QueryClientProvider>
     );
 
     await waitForElementToBeRemoved(() => screen.queryByTestId('loading'));

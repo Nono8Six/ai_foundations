@@ -121,6 +121,7 @@ export const CourseProvider = ({ children }) => {
     lessons,      // Contains duration from lessons table
     modules,      // Contains module data
     loading,
+    isLoading: loading,
     refetchCourses: () => user?.id && fetchAllData(user.id),
   };
 
