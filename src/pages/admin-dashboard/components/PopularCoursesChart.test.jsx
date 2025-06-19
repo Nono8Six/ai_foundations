@@ -114,7 +114,7 @@ describe('PopularCoursesChart', () => {
   });
 
   test('handles error when fetching courses', async () => {
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     supabase.from
       .mockReturnValueOnce(createBuilder({ data: null, error: { message: 'Courses fetch error' } }))
       .mockReturnValueOnce(createBuilder({ data: [], error: null }));
@@ -132,7 +132,7 @@ describe('PopularCoursesChart', () => {
     const courses = [
       { id: 1, title: 'Course A', is_published: true, modules: [{ id: 10, lessons: [{ id: 101 }] }] }
     ];
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     supabase.from
       .mockReturnValueOnce(createBuilder({ data: courses, error: null }))
       .mockReturnValueOnce(createBuilder({ data: null, error: { message: 'Progress fetch error' } }));
