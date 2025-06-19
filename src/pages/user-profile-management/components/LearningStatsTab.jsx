@@ -23,12 +23,12 @@ import Icon from '../../../components/AppIcon';
 
 const LearningStatsTab = () => {
   const { user, userProfile } = useAuth();
-  const { coursesWithProgress, loading: coursesLoading } = useCourses();
+  const { coursesWithProgress, loading: isLoading } = useCourses();
   const { achievements } = useAchievements(user?.id, { order: 'desc' });
   const { activities } = useRecentActivity(user?.id, { limit: 50, order: 'desc' });
 
   const stats = useMemo(() => {
-    if (coursesLoading || !coursesWithProgress || coursesWithProgress.length === 0) {
+    if (isLoading || !coursesWithProgress || coursesWithProgress.length === 0) {
       return {
         hasData: false,
         completedLessonsCount: 0,
@@ -90,12 +90,12 @@ const LearningStatsTab = () => {
       weeklyData,
       subjectData,
     };
-  }, [coursesWithProgress, activities, coursesLoading]);
+  }, [coursesWithProgress, activities, isLoading]);
 
   const currentStreak = userProfile?.current_streak || 0;
   const currentLevel = userProfile?.level || 1;
 
-  if (coursesLoading) {
+  if (isLoading) {
     return (
       <div className='flex justify-center items-center h-64'>
         <Icon name='Loader' className='animate-spin text-primary' size={40} />

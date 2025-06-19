@@ -16,7 +16,13 @@ import Icon from '../../../components/AppIcon';
 
 const ProgressChart = () => {
   const [activeTab, setActiveTab] = useState('weekly');
-  const { userProgress, lessons, coursesWithProgress, modules, loading: coursesLoading } = useCourses();
+  const {
+    userProgress,
+    lessons,
+    coursesWithProgress,
+    modules,
+    loading: isLoading,
+  } = useCourses();
 
   // Call the new hook to get aggregated chart data
   const chartData = useProgressChartData(userProgress, lessons, coursesWithProgress, modules);
@@ -26,13 +32,13 @@ const ProgressChart = () => {
   useEffect(() => {
     // Determine if there's meaningful data to display
     // Consider loading state as well. Data is only truly absent if not loading and chart data arrays are empty.
-    if (!coursesLoading && chartData && (chartData.weekly?.length > 0 || chartData.monthly?.length > 0)) {
+    if (!isLoading && chartData && (chartData.weekly?.length > 0 || chartData.monthly?.length > 0)) {
       setHasData(true);
-    } else if (!coursesLoading) {
+    } else if (!isLoading) {
       setHasData(false);
     }
     // If still loading, hasData might remain false until data is processed.
-  }, [chartData, coursesLoading]);
+  }, [chartData, isLoading]);
 
   const getCurrentData = () => (activeTab === 'weekly' ? chartData.weekly || [] : chartData.monthly || []);
   const getXAxisKey = () => (activeTab === 'weekly' ? 'day' : 'month');
@@ -60,8 +66,8 @@ const ProgressChart = () => {
     { id: 'monthly', label: 'Ces 6 mois', icon: 'TrendingUp' },
   ];
 
-  // Display loading indicator if coursesLoading is true
-  if (coursesLoading) {
+  // Display loading indicator if isLoading is true
+  if (isLoading) {
      return (
       <div className='bg-surface rounded-xl border border-border p-6 text-center'>
         <Icon name='Loader' size={32} className='mx-auto animate-spin text-primary mb-4' />

@@ -18,7 +18,7 @@ const UserDashboard = () => {
   const navigate = useNavigate();
 
   const { userProfile, user } = useAuth();
-  const { coursesWithProgress, loading } = useCourses();
+  const { coursesWithProgress, loading: isLoading } = useCourses();
   const { activities } = useRecentActivity(user?.id, { limit: 5, order: 'desc' });
   const { achievements } = useAchievements(user?.id, {
     order: 'desc',
@@ -176,7 +176,7 @@ const UserDashboard = () => {
                   </Link>
                 </div>
                 
-                {loading ? (
+                {isLoading ? (
                   <div className='text-center py-10'>
                     <Icon name='Loader' size={32} className='mx-auto animate-spin text-primary mb-4' />
                     <p className='text-text-secondary'>Chargement de vos cours...</p>
