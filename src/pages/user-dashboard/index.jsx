@@ -18,7 +18,7 @@ const UserDashboard = () => {
   const navigate = useNavigate();
 
   const { userProfile, user } = useAuth();
-  const { coursesWithProgress, loading } = useCourses();
+  const { courses, isLoading } = useCourses();
   const { activities } = useRecentActivity(user?.id, { limit: 5, order: 'desc' });
   const { achievements } = useAchievements(user?.id, {
     order: 'desc',
@@ -34,9 +34,9 @@ const UserDashboard = () => {
 
 
   const nextLessonToContinue = useMemo(() => {
-    if (!coursesWithProgress || coursesWithProgress.length === 0) return null;
+    if (!courses || courses.length === 0) return null;
 
-    const inProgressCourse = coursesWithProgress.find(
+    const inProgressCourse = courses.find(
       course => course.progress.completed > 0 && course.progress.completed < course.progress.total
     );
     if (inProgressCourse) {
@@ -46,7 +46,7 @@ const UserDashboard = () => {
       };
     }
 
-    const unstartedCourse = coursesWithProgress.find(course => course.progress.completed === 0);
+    const unstartedCourse = courses.find(course => course.progress.completed === 0);
     if (unstartedCourse) {
       return {
         title: `Commencer ${unstartedCourse.title}`,
@@ -54,14 +54,14 @@ const UserDashboard = () => {
       };
     }
     
-    if (coursesWithProgress.length > 0) {
+    if (courses.length > 0) {
         return {
-          title: `Revoir ${coursesWithProgress[0].title}`,
-          href: `/programmes/${coursesWithProgress[0].id}`,
+          title: `Revoir ${courses[0].title}`,
+          href: `/programmes/${courses[0].id}`,
         };
     }
     return null;
-  }, [coursesWithProgress]);
+  }, [courses]);
 
   const userData = useMemo(() => ({
     name: userProfile?.full_name || user?.email || 'Utilisateur',
@@ -70,11 +70,11 @@ const UserDashboard = () => {
     xp: userProfile?.xp || 0,
     xpToNextLevel: Math.floor(100 * Math.pow(userProfile?.level || 1, 1.5)),
     currentStreak: userProfile?.current_streak || 0,
-    totalCourses: coursesWithProgress.length,
-    completedCourses: coursesWithProgress.filter(c => c.progress.completed > 0 && c.progress.completed === c.progress.total).length,
-    totalLessons: coursesWithProgress.reduce((acc, course) => acc + (course.progress?.total || 0), 0),
-    completedLessons: coursesWithProgress.reduce((acc, course) => acc + (course.progress?.completed || 0), 0),
-  }), [userProfile, user, coursesWithProgress]);
+    totalCourses: courses.length,
+    completedCourses: courses.filter(c => c.progress.completed > 0 && c.progress.completed === c.progress.total).length,
+    totalLessons: courses.reduce((acc, course) => acc + (course.progress?.total || 0), 0),
+    completedLessons: courses.reduce((acc, course) => acc + (course.progress?.completed || 0), 0),
+  }), [userProfile, user, courses]);
 
   const getFirstName = () => {
     const fullName = userProfile?.full_name || '';
@@ -176,14 +176,14 @@ const UserDashboard = () => {
                   </Link>
                 </div>
                 
-                {loading ? (
+                {isLoading ? (
                   <div className='text-center py-10'>
                     <Icon name='Loader' size={32} className='mx-auto animate-spin text-primary mb-4' />
                     <p className='text-text-secondary'>Chargement de vos cours...</p>
                   </div>
-                ) : coursesWithProgress.length > 0 ? (
+                ) : courses.length > 0 ? (
                   <div className='space-y-4'>
-                    {coursesWithProgress.map(course => {
+                    {courses.map(course => {
                       const progressPercentage = course.progress.total > 0 ? (course.progress.completed / course.progress.total) * 100 : 0;
                       return (
                         <div 

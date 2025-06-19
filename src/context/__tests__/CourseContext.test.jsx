@@ -1,6 +1,7 @@
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import React from 'react';
 import { render, waitForElementToBeRemoved, screen } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
 
 // Mock AuthContext to always return a user
@@ -70,11 +71,11 @@ vi.mock('../../utils/supabaseClient', () => {
 import { CourseProvider, useCourses } from '../CourseContext.jsx';
 
 const Consumer = () => {
-  const { coursesWithProgress, loading } = useCourses();
+  const { courses, isLoading } = useCourses();
   return (
     <div>
-      {loading && <span data-testid='loading'>loading</span>}
-      <pre data-testid='courses'>{JSON.stringify(coursesWithProgress)}</pre>
+      {isLoading && <span data-testid='loading'>loading</span>}
+      <pre data-testid='courses'>{JSON.stringify(courses)}</pre>
     </div>
   );
 };
@@ -90,10 +91,13 @@ describe('fetchAllData', () => {
   });
 
   it('calculates progress per course using modules', async () => {
+    const client = new QueryClient();
     render(
-      <CourseProvider>
-        <Consumer />
-      </CourseProvider>
+      <QueryClientProvider client={client}>
+        <CourseProvider>
+          <Consumer />
+        </CourseProvider>
+      </QueryClientProvider>
     );
 
     await waitForElementToBeRemoved(() => screen.queryByTestId('loading'));
