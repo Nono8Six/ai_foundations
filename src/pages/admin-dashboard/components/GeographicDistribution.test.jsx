@@ -21,7 +21,7 @@ describe('GeographicDistribution', () => {
     // Check for the "unavailable" message and icon
     expect(screen.getByText('Les données de distribution géographique ne sont pas actuellement disponibles.')).toBeInTheDocument();
     expect(screen.getByText('Pour activer cette fonctionnalité, des informations de localisation des utilisateurs seraient nécessaires.')).toBeInTheDocument();
-    expect(screen.getByTestId('icon-MapOff')).toBeInTheDocument();
+    expect(screen.getByTestId('icon-MapPinOff')).toBeInTheDocument();
 
     // Check that the footer shows N/A
     expect(screen.getByText('Total utilisateurs (géographique)')).toBeInTheDocument();
