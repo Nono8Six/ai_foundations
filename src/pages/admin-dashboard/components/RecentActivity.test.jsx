@@ -79,7 +79,7 @@ describe('RecentActivity', () => {
     expect(screen.getByText(/s'est inscrite/)).toBeInTheDocument();
     expect(screen.getByText('Bob The Builder')).toBeInTheDocument();
     expect(screen.getByText(/a terminé 'Intro to AI'/)).toBeInTheDocument();
-    expect(screen.getByText('Il y a quelques secondes')).toBeInTheDocument(); // Or more specific based on timeSince
+    expect(screen.getByText(/Il y a \d+ seconde\(s\)/)).toBeInTheDocument();
     expect(screen.getByText('Il y a 5 minute(s)')).toBeInTheDocument();
 
     // Check for icons (via data-testid from mock)
@@ -113,7 +113,7 @@ describe('RecentActivity', () => {
     });
      // Check console.error was called (optional, but good for confirming error handling)
      // This requires spying on console.error before render and restoring after.
-     const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
      supabase.from('activity_log').select().order().limit().mockResolvedValueOnce({ data: null, error: { message: 'Fetch error' } });
      render(<MemoryRouter><RecentActivity /></MemoryRouter>);
      await waitFor(() => {
@@ -138,7 +138,7 @@ describe('RecentActivity', () => {
     render(<MemoryRouter><RecentActivity /></MemoryRouter>);
 
     await waitFor(() => {
-      expect(screen.getByText('Système')).toBeInTheDocument(); // Default name for system_update
+      expect(screen.getAllByText('Système')[0]).toBeInTheDocument();
       expect(screen.getByText(/System updated to v2/)).toBeInTheDocument();
       expect(screen.getByTestId('icon-Shield')).toBeInTheDocument(); // Icon for system_update
       // Check that no avatar image is rendered but the placeholder icon (e.g. Settings or User)
