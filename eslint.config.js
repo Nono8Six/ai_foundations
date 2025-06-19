@@ -63,6 +63,12 @@ export default [
     }
   },
   {
+    files: ["src/types/**"],
+    rules: {
+      "no-unused-vars": "off"
+    }
+  },
+  {
     files: ["**/*.test.{js,jsx,ts,tsx}"],
     languageOptions: {
       globals: {
