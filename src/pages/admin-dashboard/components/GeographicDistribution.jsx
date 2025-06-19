@@ -21,7 +21,7 @@ const GeographicDistribution = () => {
       </div>
 
       <div className='flex flex-col items-center justify-center h-64 text-center'>
-        <Icon name='MapOff' size={48} className='text-secondary-400 mb-4' />
+        <Icon name='MapPinOff' size={48} className='text-secondary-400 mb-4' />
         <p className='text-md font-medium text-text-primary mb-1'>
           Les données de distribution géographique ne sont pas actuellement disponibles.
         </p>

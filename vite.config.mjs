@@ -1,19 +1,24 @@
 // vite.config.mjs
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import { visualizer } from 'rollup-plugin-visualizer';
 import path from "path"; // <-- Importez le module 'path'
 
 // https://vitejs.dev/config/
-export default defineConfig({
-  build: {
-    outDir: "build",
-    chunkSizeWarningLimit: 2000,
-  },
-  
-  plugins: [
-    react(),
-    // Removed tsconfigPaths() to avoid conflict with manual alias resolution
-  ],
+export default defineConfig(() => {
+  const shouldAnalyze = process.env.ANALYZE;
+  return {
+    build: {
+      outDir: "build",
+      chunkSizeWarningLimit: 2000,
+    },
+
+    plugins: [
+      react(),
+      shouldAnalyze &&
+        visualizer({ filename: 'docs/bundle/stats.html', open: false }),
+      // Removed tsconfigPaths() to avoid conflict with manual alias resolution
+    ].filter(Boolean),
 
   // --- AJOUT DE CETTE SECTION ---
   // C'est ici qu'on résout le problème.
@@ -30,5 +35,6 @@ export default defineConfig({
     host: "0.0.0.0",
     strictPort: true,
     allowedHosts: ['.amazonaws.com', '.builtwithrocket.new', 'localhost']
-  }
+    },
+  };
 });
