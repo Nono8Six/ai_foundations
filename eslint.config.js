@@ -1,18 +1,22 @@
 // eslint.config.js
 import globals from "globals";
 import js from "@eslint/js";
-import tseslint from "typescript-eslint";
 import pluginReact from "eslint-plugin-react";
 import prettierConfig from "eslint-config-prettier";
 
 export default [
   // Configuration globale pour tous les fichiers
   {
-    files: ["**/*.{js,jsx,mjs,cjs,ts,tsx}"],
+    files: ["**/*.{js,jsx,mjs,cjs}"],
     languageOptions: {
       globals: {
         ...globals.browser, // Pour les variables globales du navigateur comme `window`, `document`
         ...globals.node     // Pour les variables globales de Node.js comme `process`
+      },
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+        ecmaFeatures: { jsx: true }
       }
     }
   },
@@ -25,9 +29,8 @@ export default [
     }
   },
 
-  // Importe les règles recommandées par ESLint et TypeScript
+  // Importe les règles recommandées par ESLint
   js.configs.recommended,
-  ...tseslint.configs.recommended,
 
   // Configuration spécifique pour React
   {
@@ -63,13 +66,7 @@ export default [
     }
   },
   {
-    files: ["src/types/**"],
-    rules: {
-      "no-unused-vars": "off"
-    }
-  },
-  {
-    files: ["**/*.test.{js,jsx,ts,tsx}"],
+    files: ["**/*.test.{js,jsx}"],
     languageOptions: {
       globals: {
         ...globals.vitest,
