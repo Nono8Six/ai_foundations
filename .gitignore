@@ -4,7 +4,9 @@ node_modules
 .env
 
 # Supabase directories
+apps/backend/supabase/.temp/
 supabase/.temp/
+apps/backend/supabase/.branches/
 supabase/.branches/
 
 # Removed docs
