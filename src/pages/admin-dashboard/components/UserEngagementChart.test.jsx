@@ -26,49 +26,25 @@ vi.mock('../../../components/AppIcon', () => ({ default: ({ name }) => <svg data
 vi.mock('../../../lib/supabase');
 
 describe('UserEngagementChart', () => {
-  const setupSupabaseUserSessionsMock = (sessionsData = [], sessionsError = null) => {
-    const builderInstance = {
-        select: jest.fn().mockReturnThis(),
-        gte: jest.fn().mockReturnThis(),
-        lte: jest.fn().mockReturnThis(),
-        then: jest.fn(function(callback) {
-            if (this.mockedResult) {
-                return Promise.resolve(this.mockedResult).then(callback);
-            }
-            return Promise.resolve({ data: sessionsData, error: sessionsError }).then(callback);
-        }),
-        mockResolvedValueOnce: function(value) {
-            this.mockedResult = value;
-            return this;
-        }
-    };
-    supabase.from.mockImplementation(tableName => {
-        if (tableName === 'user_sessions') {
-            // Return a new instance of the builder mock configuration for each call if needed,
-            // or just this single instance if UserEngagementChart only makes one `from('user_sessions')` call.
-            // For this component, it's one call per timeRange change.
-            return builderInstance;
-        }
-        // Fallback for other tables if any were called unexpectedly
-        const fallbackBuilder = vi.importActual('../../../lib/supabase').supabase.from(tableName);
-        fallbackBuilder.mockResolvedValueOnce({data: [], error: 'Unexpected table call'});
-        return fallbackBuilder;
-    });
-    return builderInstance; // Return the instance to allow setting mockResolvedValueOnce in the test
-  };
+  const createBuilder = (result) => ({
+    select: vi.fn().mockReturnThis(),
+    gte: vi.fn().mockReturnThis(),
+    lte: vi.fn().mockReturnThis(),
+    then: vi.fn((cb) => Promise.resolve(result).then(cb)),
+  });
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    jest.useFakeTimers(); // Use fake timers for date consistency
+    vi.clearAllMocks();
+    vi.useFakeTimers(); // Use fake timers for date consistency
   });
 
   afterEach(() => {
-    jest.useRealTimers(); // Restore real timers
+    vi.useRealTimers(); // Restore real timers
   });
 
   test('displays loading state and then renders chart for 24h range', async () => {
     const now = new Date(2023, 10, 20, 14, 0, 0); // Mon Nov 20 2023 14:00:00
-    jest.setSystemTime(now);
+    vi.setSystemTime(now);
 
     const sessions = [
       { user_id: 'u1', started_at: new Date(2023, 10, 20, 13, 5, 0).toISOString() }, // 13:00
@@ -77,8 +53,7 @@ describe('UserEngagementChart', () => {
       { user_id: 'u3', started_at: new Date(2023, 10, 19, 14, 5, 0).toISOString() }, // Yesterday, should be included by 24h
     ];
 
-    const sessionQueryBuilder = setupSupabaseUserSessionsMock();
-    sessionQueryBuilder.mockResolvedValueOnce({ data: sessions, error: null });
+    supabase.from.mockReturnValueOnce(createBuilder({ data: sessions, error: null }));
 
     render(<UserEngagementChart timeRange="24h" />);
 
@@ -117,7 +92,7 @@ describe('UserEngagementChart', () => {
 
   test('displays loading state and then renders chart for 7d range', async () => {
     const today = new Date(2023, 10, 20, 12, 0, 0); // Monday
-    jest.setSystemTime(today);
+    vi.setSystemTime(today);
 
     const sessions = [
       // Today (Mon)
@@ -130,8 +105,7 @@ describe('UserEngagementChart', () => {
       // Last Monday (7 days ago from today, should be in the first bucket)
       { user_id: 'u4', started_at: new Date(2023, 10, 13, 10, 0, 0).toISOString() },
     ];
-    const sessionQueryBuilder = setupSupabaseUserSessionsMock();
-    sessionQueryBuilder.mockResolvedValueOnce({ data: sessions, error: null });
+    supabase.from.mockReturnValueOnce(createBuilder({ data: sessions, error: null }));
 
     render(<UserEngagementChart timeRange="7d" />);
 
@@ -169,26 +143,20 @@ describe('UserEngagementChart', () => {
   });
 
   test('displays "No data available" message when no session data is fetched', async () => {
-    const sessionQueryBuilder = setupSupabaseUserSessionsMock();
-    sessionQueryBuilder.mockResolvedValueOnce({ data: [], error: null });
+    supabase.from.mockReturnValueOnce(createBuilder({ data: [], error: null }));
 
     render(<UserEngagementChart timeRange="7d" />);
 
-    await waitFor(() => {
-      expect(screen.getByText('Aucune donnée d\'engagement disponible pour la période sélectionnée.')).toBeInTheDocument();
-    });
+    await screen.findByText("Aucune donnée d'engagement disponible pour la période sélectionnée.");
   });
 
   test('handles error during Supabase fetch', async () => {
-    const sessionQueryBuilder = setupSupabaseUserSessionsMock();
-    sessionQueryBuilder.mockResolvedValueOnce({ data: null, error: { message: 'DB error' } });
+    supabase.from.mockReturnValueOnce(createBuilder({ data: null, error: { message: 'DB error' } }));
     const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
     render(<UserEngagementChart timeRange="24h" />);
 
-    await waitFor(() => {
-      expect(screen.getByText('Aucune donnée d\'engagement disponible pour la période sélectionnée.')).toBeInTheDocument();
-    });
+    await screen.findByText("Aucune donnée d'engagement disponible pour la période sélectionnée.");
     expect(consoleErrorSpy).toHaveBeenCalledWith('Error fetching user_sessions for 24h:', { message: 'DB error' });
     consoleErrorSpy.mockRestore();
   });

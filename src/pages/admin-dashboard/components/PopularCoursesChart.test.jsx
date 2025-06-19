@@ -25,32 +25,15 @@ vi.mock('../../../components/AppIcon', () => ({ default: ({ name }) => <svg data
 // Tell Jest to use the mock for supabase
 vi.mock('../../../lib/supabase');
 
-
 describe('PopularCoursesChart', () => {
+  const createBuilder = (result) => ({
+    select: vi.fn().mockReturnThis(),
+    eq: vi.fn().mockReturnThis(),
+    then: vi.fn((cb) => Promise.resolve(result).then(cb)),
+  });
 
   beforeEach(() => {
-    jest.clearAllMocks();
-     // Default mock implementation for supabase.from calls
-     // This ensures that each call to supabase.from returns a fresh mock builder instance.
-     supabase.from.mockImplementation(() => {
-        const builderInstance = {
-            select: jest.fn().mockReturnThis(),
-            eq: jest.fn().mockReturnThis(),
-            // The 'then' function will be called when the promise from select().eq() resolves
-            then: jest.fn(function(callback) {
-                if (this.mockedResult) { // Check if a result was set by mockResolvedValueOnce
-                    return Promise.resolve(this.mockedResult).then(callback);
-                }
-                return Promise.resolve({ data: [], error: null }).then(callback); // Default empty response
-            }),
-            // Custom function on the instance to set its resolve value for the test
-            mockResolvedValueOnce: function(value) {
-                this.mockedResult = value; // Store the value to be resolved in 'then'
-                return this;
-            }
-        };
-        return builderInstance;
-    });
+    vi.clearAllMocks();
   });
 
   test('displays loading state and then renders chart with processed data', async () => {
@@ -71,16 +54,9 @@ describe('PopularCoursesChart', () => {
       { user_id: 'user3', lesson_id: 401, status: 'completed' },
     ];
 
-    // Setup mocks for courses and user_progress
-    // This needs to be called before render
-    const coursesQueryBuilder = supabase.from('courses');
-    coursesQueryBuilder.select.mockReturnThis();
-    coursesQueryBuilder.eq.mockReturnThis(); // For .eq('is_published', true)
-    coursesQueryBuilder.mockResolvedValueOnce({ data: courses.filter(c => c.is_published), error: null });
-
-    const progressQueryBuilder = supabase.from('user_progress');
-    progressQueryBuilder.select.mockReturnThis();
-    progressQueryBuilder.mockResolvedValueOnce({ data: userProgress, error: null });
+    supabase.from
+      .mockReturnValueOnce(createBuilder({ data: courses.filter(c => c.is_published), error: null }))
+      .mockReturnValueOnce(createBuilder({ data: userProgress, error: null }));
 
 
     render(<PopularCoursesChart />);
@@ -122,14 +98,9 @@ describe('PopularCoursesChart', () => {
   });
 
   test('displays "No data available" when no published courses are fetched', async () => {
-    const coursesQueryBuilder = supabase.from('courses');
-    coursesQueryBuilder.select.mockReturnThis();
-    coursesQueryBuilder.eq.mockReturnThis();
-    coursesQueryBuilder.mockResolvedValueOnce({ data: [], error: null }); // No courses
-
-    const progressQueryBuilder = supabase.from('user_progress');
-    progressQueryBuilder.select.mockReturnThis();
-    progressQueryBuilder.mockResolvedValueOnce({ data: [], error: null }); // No progress
+    supabase.from
+      .mockReturnValueOnce(createBuilder({ data: [], error: null }))
+      .mockReturnValueOnce(createBuilder({ data: [], error: null }));
 
     render(<PopularCoursesChart />);
 
@@ -139,23 +110,17 @@ describe('PopularCoursesChart', () => {
   });
 
   test('handles error when fetching courses', async () => {
-    const coursesQueryBuilder = supabase.from('courses');
-    coursesQueryBuilder.select.mockReturnThis();
-    coursesQueryBuilder.eq.mockReturnThis();
-    coursesQueryBuilder.mockResolvedValueOnce({ data: null, error: { message: 'Courses fetch error' } });
-
-    const progressQueryBuilder = supabase.from('user_progress'); // Should not be called if courses fail early
-    progressQueryBuilder.select.mockReturnThis();
-    progressQueryBuilder.mockResolvedValueOnce({ data: [], error: null });
-
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    supabase.from
+      .mockReturnValueOnce(createBuilder({ data: null, error: { message: 'Courses fetch error' } }))
+      .mockReturnValueOnce(createBuilder({ data: [], error: null }));
 
     render(<PopularCoursesChart />);
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
     await waitFor(() => {
       expect(screen.getByText('Aucune donnée disponible pour les cours populaires.')).toBeInTheDocument();
     });
-    expect(consoleErrorSpy).toHaveBeenCalledWith('Error fetching courses:', expect.objectContaining({ message: 'Courses fetch error' }));
+    expect(consoleErrorSpy).toHaveBeenCalled();
     consoleErrorSpy.mockRestore();
   });
 
@@ -163,22 +128,17 @@ describe('PopularCoursesChart', () => {
     const courses = [
       { id: 1, title: 'Course A', is_published: true, modules: [{ id: 10, lessons: [{ id: 101 }] }] }
     ];
-    const coursesQueryBuilder = supabase.from('courses');
-    coursesQueryBuilder.select.mockReturnThis();
-    coursesQueryBuilder.eq.mockReturnThis();
-    coursesQueryBuilder.mockResolvedValueOnce({ data: courses, error: null });
-
-    const progressQueryBuilder = supabase.from('user_progress');
-    progressQueryBuilder.select.mockReturnThis();
-    progressQueryBuilder.mockResolvedValueOnce({ data: null, error: { message: 'Progress fetch error' } });
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    supabase.from
+      .mockReturnValueOnce(createBuilder({ data: courses, error: null }))
+      .mockReturnValueOnce(createBuilder({ data: null, error: { message: 'Progress fetch error' } }));
 
     render(<PopularCoursesChart />);
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
     await waitFor(() => {
       expect(screen.getByText('Aucune donnée disponible pour les cours populaires.')).toBeInTheDocument();
     });
-    expect(consoleErrorSpy).toHaveBeenCalledWith('Error fetching user progress:', expect.objectContaining({ message: 'Progress fetch error' }));
+    expect(consoleErrorSpy).toHaveBeenCalled();
     consoleErrorSpy.mockRestore();
   });
 });

@@ -45,9 +45,9 @@ describe('PerformanceMetrics', () => {
 
     // System Uptime should show N/A
     expect(screen.getByText('Disponibilité système')).toBeInTheDocument();
-    expect(screen.getByText('N/A')).toBeInTheDocument();
-     // Check status label for uptime (should be N/A)
-    const uptimeValueElement = screen.getByText('N/A');
+    const uptimeElements = screen.getAllByText('N/A');
+    expect(uptimeElements.length).toBeGreaterThan(0);
+    const uptimeValueElement = uptimeElements[0];
     const uptimeCard = uptimeValueElement.closest('div.p-4'); // Find the parent card
     expect(uptimeCard.textContent).toContain('N/A'); // Status label for unknown
 
@@ -77,12 +77,10 @@ describe('PerformanceMetrics', () => {
 
   test('renders "No metrics available" when metrics prop is empty or undefined', () => {
     render(<PerformanceMetrics metrics={{}} />); // Empty metrics object
-    expect(screen.getByText('Aucune métrique système disponible.')).toBeInTheDocument();
-    expect(screen.getByTestId('icon-ServerOff')).toBeInTheDocument();
-
-    // Also test with undefined metrics
     render(<PerformanceMetrics metrics={undefined} />);
-    expect(screen.getByText('Aucune métrique système disponible.')).toBeInTheDocument();
+    const messages = screen.getAllByText('Aucune métrique système disponible.');
+    expect(messages).toHaveLength(2);
+    expect(screen.getByTestId('icon-ServerOff')).toBeInTheDocument();
   });
 
   test('renders correctly when only systemUptime is available', () => {
