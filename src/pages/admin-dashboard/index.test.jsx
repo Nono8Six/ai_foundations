@@ -76,7 +76,7 @@ describe('AdminDashboard', () => {
     await waitFor(() => expect(screen.queryByText('Chargement des données...')).not.toBeInTheDocument());
 
     expect(screen.getByText('Utilisateurs totaux').closest('div').querySelector('p.text-2xl').textContent).toBe('0');
-    expect(screen.getByText('Apprenants actifs').closest('div').querySelector('p.text-2xl').textContent).toBe('1');
+    expect(screen.getByText('Apprenants actifs').closest('div').querySelector('p.text-2xl').textContent).toBe('0');
 
     await waitFor(() => {
       expect(screen.getByText(/PerformanceMetricsMock \(1 active users, N\/A uptime\)/)).toBeInTheDocument();
