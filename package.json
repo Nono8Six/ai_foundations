@@ -22,7 +22,7 @@
     "serve": "vite preview",
     "lint": "eslint src --ext .js,.jsx --fix",
     "format": "prettier --write \"src/**/*.{js,jsx,json,css,scss,md}\"",
-    "test": "vitest run --passWithNoTests || true",
+    "test": "vitest run --passWithNoTests",
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",
     "migrate": "./scripts/migrate.sh",
