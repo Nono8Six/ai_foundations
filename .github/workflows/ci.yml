@@ -1,63 +1,30 @@
 name: CI
-on: [push]  # Déclenchement sur tout push (toutes branches)
+on: [push]
 
 jobs:
-  ci:
+  frontend:
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: pnpm
+      - run: corepack enable && corepack prepare pnpm@latest --activate
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm -r run lint && pnpm -r run test
+
+  backend:
+    runs-on: ubuntu-latest
+    needs: frontend
     env:
-      # Variables d'environnement Supabase (définies dans les Secrets GitHub)
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
       SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
       SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
-
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js (LTS)
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
         with:
-          node-version: '18'
-          cache: 'pnpm'    # Active la mise en cache des dépendances pnpm:contentReference[oaicite:8]{index=8}
-
-      - name: Enable Corepack for pnpm
-        run: |
-          corepack enable
-          corepack prepare pnpm@latest --activate
-
-      - name: Cache pnpm store
-        uses: actions/cache@v3
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile  # Installe avec le lockfile gelé (CI-reproducible):contentReference[oaicite:9]{index=9}
-
-      - name: Type-check with tsc
-        run: pnpm tsc --noEmit   # Vérification du typage TypeScript
-
-      - name: Run ESLint
-        run: pnpm run lint       # Vérification de style/qualité de code (ESLint):contentReference[oaicite:10]{index=10}
-
-      - name: Run tests (Vitest)
-        run: pnpm vitest run     # Exécution de la suite de tests Vitest
-
-      - name: Setup Supabase CLI
-        uses: supabase/setup-cli@v1
-        with:
-          version: latest     # Installe la dernière version de la CLI Supabase:contentReference[oaicite:11]{index=11}
-
-      - name: Link to Supabase project
-        run: supabase link --project-ref $SUPABASE_PROJECT_REF
-        # Lien du dépôt au projet Supabase (nécessite SUPABASE_ACCESS_TOKEN):contentReference[oaicite:12]{index=12}
-
-      - name: Push database migrations
-        run: supabase db push
-        # Applique toutes les migrations SQL depuis supabase/migrations:contentReference[oaicite:13]{index=13}
-
-      - name: Generate DB types
-        run: supabase gen types typescript --project-id $SUPABASE_PROJECT_REF > src/types/database.types.ts
-        # Génère les types TypeScript de la base de données:contentReference[oaicite:14]{index=14}.
+          version: latest
+      - run: supabase link --project-ref $SUPABASE_PROJECT_REF
+      - run: pnpm --filter backend run db:push
