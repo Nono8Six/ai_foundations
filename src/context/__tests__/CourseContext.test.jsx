@@ -85,6 +85,10 @@ describe('fetchAllData', () => {
     safeQueryMock.mockClear();
   });
 
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
   it('calculates progress per course using modules', async () => {
     render(
       <CourseProvider>

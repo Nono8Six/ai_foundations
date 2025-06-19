@@ -36,6 +36,10 @@ describe('PopularCoursesChart', () => {
     vi.clearAllMocks();
   });
 
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
   test('displays loading state and then renders chart with processed data', async () => {
     const courses = [
       { id: 1, title: 'Course A', is_published: true, modules: [{ id: 10, lessons: [{ id: 101 }, { id: 102 }] }] },

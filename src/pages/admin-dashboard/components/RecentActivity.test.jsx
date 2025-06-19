@@ -41,6 +41,10 @@ describe('RecentActivity', () => {
     supabase.from.mockReturnValue(mockBuilderInstance);
   });
 
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
   test('displays loading state and then renders activities', async () => {
     const mockActivities = [
       {

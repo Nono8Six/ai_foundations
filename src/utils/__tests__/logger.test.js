@@ -14,6 +14,7 @@ describe('logger', () => {
   afterEach(() => {
     process.env.VITE_LOG_LEVEL = originalLevel;
     vi.restoreAllMocks();
+    vi.clearAllMocks();
   });
 
   it('logs debug when level is debug', async () => {

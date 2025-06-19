@@ -8,6 +8,9 @@ import PerformanceMetrics from './PerformanceMetrics';
 vi.mock('../../../components/AppIcon', () => ({ default: ({ name, size, className }) => <svg data-testid={`icon-${name}`} className={className} width={size} height={size}></svg> }));
 
 describe('PerformanceMetrics', () => {
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
   test('renders available metrics correctly when props are provided', () => {
     const mockMetrics = {
       systemUptime: '99.9%',

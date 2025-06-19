@@ -40,6 +40,10 @@ describe('AdminCourseContext', () => {
     safeQueryMock.mockClear();
   });
 
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
   it('creates, updates and deletes courses', async () => {
     const { result } = renderHook(() => useAdminCourses(), { wrapper });
 
