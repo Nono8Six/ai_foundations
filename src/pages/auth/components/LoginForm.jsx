@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Icon from '../../../components/AppIcon';
+import Button from '../../../components/ui/Button';
+import TextInput from '../../../components/ui/TextInput';
 import { useAuth } from '../../../context/AuthContext';
 import logger from '../../../utils/logger';
 
@@ -53,76 +55,38 @@ const LoginForm = ({ onSuccess, isLoading, setIsLoading }) => {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
       {/* Email Field */}
-      <div>
-        <label htmlFor='email' className='block text-sm font-medium text-text-primary mb-2'>
-          Adresse email
-        </label>
-        <div className='relative'>
-          <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-            <Icon name='Mail' size={18} className='text-text-secondary' />
-          </div>
-          <input
-            id='email'
-            type='email'
-            {...register('email', {
-              required: "L'adresse email est requise",
-              pattern: {
-                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                message: 'Adresse email invalide',
-              },
-            })}
-            className={`block w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 ${
-              errors.email
-                ? 'border-error bg-error-50 text-error-700'
-                : 'border-border bg-surface text-text-primary hover:border-primary-300'
-            }`}
-            placeholder='votre@email.com'
-            disabled={isLoading}
-          />
-        </div>
-        {errors.email && (
-          <p className='mt-1 text-sm text-error flex items-center'>
-            <Icon name='AlertCircle' size={16} className='mr-1' />
-            {errors.email.message}
-          </p>
-        )}
-      </div>
+      <TextInput
+        id='email'
+        type='email'
+        label='Adresse email'
+        placeholder='votre@email.com'
+        error={errors.email?.message}
+        disabled={isLoading}
+        {...register('email', {
+          required: "L'adresse email est requise",
+          pattern: {
+            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+            message: 'Adresse email invalide',
+          },
+        })}
+      />
 
       {/* Password Field */}
-      <div>
-        <label htmlFor='password' className='block text-sm font-medium text-text-primary mb-2'>
-          Mot de passe
-        </label>
-        <div className='relative'>
-          <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-            <Icon name='Lock' size={18} className='text-text-secondary' />
-          </div>
-          <input
-            id='password'
-            type='password'
-            {...register('password', {
-              required: 'Le mot de passe est requis',
-              minLength: {
-                value: 6,
-                message: 'Le mot de passe doit contenir au moins 6 caractères',
-              },
-            })}
-            className={`block w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 ${
-              errors.password
-                ? 'border-error bg-error-50 text-error-700'
-                : 'border-border bg-surface text-text-primary hover:border-primary-300'
-            }`}
-            placeholder='••••••••'
-            disabled={isLoading}
-          />
-        </div>
-        {errors.password && (
-          <p className='mt-1 text-sm text-error flex items-center'>
-            <Icon name='AlertCircle' size={16} className='mr-1' />
-            {errors.password.message}
-          </p>
-        )}
-      </div>
+      <TextInput
+        id='password'
+        type='password'
+        label='Mot de passe'
+        placeholder='••••••••'
+        error={errors.password?.message}
+        disabled={isLoading}
+        {...register('password', {
+          required: 'Le mot de passe est requis',
+          minLength: {
+            value: 6,
+            message: 'Le mot de passe doit contenir au moins 6 caractères',
+          },
+        })}
+      />
 
       {/* Auth Error Message */}
       {authError && (
@@ -191,11 +155,7 @@ const LoginForm = ({ onSuccess, isLoading, setIsLoading }) => {
       </div>
 
       {/* Submit Button */}
-      <button
-        type='submit'
-        disabled={isLoading}
-        className='w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-subtle text-sm font-medium text-white bg-primary hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200'
-      >
+      <Button type='submit' className='w-full flex justify-center items-center' disabled={isLoading}>
         {isLoading ? (
           <>
             <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2'></div>
@@ -207,7 +167,7 @@ const LoginForm = ({ onSuccess, isLoading, setIsLoading }) => {
             Se connecter
           </>
         )}
-      </button>
+      </Button>
     </form>
   );
 };

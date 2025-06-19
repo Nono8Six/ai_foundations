@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import Icon from '../../../components/AppIcon';
 import Image from '../../../components/AppImage';
+import Button from '../../../components/ui/Button';
+import TextInput from '../../../components/ui/TextInput';
+import Card from '../../../components/ui/Card';
 import { uploadToBucket, BUCKETS } from '../../../services/storageService';
 import logger from '../../../utils/logger';
 
@@ -88,15 +91,16 @@ const CourseEditor = ({ course, onSave, onDelete }) => {
           </div>
 
           <div className='flex items-center space-x-3'>
-            <button
+            <Button
               onClick={() =>
                 handleInputChange('status', formData.status === 'published' ? 'draft' : 'published')
               }
-              className={`px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${
+              className={`px-4 py-2 ${
                 formData.status === 'published'
                   ? 'bg-accent text-white hover:bg-accent-700'
                   : 'bg-warning text-white hover:bg-warning-600'
               }`}
+              variant='outline'
             >
               <Icon
                 name={formData.status === 'published' ? 'Eye' : 'EyeOff'}
@@ -104,15 +108,12 @@ const CourseEditor = ({ course, onSave, onDelete }) => {
                 className='mr-2'
               />
               {formData.status === 'published' ? 'Publié' : 'Brouillon'}
-            </button>
+            </Button>
 
-            <button
-              onClick={handleSave}
-              className='px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors duration-200 font-medium'
-            >
+            <Button onClick={handleSave} className='px-6 py-2'>
               <Icon name='Save' size={16} className='mr-2' />
               Enregistrer
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -120,27 +121,19 @@ const CourseEditor = ({ course, onSave, onDelete }) => {
           {/* Main Content */}
           <div className='lg:col-span-2 space-y-6'>
             {/* Basic Information */}
-            <div className='bg-white rounded-lg border border-border p-6'>
+            <Card className='p-6'>
               <h2 className='text-lg font-semibold text-text-primary mb-4'>
                 Informations générales
               </h2>
 
               <div className='space-y-4'>
-                <div>
-                  <label className='block text-sm font-medium text-text-primary mb-2'>
-                    Titre du cours *
-                  </label>
-                  <input
-                    type='text'
-                    value={formData.title}
-                    onChange={e => handleInputChange('title', e.target.value)}
-                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 ${
-                      errors.title ? 'border-error' : 'border-border'
-                    }`}
-                    placeholder="Ex: Introduction à l'Intelligence Artificielle"
-                  />
-                  {errors.title && <p className='text-error text-sm mt-1'>{errors.title}</p>}
-                </div>
+                <TextInput
+                  label='Titre du cours *'
+                  value={formData.title}
+                  onChange={e => handleInputChange('title', e.target.value)}
+                  placeholder="Ex: Introduction à l'Intelligence Artificielle"
+                  error={errors.title}
+                />
 
                 <div>
                   <label className='block text-sm font-medium text-text-primary mb-2'>
@@ -161,22 +154,16 @@ const CourseEditor = ({ course, onSave, onDelete }) => {
                 </div>
 
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                  <div>
-                    <label className='block text-sm font-medium text-text-primary mb-2'>
-                      Prix (€)
-                    </label>
-                    <input
-                      type='number'
-                      value={formData.price}
-                      onChange={e => handleInputChange('price', parseFloat(e.target.value) || 0)}
-                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 ${
-                        errors.price ? 'border-error' : 'border-border'
-                      }`}
-                      min='0'
-                      step='0.01'
-                    />
-                    {errors.price && <p className='text-error text-sm mt-1'>{errors.price}</p>}
-                  </div>
+                  <TextInput
+                    type='number'
+                    label='Prix (€)'
+                    value={formData.price}
+                    onChange={e => handleInputChange('price', parseFloat(e.target.value) || 0)}
+                    error={errors.price}
+                    inputClassName='[appearance:textfield]'
+                    min='0'
+                    step='0.01'
+                  />
 
                   <div>
                     <label className='block text-sm font-medium text-text-primary mb-2'>
@@ -212,10 +199,10 @@ const CourseEditor = ({ course, onSave, onDelete }) => {
                   />
                 </div>
               </div>
-            </div>
+            </Card>
 
             {/* Learning Objectives */}
-            <div className='bg-white rounded-lg border border-border p-6'>
+            <Card className='p-6'>
               <h2 className='text-lg font-semibold text-text-primary mb-4'>
                 Objectifs pédagogiques
               </h2>
@@ -227,10 +214,10 @@ const CourseEditor = ({ course, onSave, onDelete }) => {
                 className='w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 resize-none'
                 placeholder='Listez les compétences et connaissances que les apprenants acquerront...'
               />
-            </div>
+            </Card>
 
             {/* Prerequisites */}
-            <div className='bg-white rounded-lg border border-border p-6'>
+            <Card className='p-6'>
               <h2 className='text-lg font-semibold text-text-primary mb-4'>Prérequis</h2>
 
               <textarea
@@ -240,13 +227,13 @@ const CourseEditor = ({ course, onSave, onDelete }) => {
                 className='w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 resize-none'
                 placeholder='Décrivez les connaissances préalables nécessaires...'
               />
-            </div>
+            </Card>
           </div>
 
           {/* Sidebar */}
           <div className='space-y-6'>
             {/* Thumbnail */}
-            <div className='bg-white rounded-lg border border-border p-6'>
+            <Card className='p-6'>
               <h3 className='text-lg font-semibold text-text-primary mb-4'>Image de couverture</h3>
 
               <div className='space-y-4'>
@@ -295,11 +282,11 @@ const CourseEditor = ({ course, onSave, onDelete }) => {
                   </div>
                 </label>
               </div>
-            </div>
+            </Card>
 
             {/* Course Stats */}
             {course?.id && (
-              <div className='bg-white rounded-lg border border-border p-6'>
+              <Card className='p-6'>
                 <h3 className='text-lg font-semibold text-text-primary mb-4'>Statistiques</h3>
 
                 <div className='space-y-4'>
@@ -327,12 +314,12 @@ const CourseEditor = ({ course, onSave, onDelete }) => {
                     </span>
                   </div>
                 </div>
-              </div>
+              </Card>
             )}
 
             {/* Danger Zone */}
             {course?.id && (
-              <div className='bg-white rounded-lg border border-error p-6'>
+              <Card className='p-6 border-error'>
                 <h3 className='text-lg font-semibold text-error mb-4'>Zone de danger</h3>
 
                 <p className='text-sm text-text-secondary mb-4'>
@@ -340,14 +327,15 @@ const CourseEditor = ({ course, onSave, onDelete }) => {
                   associés.
                 </p>
 
-                <button
+                <Button
                   onClick={() => onDelete(course.id)}
-                  className='w-full px-4 py-2 bg-error text-white rounded-lg hover:bg-error-600 transition-colors duration-200 font-medium'
+                  className='w-full px-4 py-2 bg-error text-white hover:bg-error-600'
+                  variant='danger'
                 >
                   <Icon name='Trash2' size={16} className='mr-2' />
                   Supprimer le cours
-                </button>
-              </div>
+                </Button>
+              </Card>
             )}
           </div>
         </div>

@@ -7,6 +7,7 @@ import Icon from '../../components/AppIcon';
 import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
 import GoogleAuthButton from './components/GoogleAuthButton';
+import Card from '../../components/ui/Card';
 
 const AuthenticationLoginRegister = () => {
   const location = useLocation();
@@ -69,7 +70,7 @@ const AuthenticationLoginRegister = () => {
           </div>
 
           {/* Authentication Card */}
-          <div className='bg-surface rounded-2xl shadow-medium border border-border overflow-hidden'>
+          <Card className='rounded-2xl overflow-hidden'>
             {/* Tab Navigation */}
             <div className='flex border-b border-border'>
               <button
@@ -127,7 +128,7 @@ const AuthenticationLoginRegister = () => {
                 />
               )}
             </div>
-          </div>
+          </Card>
 
           {/* Footer Links */}
           <div className='text-center mt-6 space-y-3'>
