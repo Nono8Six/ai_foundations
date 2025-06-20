@@ -5,18 +5,18 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      target: builder             # on s’arrête à l’étape Node
+      target: builder               # on s’arrête à l’étape Node
     working_dir: /app/apps/frontend
-    command: pnpm dev --host      # hot-reload Vite
+    command: pnpm dev --host        # hot-reload Vite
     volumes:
-      - ./apps/frontend:/app/apps/frontend          # code source
-      - node_modules:/app/apps/frontend/node_modules # dépendances conteneur
+      - ./apps/frontend:/app/apps/frontend            # code source
+      - node_modules:/app/apps/frontend/node_modules  # dépendances conteneur
     ports:
       - "3000:3000"
     env_file:
       - .env.dev
     environment:
-      CHOKIDAR_USEPOLLING: "true" # fiabilise le watch sur Docker Desktop
+      CHOKIDAR_USEPOLLING: "true"   # fiabilise le watch sur Docker Desktop
     restart: unless-stopped
     depends_on:
       supabase-local:
@@ -29,9 +29,9 @@ services:
     volumes:
       - ./.supabase:/home/supabase/.supabase
     ports:
-      - "54321:54321" # postgREST
-      - "54322:54322" # auth
-      - "54323:54323" # studio
+      - "54321:54321"   # postgREST
+      - "54322:54322"   # auth
+      - "54323:54323"   # studio
     healthcheck:
       test: ["CMD", "pg_isready", "-h", "localhost", "-p", "54321"]
       interval: 5s
