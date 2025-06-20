@@ -19,22 +19,12 @@ RUN pnpm build
 
 
 # --- Runtime stage ---
-FROM node:20-slim AS runtime
-RUN corepack enable
-WORKDIR /app
+FROM nginx:1.25-alpine AS runtime
 
-ENV NODE_ENV=production
 ENV PORT=3000
 EXPOSE 3000
 
-# Install only production dependencies
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --prod --frozen-lockfile && pnpm cache clean --force
+COPY nginx/default.conf.template /etc/nginx/templates/default.conf.template
+COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Copy built assets from builder
-COPY --from=builder /app/dist ./dist
-
-# Run as non-root user provided by the base image
-USER node
-
-CMD ["pnpm", "run", "serve", "--", "--port", "3000", "--strictPort"]
+CMD ["nginx", "-g", "daemon off;"]
