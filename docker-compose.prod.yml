@@ -1,34 +1,21 @@
 version: '3.9'
-services:
-  db:
-    image: postgres:15-alpine
-    env_file: .env.prod
-    volumes:
-      - db-data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER:-postgres}"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    networks:
-      - app-net
 
+services:
   app:
     build:
-      context: ./apps/frontend
-      dockerfile: Dockerfile
-      target: runtime
-    depends_on:
-      db:
-        condition: service_healthy
-    env_file: .env.prod
+      context: .
+      dockerfile: Dockerfile        # étape finale : image Nginx statique
+    env_file:
+      - .env.prod                   # contient VITE_SUPABASE_URL / KEY, etc.
     ports:
-      - "3000:3000"
-    networks:
-      - app-net
-
-volumes:
-  db-data:
+      - "80:3000"                   # host:container
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+    networks: [app-net]
 
 networks:
   app-net:
