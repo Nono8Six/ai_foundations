@@ -27,10 +27,10 @@ Une plateforme complète pour les cours sur les Fondations de l'IA, construite a
    ```
 
 2. **Configurer les variables d'environnement**
-   - Copier le fichier `.env.example` en `.env`
+   - Copier le fichier `.env.dev` en `.env`
    - Remplir les variables nécessaires (notamment Supabase)
    ```bash
-   cp .env.example .env
+   cp .env.dev .env
    ```
 
 3. **Vérifier la configuration**
@@ -58,7 +58,7 @@ Une plateforme complète pour les cours sur les Fondations de l'IA, construite a
 ## 🏗 Déploiement en production
 
 1. **Configurer l'environnement de production**
-   - Créer un fichier `.env` à partir de `.env.example`
+   - Créer un fichier `.env` à partir de `.env.prod`
    - Mettre à jour les variables pour la production
 
 2. **Construire l'image de production**
@@ -118,7 +118,7 @@ pnpm migrate
 ```
 
 Les variables d'environnement nécessaires au fonctionnement local sont définies
-dans `.env`. Copiez le fichier exemple puis renseignez au minimum `VITE_SUPABASE_URL`
+dans `.env`. Copiez le fichier `.env.dev` puis renseignez au minimum `VITE_SUPABASE_URL`
 et `VITE_SUPABASE_ANON_KEY`.
 Vous pouvez vérifier leur présence avec le script
 `./scripts/check-env.sh`.
@@ -189,7 +189,8 @@ Toutes les tables sensibles utilisent la Row Level Security. La liste complète 
 │   └── migrate.sh
 ├── public/                # Fichiers statiques
 ├── src/                   # Code source de l'application
-└── .env.example           # Exemple de configuration d'environnement
+├── .env.dev              # Exemple de configuration pour le développement
+└── .env.prod             # Exemple de configuration pour la production
 ```
 
 ## 🤖 Intégration Continue
