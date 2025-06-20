@@ -31,6 +31,7 @@ services:
     ports:
       - "54321:54321"
       - "54322:54322"
+      - "54323:54323"
     healthcheck:
       test: ["CMD", "pg_isready", "-h", "localhost", "-p", "54321"]
       interval: 5s
