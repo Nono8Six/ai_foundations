@@ -1,0 +1,14 @@
+services:
+  frontend:
+    build:
+      context: ./apps/frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3001:80"
+    environment:
+      - NODE_ENV=development
+    # Volumes commentés pour le build initial
+    # volumes:
+    #   - ./apps/frontend:/app/frontend
+    #   - /app/frontend/node_modules
+    restart: unless-stopped
