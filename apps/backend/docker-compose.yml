@@ -1,37 +1,41 @@
+version: '3.9'
 services:
   app:
     build:
       context: .
-      # On cible l'étape "builder" qui contient toutes nos dépendances.
       target: builder
-      cache_from:
-        - ${DOCKER_REGISTRY:-}ai_foundations_lms:builder
-    container_name: ai-foundations-dev
-
-    # AJOUT : C'est ICI qu'on lance le serveur de développement.
-    # Cette commande écrase le CMD du Dockerfile et s'exécute au démarrage du conteneur.
-    command: pnpm run dev
-
-    # Volumes pour le développement (on retire .next qui est inutile pour Vite)
+    command: sh -c "pnpm install --frozen-lockfile && pnpm run dev"
     volumes:
       - .:/app
       - /app/node_modules
-      # - /app/.next  <- Ligne retirée
-      - /app/build
-
-    # Ports exposés
     ports:
       - "3000:3000"
       - "9229:9229"
-
-    # ... le reste de votre fichier est parfait et ne change pas ...
     env_file:
       - .env
     environment:
-      - NODE_ENV=development
-      - CHOKIDAR_USEPOLLING=true
-      - VITE_PORT=3000
+      NODE_ENV: development
+      VITE_PORT: 3000
     restart: unless-stopped
+    depends_on:
+      supabase-local:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  supabase-local:
+    image: supabase/cli:latest
+    command: start
+    volumes:
+      - ../../.supabase:/home/supabase/.supabase
+    ports:
+      - "54321:54321"
+      - "54322:54322"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-h", "localhost", "-p", "54321"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     networks:
       - app-network
 

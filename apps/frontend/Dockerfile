@@ -1,58 +1,40 @@
-# --- ÉTAPE 1: BUILDER / BASE ---
+# --- Builder stage ---
 FROM node:20-slim AS builder
 
-# Activation de corepack pour gérer pnpm
+# Enable pnpm via corepack
 RUN corepack enable
 
-# Définition du répertoire de travail
-WORKDIR /app/frontend
+# Application workspace
+WORKDIR /app
 
-# Afficher la structure du répertoire avant la copie
-RUN ls -la
-
-# Copier les fichiers de manifeste de dépendances
+# Install dependencies based on lockfile
 COPY package.json pnpm-lock.yaml ./
-
-# Vérifier que les fichiers ont été copiés
-RUN ls -la
-RUN cat package.json
-
-# Installer les dépendances
 RUN pnpm install --frozen-lockfile
 
-# Copier le reste du code
+# Copy source
 COPY . .
 
-# Vérifier la structure complète
-RUN find /app -type f -name "package.json" -o -name "vite.config.*" | xargs ls -la
+# Build the production assets
+RUN pnpm build
 
-# Build l'application avec Vite et afficher la structure des fichiers
-RUN echo "=== Avant le build ===" && \
-    pwd && \
-    ls -la && \
-    echo "=== Exécution du build ===" && \
-    pnpm run build && \
-    echo "=== Après le build ===" && \
-    ls -la && \
-    echo "=== Contenu du répertoire dist/ ===" && \
-    ls -la dist/ || (echo "ERREUR: Le répertoire dist/ n'a pas été créé" && exit 1)
 
-# --- ÉTAPE 2: PRODUCTION ---
-FROM nginx:stable-alpine
-ENV PORT=80
-EXPOSE 80
+# --- Runtime stage ---
+FROM node:20-slim AS runtime
+RUN corepack enable
+WORKDIR /app
 
-# Afficher la version de Nginx pour le débogage
-RUN nginx -v
+ENV NODE_ENV=production
+ENV PORT=3000
+EXPOSE 3000
 
-# Créer le répertoire pour la configuration Nginx
-RUN mkdir -p /etc/nginx/templates
+# Install only production dependencies
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --prod --frozen-lockfile && pnpm cache clean --force
 
-# Copier la configuration Nginx
-COPY nginx/default.conf.template /etc/nginx/templates/default.conf.template
+# Copy built assets from builder
+COPY --from=builder /app/dist ./dist
 
-# Copier les fichiers buildés depuis le builder (Vite utilise le dossier 'dist' par défaut)
-COPY --from=builder /app/frontend/dist /usr/share/nginx/html
+# Run as non-root user provided by the base image
+USER node
 
-# Démarrer Nginx
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["pnpm", "run", "serve", "--", "--port", "3000", "--strictPort"]
