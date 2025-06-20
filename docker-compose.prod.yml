@@ -18,7 +18,7 @@ services:
 
   app:
     build:
-      context: ./apps/frontend
+      context: .
       dockerfile: Dockerfile
       target: runtime
     depends_on:

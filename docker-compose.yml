@@ -2,12 +2,12 @@ version: '3.9'
 services:
   app:
     build:
-      context: ./apps/frontend
+      context: .
       dockerfile: Dockerfile
       target: builder
-    command: sh -c "pnpm install --frozen-lockfile && pnpm dev --host"
+    command: sh -c "pnpm install --frozen-lockfile && pnpm --filter ia-foundations dev --host"
     volumes:
-      - ./apps/frontend:/app
+      - ./:/app
       - /app/node_modules
     ports:
       - "3000:3000"
