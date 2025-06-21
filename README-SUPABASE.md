@@ -227,7 +227,7 @@ En cas de conflit de schéma :
 pnpm supabase:status
 
 # Voir les logs
-docker logs -f ai_foundations_lms-supabase
+docker logs -f ai-foundations-supabase-cli
 ```
 
 ### 2. Problèmes de Migrations
