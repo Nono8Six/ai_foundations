@@ -120,7 +120,7 @@ Les variables sensibles sont gérées via des fichiers `.env` qui ne doivent JAM
 1. **Erreurs de connexion à Supabase**
    - Vérifiez que les variables d'environnement sont correctement définies
    - Vérifiez que le service Supabase est en cours d'exécution : `docker-compose ps`
-   - Consultez les logs : `docker-compose logs supabase`
+   - Consultez les logs : `docker-compose logs supabase_cli`
 
 2. **Problèmes de permissions**
    ```bash

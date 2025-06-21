@@ -107,10 +107,10 @@ docker-compose exec frontend pnpm lint
 docker-compose exec db psql -U postgres
 
 # Exécuter les migrations
-docker-compose exec supabase supabase db push
+docker-compose exec supabase_cli supabase db push
 
-# Redémarrer uniquement le service Supabase
-docker-compose restart supabase
+# Redémarrer uniquement le service Supabase CLI
+docker-compose restart supabase_cli
 ```
 
 ## 🔍 Débogage
@@ -145,9 +145,9 @@ ai-foundations/
 │   │   ├── src/           # Code source
 │   │   └── package.json   # Dépendances frontend
 │   └── backend/           # Logique métier et API
-├── supabase/              # Configuration Supabase
-│   ├── migrations/        # Migrations de la base de données
-│   └── config.toml        # Configuration Supabase
+│       ├── supabase/      # Configuration Supabase
+│       │   ├── migrations/        # Migrations de la base de données
+│       │   └── config.toml        # Configuration Supabase
 ├── nginx/                 # Configuration Nginx
 ├── docker-compose.yml     # Configuration Docker Compose
 └── Dockerfile            # Définition des images Docker
