@@ -53,32 +53,13 @@ CMD ["nginx", "-g", "daemon off;"]
 # ==============================================================================
 # Étape 3 : Configuration pour le développement
 # ==============================================================================
-FROM node:20-slim AS development
-
-# Active pnpm
-RUN corepack enable
-
-# Définit le répertoire de travail
-WORKDIR /app
-
-# Copie des fichiers de dépendances (optimisation du cache Docker)
-COPY package.json pnpm-lock.yaml ./
-
-# Installation des dépendances
-RUN pnpm install --frozen-lockfile
-
-# Copie du reste du code source
-COPY . .
+FROM builder AS development
 
 # Exposition du port utilisé en développement
 EXPOSE 3000
 
-# Variables d'environnement par défaut pour le développement
-ENV PORT=3000 \
-    NODE_ENV=development \
-    VITE_APP_ENV=development \
-    VITE_DEBUG=true \
-    VITE_LOG_LEVEL=debug
+# Note: Les variables d'environnement sont maintenant gérées via docker-compose.yml
+# et le fichier .env pour plus de flexibilité en développement.
 
 # Healthcheck simplifié pour le développement
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=2 \

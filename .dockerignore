@@ -38,5 +38,8 @@ env.production.example
 docker-compose.yml
 scripts/
 clean.bat
-supabase/
 
+# Ignore les fichiers générés par Supabase localement, mais PAS les migrations
+supabase/db/
+supabase/.branches/
+supabase/generated/
