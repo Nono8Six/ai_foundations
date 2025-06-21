@@ -236,6 +236,7 @@ Le frontend est configuré pour le hot-reload automatique. Modifiez simplement l
 ## 📚 Documentation supplémentaire
 
 - [Guide du Développeur](README-DEV.md) - Documentation complète pour les développeurs
+- [Guide Supabase](README-SUPABASE.md) - Synchronisation de la base de données
 - [Documentation Supabase](https://supabase.com/docs)
 - [Documentation Docker](https://docs.docker.com/)
 - [Documentation React](https://reactjs.org/)
