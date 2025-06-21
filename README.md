@@ -77,6 +77,23 @@ docker-compose exec frontend pnpm test
 # Vérifier le formatage
 docker-compose exec frontend pnpm format:check
 ```
+## 🚀 Mode Production
+
+Pour générer l'image optimisée et lancer l'application :
+
+```bash
+# Assurez-vous de disposer d'un fichier .env configuré
+docker compose -f docker-compose.prod.yml up --build -d
+```
+
+Vous pouvez aussi construire l'image manuellement :
+
+```bash
+docker build --target production -t ai-foundations:prod .
+```
+
+Les variables requises sont lues depuis le même fichier `.env`.
+
 
 ## 🏗 Structure du Projet
 
