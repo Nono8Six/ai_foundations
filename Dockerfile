@@ -58,6 +58,9 @@ FROM builder AS development
 # Exposition du port utilisé en développement
 EXPOSE 3000
 
+# On se place dans le dossier frontend pour le dev
+WORKDIR /app/apps/frontend
+
 # Note: Les variables d'environnement sont maintenant gérées via docker-compose.yml
 # et le fichier .env pour plus de flexibilité en développement.
 
