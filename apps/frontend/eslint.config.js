@@ -2,6 +2,8 @@
 import globals from "globals";
 import js from "@eslint/js";
 import pluginReact from "eslint-plugin-react";
+import pluginTs from "@typescript-eslint/eslint-plugin";
+import parserTs from "@typescript-eslint/parser";
 import prettierConfig from "eslint-config-prettier";
 
 export default [
@@ -18,6 +20,27 @@ export default [
         sourceType: 'module',
         ecmaFeatures: { jsx: true }
       }
+    }
+  },
+  {
+    files: ["**/*.{ts,tsx}"],
+    languageOptions: {
+      parser: parserTs,
+      globals: {
+        ...globals.browser,
+        ...globals.node
+      },
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+        ecmaFeatures: { jsx: true }
+      }
+    },
+    plugins: {
+      '@typescript-eslint': pluginTs
+    },
+    rules: {
+      ...pluginTs.configs.recommended.rules
     }
   },
   {
@@ -66,7 +89,7 @@ export default [
     }
   },
   {
-    files: ["**/*.test.{js,jsx}"],
+    files: ["**/*.test.{js,jsx,ts,tsx}"],
     languageOptions: {
       globals: {
         ...globals.vitest,

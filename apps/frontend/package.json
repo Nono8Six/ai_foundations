@@ -26,7 +26,7 @@
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",
-    "type-check": "tsc --noEmit"
+    "typecheck": "tsc --noEmit"
   },
   "browserslist": {
     "production": [
