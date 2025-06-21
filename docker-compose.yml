@@ -1,15 +1,11 @@
-version: '3.9'
-
 # Réseau personnalisé pour une meilleure isolation
 networks:
   app-network:
     driver: bridge
-  supabase-network:
-    driver: bridge
 
 # Volumes pour la persistance des données
 volumes:
-  supabase-data:
+  postgres_data:
   pgadmin-data:
 
 services:
@@ -39,8 +35,7 @@ services:
     networks:
       - app-network
     depends_on:
-      supabase:
-        condition: service_healthy
+      - db
     healthcheck:
       test: ["CMD", "wget", "--spider", "http://localhost:3000"]
       interval: 10s
@@ -54,29 +49,24 @@ services:
         max-file: "3"
 
   # -------------------------------------------------------------------
-  # Base de données Supabase
+  # Base de données PostgreSQL + PostGIS (local)
   # -------------------------------------------------------------------
-  supabase:
-    image: supabase/cli:latest
-    container_name: ai-foundations-supabase
-    command: start
+  db:
+    image: postgis/postgis:15-3.4
+    container_name: ai-foundations-db
     volumes:
-      - supabase-data:/home/supabase/.supabase
-      - ./supabase:/supabase  # Pour le montage des migrations personnalisées
+      - postgres_data:/var/lib/postgresql/data
     ports:
-      - "54321:54321"   # postgREST
-      - "54322:54322"   # auth
-      - "54323:54323"   # studio
+      - "5433:5432"
     environment:
-      - POSTGRES_PASSWORD=${SUPABASE_DB_PASSWORD}
-      - JWT_SECRET=${SUPABASE_JWT_SECRET:-your-jwt-secret}
-      - SITE_URL=http://localhost:3000
-      - ADDITIONAL_REDIRECT_URLS=http://localhost:3000/auth/callback
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${LOCAL_DB_PASSWORD:-postgres}
     restart: unless-stopped
     networks:
-      - supabase-network
+      - app-network
     healthcheck:
-      test: ["CMD", "pg_isready", "-h", "localhost", "-p", "54321"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -102,9 +92,9 @@ services:
       - "5050:80"
     restart: unless-stopped
     networks:
-      - supabase-network
+      - app-network
     depends_on:
-      - supabase
+      - db
     logging:
       driver: "json-file"
       options:
@@ -112,6 +102,25 @@ services:
         max-file: "3"
 
   # -------------------------------------------------------------------
+  # -------------------------------------------------------------------
+  # Outil CLI Supabase pour la synchronisation cloud/local
+  # -------------------------------------------------------------------
+  supabase_cli:
+    image: ghcr.io/supabase/cli:1.153.0
+    container_name: ai-foundations-supabase-cli
+    profiles: ["tools"]
+    volumes:
+      - ./supabase:/supabase
+    working_dir: /supabase
+    entrypoint: ["sleep", "infinity"]
+    networks:
+      - app-network
+    environment:
+      SUPABASE_ACCESS_TOKEN: ${SUPABASE_ACCESS_TOKEN}
+      SUPABASE_PROJECT_REF: ${SUPABASE_PROJECT_REF}
+      SUPABASE_DB_PASSWORD: ${SUPABASE_DB_PASSWORD}
+      SUPABASE_JWT_SECRET: ${SUPABASE_JWT_SECRET}
+
   # Service de surveillance (optionnel)
   # -------------------------------------------------------------------
   # Décommentez pour activer Portainer (interface de gestion des conteneurs)
@@ -139,8 +148,3 @@ x-logging: &default-logging
       max-size: "10m"
       max-file: "3"
 
-# Configuration réseau
-x-networks: &default-networks
-  networks:
-    - app-network
-    - supabase-network
