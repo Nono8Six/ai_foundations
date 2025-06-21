@@ -1,6 +1,14 @@
 {
   "name": "ai-foundations-monorepo",
   "private": true,
-  "workspaces": ["apps/*", "packages/*"],
-  "packageManager": "pnpm@10.12.1"
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "packageManager": "pnpm@10.12.1",
+  "devDependencies": {
+    "@vitest/coverage-v8": "^1.6.1",
+    "globals": "16.2.0",
+    "vitest": "^1.6.1"
+  }
 }
