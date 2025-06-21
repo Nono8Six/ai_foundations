@@ -1,54 +1,98 @@
 # ==============================================================================
-# Dockerfile Production pour AI Foundations
+# Dockerfile pour AI Foundations (Développement et Production)
 # ==============================================================================
 
-# --- Étape 1 : Builder ---
-# On utilise Node.js pour compiler l'application.
+# Étape 1 : Builder l'application
 FROM node:20-slim AS builder
 
+# Active pnpm
 RUN corepack enable
+
+# Définit le répertoire de travail
 WORKDIR /app
 
-# Copier et installer les dépendances (cette étape sera mise en cache)
+# Copie des fichiers de dépendances (optimisation du cache Docker)
 COPY package.json pnpm-lock.yaml ./
+
+# Installation des dépendances
 RUN pnpm install --frozen-lockfile
 
-# Copier le reste du code source
+# Copie du reste du code source
 COPY . .
 
-# --- Injection des variables d'environnement au moment du build ---
-# On déclare les arguments qui seront passés par docker-compose
-ARG VITE_SUPABASE_URL
-ARG VITE_SUPABASE_ANON_KEY
-
-# On les expose comme variables d'environnement pour que Vite puisse les lire
-ENV VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
-ENV VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
-# ---
-
-# Construire l'application frontend. La sortie sera dans /app/apps/frontend/dist
+# Construction de l'application
 RUN pnpm --filter frontend build
 
-# --- Étape 2 : Runtime ---
-# On utilise une image Nginx légère et sécurisée pour servir les fichiers.
-FROM nginx:1.27-alpine
+# ==============================================================================
+# Étape 2 : Image de production
+# ==============================================================================
+FROM nginx:1.27-alpine AS production
 
-LABEL org.opencontainers.image.source="https://github.com/Nono8Six/ai_foundations"
+# Installation des outils de débogage (utile en développement)
+RUN apk add --no-cache curl
 
-ENV PORT=3000
-EXPOSE 3000
-
-# Copier les fichiers statiques compilés
-COPY --from=builder /app/apps/frontend/dist /usr/share/nginx/html
-
-# Copier le template de configuration Nginx
+# Configuration Nginx
 COPY nginx/default.conf.template /etc/nginx/templates/default.conf.template
 
-HEALTHCHECK --interval=10s --timeout=3s --retries=3 \
-  CMD wget -qO- http://localhost:${PORT}/healthz || exit 1
+# Copie des fichiers construits depuis l'étape builder
+COPY --from=builder /app/apps/frontend/dist /usr/share/nginx/html
 
-# Utiliser un utilisateur non-root pour la sécurité
-USER 101
+# Exposition du port HTTP standard
+EXPOSE 80
 
-# Lancer Nginx
+# Healthcheck pour surveiller l'état du conteneur
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:80/healthz || exit 1
+
+# Utilisateur non-root pour la sécurité
+USER nginx:nginx
+
+# Commande par défaut pour Nginx
 CMD ["nginx", "-g", "daemon off;"]
+
+# ==============================================================================
+# Étape 3 : Configuration pour le développement
+# ==============================================================================
+FROM node:20-slim AS development
+
+# Active pnpm
+RUN corepack enable
+
+# Définit le répertoire de travail
+WORKDIR /app
+
+# Copie des fichiers de dépendances (optimisation du cache Docker)
+COPY package.json pnpm-lock.yaml ./
+
+# Installation des dépendances
+RUN pnpm install --frozen-lockfile
+
+# Copie du reste du code source
+COPY . .
+
+# Exposition du port utilisé en développement
+EXPOSE 3000
+
+# Variables d'environnement par défaut pour le développement
+ENV PORT=3000 \
+    NODE_ENV=development \
+    VITE_APP_ENV=development \
+    VITE_DEBUG=true \
+    VITE_LOG_LEVEL=debug
+
+# Healthcheck simplifié pour le développement
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=2 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:3000 || exit 1
+
+# Commande par défaut pour le développement
+CMD ["pnpm", "dev", "--host", "--port", "3000"]
+
+# ==============================================================================
+# Sélection de l'étape par défaut (développement)
+# ==============================================================================
+FROM development
+
+# Métadonnées
+LABEL org.opencontainers.image.source="https://github.com/Nono8Six/ai_foundations" \
+      org.opencontainers.image.description="AI Foundations - Environnement de développement" \
+      org.opencontainers.image.licenses="MIT"
