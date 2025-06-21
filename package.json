@@ -6,9 +6,13 @@
     "packages/*"
   ],
   "packageManager": "pnpm@10.12.1",
+  "scripts": {
+    "typecheck": "tsc -b --pretty"
+  },
   "devDependencies": {
-    "@vitest/coverage-v8": "^1.6.1",
-    "globals": "16.2.0",
-    "vitest": "^1.6.1"
+    "@typescript-eslint/eslint-plugin": "^8.34.1",
+    "@typescript-eslint/parser": "^8.34.1",
+    "typescript": "^5.8.3",
+    "vite-plugin-checker": "^0.9.3"
   }
 }
