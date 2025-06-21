@@ -1,7 +1,13 @@
 {
-  "extends": "@tsconfig/vite/tsconfig.json",
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "jsx": "react-jsx"
+    "allowJs": true,
+    "checkJs": true,
+    "isolatedModules": true,
+    "lib": ["DOM", "ESNext"],
+    "module": "ESNext",
+    "jsx": "react-jsx",
+    "noEmit": true
   },
   "include": ["src"]
 }
