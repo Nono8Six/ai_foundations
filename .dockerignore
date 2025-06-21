@@ -8,7 +8,6 @@ node_modules
 # Development environments
 .vscode
 .idea
-.husky
 
 # Logs
 npm-debug.log*
@@ -25,19 +24,14 @@ coverage/
 # Documentation and plans
 docs/
 README.md
-PROJECT_PROGRESS.md
-REFACTORING_PLAN.md
-AGENTS.md
 
 # Sample and local env files
 .env*
 !.env.production
-env.production.example
 
 # Docker compose and other local config
 docker-compose.yml
 scripts/
-clean.bat
 
 # Ignore les fichiers générés par Supabase localement, mais PAS les migrations
 supabase/db/
