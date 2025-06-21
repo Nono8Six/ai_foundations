@@ -390,6 +390,18 @@ fi
 echo "Usage: $0 [--pull|--push]"
 exit 1
 ```
+Rendez-le executable :
+```bash
+chmod +x scripts/sync-supabase.sh
+```
+
+Utilisation rapide :
+```bash
+./scripts/sync-supabase.sh --pull  # Récupérer les modifications
+./scripts/sync-supabase.sh --push  # Envoyer vos migrations
+```
+
+
 
 ### Hooks Git
 
