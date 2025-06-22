@@ -9,14 +9,38 @@ import UserFilters from './components/UserFilters';
 import CreateUserModal from './components/CreateUserModal';
 import BulkActionsBar from './components/BulkActionsBar';
 
+interface AdminUser {
+  id: string;
+  name: string;
+  email: string;
+  avatar: string;
+  role: 'admin' | 'student';
+  status: string;
+  registrationDate: string;
+  lastActivity: string;
+  courseProgress: number;
+  totalCourses: number;
+  completedCourses: number;
+  xpPoints: number;
+  level: number;
+  streak: number;
+  achievements: number;
+  location: string;
+  phone: string;
+  notes: string;
+  enrolledCourses: string[];
+}
+
 const UserManagementAdminContent = () => {
   const { setSidebarOpen } = useAdminSidebar();
+
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState<Record<string, unknown> | null>(null);
+
   const [showDetailsPanel, setShowDetailsPanel] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<AdminUser[]>([]);
   const [filters, setFilters] = useState({
     status: 'all',
     role: 'all',

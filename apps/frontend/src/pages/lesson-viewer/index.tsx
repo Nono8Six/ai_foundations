@@ -12,6 +12,27 @@ import ProgressBar from './components/ProgressBar';
 import ActionBar from './components/ActionBar';
 import XPCelebration from './components/XPCelebration';
 
+interface Note {
+  id: number;
+  content: string;
+  timestamp: string;
+  selectedText: string;
+}
+
+interface LessonItem {
+  id: string;
+  title: string;
+  duration: string;
+  completed: boolean;
+  current: boolean;
+}
+
+interface ModuleItem {
+  id: string;
+  title: string;
+  lessons: LessonItem[];
+}
+
 const LessonViewer = () => {
   const navigate = useNavigate();
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
@@ -20,10 +41,10 @@ const LessonViewer = () => {
   const [currentLesson, setCurrentLesson] = useState<Record<string, any> | null>(null);
   const [lessonProgress, setLessonProgress] = useState(0);
   const [showXPCelebration, setShowXPCelebration] = useState(false);
-  const [userNotes, setUserNotes] = useState([]);
+  const [userNotes, setUserNotes] = useState<Note[]>([]);
   const [selectedText, setSelectedText] = useState('');
 
-  const [moduleStructure, setModuleStructure] = useState([]);
+  const [moduleStructure, setModuleStructure] = useState<ModuleItem[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {

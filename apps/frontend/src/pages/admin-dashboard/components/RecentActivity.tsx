@@ -3,6 +3,17 @@ import Icon from '../../../components/AppIcon';
 import Image from '../../../components/AppImage';
 import { supabase } from '../../../lib/supabase';
 
+interface ActivityItem {
+  id: string;
+  type: string;
+  user: { name: string; avatar: string | null };
+  action: string;
+  timestamp: string;
+  icon: string;
+  iconColor: string;
+  label: string;
+}
+
 // Helper function to format time since date
 const timeSince = date => {
   const seconds = Math.floor((new Date() - new Date(date)) / 1000);
@@ -91,7 +102,7 @@ const getActivityTypeProps = type => {
 
 
 const RecentActivity = () => {
-  const [activitiesData, setActivitiesData] = useState([]);
+  const [activitiesData, setActivitiesData] = useState<ActivityItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchRecentActivity = async () => {
