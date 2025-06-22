@@ -1,12 +1,19 @@
 import React from 'react';
 
-export default function TextInput({
+export interface TextInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'className'> {
+  label?: string;
+  error?: string;
+  className?: string;
+  inputClassName?: string;
+}
+
+const TextInput: React.FC<TextInputProps> = ({
   label,
   error,
   className = '',
   inputClassName = '',
   ...props
-}) {
+}) => {
   return (
     <div className={className}>
       {label && (
@@ -23,4 +30,6 @@ export default function TextInput({
       {error && <p className='text-error text-sm mt-1'>{error}</p>}
     </div>
   );
-}
+};
+
+export default TextInput;
