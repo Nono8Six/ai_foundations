@@ -140,7 +140,7 @@ const ContentTree = ({
 
             <div className='opacity-0 group-hover:opacity-100 transition-opacity duration-200 ml-2'>
               <button className='p-1 hover:bg-secondary-100 rounded'>
-                <Icon name='MoreVertical' size={14} aria-label='Plus d\'options' className='text-secondary-500' />
+                <Icon name='MoreVertical' size={14} aria-label="Plus d'options" className='text-secondary-500' />
               </button>
             </div>
           </div>
@@ -214,7 +214,7 @@ const ContentTree = ({
 
               <div className='opacity-0 group-hover:opacity-100 transition-opacity duration-200 ml-2'>
                 <button className='p-1 hover:bg-secondary-100 rounded'>
-                  <Icon name='MoreVertical' size={14} aria-label='Plus d\'options' className='text-secondary-500' />
+                  <Icon name='MoreVertical' size={14} aria-label="Plus d'options" className='text-secondary-500' />
                 </button>
               </div>
             </div>
@@ -290,7 +290,7 @@ const ContentTree = ({
 
             <div className='opacity-0 group-hover:opacity-100 transition-opacity duration-200 ml-2'>
               <button className='p-1 hover:bg-secondary-100 rounded'>
-                <Icon name='MoreVertical' size={16} aria-label='Plus d\'options' className='text-secondary-500' />
+                <Icon name='MoreVertical' size={16} aria-label="Plus d'options" className='text-secondary-500' />
               </button>
             </div>
           </div>
