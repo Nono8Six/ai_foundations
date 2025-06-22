@@ -59,6 +59,8 @@ pnpm run supabase:start
 
 ## 🎯 Commandes Essentielles
 
+Toutes les commandes suivantes se lancent depuis le dossier `apps/backend`.
+
 | Commande | Description |
 |----------|-------------|
 | `pnpm supabase:start` | Démarrer l'environnement local |
@@ -129,7 +131,6 @@ pnpm gen:types
 Ce script exécute :
 ```bash
 supabase gen types typescript --local > ../frontend/src/types/database.types.ts
-```
 
 **IMPORTANT** : Ces types sont utilisés par votre application React pour un typage fort. Sans cette étape, TypeScript ne connaîtra pas vos nouvelles tables/champs.
 
@@ -151,8 +152,8 @@ supabase login
 ### 2. Configuration du projet local
 
 ```bash
-# Se placer dans le dossier du projet
-cd /chemin/vers/votre/projet
+# Se placer dans le dossier backend
+cd apps/backend
 
 # Lier le projet local à votre projet Supabase
 supabase link --project-ref votre-reference-projet
@@ -177,9 +178,13 @@ Les ports par défaut sont automatiquement configurés par Supabase et Docker.
 
 ## 🔄 Workflow de synchronisation
 
+Exécutez les commandes suivantes depuis le dossier `apps/backend`.
+
 ### 1. Depuis l'interface web vers le local
 
 ```bash
+# Se placer dans le dossier backend
+cd apps/backend
 # 1. Récupérer les dernières modifications
 supabase db pull
 
@@ -196,6 +201,8 @@ supabase db reset
 ### 2. Du local vers l'interface web
 
 ```bash
+# Se placer dans le dossier backend
+cd apps/backend
 # 1. Appliquer les migrations locales
 supabase db push
 
