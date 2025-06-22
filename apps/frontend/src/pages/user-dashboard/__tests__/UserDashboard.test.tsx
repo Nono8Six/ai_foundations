@@ -59,7 +59,7 @@ vi.mock('../components/ProgressChart', () => ({
   default: () => <div data-testid='progress-chart' />,
 }));
 
-import UserDashboard from '../index.jsx';
+import UserDashboard from '../index';
 
 describe('UserDashboard', () => {
   afterEach(() => {

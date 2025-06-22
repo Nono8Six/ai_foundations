@@ -2,7 +2,12 @@ import React, { useState } from 'react';
 import Icon from '../../../components/AppIcon';
 import Image from '../../../components/AppImage';
 
-const UserDetailsPanel = ({ user, onClose }) => {
+interface UserDetailsPanelProps {
+  user: Record<string, unknown> | null;
+  onClose: () => void;
+}
+
+const UserDetailsPanel = ({ user, onClose }: UserDetailsPanelProps) => {
   const [activeTab, setActiveTab] = useState('overview');
 
   if (!user) return null;

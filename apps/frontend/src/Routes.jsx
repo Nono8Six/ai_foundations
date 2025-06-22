@@ -6,17 +6,17 @@ import ErrorBoundary from './components/ErrorBoundary';
 import { useAuth } from './context/AuthContext';
 
 // --- Lazy Loading des pages ---
-const PublicHomepage = lazy(() => import('./pages/public-homepage/index.jsx'));
-const ProgramOverview = lazy(() => import('./pages/program-overview/index.jsx'));
-const AuthenticationLoginRegister = lazy(() => import('./pages/auth/index.jsx'));
-const UserDashboard = lazy(() => import('./pages/user-dashboard/index.jsx'));
-const UserProfileManagement = lazy(() => import('./pages/user-profile-management/index.jsx'));
-const LessonViewer = lazy(() => import('./pages/lesson-viewer/index.jsx'));
-const AdminDashboard = lazy(() => import('./pages/admin-dashboard/index.jsx'));
-const UserManagementAdmin = lazy(() => import('./pages/user-management-admin/index.jsx'));
-const ContentManagementCoursesModulesLessons = lazy(() => import('./pages/cms/index.jsx'));
-const NotFound = lazy(() => import('./pages/not-found/index.jsx'));
-const VerifyEmail = lazy(() => import('./pages/verify-email/index.jsx'));
+const PublicHomepage = lazy(() => import('./pages/public-homepage/index.tsx'));
+const ProgramOverview = lazy(() => import('./pages/program-overview/index.tsx'));
+const AuthenticationLoginRegister = lazy(() => import('./pages/auth/index.tsx'));
+const UserDashboard = lazy(() => import('./pages/user-dashboard/index.tsx'));
+const UserProfileManagement = lazy(() => import('./pages/user-profile-management/index.tsx'));
+const LessonViewer = lazy(() => import('./pages/lesson-viewer/index.tsx'));
+const AdminDashboard = lazy(() => import('./pages/admin-dashboard/index.tsx'));
+const UserManagementAdmin = lazy(() => import('./pages/user-management-admin/index.tsx'));
+const ContentManagementCoursesModulesLessons = lazy(() => import('./pages/cms/index.tsx'));
+const NotFound = lazy(() => import('./pages/not-found/index.tsx'));
+const VerifyEmail = lazy(() => import('./pages/verify-email/index.tsx'));
 
 // --- Composant de chargement ---
 const PageLoader = () => (

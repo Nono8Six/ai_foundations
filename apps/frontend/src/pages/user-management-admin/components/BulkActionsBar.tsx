@@ -1,7 +1,17 @@
 import React, { useState } from 'react';
 import Icon from '../../../components/AppIcon';
 
-const BulkActionsBar = ({ selectedCount, onBulkAction, onClearSelection }) => {
+interface BulkActionsBarProps {
+  selectedCount: number;
+  onBulkAction: (action: string) => void;
+  onClearSelection: () => void;
+}
+
+const BulkActionsBar = ({
+  selectedCount,
+  onBulkAction,
+  onClearSelection,
+}: BulkActionsBarProps) => {
   const [showActionMenu, setShowActionMenu] = useState(false);
 
   const bulkActions = [

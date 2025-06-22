@@ -1,7 +1,17 @@
 import React, { useState } from 'react';
 import Icon from '../../../components/AppIcon';
 
-const BulkOperations = ({ selectedItems, onClose, onExecute }) => {
+interface BulkOperationsProps {
+  selectedItems: string[];
+  onClose: () => void;
+  onExecute: (operationId: string, items: string[]) => void;
+}
+
+const BulkOperations = ({
+  selectedItems,
+  onClose,
+  onExecute,
+}: BulkOperationsProps) => {
   const [selectedOperation, setSelectedOperation] = useState('');
   const [confirmationText, setConfirmationText] = useState('');
 

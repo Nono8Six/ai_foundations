@@ -35,7 +35,7 @@ vi.mock('../../../../context/AuthContext', () => ({
   }),
 }));
 
-import SettingsTab from '../SettingsTab.jsx';
+import SettingsTab from '../SettingsTab';
 
 describe('SettingsTab', () => {
   afterEach(() => {

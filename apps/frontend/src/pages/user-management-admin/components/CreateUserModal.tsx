@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
 import Icon from '../../../components/AppIcon';
 
-const CreateUserModal = ({ onClose, onUserCreated }) => {
+interface CreateUserModalProps {
+  onClose: () => void;
+  onUserCreated: (user: unknown) => void;
+}
+
+const CreateUserModal = ({ onClose, onUserCreated }: CreateUserModalProps) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
