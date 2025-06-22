@@ -1,4 +1,4 @@
-// src/lib/__mocks__/supabase.js
+// src/lib/__mocks__/supabase.ts
 import { vi } from 'vitest';
 
 // Define a flexible mock for the Supabase query builder chain

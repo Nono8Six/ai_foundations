@@ -18,7 +18,7 @@ describe('RecentActivity', () => {
     // Reset all mocks before each test, especially for supabase chain
     supabase.from.mockClear();
     // Ensure each call to `from` returns a new chainable mock with its own resolution capability
-    // This setup relies on the global __mocks__/supabase.js structure
+    // This setup relies on the global __mocks__/supabase.ts structure
     const mockBuilderInstance = {
         select: vi.fn().mockReturnThis(),
         order: vi.fn().mockReturnThis(),
