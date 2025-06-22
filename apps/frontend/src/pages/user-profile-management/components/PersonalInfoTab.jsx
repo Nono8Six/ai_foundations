@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../../../context/AuthContext';
-import { useToast } from '../../../context/ToastContext';
+import { useToast } from '../../../context/ToastContext.tsx';
 import Icon from '../../../components/AppIcon';
 import Image from '../../../components/AppImage';
 import logger from '../../../utils/logger.ts';
@@ -42,9 +42,9 @@ const PersonalInfoTab = ({ userData }) => {
         // Add avatar_url if it was changed
         ...(avatarPreview !== userData.avatar && { avatar_url: avatarPreview }),
       };
-      
+
       logger.debug('Submitting profile updates:', updates);
-      
+
       // Update the profile in Supabase using RPC function
       await updateProfile(updates);
 
@@ -53,12 +53,11 @@ const PersonalInfoTab = ({ userData }) => {
 
       // Show success message
       addToast('Profil mis à jour avec succès !', 'success');
-      
     } catch (error) {
       console.error('Error updating profile:', error);
-      setError('root', { 
-        type: 'manual', 
-        message: 'Erreur lors de la mise à jour du profil. Veuillez réessayer.' 
+      setError('root', {
+        type: 'manual',
+        message: 'Erreur lors de la mise à jour du profil. Veuillez réessayer.',
       });
     } finally {
       setIsSubmitting(false);
@@ -145,7 +144,9 @@ const PersonalInfoTab = ({ userData }) => {
                 {isEditing ? 'Choisissez une nouvelle photo de profil' : 'Votre photo de profil'}
               </p>
               <p className='text-xs text-text-secondary'>
-                {isEditing ? 'JPG, PNG ou GIF. Taille maximale de 2MB.' : 'Utilisée pour personnaliser votre expérience'}
+                {isEditing
+                  ? 'JPG, PNG ou GIF. Taille maximale de 2MB.'
+                  : 'Utilisée pour personnaliser votre expérience'}
               </p>
             </div>
           </div>

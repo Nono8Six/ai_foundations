@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useAdminCourses } from '../../context/AdminCourseContext';
-import { useToast } from '../../context/ToastContext';
+import { useToast } from '../../context/ToastContext.tsx';
 import { fetchCoursesWithContent } from '../../services/courseService';
 import logger from '../../utils/logger.ts';
 
 import Icon from '../../components/AppIcon';
-import AdminLayout, { useAdminSidebar } from "../../components/AdminLayout";
+import AdminLayout, { useAdminSidebar } from '../../components/AdminLayout';
 import ContentTree from './components/ContentTree';
 import CourseEditor from './components/CourseEditor';
 import ModuleEditor from './components/ModuleEditor';
@@ -22,7 +22,7 @@ const ContentManagementCoursesModulesLessonsContent = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedItems, setSelectedItems] = useState([]);
   const [showBulkOperations, setShowBulkOperations] = useState(false);
-  
+
   const [contentData, setContentData] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -37,7 +37,7 @@ const ContentManagementCoursesModulesLessonsContent = () => {
         setContentData(courses);
       } catch (err) {
         logger.error('Failed to fetch courses', err);
-        addToast("Erreur lors du chargement du contenu", 'error');
+        addToast('Erreur lors du chargement du contenu', 'error');
       } finally {
         setLoading(false);
       }
@@ -50,7 +50,7 @@ const ContentManagementCoursesModulesLessonsContent = () => {
     setContentType(content.type);
   };
 
-  const handleSaveContent = async (updatedContent) => {
+  const handleSaveContent = async updatedContent => {
     // Note: This logic currently only handles the 'course' type.
     // It should be expanded to handle modules and lessons.
     if (contentType !== 'course') {
@@ -73,11 +73,11 @@ const ContentManagementCoursesModulesLessonsContent = () => {
       setSelectedContent(savedCourse);
     } catch (error) {
       logger.error('Erreur lors de la sauvegarde du cours:', error);
-      addToast("Erreur lors de la sauvegarde du cours", 'error');
+      addToast('Erreur lors de la sauvegarde du cours', 'error');
     }
   };
 
-  const handleDeleteContent = async (contentId) => {
+  const handleDeleteContent = async contentId => {
     if (contentType !== 'course') {
       logger.info('Deleting non-course content (local state only):', contentId);
       setSelectedContent(null);
@@ -91,10 +91,9 @@ const ContentManagementCoursesModulesLessonsContent = () => {
       addToast('Cours supprimé avec succès !', 'success');
     } catch (error) {
       logger.error('Erreur lors de la suppression du cours:', error);
-      addToast("Erreur lors de la suppression du cours", 'error');
+      addToast('Erreur lors de la suppression du cours', 'error');
     }
   };
-
 
   const handleBulkOperation = (operation, items) => {
     logger.info('Bulk operation:', operation, items);
@@ -152,7 +151,7 @@ const ContentManagementCoursesModulesLessonsContent = () => {
   if (loading) {
     return (
       <div className='min-h-screen flex items-center justify-center'>
-        <Icon name="Loader" className="animate-spin text-primary" size={48} />
+        <Icon name='Loader' className='animate-spin text-primary' size={48} />
       </div>
     );
   }
@@ -170,73 +169,75 @@ const ContentManagementCoursesModulesLessonsContent = () => {
           <h1 className='text-xl font-semibold text-text-primary ml-4'>Gestion du Contenu</h1>
         </div>
       </header>
-        <main className='p-6 pt-16'>
+      <main className='p-6 pt-16'>
         <div className='flex h-[calc(100vh-4rem)]'>
-        <div className='w-80 bg-surface border-r border-border flex flex-col'>
-          <div className='p-4 border-b border-border'>
-            <ContentSearch
-              searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
-              onCreateNew={() => setSelectedContent({ type: 'course', title: '', description: '' })}
-            />
-            {selectedItems.length > 0 && (
-              <button
-                onClick={() => setShowBulkOperations(true)}
-                className='mt-3 w-full px-3 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary-700 transition-colors duration-200 flex items-center justify-center'
-              >
-                <Icon name='Edit' size={16} className='mr-2' />
-                Actions groupées ({selectedItems.length})
-              </button>
-            )}
-          </div>
-          <div className='flex-1 overflow-y-auto'>
-            <ContentTree
-              contentData={contentData}
-              searchQuery={searchQuery}
-              selectedContent={selectedContent}
-              selectedItems={selectedItems}
-              onContentSelect={handleContentSelect}
-              onItemsSelect={setSelectedItems}
-              onReorder={(newOrder) => setContentData(newOrder)}
-            />
-          </div>
-          <div className='p-4 border-t border-border bg-secondary-50'>
-            <div className='grid grid-cols-2 gap-4 text-center'>
-              <div>
-                <div className='text-2xl font-bold text-primary'>{contentData.length}</div>
-                <div className='text-xs text-text-secondary'>Cours</div>
-              </div>
-              <div>
-                <div className='text-2xl font-bold text-accent'>
-                  {contentData.reduce((acc, course) => acc + (course.modules?.length || 0), 0)}
+          <div className='w-80 bg-surface border-r border-border flex flex-col'>
+            <div className='p-4 border-b border-border'>
+              <ContentSearch
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+                onCreateNew={() =>
+                  setSelectedContent({ type: 'course', title: '', description: '' })
+                }
+              />
+              {selectedItems.length > 0 && (
+                <button
+                  onClick={() => setShowBulkOperations(true)}
+                  className='mt-3 w-full px-3 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary-700 transition-colors duration-200 flex items-center justify-center'
+                >
+                  <Icon name='Edit' size={16} className='mr-2' />
+                  Actions groupées ({selectedItems.length})
+                </button>
+              )}
+            </div>
+            <div className='flex-1 overflow-y-auto'>
+              <ContentTree
+                contentData={contentData}
+                searchQuery={searchQuery}
+                selectedContent={selectedContent}
+                selectedItems={selectedItems}
+                onContentSelect={handleContentSelect}
+                onItemsSelect={setSelectedItems}
+                onReorder={newOrder => setContentData(newOrder)}
+              />
+            </div>
+            <div className='p-4 border-t border-border bg-secondary-50'>
+              <div className='grid grid-cols-2 gap-4 text-center'>
+                <div>
+                  <div className='text-2xl font-bold text-primary'>{contentData.length}</div>
+                  <div className='text-xs text-text-secondary'>Cours</div>
                 </div>
-                <div className='text-xs text-text-secondary'>Modules</div>
+                <div>
+                  <div className='text-2xl font-bold text-accent'>
+                    {contentData.reduce((acc, course) => acc + (course.modules?.length || 0), 0)}
+                  </div>
+                  <div className='text-xs text-text-secondary'>Modules</div>
+                </div>
               </div>
             </div>
           </div>
+          <div className='flex-1 flex flex-col'>{renderContentEditor()}</div>
         </div>
-        <div className='flex-1 flex flex-col'>{renderContentEditor()}</div>
-      </div>
-      {showMediaLibrary && (
-        <MediaLibrary
-          onClose={() => setShowMediaLibrary(false)}
-          onSelectMedia={(media) => {
-            logger.info('Selected media:', media);
-            setShowMediaLibrary(false);
-          }}
-        />
-      )}
-      {showBulkOperations && (
-        <BulkOperations
-          selectedItems={selectedItems}
-          onClose={() => setShowBulkOperations(false)}
-          onExecute={handleBulkOperation}
-        />
+        {showMediaLibrary && (
+          <MediaLibrary
+            onClose={() => setShowMediaLibrary(false)}
+            onSelectMedia={media => {
+              logger.info('Selected media:', media);
+              setShowMediaLibrary(false);
+            }}
+          />
         )}
-        </main>
-      </>
-    );
-  };
+        {showBulkOperations && (
+          <BulkOperations
+            selectedItems={selectedItems}
+            onClose={() => setShowBulkOperations(false)}
+            onExecute={handleBulkOperation}
+          />
+        )}
+      </main>
+    </>
+  );
+};
 
 const ContentManagementCoursesModulesLessons = () => (
   <AdminLayout>
