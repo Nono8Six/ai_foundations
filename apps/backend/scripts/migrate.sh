@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Apply Supabase migrations to the linked project
+# Normally this script is run automatically; executing it manually is exceptional.
 
 set -e
 
