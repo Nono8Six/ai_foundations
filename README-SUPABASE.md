@@ -226,6 +226,21 @@ En cas de conflit de schéma :
    supabase db reset
    ```
 
+## Récupérer la base locale depuis Supabase Cloud
+
+Quand votre environnement local devient instable ou si vous souhaitez repartir sur une base propre, exécutez les commandes suivantes depuis `apps/backend` :
+
+```bash
+supabase db reset
+supabase db pull
+```
+
+La première commande vide la base locale, la seconde télécharge le schéma stocké sur Supabase Cloud. Après chaque synchronisation, pensez à régénérer les types TypeScript :
+
+```bash
+pnpm gen:types
+```
+
 ## 🐛 Dépannage
 
 ### 1. Erreurs de Connexion
