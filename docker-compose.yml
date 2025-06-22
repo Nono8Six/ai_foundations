@@ -106,7 +106,7 @@ services:
     container_name: ai-foundations-supabase-cli
     profiles: ["tools"]
     volumes:
-      - ./supabase:/supabase
+      - ./apps/backend/supabase:/supabase
     working_dir: /supabase
     entrypoint: ["sleep", "infinity"]
     networks:
