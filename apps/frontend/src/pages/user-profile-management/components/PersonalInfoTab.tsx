@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../../../context/AuthContext';
-import { useToast } from '../../../context/ToastContext.tsx';
+import { useToast } from '../../../context/ToastContext';
 import Icon from '../../../components/AppIcon';
 import Image from '../../../components/AppImage';
-import logger from '../../../utils/logger.ts';
+import logger from '../../../utils/logger';
 
 const PersonalInfoTab = ({ userData }) => {
   const [isEditing, setIsEditing] = useState(false);

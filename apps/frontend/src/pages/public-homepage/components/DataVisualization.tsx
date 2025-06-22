@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { colors, theme } from '../../../utils/theme.ts';
+import { colors, theme } from '../../../utils/theme';
 import { motion } from 'framer-motion';
 import {
   BarChart,
