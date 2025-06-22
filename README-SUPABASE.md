@@ -11,6 +11,7 @@
 5. [Gestion des Types TypeScript](#-gestion-des-types-typescript)
 6. [Dépannage](#-dépannage)
 7. [Automatisation & Astuces](#-automatisation--astuces)
+8. [Scripts d'initialisation](#-scripts-dinitialisation)
 
 ## 🛡️ Les 3 Règles d'Or
 
@@ -425,6 +426,11 @@ fi
 
 exit 0
 ```
+
+## 📝 Scripts d'initialisation
+
+Les scripts SQL du dossier `apps/backend/supabase/init-scripts` sont exécutés automatiquement lors d'un `supabase start`.
+Utilisez-les pour définir des rôles personnalisés ou préremplir la base.
 
 ## 📚 Ressources
 
