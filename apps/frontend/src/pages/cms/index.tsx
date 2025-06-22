@@ -16,7 +16,7 @@ import MediaLibrary from './components/MediaLibrary';
 
 const ContentManagementCoursesModulesLessonsContent = () => {
   const { setSidebarOpen } = useAdminSidebar();
-  const [selectedContent, setSelectedContent] = useState(null);
+  const [selectedContent, setSelectedContent] = useState<Record<string, any> | null>(null);
   const [contentType, setContentType] = useState('course');
   const [showMediaLibrary, setShowMediaLibrary] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');

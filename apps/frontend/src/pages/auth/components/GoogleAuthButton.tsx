@@ -3,7 +3,7 @@ import { useAuth } from '../../../context/AuthContext';
 
 const GoogleAuthButton = ({ isLoading, setIsLoading, disabled }) => {
   const { signInWithGoogle } = useAuth();
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   const handleGoogleSignIn = async () => {
     try {
