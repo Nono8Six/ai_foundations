@@ -1,0 +1,23 @@
+
+> ai-foundations-monorepo@ typecheck C:\Users\arnau\OneDrive\Documents\GitHub\ai_foundations_lms
+> pnpm exec tsc -b --pretty "--pretty" "false"
+
+apps/frontend/src/pages/admin-dashboard/components/PopularCoursesChart.tsx(199,42): error TS1003: Identifier expected.
+apps/frontend/src/pages/admin-dashboard/components/PopularCoursesChart.tsx(199,43): error TS1002: Unterminated string literal.
+apps/frontend/src/pages/admin-dashboard/components/PopularCoursesChart.tsx(201,14): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+apps/frontend/src/pages/admin-dashboard/components/RecentActivity.tsx(232,46): error TS1003: Identifier expected.
+apps/frontend/src/pages/admin-dashboard/components/RecentActivity.tsx(232,47): error TS1002: Unterminated string literal.
+apps/frontend/src/pages/admin-dashboard/components/RecentActivity.tsx(234,18): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+apps/frontend/src/pages/cms/components/ContentTree.tsx(143,80): error TS1003: Identifier expected.
+apps/frontend/src/pages/cms/components/ContentTree.tsx(143,114): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+apps/frontend/src/pages/cms/components/ContentTree.tsx(217,82): error TS1003: Identifier expected.
+apps/frontend/src/pages/cms/components/ContentTree.tsx(217,116): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+apps/frontend/src/pages/cms/components/ContentTree.tsx(293,80): error TS1003: Identifier expected.
+apps/frontend/src/pages/cms/components/ContentTree.tsx(293,114): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+apps/frontend/src/pages/user-management-admin/components/UserDetailsPanel.tsx(136,76): error TS1003: Identifier expected.
+apps/frontend/src/pages/user-management-admin/components/UserDetailsPanel.tsx(136,79): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+apps/frontend/src/pages/user-management-admin/components/UserDetailsPanel.tsx(136,80): error TS1002: Unterminated string literal.
+apps/frontend/src/pages/user-management-admin/components/UserTable.tsx(234,88): error TS1003: Identifier expected.
+apps/frontend/src/pages/user-management-admin/components/UserTable.tsx(234,91): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+apps/frontend/src/pages/user-management-admin/components/UserTable.tsx(234,92): error TS1002: Unterminated string literal.
+ ELIFECYCLE  Command failed with exit code 2.
