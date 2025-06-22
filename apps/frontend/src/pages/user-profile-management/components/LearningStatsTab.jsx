@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { colors } from '../../../utils/theme';
+import { colors } from '../../../utils/theme.ts';
 import {
   BarChart,
   Bar,
