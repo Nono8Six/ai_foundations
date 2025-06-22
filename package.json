@@ -7,7 +7,8 @@
   ],
   "packageManager": "pnpm@10.12.1",
   "scripts": {
-    "typecheck": "pnpm exec tsc -b --pretty"
+    "typecheck": "pnpm exec tsc -b --pretty",
+    "gen:types": "supabase gen types typescript --project-id oqmllypaarqvabuvbqga --schema public,auth,storage > apps/frontend/src/types/database.types.ts"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
