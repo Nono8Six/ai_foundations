@@ -49,6 +49,9 @@ Ce guide vous aidera à configurer et utiliser l'environnement de développement
    PGADMIN_EMAIL=admin@votredomaine.com
    PGADMIN_PASSWORD=change-me-please
    ```
+- `SUPABASE_PROJECT_REF` : identifiant de votre projet Supabase
+- `SUPABASE_ACCESS_TOKEN` : token personnel pour la CLI Supabase
+- `SUPABASE_SERVICE_ROLE_KEY` : clé service_role pour les scripts sécurisés
    
    ⚠️ **Sécurité** : Ne partagez jamais votre fichier `.env` ou vos clés secrètes. Le fichier `.env` est dans `.gitignore` pour éviter les fuites accidentelles.
 

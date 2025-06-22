@@ -57,6 +57,17 @@ pnpm exec supabase link --project-ref votre-reference-projet
 # Démarrer l'environnement local (utilise Docker)
 pnpm run supabase:start
 ```
+Préparez ensuite le fichier `.env` à la racine :
+```bash
+cp .env.example .env
+# Renseignez SUPABASE_PROJECT_REF, SUPABASE_ACCESS_TOKEN,
+# SUPABASE_SERVICE_ROLE_KEY, SUPABASE_DB_PASSWORD et SUPABASE_JWT_SECRET
+```
+- `SUPABASE_PROJECT_REF` : identifiant du projet Supabase
+- `SUPABASE_ACCESS_TOKEN` : token personnel pour la CLI
+- `SUPABASE_SERVICE_ROLE_KEY` : clé service_role
+- `SUPABASE_DB_PASSWORD` : mot de passe PostgreSQL
+- `SUPABASE_JWT_SECRET` : secret JWT du projet
 
 ## 🎯 Commandes Essentielles
 
