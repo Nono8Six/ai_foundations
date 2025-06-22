@@ -345,7 +345,7 @@ Pour toute question ou problème :
 
 ---
 
-Dernière mise à jour : $(date +"%d/%m/%Y")
+Dernière mise à jour : 22/06/2025
 
 ## ✅ Bonnes pratiques
 
@@ -467,4 +467,4 @@ Utilisez-les pour définir des rôles personnalisés ou préremplir la base.
 
 ---
 
-Dernière mise à jour : $(date +"%Y-%m-%d")
+Dernière mise à jour : 2025-06-22
