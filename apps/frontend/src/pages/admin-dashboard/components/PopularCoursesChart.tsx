@@ -196,7 +196,7 @@ const PopularCoursesChart = () => {
             <Icon
               name='MoreVertical'
               size={16}
-              aria-label='Plus d\'options'
+              aria-label="Plus d'options"
               className='text-text-secondary'
             />
           </button>

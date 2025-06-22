@@ -231,7 +231,7 @@ const UserTable = ({
                         }}
                         className='text-text-secondary hover:text-primary transition-colors'
                       >
-                        <Icon name='MoreVertical' size={16} aria-label='Plus d\'actions' />
+                        <Icon name='MoreVertical' size={16} aria-label="Plus d'actions" />
                       </button>
                     </div>
                   </td>
