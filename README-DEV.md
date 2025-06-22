@@ -21,7 +21,7 @@ Ce guide vous aidera à configurer et utiliser l'environnement de développement
 
 2. **Configurer les variables d'environnement**
    ```bash
-   # Copier le fichier d'exemple
+   # Copier le fichier d'exemple `.env.example`
    cp .env.example .env
    
    # Éditer le fichier .env avec vos clés
