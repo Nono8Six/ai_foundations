@@ -1,14 +1,32 @@
 import { useEffect, useState } from 'react';
+import type { PostgrestError, SupabaseClient } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 import { safeQuery } from '../utils/supabaseClient';
+import type { Database } from '../types/database.types';
+
+type ActivityRow = Database['public']['Tables']['activity_log']['Row'];
+
+interface UseRecentActivityOptions {
+  limit?: number;
+  order?: 'asc' | 'desc';
+  filters?: Record<string, unknown>;
+}
+
+interface UseRecentActivityResult {
+  activities: ActivityRow[];
+  loading: boolean;
+  error: PostgrestError | null;
+}
+
+const supabaseClient = supabase as SupabaseClient<Database>;
 
 const useRecentActivity = (
-  userId,
-  { limit = 10, order = 'desc', filters = {} } = {}
-) => {
-  const [activities, setActivities] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  userId: string | undefined,
+  { limit = 10, order = 'desc', filters = {} }: UseRecentActivityOptions = {}
+): UseRecentActivityResult => {
+  const [activities, setActivities] = useState<ActivityRow[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<PostgrestError | null>(null);
 
   useEffect(() => {
     if (!userId) {
@@ -22,15 +40,15 @@ const useRecentActivity = (
 
       // On combine la requête flexible de la branche 'main'
       // avec la sécurité de 'safeQuery' de la branche 'codex'.
-      const { data, error } = await safeQuery(() => {
-        let query = supabase
-          .from('activity_log')
+      const { data, error } = await safeQuery<ActivityRow[]>(() => {
+        let query = supabaseClient
+          .from<'activity_log', ActivityRow>('activity_log')
           .select('*')
           .eq('user_id', userId);
 
         // Applique les filtres dynamiques
         Object.entries(filters).forEach(([column, value]) => {
-          query = query.eq(column, value);
+          query = query.eq(column as keyof ActivityRow, value as never);
         });
 
         // Applique l'ordre de tri
