@@ -13,7 +13,7 @@ check_required_vars() {
     missing_vars=""
     
     if [ ! -f "$env_file" ]; then
-        fatal "Le fichier $env_file n'existe pas. Veuillez créer ce fichier à partir de .env.dev ou .env.prod."
+        fatal "Le fichier $env_file n'existe pas. Veuillez créer ce fichier à partir de .env.example."
     fi
     
     # Vérifier les variables requises
@@ -42,7 +42,7 @@ echo "Vérification des variables d'environnement..."
 if [ -f ".env" ]; then
     check_required_vars ".env"
 else
-    fatal "Le fichier .env est manquant. Créez-en un à partir de .env.dev ou .env.prod"
+    fatal "Le fichier .env est manquant. Créez-en un à partir de .env.example"
 fi
 
 echo "✅ Vérification terminée avec succès"

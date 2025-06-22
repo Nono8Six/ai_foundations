@@ -41,7 +41,7 @@ Plateforme complète pour les cours sur les Fondations de l'IA, construite avec 
    ```bash
    cp .env.example .env
    ```
-   Éditez le fichier `.env` avec vos clés Supabase et autres configurations.
+   Éditez ensuite le fichier `.env` créé depuis `.env.example` avec vos clés Supabase et autres configurations.
 
 3. **Démarrer l'environnement**
    ```bash
@@ -194,7 +194,7 @@ docker-compose exec backend pnpm migrate:create nom_de_la_migration
 
 ### Variables d'Environnement
 
-Créez un fichier `.env` à partir du modèle :
+Créez un fichier `.env` en copiant le modèle `.env.example` :
 
 ```bash
 cp .env.example .env
