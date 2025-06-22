@@ -12,6 +12,12 @@ import {
 import Icon from '../../../components/AppIcon';
 import { supabase } from '../../../lib/supabase';
 
+interface EngagementData {
+  time: string;
+  users: number;
+  sessions: number;
+}
+
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
@@ -246,7 +252,7 @@ const UserEngagementChart = ({ timeRange }) => {
 
       <div className='h-64'>
         <ResponsiveContainer width='100%' height='100%'>
-          <AreaChart data={engagementData}>
+          <AreaChart<EngagementData> data={engagementData}>
             <defs>
               <linearGradient id='colorUsers' x1='0' y1='0' x2='0' y2='1'>
                 <stop offset='5%' stopColor='var(--color-primary)' stopOpacity={0.3} />
