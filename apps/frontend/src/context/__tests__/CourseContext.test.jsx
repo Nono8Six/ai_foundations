@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
 
 // Mocks
-import { CourseProvider, useCourses } from '../CourseContext.jsx';
+import { CourseProvider, useCourses } from '../CourseContext';
 import { fetchCoursesFromSupabase } from '../../services/courseService';
 
 // On simule le AuthContext pour qu'il retourne toujours un utilisateur

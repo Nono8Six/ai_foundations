@@ -35,7 +35,7 @@ vi.mock('../AuthContext', () => ({
   useAuth: () => ({ user: { id: 'u1' } }),
 }));
 
-import { AdminCourseProvider, useAdminCourses } from '../AdminCourseContext.jsx';
+import { AdminCourseProvider, useAdminCourses } from '../AdminCourseContext';
 
 const wrapper = ({ children }) => (
   <QueryClientProvider client={new QueryClient()}>
