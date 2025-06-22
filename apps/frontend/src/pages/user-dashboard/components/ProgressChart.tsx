@@ -14,6 +14,20 @@ import { useCourses } from '../../../context/CourseContext';
 import useProgressChartData from '../../../hooks/useProgressChartData';
 import Icon from '../../../components/AppIcon';
 
+interface WeeklyData {
+  day: string;
+  lessons: number;
+  hours: number;
+  xp: number;
+}
+
+interface MonthlyData {
+  month: string;
+  lessons: number;
+  hours: number;
+  xp: number;
+}
+
 const ProgressChart = () => {
   const [activeTab, setActiveTab] = useState('weekly');
   
@@ -116,7 +130,7 @@ const ProgressChart = () => {
 
       <div className='w-full h-60 sm:h-72 md:h-80'>
         <ResponsiveContainer width='100%' height='100%'>
-          <LineChart data={getCurrentData()} margin={{ top: 5, right: 5, left: -25, bottom: 5 }}>
+          <LineChart<WeeklyData | MonthlyData> data={getCurrentData()} margin={{ top: 5, right: 5, left: -25, bottom: 5 }}>
             <CartesianGrid strokeDasharray='3 3' stroke={colors.border} />
             <XAxis dataKey={getXAxisKey()} tick={{ fill: colors.textSecondary, fontSize: 12 }} dy={10} />
             <YAxis tick={{ fill: colors.textSecondary, fontSize: 12 }} dx={-5} />

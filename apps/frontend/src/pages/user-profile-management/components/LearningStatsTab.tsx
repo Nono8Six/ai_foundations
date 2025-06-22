@@ -21,6 +21,29 @@ import useAchievements from '../../../hooks/useAchievements';
 import useRecentActivity from '../../../hooks/useRecentActivity';
 import Icon from '../../../components/AppIcon';
 
+interface WeeklyData {
+  day: string;
+  minutes: number;
+  xp: number;
+  lessons: number;
+}
+
+interface SubjectData {
+  name: string;
+  value: number;
+  fill: string;
+}
+
+interface Stats {
+  hasData: boolean;
+  completedLessonsCount: number;
+  inProgressLessonsCount: number;
+  totalLearningTime: number;
+  coursesCompleted: number;
+  weeklyData: WeeklyData[];
+  subjectData: SubjectData[];
+}
+
 const LearningStatsTab = () => {
   const { user, userProfile } = useAuth();
   // On utilise la version corrigée et cohérente des variables
@@ -28,7 +51,7 @@ const LearningStatsTab = () => {
   const { achievements } = useAchievements(user?.id, { order: 'desc' });
   const { activities } = useRecentActivity(user?.id, { limit: 50, order: 'desc' });
 
-  const stats = useMemo(() => {
+  const stats: Stats = useMemo(() => {
     // On utilise les bonnes variables ici
     if (coursesLoading || !courses || courses.length === 0) {
       return {
@@ -198,7 +221,7 @@ const LearningStatsTab = () => {
             {stats.weeklyData.length > 0 ? (
               <div className='h-64'>
                 <ResponsiveContainer width='100%' height='100%'>
-                  <BarChart data={stats.weeklyData}>
+                  <BarChart<WeeklyData> data={stats.weeklyData}>
                     <CartesianGrid strokeDasharray='3 3' stroke={colors.border} />
                     <XAxis dataKey='day' stroke={colors.secondary} fontSize={12} />
                     <YAxis stroke={colors.secondary} fontSize={12} />
@@ -231,7 +254,7 @@ const LearningStatsTab = () => {
             {stats.weeklyData.length > 0 && stats.weeklyData.some(d => d.xp > 0) ? (
               <div className='h-64'>
                 <ResponsiveContainer width='100%' height='100%'>
-                  <LineChart data={stats.weeklyData}>
+                  <LineChart<WeeklyData> data={stats.weeklyData}>
                     <CartesianGrid strokeDasharray='3 3' stroke={colors.border} />
                     <XAxis dataKey='day' stroke={colors.secondary} fontSize={12} />
                     <YAxis stroke={colors.secondary} fontSize={12} />
@@ -273,7 +296,7 @@ const LearningStatsTab = () => {
               <>
                 <div className='h-64'>
                   <ResponsiveContainer width='100%' height='100%'>
-                    <PieChart>
+                    <PieChart<SubjectData>>
                       <Pie
                         data={stats.subjectData}
                         cx='50%'
