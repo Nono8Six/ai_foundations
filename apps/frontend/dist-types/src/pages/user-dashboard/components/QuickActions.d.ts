@@ -1,5 +1,5 @@
 declare const QuickActions: ({ actions, onAction }: {
-    actions?: any[];
+    actions?: never[] | undefined;
     onAction: any;
 }) => import("react/jsx-runtime").JSX.Element;
 export default QuickActions;

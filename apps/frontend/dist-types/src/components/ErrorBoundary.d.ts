@@ -1,6 +1,6 @@
 export default ErrorBoundary;
 declare class ErrorBoundary extends React.Component<any, any, any> {
-    static contextType: React.Context<import("../context/ErrorContext.tsx").ErrorLogger>;
+    static contextType: React.Context<import("../context/ErrorContext").ErrorLogger>;
     static getDerivedStateFromError(): {
         hasError: boolean;
     };

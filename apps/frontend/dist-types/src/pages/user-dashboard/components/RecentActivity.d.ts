@@ -1,4 +1,4 @@
 declare const RecentActivity: ({ activities }: {
-    activities?: any[];
+    activities?: never[] | undefined;
 }) => import("react/jsx-runtime").JSX.Element;
 export default RecentActivity;

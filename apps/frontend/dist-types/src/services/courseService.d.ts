@@ -21,11 +21,11 @@ export interface CoursesFromSupabase {
     userProgress: UserProgressRow[];
 }
 export declare function fetchCourses({ search, filters, sortBy, page, pageSize }?: {
-    search?: string;
-    filters?: {};
-    sortBy?: string;
-    page?: number;
-    pageSize?: number;
+    search?: string | undefined;
+    filters?: {} | undefined;
+    sortBy?: string | undefined;
+    page?: number | undefined;
+    pageSize?: number | undefined;
 }): Promise<{
     data: CoursesRow[];
     count: number;

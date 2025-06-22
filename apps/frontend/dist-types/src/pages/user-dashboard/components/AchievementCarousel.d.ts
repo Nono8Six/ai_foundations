@@ -1,4 +1,4 @@
 declare const AchievementCarousel: ({ achievements }: {
-    achievements?: any[];
+    achievements?: never[] | undefined;
 }) => import("react/jsx-runtime").JSX.Element;
 export default AchievementCarousel;

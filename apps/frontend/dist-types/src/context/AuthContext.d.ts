@@ -1,5 +1,6 @@
 import { type ReactNode } from 'react';
-import type { Session, User } from '@supabase/supabase-js';
+import type { Session, User, AuthResponse, OAuthResponse } from '@supabase/supabase-js';
+import type { UpdateUserProfilePayload, UpdateUserProfileResponse, UpdateUserSettingsPayload, UpdateUserSettingsResponse, GetUserSettingsResponse } from '../types/rpc.types';
 import type { UserProfile } from '../types/user';
 export interface AuthContextValue {
     signUp: (args: {
@@ -7,19 +8,19 @@ export interface AuthContextValue {
         password: string;
         firstName: string;
         lastName: string;
-    }) => Promise<unknown>;
+    }) => Promise<AuthResponse>;
     signIn: (args: {
         email: string;
         password: string;
-    }) => Promise<unknown>;
-    signInWithGoogle: () => Promise<unknown>;
+    }) => Promise<AuthResponse>;
+    signInWithGoogle: () => Promise<OAuthResponse>;
     signOut: () => Promise<void>;
     logout: () => Promise<void>;
     resetPassword: (email: string) => Promise<void>;
     resendVerificationEmail: (email: string) => Promise<void>;
-    updateProfile: (updates: unknown) => Promise<unknown>;
-    updateUserSettings: (settings: unknown) => Promise<unknown>;
-    getUserSettings: () => Promise<unknown>;
+    updateProfile: (updates: UpdateUserProfilePayload['profile_data']) => Promise<UpdateUserProfileResponse>;
+    updateUserSettings: (settings: UpdateUserSettingsPayload['settings_data']) => Promise<UpdateUserSettingsResponse>;
+    getUserSettings: () => Promise<GetUserSettingsResponse>;
     user: User | null;
     userProfile: UserProfile | null;
     session: Session | null;

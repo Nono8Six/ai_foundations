@@ -1,11 +1,7 @@
 import { type ReactNode } from 'react';
 import type { QueryObserverResult } from '@tanstack/react-query';
-interface CourseData {
-    courses: unknown[];
-    lessons: unknown[];
-    modules: unknown[];
-    userProgress: unknown[];
-}
+import type { CoursesFromSupabase } from '../services/courseService';
+type CourseData = CoursesFromSupabase;
 export interface CourseContextValue extends CourseData {
     isLoading: boolean;
     refetchCourses: () => Promise<QueryObserverResult<CourseData | null, unknown>>;
