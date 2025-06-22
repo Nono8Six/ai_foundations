@@ -1,6 +1,6 @@
 // src/pages/user-dashboard/components/ProgressChart.jsx
 import React, { useState, useEffect } from 'react';
-import { colors } from '../../../utils/theme';
+import { colors } from '../../../utils/theme.ts';
 import {
   LineChart,
   Line,
