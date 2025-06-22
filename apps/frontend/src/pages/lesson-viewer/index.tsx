@@ -38,7 +38,7 @@ const LessonViewer = () => {
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isNotesOpen, setIsNotesOpen] = useState(false);
-  const [currentLesson, setCurrentLesson] = useState(null);
+  const [currentLesson, setCurrentLesson] = useState<Record<string, any> | null>(null);
   const [lessonProgress, setLessonProgress] = useState(0);
   const [showXPCelebration, setShowXPCelebration] = useState(false);
   const [userNotes, setUserNotes] = useState<Note[]>([]);

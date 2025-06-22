@@ -11,7 +11,7 @@ const ContentTree = ({
   onItemsSelect,
 }) => {
   const [expandedItems, setExpandedItems] = useState(new Set([1]));
-  const [draggedItem, setDraggedItem] = useState(null);
+  const [draggedItem, setDraggedItem] = useState<Record<string, any> | null>(null);
 
   const toggleExpanded = id => {
     const newExpanded = new Set(expandedItems);

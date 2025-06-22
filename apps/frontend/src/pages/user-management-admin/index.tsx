@@ -33,8 +33,10 @@ interface AdminUser {
 
 const UserManagementAdminContent = () => {
   const { setSidebarOpen } = useAdminSidebar();
-  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
-  const [selectedUser, setSelectedUser] = useState(null);
+
+  const [selectedUsers, setSelectedUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState<Record<string, unknown> | null>(null);
+
   const [showDetailsPanel, setShowDetailsPanel] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
