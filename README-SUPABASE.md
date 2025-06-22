@@ -15,9 +15,9 @@
 
 ## 🛡️ Les 3 Règles d'Or
 
-1. **Le Code est Roi** :
-   - Le dossier `/apps/backend/supabase/migrations` est la **source de vérité absolue**
-   - La base de données en ligne n'est qu'un reflet de ce code
+1. **La Base en Ligne est la Source** :
+   - La base Supabase Cloud est la **référence principale** pour le schéma
+   - `pnpm db:pull` sert à synchroniser le dossier `/apps/backend/supabase/migrations`
 
 2. **Les Types Suivent le Schéma** :
    - `apps/frontend/src/types/database.types.ts` doit TOUJOURS être à jour après chaque modification
@@ -66,8 +66,8 @@ Toutes les commandes suivantes se lancent depuis le dossier `apps/backend`.
 |----------|-------------|
 | `pnpm supabase:start` | Démarrer l'environnement local |
 | `pnpm db:reset` | Réinitialiser complètement la base locale |
-| `pnpm db:push` | Pousser les migrations vers Supabase Cloud |
-| `pnpm db:pull` | Récupérer le schéma depuis Supabase Cloud |
+| `pnpm db:pull` | Synchroniser le dossier `migrations` depuis Supabase Cloud |
+| `pnpm db:push` | Appliquer vos migrations sur Supabase Cloud |
 | `pnpm gen:types` | Générer les types TypeScript |
 
 ## 🔄 Workflows Complets
@@ -80,23 +80,28 @@ Toutes les commandes suivantes se lancent depuis le dossier `apps/backend`.
    pnpm supabase:start
    ```
 
-2. **Créer une migration**
+2. **Synchroniser avec la base en ligne**
+   ```bash
+   pnpm db:pull
+   ```
+
+3. **Créer une migration**
    ```bash
    pnpm exec supabase migration new nom_descriptif
    # Éditez le fichier créé dans supabase/migrations/
    ```
 
-3. **Tester la migration**
+4. **Tester la migration**
    ```bash
    pnpm db:reset
    ```
 
-4. **Mettre à jour les types**
+5. **Mettre à jour les types**
    ```bash
    pnpm gen:types
    ```
 
-5. **Déployer en production**
+6. **Déployer en production**
    ```bash
    pnpm db:push
    ```
@@ -110,12 +115,17 @@ Toutes les commandes suivantes se lancent depuis le dossier `apps/backend`.
    pnpm install
    ```
 
-2. **Mettre à jour votre base locale**
+2. **Synchroniser les migrations**
+   ```bash
+   pnpm db:pull
+   ```
+
+3. **Mettre à jour votre base locale**
    ```bash
    pnpm db:reset
    ```
 
-3. **Générer les nouveaux types**
+4. **Générer les nouveaux types**
    ```bash
    pnpm gen:types
    ```
