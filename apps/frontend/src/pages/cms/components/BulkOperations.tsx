@@ -91,7 +91,7 @@ const BulkOperations = ({
             onClick={onClose}
             className='p-2 text-text-secondary hover:text-text-primary hover:bg-secondary-100 rounded-lg transition-colors duration-200'
           >
-            <Icon name='X' size={20} />
+            <Icon name='X' size={20} aria-label='Fermer' />
           </button>
         </div>
 
@@ -113,7 +113,7 @@ const BulkOperations = ({
                   }`}
                 >
                   <div className='flex items-start'>
-                    <Icon
+                    <Icon aria-hidden="true" 
                       name={operation.icon}
                       size={20}
                       className={`${operation.color} mr-3 mt-0.5`}
@@ -132,7 +132,7 @@ const BulkOperations = ({
           {requiresConfirmation && (
             <div className='mb-6 p-4 bg-error-50 border border-error-200 rounded-lg'>
               <div className='flex items-start'>
-                <Icon name='AlertTriangle' size={20} className='text-error mr-3 mt-0.5' />
+                <Icon aria-hidden="true"  name='AlertTriangle' size={20} className='text-error mr-3 mt-0.5' />
                 <div className='flex-1'>
                   <h4 className='font-medium text-error mb-2'>Attention : Action irréversible</h4>
                   <p className='text-sm text-error-700 mb-4'>
@@ -159,7 +159,7 @@ const BulkOperations = ({
               className={`mb-6 p-4 ${selectedOp.bgColor} border ${selectedOp.borderColor} rounded-lg`}
             >
               <div className='flex items-start'>
-                <Icon
+                <Icon aria-hidden="true" 
                   name={selectedOp.icon}
                   size={20}
                   className={`${selectedOp.color} mr-3 mt-0.5`}
@@ -190,7 +190,7 @@ const BulkOperations = ({
                   }`}
                 >
                   <span className='text-sm text-text-secondary'>Élément ID: {itemId}</span>
-                  <Icon name='Check' size={16} className='text-accent' />
+                  <Icon aria-hidden="true"  name='Check' size={16} className='text-accent' />
                 </div>
               ))}
             </div>
@@ -221,7 +221,7 @@ const BulkOperations = ({
           >
             {selectedOp ? (
               <div className='flex items-center'>
-                <Icon name={selectedOp.icon} size={16} className='mr-2' />
+                <Icon aria-hidden="true"  name={selectedOp.icon} size={16} className='mr-2' />
                 {selectedOp.label}
               </div>
             ) : (

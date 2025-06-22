@@ -116,7 +116,7 @@ const LessonViewer = () => {
     return (
       <div className='min-h-screen bg-background flex items-center justify-center'>
         <div className='text-center'>
-          <Icon name='Loader2' size={48} className='animate-spin text-primary mx-auto mb-4' />
+          <Icon aria-hidden="true"  name='Loader2' size={48} className='animate-spin text-primary mx-auto mb-4' />
           <p className='text-text-secondary'>Chargement de la leçon...</p>
         </div>
       </div>
@@ -134,14 +134,14 @@ const LessonViewer = () => {
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             className='lg:hidden p-2 hover:bg-secondary-50 rounded-lg transition-colors'
           >
-            <Icon name='Menu' size={20} />
+            <Icon aria-hidden="true"  name='Menu' size={20} />
           </button>
 
           <Link
             to='/espace'
             className='flex items-center space-x-2 text-text-secondary hover:text-primary transition-colors'
           >
-            <Icon name='ArrowLeft' size={20} />
+            <Icon aria-hidden="true"  name='ArrowLeft' size={20} />
             <span className='hidden sm:inline'>Retour à mon espace</span>
           </Link>
         </div>
@@ -155,14 +155,14 @@ const LessonViewer = () => {
             onClick={() => setIsHeaderCollapsed(!isHeaderCollapsed)}
             className='p-2 hover:bg-secondary-50 rounded-lg transition-colors'
           >
-            <Icon name={isHeaderCollapsed ? 'ChevronDown' : 'ChevronUp'} size={20} />
+            <Icon aria-hidden="true"  name={isHeaderCollapsed ? 'ChevronDown' : 'ChevronUp'} size={20} />
           </button>
 
           <button
             onClick={() => navigate('/espace')}
             className='p-2 hover:bg-secondary-50 rounded-lg transition-colors'
           >
-            <Icon name='X' size={20} />
+            <Icon aria-hidden="true"  name='X' size={20} />
           </button>
         </div>
       </header>
@@ -199,7 +199,7 @@ const LessonViewer = () => {
             {currentLesson.resources && currentLesson.resources.length > 0 && (
               <div className='border-t border-border bg-surface p-4'>
                 <h3 className='font-semibold text-text-primary mb-3 flex items-center'>
-                  <Icon name='Download' size={20} className='mr-2' />
+                  <Icon aria-hidden="true"  name='Download' size={20} className='mr-2' />
                   Ressources téléchargeables
                 </h3>
                 <div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
@@ -209,7 +209,7 @@ const LessonViewer = () => {
                       href={resource.url}
                       className='flex items-center p-3 border border-border rounded-lg hover:bg-secondary-50 transition-colors group'
                     >
-                      <Icon
+                      <Icon aria-hidden="true" 
                         name={resource.type === 'pdf' ? 'FileText' : 'Code'}
                         size={20}
                         className='text-primary mr-3'
@@ -220,7 +220,7 @@ const LessonViewer = () => {
                         </p>
                         <p className='text-sm text-text-secondary'>{resource.size}</p>
                       </div>
-                      <Icon
+                      <Icon aria-hidden="true" 
                         name='Download'
                         size={16}
                         className='text-text-secondary group-hover:text-primary transition-colors'

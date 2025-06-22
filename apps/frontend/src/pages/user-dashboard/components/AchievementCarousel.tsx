@@ -72,7 +72,7 @@ const AchievementCarousel = ({ achievements = [] }) => {
       >
         {currentAchievement.earned && (
           <div className='absolute -top-2 -right-2 w-6 h-6 bg-success rounded-full flex items-center justify-center'>
-            <Icon name='Check' size={14} color='white' />
+            <Icon aria-hidden="true"  name='Check' size={14} color='white' />
           </div>
         )}
         <div className='flex items-center gap-4'>
@@ -99,7 +99,7 @@ const AchievementCarousel = ({ achievements = [] }) => {
           className='p-2 rounded-full hover:bg-secondary-100 transition-colors'
           disabled={achievements.length <= 1}
         >
-          <Icon name='ChevronLeft' size={16} className='text-text-secondary' />
+          <Icon aria-hidden="true"  name='ChevronLeft' size={16} className='text-text-secondary' />
         </button>
         <div className='flex space-x-2'>
           {achievements.map((_, index) => (
@@ -114,7 +114,7 @@ const AchievementCarousel = ({ achievements = [] }) => {
           className='p-2 rounded-full hover:bg-secondary-100 transition-colors'
           disabled={achievements.length <= 1}
         >
-          <Icon name='ChevronRight' size={16} className='text-text-secondary' />
+          <Icon aria-hidden="true"  name='ChevronRight' size={16} className='text-text-secondary' />
         </button>
       </div>
 

@@ -108,7 +108,7 @@ const CourseEditor = ({ course, onSave, onDelete }) => {
               }`}
               variant='outline'
             >
-              <Icon
+              <Icon aria-hidden="true" 
                 name={formData.status === 'published' ? 'Eye' : 'EyeOff'}
                 size={16}
                 className='mr-2'
@@ -120,7 +120,7 @@ const CourseEditor = ({ course, onSave, onDelete }) => {
               {isSaving ? (
                 <Spinner size={16} className='mr-2' />
               ) : (
-                <Icon name='Save' size={16} className='mr-2' />
+                <Icon aria-hidden="true"  name='Save' size={16} className='mr-2' />
               )}
               {isSaving ? 'Enregistrement...' : 'Enregistrer'}
             </Button>
@@ -258,13 +258,13 @@ const CourseEditor = ({ course, onSave, onDelete }) => {
                       onClick={() => handleInputChange('thumbnail', '')}
                       className='absolute top-2 right-2 p-1 bg-error text-white rounded-full hover:bg-error-600 transition-colors duration-200'
                     >
-                      <Icon name='X' size={16} />
+                      <Icon name='X' size={16} aria-label='Supprimer la miniature' />
                     </button>
                   </div>
                 ) : (
                   <div className='w-full h-32 border-2 border-dashed border-secondary-300 rounded-lg flex items-center justify-center'>
                     <div className='text-center'>
-                      <Icon name='Image' size={32} className='text-secondary-400 mx-auto mb-2' />
+                      <Icon aria-hidden="true"  name='Image' size={32} className='text-secondary-400 mx-auto mb-2' />
                       <p className='text-sm text-text-secondary'>Aucune image</p>
                     </div>
                   </div>
@@ -280,12 +280,12 @@ const CourseEditor = ({ course, onSave, onDelete }) => {
                   <div className='w-full px-4 py-2 border border-border rounded-lg text-center cursor-pointer hover:bg-secondary-50 transition-colors duration-200'>
                     {isUploading ? (
                       <div className='flex items-center justify-center'>
-                        <Icon name='Loader2' size={16} className='animate-spin mr-2' />
+                        <Icon aria-hidden="true"  name='Loader2' size={16} className='animate-spin mr-2' />
                         Téléchargement...
                       </div>
                     ) : (
                       <div className='flex items-center justify-center'>
-                        <Icon name='Upload' size={16} className='mr-2' />
+                        <Icon aria-hidden="true"  name='Upload' size={16} className='mr-2' />
                         Choisir une image
                       </div>
                     )}
@@ -310,7 +310,7 @@ const CourseEditor = ({ course, onSave, onDelete }) => {
                   <div className='flex justify-between items-center'>
                     <span className='text-text-secondary'>Note moyenne</span>
                     <div className='flex items-center'>
-                      <Icon name='Star' size={16} className='text-warning mr-1' />
+                      <Icon aria-hidden="true"  name='Star' size={16} className='text-warning mr-1' />
                       <span className='font-semibold text-text-primary'>
                         {course.rating || 0}/5
                       </span>
@@ -342,7 +342,7 @@ const CourseEditor = ({ course, onSave, onDelete }) => {
                   className='w-full px-4 py-2 bg-error text-white hover:bg-error-600'
                   variant='danger'
                 >
-                  <Icon name='Trash2' size={16} className='mr-2' />
+                  <Icon aria-hidden="true"  name='Trash2' size={16} className='mr-2' />
                   Supprimer le cours
                 </Button>
               </Card>

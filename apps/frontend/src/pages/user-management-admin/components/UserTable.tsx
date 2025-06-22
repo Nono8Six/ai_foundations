@@ -93,7 +93,7 @@ const UserTable = ({
                   className='flex items-center space-x-1 hover:text-text-primary transition-colors'
                 >
                   <span>Utilisateur</span>
-                  <Icon name={getSortIcon('name')} size={14} />
+                  <Icon aria-hidden="true"  name={getSortIcon('name')} size={14} />
                 </button>
               </th>
               <th className='px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider'>
@@ -102,7 +102,7 @@ const UserTable = ({
                   className='flex items-center space-x-1 hover:text-text-primary transition-colors'
                 >
                   <span>Rôle</span>
-                  <Icon name={getSortIcon('role')} size={14} />
+                  <Icon aria-hidden="true"  name={getSortIcon('role')} size={14} />
                 </button>
               </th>
               <th className='px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider'>
@@ -111,7 +111,7 @@ const UserTable = ({
                   className='flex items-center space-x-1 hover:text-text-primary transition-colors'
                 >
                   <span>Statut</span>
-                  <Icon name={getSortIcon('status')} size={14} />
+                  <Icon aria-hidden="true"  name={getSortIcon('status')} size={14} />
                 </button>
               </th>
               <th className='px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider'>
@@ -120,7 +120,7 @@ const UserTable = ({
                   className='flex items-center space-x-1 hover:text-text-primary transition-colors'
                 >
                   <span>Inscription</span>
-                  <Icon name={getSortIcon('registrationDate')} size={14} />
+                  <Icon aria-hidden="true"  name={getSortIcon('registrationDate')} size={14} />
                 </button>
               </th>
               <th className='px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider'>
@@ -129,7 +129,7 @@ const UserTable = ({
                   className='flex items-center space-x-1 hover:text-text-primary transition-colors'
                 >
                   <span>Dernière activité</span>
-                  <Icon name={getSortIcon('lastActivity')} size={14} />
+                  <Icon aria-hidden="true"  name={getSortIcon('lastActivity')} size={14} />
                 </button>
               </th>
               <th className='px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider'>
@@ -138,7 +138,7 @@ const UserTable = ({
                   className='flex items-center space-x-1 hover:text-text-primary transition-colors'
                 >
                   <span>Progression</span>
-                  <Icon name={getSortIcon('courseProgress')} size={14} />
+                  <Icon aria-hidden="true"  name={getSortIcon('courseProgress')} size={14} />
                 </button>
               </th>
               <th className='px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase tracking-wider'>
@@ -213,7 +213,7 @@ const UserTable = ({
                         }}
                         className='text-primary hover:text-primary-700 transition-colors'
                       >
-                        <Icon name='Edit' size={16} />
+                        <Icon aria-hidden="true"  name='Edit' size={16} />
                       </button>
                       <button
                         onClick={e => {
@@ -222,7 +222,7 @@ const UserTable = ({
                         }}
                         className='text-text-secondary hover:text-primary transition-colors'
                       >
-                        <Icon name='MessageCircle' size={16} />
+                        <Icon aria-hidden="true"  name='MessageCircle' size={16} />
                       </button>
                       <button
                         onClick={e => {
@@ -231,7 +231,7 @@ const UserTable = ({
                         }}
                         className='text-text-secondary hover:text-primary transition-colors'
                       >
-                        <Icon name='MoreVertical' size={16} />
+                        <Icon aria-hidden="true"  name='MoreVertical' size={16} />
                       </button>
                     </div>
                   </td>
@@ -301,7 +301,7 @@ const UserTable = ({
 
       {users.length === 0 && (
         <div className='text-center py-12'>
-          <Icon name='Users' size={48} className='mx-auto text-text-secondary mb-4' />
+          <Icon aria-hidden="true"  name='Users' size={48} className='mx-auto text-text-secondary mb-4' />
           <h3 className='text-lg font-medium text-text-primary mb-2'>Aucun utilisateur trouvé</h3>
           <p className='text-text-secondary'>
             Essayez de modifier vos critères de recherche ou filtres.

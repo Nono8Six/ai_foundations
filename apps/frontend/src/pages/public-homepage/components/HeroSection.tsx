@@ -30,7 +30,7 @@ const HeroSection = () => {
               transition={{ duration: 0.6, delay: 0.2 }}
               className='inline-flex items-center px-4 py-2 bg-primary-100 text-primary-700 rounded-full text-sm font-medium mb-6'
             >
-              <Icon name='Sparkles' size={16} className='mr-2' />
+              <Icon aria-hidden="true"  name='Sparkles' size={16} className='mr-2' />
               Formation IA de nouvelle génération
             </motion.div>
 
@@ -70,7 +70,7 @@ const HeroSection = () => {
                   to='/register'
                   className='inline-flex items-center justify-center px-8 py-4 bg-primary text-white font-semibold rounded-lg hover:bg-primary-700 transition-all duration-200 shadow-medium hover:shadow-lg hover:-translate-y-0.5 group'
                 >
-                  <Icon
+                  <Icon aria-hidden="true" 
                     name='Play'
                     size={20}
                     className='mr-2 group-hover:scale-110 transition-transform duration-200'
@@ -82,7 +82,7 @@ const HeroSection = () => {
                   to='/user-dashboard'
                   className='inline-flex items-center justify-center px-8 py-4 bg-primary text-white font-semibold rounded-lg hover:bg-primary-700 transition-all duration-200 shadow-medium hover:shadow-lg hover:-translate-y-0.5 group'
                 >
-                  <Icon
+                  <Icon aria-hidden="true" 
                     name='Play'
                     size={20}
                     className='mr-2 group-hover:scale-110 transition-transform duration-200'
@@ -95,7 +95,7 @@ const HeroSection = () => {
                 to='/programmes'
                 className='inline-flex items-center justify-center px-8 py-4 border-2 border-primary text-primary font-semibold rounded-lg hover:bg-primary hover:text-white transition-all duration-200 group'
               >
-                <Icon
+                <Icon aria-hidden="true" 
                   name='BookOpen'
                   size={20}
                   className='mr-2 group-hover:scale-110 transition-transform duration-200'
@@ -141,7 +141,7 @@ const HeroSection = () => {
                   whileTap={{ scale: 0.95 }}
                   className='w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200'
                 >
-                  <Icon name='Play' size={32} />
+                  <Icon aria-hidden="true"  name='Play' size={32} />
                 </motion.button>
               </div>
 
@@ -162,7 +162,7 @@ const HeroSection = () => {
               transition={{ duration: 3, repeat: Infinity }}
               className='absolute -top-4 -right-4 w-16 h-16 bg-accent text-white rounded-full flex items-center justify-center shadow-lg'
             >
-              <Icon name='Zap' size={24} />
+              <Icon aria-hidden="true"  name='Zap' size={24} />
             </motion.div>
 
             <motion.div
@@ -170,7 +170,7 @@ const HeroSection = () => {
               transition={{ duration: 4, repeat: Infinity }}
               className='absolute -bottom-4 -left-4 w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center shadow-lg'
             >
-              <Icon name='Star' size={20} />
+              <Icon aria-hidden="true"  name='Star' size={20} />
             </motion.div>
           </motion.div>
         </div>

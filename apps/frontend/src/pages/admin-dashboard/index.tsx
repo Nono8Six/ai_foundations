@@ -156,7 +156,7 @@ const AdminDashboardContent = () => {
                 onClick={() => setSidebarOpen(true)}
                 className='lg:hidden p-2 rounded-md hover:bg-secondary-100 transition-colors'
               >
-                <Icon name='Menu' size={20} />
+                <Icon aria-hidden="true"  name='Menu' size={20} />
               </button>
               <h1 className='text-xl font-semibold text-text-primary'>
                 Tableau de bord administrateur
@@ -166,7 +166,7 @@ const AdminDashboardContent = () => {
             <div className='flex items-center space-x-4'>
               {/* Global search */}
               <div className='relative hidden md:block'>
-                <Icon
+                <Icon aria-hidden="true" 
                   name='Search'
                   size={18}
                   className='absolute left-3 top-1/2 transform -translate-y-1/2 text-text-secondary'
@@ -193,7 +193,7 @@ const AdminDashboardContent = () => {
 
               {/* Notifications */}
               <button className='relative p-2 rounded-lg hover:bg-secondary-100 transition-colors'>
-                <Icon name='Bell' size={20} />
+                <Icon name='Bell' size={20} aria-label='Notifications' />
                 <span className='absolute top-1 right-1 w-2 h-2 bg-error rounded-full'></span>
               </button>
             </div>
@@ -233,7 +233,7 @@ const AdminDashboardContent = () => {
                   <div
                     className={`w-12 h-12 ${stat.color} rounded-lg flex items-center justify-center`}
                   >
-                    <Icon name={stat.icon} size={24} color='white' />
+                    <Icon aria-hidden="true"  name={stat.icon} size={24} color='white' />
                   </div>
                 </div>
                   </div>
@@ -265,22 +265,22 @@ const AdminDashboardContent = () => {
                 to='/user-management-admin'
                 className='flex items-center p-4 border border-border rounded-lg hover:bg-secondary-50 transition-colors'
               >
-                <Icon name='UserPlus' size={20} className='text-primary mr-3' />
+                <Icon aria-hidden="true"  name='UserPlus' size={20} className='text-primary mr-3' />
                 <span className='text-sm font-medium text-text-primary'>Ajouter utilisateur</span>
               </Link>
               <Link
                 to='/cms'
                 className='flex items-center p-4 border border-border rounded-lg hover:bg-secondary-50 transition-colors'
               >
-                <Icon name='Plus' size={20} className='text-primary mr-3' />
+                <Icon aria-hidden="true"  name='Plus' size={20} className='text-primary mr-3' />
                 <span className='text-sm font-medium text-text-primary'>Créer cours</span>
               </Link>
               <button className='flex items-center p-4 border border-border rounded-lg hover:bg-secondary-50 transition-colors'>
-                <Icon name='Download' size={20} className='text-primary mr-3' />
+                <Icon aria-hidden="true"  name='Download' size={20} className='text-primary mr-3' />
                 <span className='text-sm font-medium text-text-primary'>Exporter données</span>
               </button>
               <button className='flex items-center p-4 border border-border rounded-lg hover:bg-secondary-50 transition-colors'>
-                <Icon name='Settings' size={20} className='text-primary mr-3' />
+                <Icon aria-hidden="true"  name='Settings' size={20} className='text-primary mr-3' />
                 <span className='text-sm font-medium text-text-primary'>Paramètres</span>
               </button>
             </div>

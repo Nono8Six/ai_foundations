@@ -57,7 +57,7 @@ const FilterSidebar = ({ filters, onFilterChange, courses }) => {
       {/* Skill Level Filter */}
       <div className='mb-6'>
         <h4 className='text-sm font-medium text-text-primary mb-3 flex items-center gap-2'>
-          <Icon name='TrendingUp' size={16} />
+          <Icon aria-hidden="true"  name='TrendingUp' size={16} />
           Niveau de difficulté
         </h4>
         <div className='space-y-2'>
@@ -80,7 +80,7 @@ const FilterSidebar = ({ filters, onFilterChange, courses }) => {
       {/* Duration Filter */}
       <div className='mb-6'>
         <h4 className='text-sm font-medium text-text-primary mb-3 flex items-center gap-2'>
-          <Icon name='Clock' size={16} />
+          <Icon aria-hidden="true"  name='Clock' size={16} />
           Durée
         </h4>
         <div className='space-y-2'>
@@ -103,7 +103,7 @@ const FilterSidebar = ({ filters, onFilterChange, courses }) => {
       {/* Category Filter */}
       <div className='mb-6'>
         <h4 className='text-sm font-medium text-text-primary mb-3 flex items-center gap-2'>
-          <Icon name='FolderOpen' size={16} />
+          <Icon aria-hidden="true"  name='FolderOpen' size={16} />
           Catégorie
         </h4>
         <div className='space-y-2'>
@@ -126,7 +126,7 @@ const FilterSidebar = ({ filters, onFilterChange, courses }) => {
       {/* Status Filter */}
       <div className='mb-6'>
         <h4 className='text-sm font-medium text-text-primary mb-3 flex items-center gap-2'>
-          <Icon name='CheckCircle' size={16} />
+          <Icon aria-hidden="true"  name='CheckCircle' size={16} />
           Statut
         </h4>
         <div className='space-y-2'>
