@@ -4,6 +4,8 @@
     "allowJs": true,
     "checkJs": false, // 💡 on réactivera plus tard
     "jsx": "react-jsx",
+    "allowImportingTsExtensions": true,
+    "strictNullChecks": true,
     "composite": true,
     "noEmit": false,
     "emitDeclarationOnly": true,
