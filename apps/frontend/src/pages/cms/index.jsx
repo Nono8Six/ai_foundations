@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAdminCourses } from '../../context/AdminCourseContext';
 import { useToast } from '../../context/ToastContext';
 import { fetchCoursesWithContent } from '../../services/courseService';
-import logger from '../../utils/logger';
+import logger from '../../utils/logger.ts';
 
 import Icon from '../../components/AppIcon';
 import AdminLayout, { useAdminSidebar } from "../../components/AdminLayout";
