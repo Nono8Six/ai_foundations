@@ -133,7 +133,7 @@ const UserDetailsPanel = ({ user, onClose }: UserDetailsPanelProps) => {
             Modifier
           </button>
           <button className='px-3 py-2 border border-border text-sm font-medium rounded-lg text-text-secondary bg-surface hover:bg-secondary-50 transition-colors'>
-            <Icon aria-hidden="true"  name='MoreVertical' size={16} />
+            <Icon name='MoreVertical' size={16} aria-label='Plus d\'options' />
           </button>
         </div>
       </div>

@@ -109,7 +109,7 @@ const ProgramOverview = () => {
                     viewMode === 'grid' ? 'bg-surface text-primary shadow-sm' : 'text-text-secondary hover:text-text-primary'
                   }`}
                 >
-                  <Icon aria-hidden="true"  name='Grid3X3' size={16} />
+                  <Icon name='Grid3X3' size={16} aria-label='Vue grille' />
                 </button>
                 <button
                   onClick={() => setViewMode('pathway')}
@@ -117,7 +117,7 @@ const ProgramOverview = () => {
                     viewMode === 'pathway' ? 'bg-surface text-primary shadow-sm' : 'text-text-secondary hover:text-text-primary'
                   }`}
                 >
-                  <Icon aria-hidden="true"  name='GitBranch' size={16} />
+                  <Icon name='GitBranch' size={16} aria-label='Vue parcours' />
                 </button>
               </div>
 

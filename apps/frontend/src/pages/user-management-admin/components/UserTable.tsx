@@ -213,7 +213,7 @@ const UserTable = ({
                         }}
                         className='text-primary hover:text-primary-700 transition-colors'
                       >
-                        <Icon aria-hidden="true"  name='Edit' size={16} />
+                        <Icon name='Edit' size={16} aria-label='Modifier utilisateur' />
                       </button>
                       <button
                         onClick={e => {
@@ -222,7 +222,7 @@ const UserTable = ({
                         }}
                         className='text-text-secondary hover:text-primary transition-colors'
                       >
-                        <Icon aria-hidden="true"  name='MessageCircle' size={16} />
+                        <Icon name='MessageCircle' size={16} aria-label='Envoyer un message' />
                       </button>
                       <button
                         onClick={e => {
@@ -231,7 +231,7 @@ const UserTable = ({
                         }}
                         className='text-text-secondary hover:text-primary transition-colors'
                       >
-                        <Icon aria-hidden="true"  name='MoreVertical' size={16} />
+                        <Icon name='MoreVertical' size={16} aria-label='Plus d\'actions' />
                       </button>
                     </div>
                   </td>
