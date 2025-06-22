@@ -66,8 +66,10 @@ Toutes les commandes suivantes se lancent depuis le dossier `apps/backend`.
 |----------|-------------|
 | `pnpm supabase:start` | Démarrer l'environnement local |
 | `pnpm db:reset` | Réinitialiser complètement la base locale |
+
 | `pnpm db:pull` | Synchroniser le dossier `migrations` depuis Supabase Cloud |
 | `pnpm db:push` | Appliquer vos migrations sur Supabase Cloud |
+
 | `pnpm gen:types` | Générer les types TypeScript |
 
 ## 🔄 Workflows Complets
@@ -103,7 +105,7 @@ Toutes les commandes suivantes se lancent depuis le dossier `apps/backend`.
 
 6. **Déployer en production**
    ```bash
-   pnpm db:push
+   pnpm db:push # exceptionnel
    ```
 
 ### B. Quand un collègue a fait des changements
@@ -214,7 +216,7 @@ supabase db reset
 ```bash
 # Se placer dans le dossier backend
 cd apps/backend
-# 1. Appliquer les migrations locales
+# 1. Appliquer les migrations locales (opération exceptionnelle)
 supabase db push
 
 # 2. Vérifier dans l'interface web que tout est à jour
@@ -357,8 +359,8 @@ Dernière mise à jour : $(date +"%d/%m/%Y")
    git pull
    supabase db pull
    
-   # Après des modifications
-   supabase db push
+    # Après des modifications (opération exceptionnelle)
+    supabase db push
    git add .
    git commit -m "feat: mise à jour du schéma pour la fonctionnalité X"
    git push
@@ -406,16 +408,16 @@ Créez un fichier `scripts/sync-supabase.sh` :
 ```bash
 #!/bin/bash
 
-# Vérifier les mises à jour
-if [ "$1" = "--pull" ]; then
+# Synchronise avec Supabase. Sans argument, lance un `pull`.
+if [ -z "$1" ] || [ "$1" = "--pull" ]; then
     echo "🔄 Récupération des dernières modifications..."
     supabase db pull
     exit 0
 fi
 
-# Pousser les modifications locales
+# Pousser les modifications locales (usage exceptionnel)
 if [ "$1" = "--push" ]; then
-    echo "🚀 Envoi des modifications..."
+    echo "🚀 Envoi des modifications (opération exceptionnelle)..."
     supabase db push
     exit 0
 fi
@@ -430,7 +432,7 @@ chmod +x scripts/sync-supabase.sh
 
 Utilisation rapide :
 ```bash
-./scripts/sync-supabase.sh --pull  # Récupérer les modifications
+./scripts/sync-supabase.sh         # Récupérer les modifications
 ./scripts/sync-supabase.sh --push  # Envoyer vos migrations
 ```
 
@@ -445,7 +447,7 @@ Ajoutez un hook pre-commit pour vérifier l'état de la base de données :
 
 # Vérifier si des migrations sont en attente
 if ! supabase migration list | grep -q "No migrations found"; then
-    echo "⚠️  Des migrations sont en attente. Exécutez 'supabase db push' d'abord."
+    echo "⚠️  Des migrations sont en attente. Exécutez 'supabase db push' d'abord (cas exceptionnel)."
     exit 1
 fi
 

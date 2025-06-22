@@ -106,7 +106,7 @@ docker-compose exec frontend pnpm lint
 # Se connecter à la base de données PostgreSQL
 docker-compose exec db psql -U postgres
 
-# Exécuter les migrations
+# Exécuter les migrations (opération exceptionnelle)
 docker-compose exec supabase_cli supabase db push
 
 # Redémarrer uniquement le service Supabase CLI

@@ -14,6 +14,6 @@ db-reset:
 	$(SUPABASE_CLI) db reset --linked
 
 # Utilisation :
-#   make db-pull   # Récupère le schéma cloud
-#   make db-push   # Pousse les migrations locales vers le cloud
+#   make db-pull   # À exécuter en premier pour mettre à jour la copie locale
+#   make db-push   # (exceptionnel) pousse les migrations locales vers le cloud
 #   make db-reset  # Réinitialise la base locale à partir du cloud
