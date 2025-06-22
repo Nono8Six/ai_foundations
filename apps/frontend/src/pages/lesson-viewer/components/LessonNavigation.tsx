@@ -46,7 +46,7 @@ const LessonNavigation = ({ isOpen, onClose, moduleStructure }) => {
             onClick={onClose}
             className='lg:hidden p-1 hover:bg-secondary-50 rounded transition-colors'
           >
-            <Icon name='X' size={20} />
+            <Icon name='X' size={20} aria-label='Fermer' />
           </button>
         </div>
 
@@ -99,7 +99,7 @@ const LessonNavigation = ({ isOpen, onClose, moduleStructure }) => {
                     </span>
                   </div>
                 </div>
-                <Icon
+                <Icon aria-hidden="true" 
                   name={expandedModules.has(module.id) ? 'ChevronDown' : 'ChevronRight'}
                   size={20}
                   className='text-text-secondary'
@@ -133,11 +133,11 @@ const LessonNavigation = ({ isOpen, onClose, moduleStructure }) => {
                       <div className='mr-3'>
                         {lesson.completed ? (
                           <div className='w-6 h-6 bg-accent rounded-full flex items-center justify-center'>
-                            <Icon name='Check' size={14} color='white' />
+                            <Icon aria-hidden="true"  name='Check' size={14} color='white' />
                           </div>
                         ) : lesson.current ? (
                           <div className='w-6 h-6 bg-primary rounded-full flex items-center justify-center'>
-                            <Icon name='Play' size={12} color='white' />
+                            <Icon aria-hidden="true"  name='Play' size={12} color='white' />
                           </div>
                         ) : (
                           <div className='w-6 h-6 border-2 border-secondary-300 rounded-full flex items-center justify-center'>
@@ -155,12 +155,12 @@ const LessonNavigation = ({ isOpen, onClose, moduleStructure }) => {
                         </h4>
                         <div className='flex items-center space-x-3 text-sm text-text-secondary'>
                           <span className='flex items-center'>
-                            <Icon name='Clock' size={12} className='mr-1' />
+                            <Icon aria-hidden="true"  name='Clock' size={12} className='mr-1' />
                             {lesson.duration}
                           </span>
                           {lesson.completed && (
                             <span className='flex items-center text-accent'>
-                              <Icon name='CheckCircle' size={12} className='mr-1' />
+                              <Icon aria-hidden="true"  name='CheckCircle' size={12} className='mr-1' />
                               Terminé
                             </span>
                           )}
@@ -170,7 +170,7 @@ const LessonNavigation = ({ isOpen, onClose, moduleStructure }) => {
                       {/* Lesson Actions */}
                       <div className='ml-2'>
                         {lesson.current && (
-                          <Icon name='Volume2' size={16} className='text-primary' />
+                          <Icon aria-hidden="true"  name='Volume2' size={16} className='text-primary' />
                         )}
                       </div>
                     </div>
@@ -184,7 +184,7 @@ const LessonNavigation = ({ isOpen, onClose, moduleStructure }) => {
         {/* Footer Actions */}
         <div className='p-4 border-t border-border bg-secondary-50'>
           <button className='w-full flex items-center justify-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors'>
-            <Icon name='Download' size={16} className='mr-2' />
+            <Icon aria-hidden="true"  name='Download' size={16} className='mr-2' />
             Télécharger pour hors-ligne
           </button>
         </div>

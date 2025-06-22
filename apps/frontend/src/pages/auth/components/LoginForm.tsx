@@ -5,7 +5,7 @@ import Icon from '../../../components/AppIcon';
 import Button from '../../../components/ui/Button';
 import TextInput from '../../../components/ui/TextInput';
 import { useAuth } from '../../../context/AuthContext';
-import logger from '../../../utils/logger.ts';
+import logger from '../../../utils/logger';
 
 const LoginForm = ({ onSuccess, isLoading, setIsLoading }) => {
   const {
@@ -92,7 +92,7 @@ const LoginForm = ({ onSuccess, isLoading, setIsLoading }) => {
       {authError && (
         <div className='p-4 bg-error-50 border border-error-200 rounded-lg'>
           <div className='flex items-start'>
-            <Icon name='AlertTriangle' size={20} className='mr-3 flex-shrink-0 text-error-600 mt-0.5' />
+            <Icon aria-hidden="true"  name='AlertTriangle' size={20} className='mr-3 flex-shrink-0 text-error-600 mt-0.5' />
             <div className='flex-1'>
               <p className='text-sm text-error-700 font-medium mb-1'>
                 Erreur de connexion
@@ -163,7 +163,7 @@ const LoginForm = ({ onSuccess, isLoading, setIsLoading }) => {
           </>
         ) : (
           <>
-            <Icon name='LogIn' size={18} className='mr-2' />
+            <Icon aria-hidden="true"  name='LogIn' size={18} className='mr-2' />
             Se connecter
           </>
         )}

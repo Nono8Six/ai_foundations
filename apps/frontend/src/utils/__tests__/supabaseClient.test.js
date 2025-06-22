@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { safeQuery } from '../supabaseClient';
-import * as ErrorContext from '../../context/ErrorContext.tsx';
+import * as ErrorContext from '../../context/ErrorContext';
 
 describe('safeQuery', () => {
   afterEach(() => {

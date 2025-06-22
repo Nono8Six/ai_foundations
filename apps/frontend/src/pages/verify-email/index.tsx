@@ -15,7 +15,7 @@ const VerifyEmail = () => {
   return (
     <div className='min-h-screen flex items-center justify-center bg-background p-4'>
       <div className='bg-surface p-6 rounded-lg shadow-medium max-w-md w-full text-center'>
-        <Icon name='Mail' size={40} className='mx-auto text-primary mb-4' />
+        <Icon aria-hidden="true"  name='Mail' size={40} className='mx-auto text-primary mb-4' />
         <h1 className='text-xl font-bold text-text-primary mb-2'>Vérifiez votre email</h1>
         <p className='text-text-secondary mb-4'>Un lien de vérification a été envoyé à votre adresse email. Cliquez dessus pour activer votre compte.</p>
         {pendingEmail && (

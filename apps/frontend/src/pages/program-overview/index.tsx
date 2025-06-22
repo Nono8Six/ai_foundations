@@ -84,7 +84,7 @@ const ProgramOverview = () => {
         <div className='mb-8'>
           <div className='flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4'>
             <div className='relative flex-1 max-w-md'>
-              <Icon
+              <Icon aria-hidden="true" 
                 name='Search'
                 size={20}
                 className='absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary-400'
@@ -106,7 +106,7 @@ const ProgramOverview = () => {
                     viewMode === 'grid' ? 'bg-surface text-primary shadow-sm' : 'text-text-secondary hover:text-text-primary'
                   }`}
                 >
-                  <Icon name='Grid3X3' size={16} />
+                  <Icon aria-hidden="true"  name='Grid3X3' size={16} />
                 </button>
                 <button
                   onClick={() => setViewMode('pathway')}
@@ -114,7 +114,7 @@ const ProgramOverview = () => {
                     viewMode === 'pathway' ? 'bg-surface text-primary shadow-sm' : 'text-text-secondary hover:text-text-primary'
                   }`}
                 >
-                  <Icon name='GitBranch' size={16} />
+                  <Icon aria-hidden="true"  name='GitBranch' size={16} />
                 </button>
               </div>
 
@@ -134,7 +134,7 @@ const ProgramOverview = () => {
                 onClick={() => setShowFilters(!showFilters)}
                 className='lg:hidden px-4 py-2 border border-border rounded-lg flex items-center gap-2'
               >
-                <Icon name='Filter' size={16} />
+                <Icon aria-hidden="true"  name='Filter' size={16} />
                 Filtres
               </button>
             </div>
@@ -177,7 +177,7 @@ const ProgramOverview = () => {
                   )
                 ) : (
                   <div className='text-center py-12 bg-surface rounded-xl border border-border p-8'>
-                    <Icon name='BookOpen' size={64} className='mx-auto text-secondary-300 mb-6' />
+                    <Icon aria-hidden="true"  name='BookOpen' size={64} className='mx-auto text-secondary-300 mb-6' />
                     <h3 className='text-xl font-medium text-text-primary mb-4'>
                       Aucun cours disponible pour le moment
                     </h3>
@@ -194,7 +194,7 @@ const ProgramOverview = () => {
                         }}
                         className='px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors'
                       >
-                        <Icon name='RefreshCw' size={18} className='mr-2 inline-block' />
+                        <Icon aria-hidden="true"  name='RefreshCw' size={18} className='mr-2 inline-block' />
                         Réinitialiser les filtres
                       </button>
                     )}

@@ -195,14 +195,14 @@ const RecentActivity = () => {
                 />
               ) : (
                 <div className='w-10 h-10 bg-secondary-200 rounded-full flex items-center justify-center'>
-                  <Icon name={activity.user && activity.user.name === 'Système' ? 'Settings' : 'User'} size={20} className='text-secondary-500' />
+                  <Icon aria-hidden="true"  name={activity.user && activity.user.name === 'Système' ? 'Settings' : 'User'} size={20} className='text-secondary-500' />
                 </div>
               )}
             </div>
 
             <div className='flex-1 min-w-0'>
               <div className='flex items-center space-x-2 mb-1'>
-                <Icon name={activity.icon} size={16} className={activity.iconColor} />
+                <Icon aria-hidden="true"  name={activity.icon} size={16} className={activity.iconColor} />
                 <span className='text-xs font-medium text-text-secondary bg-secondary-100 px-2 py-1 rounded-full'>
                   {activity.label}
                 </span>
@@ -215,7 +215,7 @@ const RecentActivity = () => {
 
             <div className='flex-shrink-0'>
               <button className='p-1 rounded-md hover:bg-secondary-100 transition-colors'>
-                <Icon name='MoreHorizontal' size={16} className='text-text-secondary' />
+                <Icon aria-hidden="true"  name='MoreHorizontal' size={16} className='text-text-secondary' />
               </button>
             </div>
           </div>

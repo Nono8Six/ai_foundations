@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAdminCourses } from '../../context/AdminCourseContext';
-import { useToast } from '../../context/ToastContext.tsx';
+import { useToast } from '../../context/ToastContext';
 import { fetchCoursesWithContent } from '../../services/courseService';
-import logger from '../../utils/logger.ts';
+import logger from '../../utils/logger';
 
 import Icon from '../../components/AppIcon';
 import AdminLayout, { useAdminSidebar } from '../../components/AdminLayout';
@@ -106,7 +106,7 @@ const ContentManagementCoursesModulesLessonsContent = () => {
       return (
         <div className='flex-1 flex items-center justify-center bg-surface'>
           <div className='text-center'>
-            <Icon name='FileText' size={64} className='text-secondary-300 mx-auto mb-4' />
+            <Icon aria-hidden="true"  name='FileText' size={64} className='text-secondary-300 mx-auto mb-4' />
             <h3 className='text-xl font-semibold text-text-primary mb-2'>
               Sélectionnez un contenu à modifier
             </h3>
@@ -151,7 +151,7 @@ const ContentManagementCoursesModulesLessonsContent = () => {
   if (loading) {
     return (
       <div className='min-h-screen flex items-center justify-center'>
-        <Icon name='Loader' className='animate-spin text-primary' size={48} />
+        <Icon aria-hidden="true"  name='Loader' className='animate-spin text-primary' size={48} />
       </div>
     );
   }
@@ -164,7 +164,7 @@ const ContentManagementCoursesModulesLessonsContent = () => {
             onClick={() => setSidebarOpen(true)}
             className='lg:hidden p-2 rounded-md hover:bg-secondary-100 transition-colors'
           >
-            <Icon name='Menu' size={20} />
+            <Icon aria-hidden="true"  name='Menu' size={20} />
           </button>
           <h1 className='text-xl font-semibold text-text-primary ml-4'>Gestion du Contenu</h1>
         </div>
@@ -185,7 +185,7 @@ const ContentManagementCoursesModulesLessonsContent = () => {
                   onClick={() => setShowBulkOperations(true)}
                   className='mt-3 w-full px-3 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary-700 transition-colors duration-200 flex items-center justify-center'
                 >
-                  <Icon name='Edit' size={16} className='mr-2' />
+                  <Icon aria-hidden="true"  name='Edit' size={16} className='mr-2' />
                   Actions groupées ({selectedItems.length})
                 </button>
               )}

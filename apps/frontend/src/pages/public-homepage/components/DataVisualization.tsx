@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { colors, theme } from '../../../utils/theme.ts';
+import { colors, theme } from '../../../utils/theme';
 import { motion } from 'framer-motion';
 import {
   BarChart,
@@ -72,7 +72,7 @@ const DataVisualization = () => {
           className='text-center mb-16'
         >
           <div className='inline-flex items-center px-4 py-2 bg-accent-100 text-accent-700 rounded-full text-sm font-medium mb-6'>
-            <Icon name='TrendingUp' size={16} className='mr-2' />
+            <Icon aria-hidden="true"  name='TrendingUp' size={16} className='mr-2' />
             Impact mesurable de l'IA
           </div>
           <h2 className='text-3xl lg:text-4xl font-bold text-text-primary mb-6'>
@@ -99,7 +99,7 @@ const DataVisualization = () => {
           >
             <div className='flex items-center justify-between mb-6'>
               <h3 className='text-xl font-semibold text-text-primary'>Impact par secteur</h3>
-              <Icon name='BarChart3' size={24} className='text-primary' />
+              <Icon aria-hidden="true"  name='BarChart3' size={24} className='text-primary' />
             </div>
             <div className='h-80'>
               <ResponsiveContainer width='100%' height='100%'>
@@ -141,7 +141,7 @@ const DataVisualization = () => {
               <h3 className='text-xl font-semibold text-text-primary'>
                 Croissance des utilisateurs
               </h3>
-              <Icon name='TrendingUp' size={24} className='text-accent' />
+              <Icon aria-hidden="true"  name='TrendingUp' size={24} className='text-accent' />
             </div>
             <div className='h-80'>
               <ResponsiveContainer width='100%' height='100%'>
@@ -194,7 +194,7 @@ const DataVisualization = () => {
           >
             <div className='flex items-center justify-between mb-6'>
               <h3 className='text-lg font-semibold text-text-primary'>Répartition des niveaux</h3>
-              <Icon name='PieChart' size={20} className='text-warning' />
+              <Icon aria-hidden="true"  name='PieChart' size={20} className='text-warning' />
             </div>
             <div className='h-48'>
               <ResponsiveContainer width='100%' height='100%'>
@@ -238,7 +238,7 @@ const DataVisualization = () => {
             className='bg-gradient-to-br from-primary-50 to-accent-50 border border-border rounded-xl p-6'
           >
             <div className='flex items-center mb-6'>
-              <Icon name='Target' size={24} className='text-primary mr-3' />
+              <Icon aria-hidden="true"  name='Target' size={24} className='text-primary mr-3' />
               <h3 className='text-lg font-semibold text-text-primary'>Métriques clés</h3>
             </div>
             <div className='space-y-4'>
@@ -267,7 +267,7 @@ const DataVisualization = () => {
             className='bg-surface border border-border rounded-xl p-6 shadow-subtle hover:shadow-medium transition-shadow duration-300'
           >
             <div className='flex items-center mb-4'>
-              <Icon name='Quote' size={20} className='text-accent mr-2' />
+              <Icon aria-hidden="true"  name='Quote' size={20} className='text-accent mr-2' />
               <h3 className='text-lg font-semibold text-text-primary'>Témoignage</h3>
             </div>
             <blockquote className='text-text-secondary mb-4 italic'>
@@ -276,7 +276,7 @@ const DataVisualization = () => {
             </blockquote>
             <div className='flex items-center'>
               <div className='w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center mr-3'>
-                <Icon name='User' size={16} color='white' />
+                <Icon aria-hidden="true"  name='User' size={16} color='white' />
               </div>
               <div>
                 <div className='font-medium text-text-primary'>Marie Dubois</div>

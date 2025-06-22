@@ -9,7 +9,7 @@ const NotFound = () => {
         {/* Logo */}
         <div className='flex justify-center mb-8'>
           <div className='w-16 h-16 bg-gradient-to-br from-primary to-primary-700 rounded-full flex items-center justify-center'>
-            <Icon name='GraduationCap' size={32} color='white' />
+            <Icon aria-hidden="true"  name='GraduationCap' size={32} color='white' />
           </div>
         </div>
 
@@ -28,7 +28,7 @@ const NotFound = () => {
             to='/'
             className='inline-flex items-center justify-center w-full px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-primary hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-200 shadow-subtle hover:shadow-medium'
           >
-            <Icon name='Home' size={20} className='mr-2' />
+            <Icon aria-hidden="true"  name='Home' size={20} className='mr-2' />
             Retour à l'accueil
           </Link>
 
@@ -36,7 +36,7 @@ const NotFound = () => {
             onClick={() => window.history.back()}
             className='inline-flex items-center justify-center w-full px-6 py-3 border border-border text-base font-medium rounded-lg text-text-secondary bg-surface hover:bg-secondary-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-200'
           >
-            <Icon name='ArrowLeft' size={20} className='mr-2' />
+            <Icon aria-hidden="true"  name='ArrowLeft' size={20} className='mr-2' />
             Page précédente
           </button>
         </div>

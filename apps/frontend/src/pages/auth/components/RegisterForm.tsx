@@ -47,7 +47,7 @@ const RegisterForm = ({ isLoading, setIsLoading }) => {
           </label>
           <div className='relative'>
             <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-              <Icon name='User' size={18} className='text-text-secondary' />
+              <Icon aria-hidden="true"  name='User' size={18} className='text-text-secondary' />
             </div>
             <input
               id='firstName'
@@ -70,7 +70,7 @@ const RegisterForm = ({ isLoading, setIsLoading }) => {
           </div>
           {errors.firstName && (
             <p className='mt-1 text-sm text-error flex items-center'>
-              <Icon name='AlertCircle' size={16} className='mr-1' />
+              <Icon aria-hidden="true"  name='AlertCircle' size={16} className='mr-1' />
               {errors.firstName.message}
             </p>
           )}
@@ -100,7 +100,7 @@ const RegisterForm = ({ isLoading, setIsLoading }) => {
           />
           {errors.lastName && (
             <p className='mt-1 text-sm text-error flex items-center'>
-              <Icon name='AlertCircle' size={16} className='mr-1' />
+              <Icon aria-hidden="true"  name='AlertCircle' size={16} className='mr-1' />
               {errors.lastName.message}
             </p>
           )}
@@ -114,7 +114,7 @@ const RegisterForm = ({ isLoading, setIsLoading }) => {
         </label>
         <div className='relative'>
           <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-            <Icon name='Mail' size={18} className='text-text-secondary' />
+            <Icon aria-hidden="true"  name='Mail' size={18} className='text-text-secondary' />
           </div>
           <input
             id='email'
@@ -137,7 +137,7 @@ const RegisterForm = ({ isLoading, setIsLoading }) => {
         </div>
         {errors.email && (
           <p className='mt-1 text-sm text-error flex items-center'>
-            <Icon name='AlertCircle' size={16} className='mr-1' />
+            <Icon aria-hidden="true"  name='AlertCircle' size={16} className='mr-1' />
             {errors.email.message}
           </p>
         )}
@@ -150,7 +150,7 @@ const RegisterForm = ({ isLoading, setIsLoading }) => {
         </label>
         <div className='relative'>
           <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-            <Icon name='Lock' size={18} className='text-text-secondary' />
+            <Icon aria-hidden="true"  name='Lock' size={18} className='text-text-secondary' />
           </div>
           <input
             id='password'
@@ -178,7 +178,7 @@ const RegisterForm = ({ isLoading, setIsLoading }) => {
         </div>
         {errors.password && (
           <p className='mt-1 text-sm text-error flex items-center'>
-            <Icon name='AlertCircle' size={16} className='mr-1' />
+            <Icon aria-hidden="true"  name='AlertCircle' size={16} className='mr-1' />
             {errors.password.message}
           </p>
         )}
@@ -194,7 +194,7 @@ const RegisterForm = ({ isLoading, setIsLoading }) => {
         </label>
         <div className='relative'>
           <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-            <Icon name='Lock' size={18} className='text-text-secondary' />
+            <Icon aria-hidden="true"  name='Lock' size={18} className='text-text-secondary' />
           </div>
           <input
             id='confirmPassword'
@@ -214,7 +214,7 @@ const RegisterForm = ({ isLoading, setIsLoading }) => {
         </div>
         {errors.confirmPassword && (
           <p className='mt-1 text-sm text-error flex items-center'>
-            <Icon name='AlertCircle' size={16} className='mr-1' />
+            <Icon aria-hidden="true"  name='AlertCircle' size={16} className='mr-1' />
             {errors.confirmPassword.message}
           </p>
         )}
@@ -224,7 +224,7 @@ const RegisterForm = ({ isLoading, setIsLoading }) => {
       {authError && (
         <div className='p-3 bg-error-50 border border-error-200 rounded-lg'>
           <p className='text-sm text-error-700 flex items-center'>
-            <Icon name='AlertTriangle' size={16} className='mr-2 flex-shrink-0' />
+            <Icon aria-hidden="true"  name='AlertTriangle' size={16} className='mr-2 flex-shrink-0' />
             {authError}
           </p>
         </div>
@@ -262,7 +262,7 @@ const RegisterForm = ({ isLoading, setIsLoading }) => {
           </label>
           {errors.terms && (
             <p className='mt-1 text-error flex items-center'>
-              <Icon name='AlertCircle' size={16} className='mr-1' />
+              <Icon aria-hidden="true"  name='AlertCircle' size={16} className='mr-1' />
               {errors.terms.message}
             </p>
           )}
@@ -282,7 +282,7 @@ const RegisterForm = ({ isLoading, setIsLoading }) => {
           </>
         ) : (
           <>
-            <Icon name='UserPlus' size={18} className='mr-2' />
+            <Icon aria-hidden="true"  name='UserPlus' size={18} className='mr-2' />
             Créer mon compte
           </>
         )}

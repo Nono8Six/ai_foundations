@@ -55,21 +55,21 @@ const NoteTaking = ({ isOpen, onClose, notes, onAddNote, selectedText }) => {
         {/* Header */}
         <div className='p-4 border-b border-border flex items-center justify-between'>
           <h3 className='font-semibold text-text-primary flex items-center'>
-            <Icon name='StickyNote' size={20} className='mr-2' />
+            <Icon aria-hidden="true"  name='StickyNote' size={20} className='mr-2' />
             Mes notes ({notes.length})
           </h3>
           <button
             onClick={onClose}
             className='lg:hidden p-1 hover:bg-secondary-50 rounded transition-colors'
           >
-            <Icon name='X' size={20} />
+            <Icon name='X' size={20} aria-label='Fermer' />
           </button>
         </div>
 
         {/* Search and Filter */}
         <div className='p-4 border-b border-border space-y-3'>
           <div className='relative'>
-            <Icon
+            <Icon aria-hidden="true" 
               name='Search'
               size={16}
               className='absolute left-3 top-1/2 transform -translate-y-1/2 text-text-secondary'
@@ -101,7 +101,7 @@ const NoteTaking = ({ isOpen, onClose, notes, onAddNote, selectedText }) => {
                   }
                 `}
               >
-                <Icon name={filter.icon} size={12} className='mr-1' />
+                <Icon aria-hidden="true"  name={filter.icon} size={12} className='mr-1' />
                 {filter.label}
               </button>
             ))}
@@ -131,7 +131,7 @@ const NoteTaking = ({ isOpen, onClose, notes, onAddNote, selectedText }) => {
               disabled={!newNote.trim()}
               className='w-full flex items-center justify-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
             >
-              <Icon name='Plus' size={16} className='mr-2' />
+              <Icon aria-hidden="true"  name='Plus' size={16} className='mr-2' />
               Ajouter la note
             </button>
           </form>
@@ -141,7 +141,7 @@ const NoteTaking = ({ isOpen, onClose, notes, onAddNote, selectedText }) => {
         <div className='flex-1 overflow-auto'>
           {filteredNotes.length === 0 ? (
             <div className='p-8 text-center'>
-              <Icon name='StickyNote' size={48} className='mx-auto text-secondary-300 mb-4' />
+              <Icon aria-hidden="true"  name='StickyNote' size={48} className='mx-auto text-secondary-300 mb-4' />
               <p className='text-text-secondary mb-2'>
                 {searchTerm ? 'Aucune note trouvée' : 'Aucune note pour le moment'}
               </p>
@@ -161,7 +161,7 @@ const NoteTaking = ({ isOpen, onClose, notes, onAddNote, selectedText }) => {
                   {/* Note Header */}
                   <div className='flex items-start justify-between mb-2'>
                     <div className='flex items-center space-x-2'>
-                      <Icon
+                      <Icon aria-hidden="true" 
                         name={note.selectedText ? 'Highlighter' : 'Edit3'}
                         size={14}
                         className={note.selectedText ? 'text-warning' : 'text-primary'}
@@ -171,7 +171,7 @@ const NoteTaking = ({ isOpen, onClose, notes, onAddNote, selectedText }) => {
                       </span>
                     </div>
                     <button className='opacity-0 group-hover:opacity-100 p-1 hover:bg-error-100 rounded transition-all'>
-                      <Icon name='Trash2' size={12} className='text-error' />
+                      <Icon aria-hidden="true"  name='Trash2' size={12} className='text-error' />
                     </button>
                   </div>
 
@@ -188,11 +188,11 @@ const NoteTaking = ({ isOpen, onClose, notes, onAddNote, selectedText }) => {
                   {/* Note Actions */}
                   <div className='mt-2 flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity'>
                     <button className='text-xs text-text-secondary hover:text-primary transition-colors flex items-center'>
-                      <Icon name='Edit2' size={12} className='mr-1' />
+                      <Icon aria-hidden="true"  name='Edit2' size={12} className='mr-1' />
                       Modifier
                     </button>
                     <button className='text-xs text-text-secondary hover:text-primary transition-colors flex items-center'>
-                      <Icon name='Share' size={12} className='mr-1' />
+                      <Icon aria-hidden="true"  name='Share' size={12} className='mr-1' />
                       Partager
                     </button>
                   </div>
@@ -205,7 +205,7 @@ const NoteTaking = ({ isOpen, onClose, notes, onAddNote, selectedText }) => {
         {/* Footer */}
         <div className='p-4 border-t border-border bg-secondary-50'>
           <button className='w-full flex items-center justify-center px-4 py-2 text-sm text-text-secondary hover:text-primary transition-colors'>
-            <Icon name='Download' size={16} className='mr-2' />
+            <Icon aria-hidden="true"  name='Download' size={16} className='mr-2' />
             Exporter toutes les notes
           </button>
         </div>

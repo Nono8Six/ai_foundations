@@ -80,7 +80,7 @@ const PerformanceMetrics = ({ metrics }) => {
             </span>
           </div>
           {/* <button className='p-1 rounded-md hover:bg-secondary-100 transition-colors'>
-            <Icon name='Settings' size={16} className='text-text-secondary' />
+            <Icon aria-hidden="true"  name='Settings' size={16} className='text-text-secondary' />
           </button> */}
         </div>
       </div>
@@ -95,7 +95,7 @@ const PerformanceMetrics = ({ metrics }) => {
               <div className='flex items-center justify-between mb-2'>
                 <div className='flex items-center space-x-3'>
                   <div className={`p-2 rounded-lg ${getStatusBg(metric.status)}`}>
-                    <Icon name={metric.icon} size={16} className={getStatusColor(metric.status)} />
+                    <Icon aria-hidden="true"  name={metric.icon} size={16} className={getStatusColor(metric.status)} />
                   </div>
                   <div>
                     <h4 className='text-sm font-medium text-text-primary'>{metric.title}</h4>
@@ -117,7 +117,7 @@ const PerformanceMetrics = ({ metrics }) => {
             </div>
           ))}
            <div className="mt-4 p-4 border border-dashed border-border rounded-lg text-center">
-            <Icon name="Info" size={20} className="text-text-secondary mx-auto mb-2" />
+            <Icon aria-hidden="true"  name="Info" size={20} className="text-text-secondary mx-auto mb-2" />
             <p className="text-sm text-text-secondary">
               Les données de performance détaillées (CPU, mémoire, etc.) ne sont pas disponibles.
             </p>
@@ -128,7 +128,7 @@ const PerformanceMetrics = ({ metrics }) => {
         </div>
       ) : (
         <div className='flex flex-col items-center justify-center h-48 text-center'>
-          <Icon name='ServerOff' size={32} className='text-secondary-400 mb-3' />
+          <Icon aria-hidden="true"  name='ServerOff' size={32} className='text-secondary-400 mb-3' />
           <p className='text-md font-medium text-text-primary mb-1'>
             Aucune métrique système disponible.
           </p>

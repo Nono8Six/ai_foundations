@@ -99,7 +99,7 @@ const VideoPlayer = ({ videoUrl, transcript, onProgress }) => {
               onClick={togglePlay}
               className='w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-colors'
             >
-              <Icon name={isPlaying ? 'Pause' : 'Play'} size={24} color='white' />
+              <Icon aria-hidden="true"  name={isPlaying ? 'Pause' : 'Play'} size={24} color='white' />
             </button>
           </div>
 
@@ -123,25 +123,25 @@ const VideoPlayer = ({ videoUrl, transcript, onProgress }) => {
                   onClick={togglePlay}
                   className='text-white hover:text-primary transition-colors'
                 >
-                  <Icon name={isPlaying ? 'Pause' : 'Play'} size={20} />
+                  <Icon aria-hidden="true"  name={isPlaying ? 'Pause' : 'Play'} size={20} />
                 </button>
 
                 <button
                   onClick={() => skipTime(-10)}
                   className='text-white hover:text-primary transition-colors'
                 >
-                  <Icon name='RotateCcw' size={20} />
+                  <Icon aria-hidden="true"  name='RotateCcw' size={20} />
                 </button>
 
                 <button
                   onClick={() => skipTime(10)}
                   className='text-white hover:text-primary transition-colors'
                 >
-                  <Icon name='RotateCw' size={20} />
+                  <Icon aria-hidden="true"  name='RotateCw' size={20} />
                 </button>
 
                 <div className='flex items-center space-x-2'>
-                  <Icon name='Volume2' size={16} color='white' />
+                  <Icon aria-hidden="true"  name='Volume2' size={16} color='white' />
                   <input
                     type='range'
                     min='0'
@@ -183,18 +183,18 @@ const VideoPlayer = ({ videoUrl, transcript, onProgress }) => {
                   onClick={() => setShowCaptions(!showCaptions)}
                   className={`transition-colors ${showCaptions ? 'text-primary' : 'text-white hover:text-primary'}`}
                 >
-                  <Icon name='Captions' size={20} />
+                  <Icon aria-hidden="true"  name='Captions' size={20} />
                 </button>
 
                 <button
                   onClick={() => setShowTranscript(!showTranscript)}
                   className={`transition-colors ${showTranscript ? 'text-primary' : 'text-white hover:text-primary'}`}
                 >
-                  <Icon name='FileText' size={20} />
+                  <Icon aria-hidden="true"  name='FileText' size={20} />
                 </button>
 
                 <button className='text-white hover:text-primary transition-colors'>
-                  <Icon name='Maximize' size={20} />
+                  <Icon aria-hidden="true"  name='Maximize' size={20} />
                 </button>
               </div>
             </div>
@@ -220,7 +220,7 @@ const VideoPlayer = ({ videoUrl, transcript, onProgress }) => {
               onClick={() => setShowTranscript(false)}
               className='p-1 hover:bg-secondary-50 rounded transition-colors'
             >
-              <Icon name='X' size={16} />
+              <Icon name='X' size={16} aria-label='Fermer la transcription' />
             </button>
           </div>
 
