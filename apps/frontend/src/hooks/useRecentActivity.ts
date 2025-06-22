@@ -40,29 +40,19 @@ const useRecentActivity = (
 
       // On combine la requête flexible de la branche 'main'
       // avec la sécurité de 'safeQuery' de la branche 'codex'.
-      const { data, error } = await safeQuery<ActivityRow[]>(() => {
-        let query = supabaseClient
-          .from<'activity_log', ActivityRow>('activity_log')
-          .select('*')
-          .eq('user_id', userId);
-
-        // Applique les filtres dynamiques
-        Object.entries(filters).forEach(([column, value]) => {
-          query = query.eq(column as keyof ActivityRow, value as never);
-        });
-
-        // Applique l'ordre de tri
-        if (order) {
-          query = query.order('created_at', { ascending: order === 'asc' });
-        }
-
-        // Applique la limite
-        if (limit) {
-          query = query.limit(limit);
-        }
-
-        return query; // La requête est prête à être exécutée par safeQuery
-      });
+      const { data, error } = await safeQuery<ActivityRow[]>(() =>
+        Object.entries(filters)
+          .reduce(
+            (q, [column, value]) =>
+              q.eq(column as keyof ActivityRow, value as never),
+            supabaseClient
+              .from<'activity_log', ActivityRow>('activity_log')
+              .select('*')
+              .eq('user_id', userId)
+          )
+          .order('created_at', { ascending: order === 'asc' })
+          .limit(limit)
+      );
 
       if (error) {
         setError(error);
