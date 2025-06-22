@@ -1,9 +1,33 @@
 import { supabase } from '../lib/supabase';
 import { safeQuery } from '../utils/supabaseClient';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '../types/database.types';
 
-export async function fetchCourses({ search = '', filters = {}, sortBy = 'popularity', page = 1, pageSize = 12 } = {}) {
-  let query = supabase
-    .from('courses')
+const supabaseClient = supabase as SupabaseClient<Database>;
+
+type CoursesRow = Database['public']['Tables']['courses']['Row'];
+type LessonsRow = Database['public']['Tables']['lessons']['Row'];
+type ModulesRow = Database['public']['Tables']['modules']['Row'];
+type UserProgressRow = Database['public']['Tables']['user_progress']['Row'];
+
+type CourseWithContent = CoursesRow & {
+  modules: (ModulesRow & { lessons: LessonsRow[] })[];
+};
+
+type CourseProgress = CoursesRow & {
+  progress: { completed: number; total: number };
+};
+
+export interface CoursesFromSupabase {
+  courses: CourseProgress[];
+  lessons: LessonsRow[];
+  modules: ModulesRow[];
+  userProgress: UserProgressRow[];
+}
+
+export async function fetchCourses({ search = '', filters = {}, sortBy = 'popularity', page = 1, pageSize = 12 } = {}): Promise<{ data: CoursesRow[]; count: number }> {
+  let query = supabaseClient
+    .from<'courses', CoursesRow>('courses')
     .select('*', { count: 'exact' })
     .eq('is_published', true);
 
@@ -64,34 +88,36 @@ export async function fetchCourses({ search = '', filters = {}, sortBy = 'popula
   return { data: data || [], count: count || 0 };
 }
 
-export async function fetchCoursesWithContent() {
-  const { data, error } = await supabase
-    .from('courses')
+export async function fetchCoursesWithContent(): Promise<CourseWithContent[]> {
+  const { data, error } = await supabaseClient
+    .from<'courses', CoursesRow>('courses')
     .select('*, modules(*, lessons(*))')
     .order('created_at');
   if (error) throw error;
-  return data || [];
+  return (data ?? []) as CourseWithContent[];
 }
 
-export async function fetchCoursesFromSupabase(userId) {
+export async function fetchCoursesFromSupabase(userId: string): Promise<CoursesFromSupabase> {
   const [coursesResult, lessonsResult, modulesResult, progressResult] =
     await Promise.all([
       safeQuery(() =>
-        supabase
-          .from('courses')
+        supabaseClient
+          .from<'courses', CoursesRow>('courses')
           .select('id, title, cover_image_url, category, thumbnail_url')
           .eq('is_published', true)
       ),
       safeQuery(() =>
-        supabase
-          .from('lessons')
+        supabaseClient
+          .from<'lessons', LessonsRow>('lessons')
           .select('id, module_id, is_published, duration')
           .eq('is_published', true)
       ),
-      safeQuery(() => supabase.from('modules').select('id, course_id')),
       safeQuery(() =>
-        supabase
-          .from('user_progress')
+        supabaseClient.from<'modules', ModulesRow>('modules').select('id, course_id')
+      ),
+      safeQuery(() =>
+        supabaseClient
+          .from<'user_progress', UserProgressRow>('user_progress')
           .select('lesson_id, status, completed_at')
           .eq('user_id', userId)
       ),
@@ -102,10 +128,10 @@ export async function fetchCoursesFromSupabase(userId) {
   if (modulesResult.error) throw modulesResult.error;
   if (progressResult.error) throw progressResult.error;
 
-  const coursesData = coursesResult.data || [];
-  const lessonsData = lessonsResult.data || [];
-  const modulesData = modulesResult.data || [];
-  const progressData = progressResult.data || [];
+  const coursesData = (coursesResult.data ?? []) as CoursesRow[];
+  const lessonsData = (lessonsResult.data ?? []) as LessonsRow[];
+  const modulesData = (modulesResult.data ?? []) as ModulesRow[];
+  const progressData = (progressResult.data ?? []) as UserProgressRow[];
 
   const completedLessonIds = new Set(
     progressData.filter(p => p.status === 'completed').map(p => p.lesson_id)
@@ -128,7 +154,7 @@ export async function fetchCoursesFromSupabase(userId) {
     return acc;
   }, {});
 
-  const coursesWithStats = coursesData.map(course => {
+  const coursesWithStats: CourseProgress[] = coursesData.map(course => {
     const courseLessonIds = lessonsByCourse[course.id] || [];
     const progress = {
       completed: courseLessonIds.filter(id => completedLessonIds.has(id)).length,
@@ -142,5 +168,5 @@ export async function fetchCoursesFromSupabase(userId) {
     lessons: lessonsData,
     modules: modulesData,
     userProgress: progressData,
-  };
+  } as CoursesFromSupabase;
 }
