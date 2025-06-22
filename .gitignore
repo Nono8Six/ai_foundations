@@ -13,3 +13,8 @@ supabase/.branches/
 
 /docs/bundle/*.html
 *.map
+
+# Ignore TypeScript build info files
+*.tsbuildinfo
+# Ignore temporary tsconfig
+tsconfig.tmp
