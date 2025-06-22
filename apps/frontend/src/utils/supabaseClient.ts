@@ -1,9 +1,9 @@
 import { PostgrestError } from '@supabase/supabase-js';
 import { logError } from '../context/ErrorContext.tsx';
 
-export async function safeQuery<T>(
-  fn: () => Promise<{ data: T | null; error: PostgrestError | null }>
-): Promise<{ data: T | null; error: PostgrestError | null }> {
+export async function safeQuery<T, E extends Error = PostgrestError>(
+  fn: () => Promise<{ data: T | null; error: E | null }>
+): Promise<{ data: T | null; error: E | null }> {
   try {
     const { data, error } = await fn();
     if (error) {
@@ -12,6 +12,6 @@ export async function safeQuery<T>(
     return { data, error: null };
   } catch (err) {
     logError(err);
-    return { data: null, error: err as PostgrestError };
+    return { data: null, error: err as E };
   }
 }
