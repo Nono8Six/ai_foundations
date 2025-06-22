@@ -7,12 +7,29 @@ import React, {
   useCallback,
   type ReactNode,
 } from 'react';
-import type { Session, User } from '@supabase/supabase-js';
+import type {
+  Session,
+  User,
+  SupabaseClient,
+  AuthResponse,
+  OAuthResponse,
+  AuthError,
+} from '@supabase/supabase-js';
+import type { Database } from '../types/database.types';
+import type {
+  UpdateUserProfilePayload,
+  UpdateUserProfileResponse,
+  UpdateUserSettingsPayload,
+  UpdateUserSettingsResponse,
+  GetUserSettingsResponse,
+} from '../types/rpc.types';
 import type { UserProfile } from '../types/user';
 import { supabase } from '../lib/supabase';
 import { safeQuery } from '../utils/supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import logger from '../utils/logger';
+
+const supabaseClient = supabase as SupabaseClient<Database>;
 
 export interface AuthContextValue {
   signUp: (args: {
@@ -20,16 +37,20 @@ export interface AuthContextValue {
     password: string;
     firstName: string;
     lastName: string;
-  }) => Promise<unknown>;
-  signIn: (args: { email: string; password: string }) => Promise<unknown>;
-  signInWithGoogle: () => Promise<unknown>;
+  }) => Promise<AuthResponse>;
+  signIn: (args: { email: string; password: string }) => Promise<AuthResponse>;
+  signInWithGoogle: () => Promise<OAuthResponse>;
   signOut: () => Promise<void>;
   logout: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   resendVerificationEmail: (email: string) => Promise<void>;
-  updateProfile: (updates: unknown) => Promise<unknown>;
-  updateUserSettings: (settings: unknown) => Promise<unknown>;
-  getUserSettings: () => Promise<unknown>;
+  updateProfile: (
+    updates: UpdateUserProfilePayload['profile_data']
+  ) => Promise<UpdateUserProfileResponse>;
+  updateUserSettings: (
+    settings: UpdateUserSettingsPayload['settings_data']
+  ) => Promise<UpdateUserSettingsResponse>;
+  getUserSettings: () => Promise<GetUserSettingsResponse>;
   user: User | null;
   userProfile: UserProfile | null;
   session: Session | null;
@@ -53,7 +74,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const getInitialSession = async () => {
       try {
         logger.debug('🔍 Getting initial session...');
-        const { data, error } = await safeQuery(() => supabase.auth.getSession());
+        const { data, error } = await safeQuery(() =>
+          supabaseClient.auth.getSession()
+        );
         if (error) throw error;
         const { session } = data;
         logger.debug('📋 Initial session:', session);
@@ -77,7 +100,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     // Set up auth subscription
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
+    } = supabaseClient.auth.onAuthStateChange(async (event, session) => {
       logger.debug('🔄 Auth state change event:', event);
       logger.debug('📋 Auth state change session:', session);
       logger.debug('⏰ Timestamp:', new Date().toISOString());
@@ -116,7 +139,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       logger.debug('🔍 Fetching profile for user:', userId);
       const { data, error } = await safeQuery(() =>
-        supabase.from('profiles').select('*').eq('id', userId)
+        supabaseClient.from('profiles').select('*').eq('id', userId)
       );
 
       if (error) {
@@ -129,7 +152,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         logger.debug('⚠️ No profile found for user, creating default...');
         // Try to create a default profile
         const { data: newProfile, error: createError } = await safeQuery(() =>
-          supabase
+          supabaseClient
             .from('profiles')
             .insert([
               {
@@ -166,10 +189,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // Sign Up with email
-  const signUp = async ({ email, password, firstName, lastName }) => {
+  const signUp = async ({
+    email,
+    password,
+    firstName,
+    lastName,
+  }: {
+    email: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+  }): Promise<AuthResponse> => {
     logger.debug('📝 Signing up user:', email);
     const { data, error } = await safeQuery(() =>
-      supabase.auth.signUp({
+      supabaseClient.auth.signUp({
         email,
         password,
         options: {
@@ -191,11 +224,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // Sign In with email
-  const signIn = async ({ email, password }) => {
+  const signIn = async ({
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+  }): Promise<AuthResponse> => {
     logger.debug('🔐 Signing in user:', email);
 
     const { data, error } = await safeQuery(() =>
-      supabase.auth.signInWithPassword({
+      supabaseClient.auth.signInWithPassword({
         email,
         password,
       })
@@ -239,10 +278,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // Sign In with Google
-  const signInWithGoogle = async () => {
+  const signInWithGoogle = async (): Promise<OAuthResponse> => {
     logger.debug('🔐 Signing in with Google...');
     const { data, error } = await safeQuery(() =>
-      supabase.auth.signInWithOAuth({
+      supabaseClient.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: `${window.location.origin}/user-dashboard`,
@@ -259,9 +298,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // Sign Out
-  const signOut = async () => {
+  const signOut = async (): Promise<void> => {
     logger.debug('🚪 Signing out user...');
-    const { error } = await safeQuery(() => supabase.auth.signOut());
+    const { error } = await safeQuery(() => supabaseClient.auth.signOut());
     if (error) {
       setError(error);
       throw error;
@@ -270,7 +309,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // Logout helper used by UI
-  const logout = async () => {
+  const logout = async (): Promise<void> => {
     try {
       logger.debug('🚪 Logout initiated...');
       await signOut();
@@ -287,15 +326,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // Update user profile using RPC function
-  const updateProfile = useCallback(async updates => {
-    logger.debug('📝 Updating profile:', updates);
+  const updateProfile = useCallback(
+    async (
+      updates: UpdateUserProfilePayload['profile_data']
+    ): Promise<UpdateUserProfileResponse> => {
+      logger.debug('📝 Updating profile:', updates);
 
-    const { data, error } = await safeQuery(() =>
-      supabase.rpc('update_user_profile', {
-        profile_data: updates,
-        user_id: user.id,
-      })
-    );
+      const { data, error } = await safeQuery(() =>
+        supabaseClient.rpc('update_user_profile', {
+          profile_data: updates,
+          user_id: user.id,
+        })
+      );
 
     if (error) {
       setError(error);
@@ -306,18 +348,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     setUserProfile(data);
 
-    return data;
-  }, []);
+      return data;
+    },
+    []
+  );
 
   // Update user settings using RPC function
-  const updateUserSettings = useCallback(async settings => {
-    logger.debug('📝 Updating user settings:', settings);
+  const updateUserSettings = useCallback(
+    async (
+      settings: UpdateUserSettingsPayload['settings_data']
+    ): Promise<UpdateUserSettingsResponse> => {
+      logger.debug('📝 Updating user settings:', settings);
 
-    const { data, error } = await safeQuery(() =>
-      supabase.rpc('update_user_settings', {
-        settings_data: settings,
-      })
-    );
+      const { data, error } = await safeQuery(() =>
+        supabaseClient.rpc('update_user_settings', {
+          settings_data: settings,
+        })
+      );
 
     if (error) {
       setError(error);
@@ -325,14 +372,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     logger.info('✅ Settings updated successfully:', data);
-    return data;
-  }, []);
+      return data;
+    },
+    []
+  );
 
   // Get user settings using RPC function
-  const getUserSettings = useCallback(async () => {
+  const getUserSettings = useCallback(async (): Promise<GetUserSettingsResponse> => {
     logger.debug('🔍 Getting user settings...');
 
-    const { data, error } = await safeQuery(() => supabase.rpc('get_user_settings').single());
+    const { data, error } = await safeQuery(() =>
+      supabaseClient.rpc('get_user_settings').single()
+    );
 
     if (error) {
       setError(error);
@@ -344,10 +395,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   // Reset password
-  const resetPassword = async email => {
+  const resetPassword = async (email: string): Promise<void> => {
     logger.debug('🔄 Resetting password for:', email);
     const { error } = await safeQuery(() =>
-      supabase.auth.resetPasswordForEmail(email, {
+      supabaseClient.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/reset-password`,
       })
     );
@@ -358,10 +409,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     logger.info('✅ Password reset email sent');
   };
 
-  const resendVerificationEmail = async email => {
+  const resendVerificationEmail = async (email: string): Promise<void> => {
     logger.debug('🔄 Resending verification email for:', email);
     const { error } = await safeQuery(() =>
-      supabase.auth.resend({
+      supabaseClient.auth.resend({
         type: 'signup',
         email,
         options: { emailRedirectTo: `${window.location.origin}/verify-email` },
