@@ -6,7 +6,16 @@
     "lib": ["DOM", "DOM.Iterable", "ES2019"],
     "baseUrl": ".",
     "paths": { "@/*": ["apps/frontend/src/*"] },
-    "types": ["vite/client", "jest"],
+    "typeRoots": [
+      "./node_modules",
+      "./node_modules/@types",
+      "./apps/frontend/src/types"
+    ],
+    "types": [
+      "vite/client",
+      "jest",
+      "global"
+    ],
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": false
