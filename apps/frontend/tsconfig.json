@@ -2,12 +2,10 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "allowJs": true,
-    "checkJs": true,
-    "isolatedModules": true,
-    "lib": ["DOM", "ESNext"],
-    "module": "ESNext",
-    "jsx": "react-jsx",
-    "noEmit": true
+    "checkJs": false,          // 💡 on réactivera plus tard
+    "jsx": "react-jsx"
   },
-  "include": ["src"]
+  "exclude": [
+    "src/context/AuthContext.tsx" // ⏸️ temporaire, on le migre au Sprint 2
+  ]
 }

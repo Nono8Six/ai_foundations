@@ -7,12 +7,17 @@
   ],
   "packageManager": "pnpm@10.12.1",
   "scripts": {
-    "typecheck": "tsc -b --pretty"
+    "typecheck": "pnpm exec tsc -b --pretty"
   },
   "devDependencies": {
+    "@types/jest": "^30.0.0",
     "@typescript-eslint/eslint-plugin": "^8.34.1",
     "@typescript-eslint/parser": "^8.34.1",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^8.10.0",
+    "eslint-plugin-react": "^7.37.5",
     "typescript": "^5.8.3",
+    "vite": "^6.3.5",
     "vite-plugin-checker": "^0.9.3"
   }
 }
