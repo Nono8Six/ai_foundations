@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Icon from '../../components/AppIcon';
 import { supabase } from '../../lib/supabase';
-import logger from '../../utils/logger';
+import logger from '../../utils/logger.ts';
 
 import VideoPlayer from './components/VideoPlayer';
 import TextContent from './components/TextContent';

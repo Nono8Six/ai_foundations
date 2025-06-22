@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Icon from '../../../components/AppIcon';
 import { uploadToBucket, BUCKETS } from '../../../services/storageService';
-import logger from '../../../utils/logger';
+import logger from '../../../utils/logger.ts';
 
 const LessonEditor = ({ lesson, onSave, onDelete }) => {
   const [formData, setFormData] = useState({

@@ -6,7 +6,7 @@ import TextInput from '../../../components/ui/TextInput';
 import Card from '../../../components/ui/Card';
 import Spinner from '../../../components/ui/Spinner';
 import { uploadToBucket, BUCKETS } from '../../../services/storageService';
-import logger from '../../../utils/logger';
+import logger from '../../../utils/logger.ts';
 
 const CourseEditor = ({ course, onSave, onDelete }) => {
   const [formData, setFormData] = useState({

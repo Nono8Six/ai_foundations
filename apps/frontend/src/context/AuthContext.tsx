@@ -10,7 +10,7 @@ import type { UserProfile } from '../types/user';
 import { supabase } from '../lib/supabase';
 import { safeQuery } from '../utils/supabaseClient';
 import { useNavigate } from 'react-router-dom';
-import logger from '../utils/logger';
+import logger from '../utils/logger.ts';
 
 const AuthContext = createContext();
 
