@@ -125,7 +125,7 @@ const TestimonialsCarousel = () => {
           className='text-center mb-16'
         >
           <div className='inline-flex items-center px-4 py-2 bg-success-100 text-success-700 rounded-full text-sm font-medium mb-6'>
-            <Icon name='MessageSquare' size={16} className='mr-2' />
+            <Icon aria-hidden="true"  name='MessageSquare' size={16} className='mr-2' />
             Témoignages de réussite
           </div>
           <h2 className='text-3xl lg:text-4xl font-bold text-text-primary mb-6'>
@@ -154,13 +154,13 @@ const TestimonialsCarousel = () => {
                   {/* Rating */}
                   <div className='flex items-center mb-6'>
                     {[...Array(currentTestimonial.rating)].map((_, i) => (
-                      <Icon key={i} name='Star' size={20} className='text-warning fill-current' />
+                      <Icon aria-hidden="true"  key={i} name='Star' size={20} className='text-warning fill-current' />
                     ))}
                   </div>
 
                   {/* Quote */}
                   <blockquote className='text-lg lg:text-xl text-text-primary mb-6 leading-relaxed'>
-                    <Icon name='Quote' size={24} className='text-primary mb-4' />
+                    <Icon aria-hidden="true"  name='Quote' size={24} className='text-primary mb-4' />
                     {currentTestimonial.content}
                   </blockquote>
 
@@ -192,7 +192,7 @@ const TestimonialsCarousel = () => {
                       <span className='text-sm font-medium text-text-secondary'>
                         Formation suivie
                       </span>
-                      <Icon name='BookOpen' size={16} className='text-primary' />
+                      <Icon aria-hidden="true"  name='BookOpen' size={16} className='text-primary' />
                     </div>
                     <p className='font-semibold text-primary'>{currentTestimonial.course}</p>
                   </div>
@@ -202,7 +202,7 @@ const TestimonialsCarousel = () => {
                 <div className='space-y-6'>
                   {/* Main Result */}
                   <div className='bg-surface rounded-xl p-6 text-center border border-border shadow-subtle'>
-                    <Icon name='TrendingUp' size={32} className='text-accent mx-auto mb-4' />
+                    <Icon aria-hidden="true"  name='TrendingUp' size={32} className='text-accent mx-auto mb-4' />
                     <h3 className='text-2xl font-bold text-text-primary mb-2'>
                       Résultat principal
                     </h3>
@@ -214,14 +214,14 @@ const TestimonialsCarousel = () => {
                   {/* Before/After */}
                   <div className='grid grid-cols-2 gap-4'>
                     <div className='bg-error-50 rounded-lg p-4 text-center border border-error-200'>
-                      <Icon name='X' size={20} className='text-error mx-auto mb-2' />
+                      <Icon aria-hidden="true"  name='X' size={20} className='text-error mx-auto mb-2' />
                       <p className='text-sm font-medium text-error-700 mb-1'>Avant</p>
                       <p className='text-xs text-error-600'>
                         {currentTestimonial.beforeAfter.before}
                       </p>
                     </div>
                     <div className='bg-success-50 rounded-lg p-4 text-center border border-success-200'>
-                      <Icon name='Check' size={20} className='text-success mx-auto mb-2' />
+                      <Icon aria-hidden="true"  name='Check' size={20} className='text-success mx-auto mb-2' />
                       <p className='text-sm font-medium text-success-700 mb-1'>Après</p>
                       <p className='text-xs text-success-600'>
                         {currentTestimonial.beforeAfter.after}
@@ -232,7 +232,7 @@ const TestimonialsCarousel = () => {
                   {/* Age Group Badge */}
                   <div className='text-center'>
                     <span className='inline-flex items-center px-4 py-2 bg-primary-100 text-primary-700 rounded-full text-sm font-medium'>
-                      <Icon name='Users' size={16} className='mr-2' />
+                      <Icon aria-hidden="true"  name='Users' size={16} className='mr-2' />
                       {currentTestimonial.age < 30
                         ? 'Jeune professionnel'
                         : currentTestimonial.age < 50
@@ -251,7 +251,7 @@ const TestimonialsCarousel = () => {
             className='absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-surface border border-border rounded-full flex items-center justify-center hover:bg-secondary-50 transition-colors duration-200'
             aria-label='Témoignage précédent'
           >
-            <Icon name='ChevronLeft' size={20} />
+            <Icon aria-hidden="true"  name='ChevronLeft' size={20} />
           </button>
 
           <button
@@ -259,7 +259,7 @@ const TestimonialsCarousel = () => {
             className='absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-surface border border-border rounded-full flex items-center justify-center hover:bg-secondary-50 transition-colors duration-200'
             aria-label='Témoignage suivant'
           >
-            <Icon name='ChevronRight' size={20} />
+            <Icon aria-hidden="true"  name='ChevronRight' size={20} />
           </button>
         </div>
 

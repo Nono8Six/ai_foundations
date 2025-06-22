@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Icon from '../../../components/AppIcon';
-import logger from '../../../utils/logger.ts';
+import logger from '../../../utils/logger';
 
 const ContentTree = ({
   contentData,
@@ -57,24 +57,24 @@ const ContentTree = ({
   const getStatusIcon = status => {
     switch (status) {
       case 'published':
-        return <Icon name='CheckCircle' size={16} className='text-accent' />;
+        return <Icon aria-hidden="true"  name='CheckCircle' size={16} className='text-accent' />;
       case 'draft':
-        return <Icon name='Clock' size={16} className='text-warning' />;
+        return <Icon aria-hidden="true"  name='Clock' size={16} className='text-warning' />;
       default:
-        return <Icon name='Circle' size={16} className='text-secondary-400' />;
+        return <Icon aria-hidden="true"  name='Circle' size={16} className='text-secondary-400' />;
     }
   };
 
   const getTypeIcon = type => {
     switch (type) {
       case 'course':
-        return <Icon name='BookOpen' size={16} className='text-primary' />;
+        return <Icon aria-hidden="true"  name='BookOpen' size={16} className='text-primary' />;
       case 'module':
-        return <Icon name='Folder' size={16} className='text-secondary-600' />;
+        return <Icon aria-hidden="true"  name='Folder' size={16} className='text-secondary-600' />;
       case 'lesson':
-        return <Icon name='FileText' size={16} className='text-secondary-500' />;
+        return <Icon aria-hidden="true"  name='FileText' size={16} className='text-secondary-500' />;
       default:
-        return <Icon name='File' size={16} className='text-secondary-400' />;
+        return <Icon aria-hidden="true"  name='File' size={16} className='text-secondary-400' />;
     }
   };
 
@@ -140,7 +140,7 @@ const ContentTree = ({
 
             <div className='opacity-0 group-hover:opacity-100 transition-opacity duration-200 ml-2'>
               <button className='p-1 hover:bg-secondary-100 rounded'>
-                <Icon name='MoreVertical' size={14} className='text-secondary-500' />
+                <Icon aria-hidden="true"  name='MoreVertical' size={14} className='text-secondary-500' />
               </button>
             </div>
           </div>
@@ -190,7 +190,7 @@ const ContentTree = ({
                 }}
                 className='mr-2 p-1 hover:bg-secondary-100 rounded transition-colors duration-200'
               >
-                <Icon
+                <Icon aria-hidden="true" 
                   name={expandedItems.has(module.id) ? 'ChevronDown' : 'ChevronRight'}
                   size={14}
                   className='text-secondary-500'
@@ -214,7 +214,7 @@ const ContentTree = ({
 
               <div className='opacity-0 group-hover:opacity-100 transition-opacity duration-200 ml-2'>
                 <button className='p-1 hover:bg-secondary-100 rounded'>
-                  <Icon name='MoreVertical' size={14} className='text-secondary-500' />
+                  <Icon aria-hidden="true"  name='MoreVertical' size={14} className='text-secondary-500' />
                 </button>
               </div>
             </div>
@@ -266,7 +266,7 @@ const ContentTree = ({
               }}
               className='mr-3 p-1 hover:bg-secondary-100 rounded transition-colors duration-200'
             >
-              <Icon
+              <Icon aria-hidden="true" 
                 name={expandedItems.has(course.id) ? 'ChevronDown' : 'ChevronRight'}
                 size={16}
                 className='text-secondary-500'
@@ -290,7 +290,7 @@ const ContentTree = ({
 
             <div className='opacity-0 group-hover:opacity-100 transition-opacity duration-200 ml-2'>
               <button className='p-1 hover:bg-secondary-100 rounded'>
-                <Icon name='MoreVertical' size={16} className='text-secondary-500' />
+                <Icon aria-hidden="true"  name='MoreVertical' size={16} className='text-secondary-500' />
               </button>
             </div>
           </div>
@@ -301,7 +301,7 @@ const ContentTree = ({
 
       {filteredContent.length === 0 && (
         <div className='text-center py-8'>
-          <Icon name='Search' size={48} className='text-secondary-300 mx-auto mb-4' />
+          <Icon aria-hidden="true"  name='Search' size={48} className='text-secondary-300 mx-auto mb-4' />
           <p className='text-text-secondary'>
             {searchQuery ? 'Aucun contenu trouvé' : 'Aucun contenu disponible'}
           </p>

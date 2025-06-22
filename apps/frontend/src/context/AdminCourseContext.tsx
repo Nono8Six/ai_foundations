@@ -3,15 +3,27 @@ import React, { createContext, useContext, type ReactNode } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
 import { safeQuery } from '../utils/supabaseClient';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '../types/database.types';
 import { useAuth } from './AuthContext';
 
+const supabaseClient = supabase as SupabaseClient<Database>;
+
 export interface AdminCourseContextValue {
-  createCourse: (course: unknown) => Promise<unknown>;
-  updateCourse: (args: { id: string; updates: unknown }) => Promise<unknown>;
-  deleteCourse: (id: string) => Promise<unknown>;
-  createModule: (module: unknown) => Promise<unknown>;
-  updateModule: (args: { id: string; updates: unknown }) => Promise<unknown>;
-  deleteModule: (id: string) => Promise<unknown>;
+  createCourse: (
+    course: Database['public']['Tables']['courses']['Insert']
+  ) => Promise<Database['public']['Tables']['courses']['Row']>;
+  updateCourse: (
+    args: { id: string; updates: Database['public']['Tables']['courses']['Update'] }
+  ) => Promise<Database['public']['Tables']['courses']['Row']>;
+  deleteCourse: (id: string) => Promise<void>;
+  createModule: (
+    module: Database['public']['Tables']['modules']['Insert']
+  ) => Promise<Database['public']['Tables']['modules']['Row']>;
+  updateModule: (
+    args: { id: string; updates: Database['public']['Tables']['modules']['Update'] }
+  ) => Promise<Database['public']['Tables']['modules']['Row']>;
+  deleteModule: (id: string) => Promise<void>;
 }
 
 const AdminCourseContext = createContext<AdminCourseContextValue | undefined>(undefined);
@@ -23,7 +35,7 @@ export const AdminCourseProvider = ({ children }: { children: ReactNode }) => {
   const createCourse = useMutation({
     mutationFn: async course => {
       const { data, error } = await safeQuery(() =>
-        supabase.from('courses').insert(course).select().single()
+        supabaseClient.from('courses').insert(course).select().single()
       );
       if (error) throw error;
       return data;
@@ -34,7 +46,7 @@ export const AdminCourseProvider = ({ children }: { children: ReactNode }) => {
   const updateCourse = useMutation({
     mutationFn: async ({ id, updates }) => {
       const { data, error } = await safeQuery(() =>
-        supabase
+        supabaseClient
           .from('courses')
           .update(updates)
           .eq('id', id)
@@ -50,7 +62,7 @@ export const AdminCourseProvider = ({ children }: { children: ReactNode }) => {
   const deleteCourse = useMutation({
     mutationFn: async id => {
       const { error } = await safeQuery(() =>
-        supabase.from('courses').delete().eq('id', id)
+        supabaseClient.from('courses').delete().eq('id', id)
       );
       if (error) throw error;
     },
@@ -60,7 +72,7 @@ export const AdminCourseProvider = ({ children }: { children: ReactNode }) => {
   const createModule = useMutation({
     mutationFn: async module => {
       const { data, error } = await safeQuery(() =>
-        supabase.from('modules').insert(module).select().single()
+        supabaseClient.from('modules').insert(module).select().single()
       );
       if (error) throw error;
       return data;
@@ -71,7 +83,7 @@ export const AdminCourseProvider = ({ children }: { children: ReactNode }) => {
   const updateModule = useMutation({
     mutationFn: async ({ id, updates }) => {
       const { data, error } = await safeQuery(() =>
-        supabase
+        supabaseClient
           .from('modules')
           .update(updates)
           .eq('id', id)
@@ -87,7 +99,7 @@ export const AdminCourseProvider = ({ children }: { children: ReactNode }) => {
   const deleteModule = useMutation({
     mutationFn: async id => {
       const { error } = await safeQuery(() =>
-        supabase.from('modules').delete().eq('id', id)
+        supabaseClient.from('modules').delete().eq('id', id)
       );
       if (error) throw error;
     },

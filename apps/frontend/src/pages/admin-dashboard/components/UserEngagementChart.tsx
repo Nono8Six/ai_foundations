@@ -12,6 +12,12 @@ import {
 import Icon from '../../../components/AppIcon';
 import { supabase } from '../../../lib/supabase';
 
+interface EngagementData {
+  time: string;
+  users: number;
+  sessions: number;
+}
+
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
@@ -239,14 +245,14 @@ const UserEngagementChart = ({ timeRange }) => {
             <span className='text-xs text-text-secondary'>Sessions</span>
           </div>
           <button className='p-1 rounded-md hover:bg-secondary-100 transition-colors'>
-            <Icon name='Download' size={16} className='text-text-secondary' />
+            <Icon aria-hidden="true"  name='Download' size={16} className='text-text-secondary' />
           </button>
         </div>
       </div>
 
       <div className='h-64'>
         <ResponsiveContainer width='100%' height='100%'>
-          <AreaChart data={engagementData}>
+          <AreaChart<EngagementData> data={engagementData}>
             <defs>
               <linearGradient id='colorUsers' x1='0' y1='0' x2='0' y2='1'>
                 <stop offset='5%' stopColor='var(--color-primary)' stopOpacity={0.3} />

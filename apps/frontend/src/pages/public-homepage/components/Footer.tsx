@@ -51,7 +51,7 @@ const Footer = () => {
             <div className='lg:col-span-2'>
               <Link to='/' className='flex items-center space-x-3 mb-6'>
                 <div className='w-12 h-12 bg-gradient-to-br from-primary to-primary-700 rounded-full flex items-center justify-center'>
-                  <Icon name='Brain' size={28} color='white' />
+                  <Icon aria-hidden="true"  name='Brain' size={28} color='white' />
                 </div>
                 <span className='text-2xl font-bold'>AI Foundations</span>
               </Link>
@@ -64,15 +64,15 @@ const Footer = () => {
               {/* Contact Info */}
               <div className='space-y-3 mb-6'>
                 <div className='flex items-center'>
-                  <Icon name='Mail' size={18} className='mr-3 text-primary' />
+                  <Icon aria-hidden="true"  name='Mail' size={18} className='mr-3 text-primary' />
                   <span className='text-secondary-300'>contact@ai-foundations.fr</span>
                 </div>
                 <div className='flex items-center'>
-                  <Icon name='Phone' size={18} className='mr-3 text-primary' />
+                  <Icon aria-hidden="true"  name='Phone' size={18} className='mr-3 text-primary' />
                   <span className='text-secondary-300'>+33 1 23 45 67 89</span>
                 </div>
                 <div className='flex items-center'>
-                  <Icon name='MapPin' size={18} className='mr-3 text-primary' />
+                  <Icon aria-hidden="true"  name='MapPin' size={18} className='mr-3 text-primary' />
                   <span className='text-secondary-300'>Paris, France</span>
                 </div>
               </div>
@@ -86,7 +86,7 @@ const Footer = () => {
                     className='w-10 h-10 bg-secondary-800 rounded-lg flex items-center justify-center hover:bg-primary transition-colors duration-200'
                     aria-label={social.name}
                   >
-                    <Icon name={social.icon} size={18} />
+                    <Icon aria-hidden="true"  name={social.icon} size={18} />
                   </a>
                 ))}
               </div>
@@ -102,7 +102,7 @@ const Footer = () => {
                       to={link.path}
                       className='text-secondary-300 hover:text-white transition-colors duration-200 flex items-center group'
                     >
-                      <Icon
+                      <Icon aria-hidden="true" 
                         name='ChevronRight'
                         size={14}
                         className='mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200'
@@ -124,7 +124,7 @@ const Footer = () => {
                       to={link.path}
                       className='text-secondary-300 hover:text-white transition-colors duration-200 flex items-center group'
                     >
-                      <Icon
+                      <Icon aria-hidden="true" 
                         name='ChevronRight'
                         size={14}
                         className='mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200'
@@ -146,7 +146,7 @@ const Footer = () => {
                       to={link.path}
                       className='text-secondary-300 hover:text-white transition-colors duration-200 flex items-center group'
                     >
-                      <Icon
+                      <Icon aria-hidden="true" 
                         name='ChevronRight'
                         size={14}
                         className='mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200'
@@ -168,7 +168,7 @@ const Footer = () => {
                       href={link.path}
                       className='text-secondary-300 hover:text-white transition-colors duration-200 flex items-center group'
                     >
-                      <Icon
+                      <Icon aria-hidden="true" 
                         name='ChevronRight'
                         size={14}
                         className='mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200'
@@ -198,7 +198,7 @@ const Footer = () => {
                 className='flex-1 px-4 py-3 bg-secondary-800 border border-secondary-700 rounded-lg text-white placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent'
               />
               <button className='px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary-700 transition-colors duration-200 flex items-center justify-center'>
-                <Icon name='Send' size={18} className='mr-2' />
+                <Icon aria-hidden="true"  name='Send' size={18} className='mr-2' />
                 S'abonner
               </button>
             </div>
@@ -214,15 +214,15 @@ const Footer = () => {
 
             <div className='flex items-center space-x-6 text-sm text-secondary-400'>
               <div className='flex items-center'>
-                <Icon name='Shield' size={16} className='mr-2 text-success' />
+                <Icon aria-hidden="true"  name='Shield' size={16} className='mr-2 text-success' />
                 <span>Certifié RGPD</span>
               </div>
               <div className='flex items-center'>
-                <Icon name='Award' size={16} className='mr-2 text-warning' />
+                <Icon aria-hidden="true"  name='Award' size={16} className='mr-2 text-warning' />
                 <span>Qualité Qualiopi</span>
               </div>
               <div className='flex items-center'>
-                <Icon name='Lock' size={16} className='mr-2 text-primary' />
+                <Icon aria-hidden="true"  name='Lock' size={16} className='mr-2 text-primary' />
                 <span>Sécurisé SSL</span>
               </div>
             </div>

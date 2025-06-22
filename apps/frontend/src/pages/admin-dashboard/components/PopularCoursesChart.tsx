@@ -3,6 +3,13 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import Icon from '../../../components/AppIcon';
 import { supabase } from '../../../lib/supabase';
 
+interface CourseData {
+  name: string;
+  enrollments: number;
+  completions: number;
+  rating: string | number;
+}
+
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
@@ -186,14 +193,14 @@ const PopularCoursesChart = () => {
             <span className='text-xs text-text-secondary'>Complétions</span>
           </div>
           <button className='p-1 rounded-md hover:bg-secondary-100 transition-colors'>
-            <Icon name='MoreVertical' size={16} className='text-text-secondary' />
+            <Icon aria-hidden="true"  name='MoreVertical' size={16} className='text-text-secondary' />
           </button>
         </div>
       </div>
 
       <div className='h-64'> {/* Ensure this height is appropriate */}
         <ResponsiveContainer width='100%' height='100%'>
-          <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+          <BarChart<CourseData> data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray='3 3' stroke='var(--color-border)' />
             <XAxis
               dataKey='name'

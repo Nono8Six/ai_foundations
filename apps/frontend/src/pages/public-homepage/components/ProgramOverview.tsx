@@ -138,7 +138,7 @@ const ProgramOverview = () => {
           className='text-center mb-16'
         >
           <div className='inline-flex items-center px-4 py-2 bg-primary-100 text-primary-700 rounded-full text-sm font-medium mb-6'>
-            <Icon name='BookOpen' size={16} className='mr-2' />
+            <Icon aria-hidden="true"  name='BookOpen' size={16} className='mr-2' />
             Programmes de formation
           </div>
           <h2 className='text-3xl lg:text-4xl font-bold text-text-primary mb-6'>
@@ -180,7 +180,7 @@ const ProgramOverview = () => {
                   </span>
                 </div>
                 <div className='absolute top-4 right-4 bg-surface/90 backdrop-blur-sm rounded-full px-2 py-1 flex items-center'>
-                  <Icon name='Star' size={14} className='text-warning mr-1' />
+                  <Icon aria-hidden="true"  name='Star' size={14} className='text-warning mr-1' />
                   <span className='text-xs font-medium text-text-primary'>{course.rating}</span>
                 </div>
               </div>
@@ -190,7 +190,7 @@ const ProgramOverview = () => {
                 <div className='flex items-center justify-between mb-3'>
                   <span className='text-sm font-medium text-primary'>{course.category}</span>
                   <div className='flex items-center text-sm text-text-secondary'>
-                    <Icon name='Users' size={14} className='mr-1' />
+                    <Icon aria-hidden="true"  name='Users' size={14} className='mr-1' />
                     {course.students}
                   </div>
                 </div>
@@ -221,11 +221,11 @@ const ProgramOverview = () => {
                 {/* Course Meta */}
                 <div className='flex items-center justify-between text-sm text-text-secondary mb-6'>
                   <div className='flex items-center'>
-                    <Icon name='Clock' size={14} className='mr-1' />
+                    <Icon aria-hidden="true"  name='Clock' size={14} className='mr-1' />
                     {course.duration}
                   </div>
                   <div className='flex items-center'>
-                    <Icon name='BookOpen' size={14} className='mr-1' />
+                    <Icon aria-hidden="true"  name='BookOpen' size={14} className='mr-1' />
                     {course.modules} modules
                   </div>
                 </div>
@@ -236,7 +236,7 @@ const ProgramOverview = () => {
                   className='w-full inline-flex items-center justify-center px-4 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary-700 transition-colors duration-200 group'
                 >
                   <span>Découvrir le programme</span>
-                  <Icon
+                  <Icon aria-hidden="true" 
                     name='ArrowRight'
                     size={16}
                     className='ml-2 group-hover:translate-x-1 transition-transform duration-200'
@@ -268,14 +268,14 @@ const ProgramOverview = () => {
                 to='/register'
                 className='inline-flex items-center justify-center px-8 py-4 bg-surface text-primary font-semibold rounded-lg hover:bg-secondary-50 transition-colors duration-200'
               >
-                <Icon name='Rocket' size={20} className='mr-2' />
+                <Icon aria-hidden="true"  name='Rocket' size={20} className='mr-2' />
                 Commencer gratuitement
               </Link>
               <Link
                 to='/programmes'
                 className='inline-flex items-center justify-center px-8 py-4 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-primary transition-colors duration-200'
               >
-                <Icon name='Info' size={20} className='mr-2' />
+                <Icon aria-hidden="true"  name='Info' size={20} className='mr-2' />
                 Plus d'informations
               </Link>
             </div>

@@ -69,7 +69,7 @@ const BulkActionsBar = ({
       <div className='flex items-center justify-between'>
         <div className='flex items-center space-x-4'>
           <div className='flex items-center space-x-2'>
-            <Icon name='CheckSquare' size={20} className='text-primary' />
+            <Icon aria-hidden="true"  name='CheckSquare' size={20} className='text-primary' />
             <span className='text-sm font-medium text-primary'>
               {selectedCount} utilisateur{selectedCount > 1 ? 's' : ''} sélectionné
               {selectedCount > 1 ? 's' : ''}
@@ -83,9 +83,9 @@ const BulkActionsBar = ({
               onClick={() => setShowActionMenu(!showActionMenu)}
               className='inline-flex items-center px-3 py-1.5 border border-primary-300 text-sm font-medium rounded-lg text-primary bg-surface hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-200'
             >
-              <Icon name='Settings' size={16} className='mr-2' />
+              <Icon aria-hidden="true"  name='Settings' size={16} className='mr-2' />
               Actions groupées
-              <Icon name='ChevronDown' size={14} className='ml-1' />
+              <Icon aria-hidden="true"  name='ChevronDown' size={14} className='ml-1' />
             </button>
 
             {showActionMenu && (
@@ -97,7 +97,7 @@ const BulkActionsBar = ({
                       onClick={() => handleActionClick(action.id)}
                       className='w-full flex items-start px-4 py-3 text-left hover:bg-secondary-50 transition-colors'
                     >
-                      <Icon
+                      <Icon aria-hidden="true" 
                         name={action.icon}
                         size={16}
                         className={`mr-3 mt-0.5 ${action.color}`}
@@ -118,7 +118,7 @@ const BulkActionsBar = ({
           onClick={onClearSelection}
           className='inline-flex items-center px-3 py-1.5 text-sm text-text-secondary hover:text-primary transition-colors'
         >
-          <Icon name='X' size={16} className='mr-1' />
+          <Icon aria-hidden="true"  name='X' size={16} className='mr-1' />
           Désélectionner tout
         </button>
       </div>
@@ -130,21 +130,21 @@ const BulkActionsBar = ({
           onClick={() => handleActionClick('activate')}
           className='inline-flex items-center px-2 py-1 text-xs font-medium rounded text-success bg-success-50 hover:bg-success-100 transition-colors'
         >
-          <Icon name='UserCheck' size={12} className='mr-1' />
+          <Icon aria-hidden="true"  name='UserCheck' size={12} className='mr-1' />
           Activer
         </button>
         <button
           onClick={() => handleActionClick('send-message')}
           className='inline-flex items-center px-2 py-1 text-xs font-medium rounded text-primary bg-primary-50 hover:bg-primary-100 transition-colors'
         >
-          <Icon name='MessageCircle' size={12} className='mr-1' />
+          <Icon aria-hidden="true"  name='MessageCircle' size={12} className='mr-1' />
           Message
         </button>
         <button
           onClick={() => handleActionClick('export')}
           className='inline-flex items-center px-2 py-1 text-xs font-medium rounded text-text-secondary bg-secondary-50 hover:bg-secondary-100 transition-colors'
         >
-          <Icon name='Download' size={12} className='mr-1' />
+          <Icon aria-hidden="true"  name='Download' size={12} className='mr-1' />
           Exporter
         </button>
       </div>

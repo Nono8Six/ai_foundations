@@ -1,6 +1,6 @@
 // src/pages/user-dashboard/components/ProgressChart.jsx
 import React, { useState, useEffect } from 'react';
-import { colors } from '../../../utils/theme.ts';
+import { colors } from '../../../utils/theme';
 import {
   LineChart,
   Line,
@@ -13,6 +13,20 @@ import {
 import { useCourses } from '../../../context/CourseContext';
 import useProgressChartData from '../../../hooks/useProgressChartData';
 import Icon from '../../../components/AppIcon';
+
+interface WeeklyData {
+  day: string;
+  lessons: number;
+  hours: number;
+  xp: number;
+}
+
+interface MonthlyData {
+  month: string;
+  lessons: number;
+  hours: number;
+  xp: number;
+}
 
 const ProgressChart = () => {
   const [activeTab, setActiveTab] = useState('weekly');
@@ -63,7 +77,7 @@ const ProgressChart = () => {
   if (isLoading) {
      return (
       <div className='bg-surface rounded-xl border border-border p-6 text-center'>
-        <Icon name='Loader' size={32} className='mx-auto animate-spin text-primary mb-4' />
+        <Icon aria-hidden="true"  name='Loader' size={32} className='mx-auto animate-spin text-primary mb-4' />
         <p className='text-text-secondary'>Chargement des données de progression...</p>
       </div>
     );
@@ -79,7 +93,7 @@ const ProgressChart = () => {
         </div>
         
         <div className='text-center py-8'>
-          <Icon name='BarChart3' size={48} className='mx-auto text-secondary-300 mb-4' />
+          <Icon aria-hidden="true"  name='BarChart3' size={48} className='mx-auto text-secondary-300 mb-4' />
           <h3 className='text-lg font-medium text-text-primary mb-2'>Aucune donnée de progression disponible</h3>
           <p className='text-text-secondary mb-4'>
             Commencez à apprendre pour voir votre progression ici.
@@ -107,7 +121,7 @@ const ProgressChart = () => {
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ${activeTab === tab.id ? 'bg-white shadow-sm text-primary' : 'text-text-secondary hover:text-primary'}`}
             >
-              <Icon name={tab.icon} size={16} />
+              <Icon aria-hidden="true"  name={tab.icon} size={16} />
               <span>{tab.label}</span>
             </button>
           ))}
@@ -116,7 +130,7 @@ const ProgressChart = () => {
 
       <div className='w-full h-60 sm:h-72 md:h-80'>
         <ResponsiveContainer width='100%' height='100%'>
-          <LineChart data={getCurrentData()} margin={{ top: 5, right: 5, left: -25, bottom: 5 }}>
+          <LineChart<WeeklyData | MonthlyData> data={getCurrentData()} margin={{ top: 5, right: 5, left: -25, bottom: 5 }}>
             <CartesianGrid strokeDasharray='3 3' stroke={colors.border} />
             <XAxis dataKey={getXAxisKey()} tick={{ fill: colors.textSecondary, fontSize: 12 }} dy={10} />
             <YAxis tick={{ fill: colors.textSecondary, fontSize: 12 }} dx={-5} />

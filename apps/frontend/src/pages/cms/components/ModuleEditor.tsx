@@ -67,7 +67,7 @@ const ModuleEditor = ({ module, onSave, onDelete }) => {
               {isSaving ? (
                 <Spinner size={16} className='mr-2' />
               ) : (
-                <Icon name='Save' size={16} className='mr-2' />
+                <Icon aria-hidden="true"  name='Save' size={16} className='mr-2' />
               )}
               {isSaving ? 'Enregistrement...' : 'Enregistrer'}
             </Button>
@@ -184,7 +184,7 @@ const ModuleEditor = ({ module, onSave, onDelete }) => {
               <div className='flex items-center justify-between mb-4'>
                 <h2 className='text-lg font-semibold text-text-primary'>Leçons du module</h2>
                 <button className='px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors duration-200 font-medium'>
-                  <Icon name='Plus' size={16} className='mr-2' />
+                  <Icon aria-hidden="true"  name='Plus' size={16} className='mr-2' />
                   Ajouter une leçon
                 </button>
               </div>
@@ -222,11 +222,11 @@ const ModuleEditor = ({ module, onSave, onDelete }) => {
                         </span>
 
                         <button className='p-2 text-text-secondary hover:text-text-primary hover:bg-secondary-100 rounded-lg transition-colors duration-200'>
-                          <Icon name='Edit' size={16} />
+                          <Icon aria-hidden="true"  name='Edit' size={16} />
                         </button>
 
                         <button className='p-2 text-text-secondary hover:text-error hover:bg-error-50 rounded-lg transition-colors duration-200'>
-                          <Icon name='Trash2' size={16} />
+                          <Icon aria-hidden="true"  name='Trash2' size={16} />
                         </button>
                       </div>
                     </div>
@@ -234,10 +234,10 @@ const ModuleEditor = ({ module, onSave, onDelete }) => {
                 </div>
               ) : (
                 <div className='text-center py-8'>
-                  <Icon name='FileText' size={48} className='text-secondary-300 mx-auto mb-4' />
+                  <Icon aria-hidden="true"  name='FileText' size={48} className='text-secondary-300 mx-auto mb-4' />
                   <p className='text-text-secondary mb-4'>Aucune leçon dans ce module</p>
                   <button className='px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors duration-200 font-medium'>
-                    <Icon name='Plus' size={16} className='mr-2' />
+                    <Icon aria-hidden="true"  name='Plus' size={16} className='mr-2' />
                     Créer la première leçon
                   </button>
                 </div>
@@ -338,7 +338,7 @@ const ModuleEditor = ({ module, onSave, onDelete }) => {
                   onClick={() => onDelete(module.id)}
                   className='w-full px-4 py-2 bg-error text-white rounded-lg hover:bg-error-600 transition-colors duration-200 font-medium'
                 >
-                  <Icon name='Trash2' size={16} className='mr-2' />
+                  <Icon aria-hidden="true"  name='Trash2' size={16} className='mr-2' />
                   Supprimer le module
                 </button>
               </div>

@@ -57,7 +57,7 @@ const AuthenticationLoginRegister = () => {
           {/* Welcome Section */}
           <div className='text-center mb-8'>
             <div className='w-20 h-20 bg-gradient-to-br from-primary to-primary-700 rounded-full flex items-center justify-center mx-auto mb-6 shadow-medium'>
-              <Icon name='Brain' size={40} color='white' />
+              <Icon aria-hidden="true"  name='Brain' size={40} color='white' />
             </div>
             <h1 className='text-3xl font-bold text-text-primary mb-2'>
               {activeTab === 'login' ? 'Bon retour !' : 'Rejoignez-nous'}
@@ -81,7 +81,7 @@ const AuthenticationLoginRegister = () => {
                     : 'text-text-secondary hover:text-primary hover:bg-secondary-50'
                 }`}
               >
-                <Icon name='LogIn' size={18} className='inline mr-2' />
+                <Icon aria-hidden="true"  name='LogIn' size={18} className='inline mr-2' />
                 Connexion
               </button>
               <button
@@ -92,7 +92,7 @@ const AuthenticationLoginRegister = () => {
                     : 'text-text-secondary hover:text-primary hover:bg-secondary-50'
                 }`}
               >
-                <Icon name='UserPlus' size={18} className='inline mr-2' />
+                <Icon aria-hidden="true"  name='UserPlus' size={18} className='inline mr-2' />
                 Inscription
               </button>
             </div>
@@ -166,7 +166,7 @@ const AuthenticationLoginRegister = () => {
           {/* Demo Info */}
           <div className='mt-8 p-4 bg-accent-50 border border-accent-200 rounded-lg'>
             <div className='flex items-start space-x-3'>
-              <Icon name='Info' size={20} className='text-accent flex-shrink-0 mt-0.5' />
+              <Icon aria-hidden="true"  name='Info' size={20} className='text-accent flex-shrink-0 mt-0.5' />
               <div>
                 <h4 className='text-sm font-medium text-accent-700 mb-1'>Information de test</h4>
                 <p className='text-xs text-accent-600 mb-2'>

@@ -106,7 +106,7 @@ const UserProfileManagement = () => {
               <div className='space-y-3'>
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center space-x-2'>
-                    <Icon name='Flame' size={16} className='text-orange-500' />
+                    <Icon aria-hidden="true"  name='Flame' size={16} className='text-orange-500' />
                     <span className='text-sm text-text-secondary'>Série actuelle</span>
                   </div>
                   <span className='text-sm font-medium text-text-primary'>
@@ -115,7 +115,7 @@ const UserProfileManagement = () => {
                 </div>
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center space-x-2'>
-                    <Icon name='BookOpen' size={16} className='text-primary' />
+                    <Icon aria-hidden="true"  name='BookOpen' size={16} className='text-primary' />
                     <span className='text-sm text-text-secondary'>Cours terminés</span>
                   </div>
                   <span className='text-sm font-medium text-text-primary'>
@@ -124,7 +124,7 @@ const UserProfileManagement = () => {
                 </div>
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center space-x-2'>
-                    <Icon name='Award' size={16} className='text-accent' />
+                    <Icon aria-hidden="true"  name='Award' size={16} className='text-accent' />
                     <span className='text-sm text-text-secondary'>Certificats</span>
                   </div>
                   <span className='text-sm font-medium text-text-primary'>
@@ -155,7 +155,7 @@ const UserProfileManagement = () => {
                       }`}
                     >
                       <div className='flex items-center space-x-2'>
-                        <Icon name={tab.icon} size={16} />
+                        <Icon aria-hidden="true"  name={tab.icon} size={16} />
                         <span className='hidden sm:inline'>{tab.label}</span>
                       </div>
                     </button>

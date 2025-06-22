@@ -5,8 +5,8 @@ import Header from './components/Header';
 import { AuthProvider } from './context/AuthContext';
 import { CourseProvider } from './context/CourseContext';
 import { AdminCourseProvider } from './context/AdminCourseContext';
-import { ToastProvider, useToast } from './context/ToastContext.tsx';
-import { ErrorProvider } from './context/ErrorContext.tsx';
+import { ToastProvider, useToast } from './context/ToastContext';
+import { ErrorProvider } from './context/ErrorContext';
 
 // Un composant pour lier les deux contextes
 const AppWithErrorToasts = () => {

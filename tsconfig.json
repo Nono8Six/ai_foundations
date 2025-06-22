@@ -16,9 +16,11 @@
       "jest",
       "global"
     ],
+    "allowImportingTsExtensions": true,
+    "strictNullChecks": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "noEmit": false
+    "noEmit": true
   },
   "references": [{ "path": "apps/frontend" }]
 }
