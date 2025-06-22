@@ -21,7 +21,7 @@ describe('supabase client initialization', () => {
   it('throws an error when required env vars are missing', async () => {
     vi.stubEnv('VITE_SUPABASE_URL', '');
     vi.stubEnv('VITE_SUPABASE_ANON_KEY', '');
-    await expect(import('../supabase.ts')).rejects.toThrow(
+    await expect(import('../supabase')).rejects.toThrow(
       'VITE_SUPABASE_URL must be a non-empty string'
     );
   });
@@ -29,7 +29,7 @@ describe('supabase client initialization', () => {
   it('exports a client when env vars are set', async () => {
     vi.stubEnv('VITE_SUPABASE_URL', 'url');
     vi.stubEnv('VITE_SUPABASE_ANON_KEY', 'key');
-    const module = await import('../supabase.ts');
+    const module = await import('../supabase');
     expect(module.supabase).toBeDefined();
   });
 });

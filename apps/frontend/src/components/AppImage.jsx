@@ -1,5 +1,5 @@
 import React from 'react';
-import logger from '../utils/logger.ts';
+import logger from '../utils/logger';
 
 function Image({ src, alt = 'Image Name', className = '', ...props }) {
   // Ensure src is a valid URL

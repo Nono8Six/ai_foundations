@@ -5,7 +5,7 @@ import Icon from '../../../components/AppIcon';
 import Button from '../../../components/ui/Button';
 import TextInput from '../../../components/ui/TextInput';
 import { useAuth } from '../../../context/AuthContext';
-import logger from '../../../utils/logger.ts';
+import logger from '../../../utils/logger';
 
 const LoginForm = ({ onSuccess, isLoading, setIsLoading }) => {
   const {
