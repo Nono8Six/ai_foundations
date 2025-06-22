@@ -1,7 +1,12 @@
 import React from 'react';
 import Icon from '../../../components/AppIcon';
 
-const UserFilters = ({ filters, setFilters }) => {
+interface UserFiltersProps {
+  filters: Record<string, string>;
+  setFilters: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+}
+
+const UserFilters = ({ filters, setFilters }: UserFiltersProps) => {
   const handleFilterChange = (key, value) => {
     setFilters(prev => ({
       ...prev,
