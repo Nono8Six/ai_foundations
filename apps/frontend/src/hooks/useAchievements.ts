@@ -37,29 +37,19 @@ const useAchievements = (
 
       // On combine les deux logiques : on construit la requête dynamique
       // et on l'exécute à l'intérieur de notre fonction sécurisée.
-      const { data, error } = await safeQuery<AchievementRow[]>(() => {
-        let query = supabaseClient
-          .from<'achievements', AchievementRow>('achievements')
-          .select('*')
-          .eq('user_id', userId);
-
-        // Applique les filtres dynamiques
-        Object.entries(filters).forEach(([column, value]) => {
-          query = query.eq(column as keyof AchievementRow, value as never);
-        });
-
-        // Applique l'ordre de tri
-        if (order) {
-          query = query.order('created_at', { ascending: order === 'asc' });
-        }
-
-        // Applique la limite
-        if (limit) {
-          query = query.limit(limit);
-        }
-        
-        return query; // La fonction safeQuery exécutera cette requête
-      });
+      const { data, error } = await safeQuery<AchievementRow[]>(() =>
+        Object.entries(filters)
+          .reduce(
+            (q, [column, value]) =>
+              q.eq(column as keyof AchievementRow, value as never),
+            supabaseClient
+              .from<'achievements', AchievementRow>('achievements')
+              .select('*')
+              .eq('user_id', userId)
+          )
+          .order('created_at', { ascending: order === 'asc' })
+          .limit(limit)
+      );
 
       if (error) {
         setError(error);
