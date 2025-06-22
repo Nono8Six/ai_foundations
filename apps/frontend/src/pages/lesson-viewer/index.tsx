@@ -155,7 +155,7 @@ const LessonViewer = () => {
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             className='lg:hidden p-2 hover:bg-secondary-50 rounded-lg transition-colors'
           >
-            <Icon aria-hidden="true"  name='Menu' size={20} />
+            <Icon name='Menu' size={20} aria-label='Basculer le menu' />
           </button>
 
           <Link
@@ -176,14 +176,18 @@ const LessonViewer = () => {
             onClick={() => setIsHeaderCollapsed(!isHeaderCollapsed)}
             className='p-2 hover:bg-secondary-50 rounded-lg transition-colors'
           >
-            <Icon aria-hidden="true"  name={isHeaderCollapsed ? 'ChevronDown' : 'ChevronUp'} size={20} />
+            <Icon
+              name={isHeaderCollapsed ? 'ChevronDown' : 'ChevronUp'}
+              size={20}
+              aria-label={isHeaderCollapsed ? "Déployer l'en-tête" : "Réduire l'en-tête"}
+            />
           </button>
 
           <button
             onClick={() => navigate('/espace')}
             className='p-2 hover:bg-secondary-50 rounded-lg transition-colors'
           >
-            <Icon aria-hidden="true"  name='X' size={20} />
+            <Icon name='X' size={20} aria-label='Quitter le cours' />
           </button>
         </div>
       </header>

@@ -156,7 +156,7 @@ const AdminDashboardContent = () => {
                 onClick={() => setSidebarOpen(true)}
                 className='lg:hidden p-2 rounded-md hover:bg-secondary-100 transition-colors'
               >
-                <Icon aria-hidden="true"  name='Menu' size={20} />
+                <Icon name='Menu' size={20} aria-label='Ouvrir le menu' />
               </button>
               <h1 className='text-xl font-semibold text-text-primary'>
                 Tableau de bord administrateur

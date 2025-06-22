@@ -222,11 +222,11 @@ const ModuleEditor = ({ module, onSave, onDelete }) => {
                         </span>
 
                         <button className='p-2 text-text-secondary hover:text-text-primary hover:bg-secondary-100 rounded-lg transition-colors duration-200'>
-                          <Icon aria-hidden="true"  name='Edit' size={16} />
+                          <Icon name='Edit' size={16} aria-label='Modifier la leçon' />
                         </button>
 
                         <button className='p-2 text-text-secondary hover:text-error hover:bg-error-50 rounded-lg transition-colors duration-200'>
-                          <Icon aria-hidden="true"  name='Trash2' size={16} />
+                          <Icon name='Trash2' size={16} aria-label='Supprimer la leçon' />
                         </button>
                       </div>
                     </div>

@@ -99,7 +99,12 @@ const VideoPlayer = ({ videoUrl, transcript, onProgress }) => {
               onClick={togglePlay}
               className='w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-colors'
             >
-              <Icon aria-hidden="true"  name={isPlaying ? 'Pause' : 'Play'} size={24} color='white' />
+              <Icon
+                name={isPlaying ? 'Pause' : 'Play'}
+                size={24}
+                color='white'
+                aria-label={isPlaying ? 'Mettre en pause' : 'Lire'}
+              />
             </button>
           </div>
 
@@ -123,21 +128,25 @@ const VideoPlayer = ({ videoUrl, transcript, onProgress }) => {
                   onClick={togglePlay}
                   className='text-white hover:text-primary transition-colors'
                 >
-                  <Icon aria-hidden="true"  name={isPlaying ? 'Pause' : 'Play'} size={20} />
+                  <Icon
+                    name={isPlaying ? 'Pause' : 'Play'}
+                    size={20}
+                    aria-label={isPlaying ? 'Mettre en pause' : 'Lire'}
+                  />
                 </button>
 
                 <button
                   onClick={() => skipTime(-10)}
                   className='text-white hover:text-primary transition-colors'
                 >
-                  <Icon aria-hidden="true"  name='RotateCcw' size={20} />
+                  <Icon name='RotateCcw' size={20} aria-label='Reculer de 10 secondes' />
                 </button>
 
                 <button
                   onClick={() => skipTime(10)}
                   className='text-white hover:text-primary transition-colors'
                 >
-                  <Icon aria-hidden="true"  name='RotateCw' size={20} />
+                  <Icon name='RotateCw' size={20} aria-label='Avancer de 10 secondes' />
                 </button>
 
                 <div className='flex items-center space-x-2'>
@@ -183,18 +192,18 @@ const VideoPlayer = ({ videoUrl, transcript, onProgress }) => {
                   onClick={() => setShowCaptions(!showCaptions)}
                   className={`transition-colors ${showCaptions ? 'text-primary' : 'text-white hover:text-primary'}`}
                 >
-                  <Icon aria-hidden="true"  name='Captions' size={20} />
+                  <Icon name='Captions' size={20} aria-label='Sous-titres' />
                 </button>
 
                 <button
                   onClick={() => setShowTranscript(!showTranscript)}
                   className={`transition-colors ${showTranscript ? 'text-primary' : 'text-white hover:text-primary'}`}
                 >
-                  <Icon aria-hidden="true"  name='FileText' size={20} />
+                  <Icon name='FileText' size={20} aria-label='Transcription' />
                 </button>
 
                 <button className='text-white hover:text-primary transition-colors'>
-                  <Icon aria-hidden="true"  name='Maximize' size={20} />
+                  <Icon name='Maximize' size={20} aria-label='Plein écran' />
                 </button>
               </div>
             </div>

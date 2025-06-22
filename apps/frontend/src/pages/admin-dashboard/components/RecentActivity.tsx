@@ -226,7 +226,12 @@ const RecentActivity = () => {
 
             <div className='flex-shrink-0'>
               <button className='p-1 rounded-md hover:bg-secondary-100 transition-colors'>
-                <Icon aria-hidden="true"  name='MoreHorizontal' size={16} className='text-text-secondary' />
+                <Icon
+                  name='MoreHorizontal'
+                  size={16}
+                  aria-label='Plus d\'options'
+                  className='text-text-secondary'
+                />
               </button>
             </div>
           </div>

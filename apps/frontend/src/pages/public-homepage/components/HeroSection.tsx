@@ -141,7 +141,7 @@ const HeroSection = () => {
                   whileTap={{ scale: 0.95 }}
                   className='w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200'
                 >
-                  <Icon aria-hidden="true"  name='Play' size={32} />
+                  <Icon name='Play' size={32} aria-label='Lire la vidéo de présentation' />
                 </motion.button>
               </div>
 

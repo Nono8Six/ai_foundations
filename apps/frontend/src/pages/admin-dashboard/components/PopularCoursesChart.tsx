@@ -193,7 +193,12 @@ const PopularCoursesChart = () => {
             <span className='text-xs text-text-secondary'>Complétions</span>
           </div>
           <button className='p-1 rounded-md hover:bg-secondary-100 transition-colors'>
-            <Icon aria-hidden="true"  name='MoreVertical' size={16} className='text-text-secondary' />
+            <Icon
+              name='MoreVertical'
+              size={16}
+              aria-label='Plus d\'options'
+              className='text-text-secondary'
+            />
           </button>
         </div>
       </div>
