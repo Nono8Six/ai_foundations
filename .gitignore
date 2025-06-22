@@ -18,3 +18,4 @@ supabase/.branches/
 *.tsbuildinfo
 # Ignore temporary tsconfig
 tsconfig.tmp
+apps/frontend/dist-types/
