@@ -179,7 +179,7 @@ const UserDashboard = () => {
                 
                 {isLoading ? (
                   <div className='text-center py-10'>
-                    <Icon name='Loader' size={32} className='mx-auto animate-spin text-primary mb-4' />
+                    <Icon aria-hidden="true"  name='Loader' size={32} className='mx-auto animate-spin text-primary mb-4' />
                     <p className='text-text-secondary'>Chargement de vos cours...</p>
                   </div>
                 ) : courses.length > 0 ? (
@@ -224,7 +224,7 @@ const UserDashboard = () => {
                   </div>
                 ) : (
                   <div className='text-center py-8'>
-                    <Icon name='BookOpen' size={48} className='mx-auto text-secondary-300 mb-4' />
+                    <Icon aria-hidden="true"  name='BookOpen' size={48} className='mx-auto text-secondary-300 mb-4' />
                     <h3 className='text-lg font-medium text-text-primary mb-2'>Aucun cours inscrit</h3>
                     <p className='text-text-secondary mb-4'>
                       Découvrez notre catalogue de formations et commencez votre parcours d'apprentissage.
@@ -233,7 +233,7 @@ const UserDashboard = () => {
                       to='/programmes'
                       className='inline-flex items-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors'
                     >
-                      <Icon name='Search' size={16} className='mr-2' />
+                      <Icon aria-hidden="true"  name='Search' size={16} className='mr-2' />
                       Explorer les cours
                     </Link>
                   </div>
@@ -265,14 +265,14 @@ const UserDashboard = () => {
                   </div>
                   <div className='flex items-center justify-between p-3 bg-secondary-50 rounded-lg'>
                     <div className='flex items-center space-x-2'>
-                      <Icon name='Flame' size={16} className='text-warning' />
+                      <Icon aria-hidden="true"  name='Flame' size={16} className='text-warning' />
                       <span className='text-sm text-text-secondary'>Série actuelle</span>
                     </div>
                     <span className='font-medium text-warning'>{userData.currentStreak} jours</span>
                   </div>
                   <div className='flex items-center justify-between p-3 bg-secondary-50 rounded-lg'>
                     <div className='flex items-center space-x-2'>
-                      <Icon name='CheckSquare' size={16} className='text-accent' />
+                      <Icon aria-hidden="true"  name='CheckSquare' size={16} className='text-accent' />
                       <span className='text-sm text-text-secondary'>Leçons terminées</span>
                     </div>
                     <span className='font-medium text-accent'>{userData.completedLessons}</span>

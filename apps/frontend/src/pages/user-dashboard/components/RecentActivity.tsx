@@ -8,7 +8,7 @@ const RecentActivity = ({ activities = [] }) => {
     <div
       className={`w-10 h-10 rounded-full bg-surface border-2 border-border flex items-center justify-center ${activity.iconColor}`}
     >
-      <Icon name={activity.icon} size={20} />
+      <Icon aria-hidden="true"  name={activity.icon} size={20} />
     </div>
   );
 
@@ -24,7 +24,7 @@ const RecentActivity = ({ activities = [] }) => {
                 <p className='text-xs text-text-secondary mt-1'>{activity.course}</p>
               </div>
               <div className='flex items-center space-x-1 bg-success-50 text-success px-2 py-1 rounded-full'>
-                <Icon name='Plus' size={12} />
+                <Icon aria-hidden="true"  name='Plus' size={12} />
                 <span className='text-xs font-medium'>{activity.xpEarned} XP</span>
               </div>
             </div>

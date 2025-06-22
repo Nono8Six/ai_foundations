@@ -106,7 +106,7 @@ const LessonEditor = ({ lesson, onSave, onDelete }) => {
                   : 'bg-warning text-white hover:bg-warning-600'
               }`}
             >
-              <Icon
+              <Icon aria-hidden="true" 
                 name={formData.status === 'published' ? 'Eye' : 'EyeOff'}
                 size={16}
                 className='mr-2'
@@ -118,7 +118,7 @@ const LessonEditor = ({ lesson, onSave, onDelete }) => {
               onClick={handleSave}
               className='px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors duration-200 font-medium'
             >
-              <Icon name='Save' size={16} className='mr-2' />
+              <Icon aria-hidden="true"  name='Save' size={16} className='mr-2' />
               Enregistrer
             </button>
           </div>
@@ -137,7 +137,7 @@ const LessonEditor = ({ lesson, onSave, onDelete }) => {
                     : 'border-transparent text-text-secondary hover:text-text-primary hover:border-secondary-300'
                 }`}
               >
-                <Icon name={tab.icon} size={16} className='mr-2' />
+                <Icon aria-hidden="true"  name={tab.icon} size={16} className='mr-2' />
                 {tab.label}
               </button>
             ))}
@@ -218,19 +218,19 @@ const LessonEditor = ({ lesson, onSave, onDelete }) => {
                   <div className='space-y-4'>
                     <div className='flex space-x-2 mb-4'>
                       <button className='px-3 py-1 text-sm bg-primary-50 text-primary rounded hover:bg-primary-100 transition-colors duration-200'>
-                        <Icon name='Bold' size={14} className='mr-1' />
+                        <Icon aria-hidden="true"  name='Bold' size={14} className='mr-1' />
                         Gras
                       </button>
                       <button className='px-3 py-1 text-sm bg-secondary-100 text-text-secondary rounded hover:bg-secondary-200 transition-colors duration-200'>
-                        <Icon name='Italic' size={14} className='mr-1' />
+                        <Icon aria-hidden="true"  name='Italic' size={14} className='mr-1' />
                         Italique
                       </button>
                       <button className='px-3 py-1 text-sm bg-secondary-100 text-text-secondary rounded hover:bg-secondary-200 transition-colors duration-200'>
-                        <Icon name='List' size={14} className='mr-1' />
+                        <Icon aria-hidden="true"  name='List' size={14} className='mr-1' />
                         Liste
                       </button>
                       <button className='px-3 py-1 text-sm bg-secondary-100 text-text-secondary rounded hover:bg-secondary-200 transition-colors duration-200'>
-                        <Icon name='Link' size={14} className='mr-1' />
+                        <Icon aria-hidden="true"  name='Link' size={14} className='mr-1' />
                         Lien
                       </button>
                     </div>
@@ -262,7 +262,7 @@ const LessonEditor = ({ lesson, onSave, onDelete }) => {
                     <div className='space-y-4'>
                       <div className='aspect-video bg-secondary-100 rounded-lg flex items-center justify-center'>
                         <div className='text-center'>
-                          <Icon name='Play' size={48} className='text-secondary-400 mx-auto mb-2' />
+                          <Icon aria-hidden="true"  name='Play' size={48} className='text-secondary-400 mx-auto mb-2' />
                           <p className='text-text-secondary'>Aperçu vidéo</p>
                           <p className='text-sm text-text-secondary mt-1'>{formData.videoUrl}</p>
                         </div>
@@ -273,7 +273,7 @@ const LessonEditor = ({ lesson, onSave, onDelete }) => {
                           onClick={() => handleInputChange('videoUrl', '')}
                           className='px-4 py-2 bg-error text-white rounded-lg hover:bg-error-600 transition-colors duration-200'
                         >
-                          <Icon name='Trash2' size={16} className='mr-2' />
+                          <Icon aria-hidden="true"  name='Trash2' size={16} className='mr-2' />
                           Supprimer
                         </button>
 
@@ -284,7 +284,7 @@ const LessonEditor = ({ lesson, onSave, onDelete }) => {
                             onChange={handleVideoUpload}
                             className='hidden'
                           />
-                          <Icon name='Upload' size={16} className='mr-2' />
+                          <Icon aria-hidden="true"  name='Upload' size={16} className='mr-2' />
                           Remplacer
                         </label>
                       </div>
@@ -293,7 +293,7 @@ const LessonEditor = ({ lesson, onSave, onDelete }) => {
                     <div className='space-y-4'>
                       <div className='aspect-video border-2 border-dashed border-secondary-300 rounded-lg flex items-center justify-center'>
                         <div className='text-center'>
-                          <Icon
+                          <Icon aria-hidden="true" 
                             name='Video'
                             size={48}
                             className='text-secondary-400 mx-auto mb-4'
@@ -315,12 +315,12 @@ const LessonEditor = ({ lesson, onSave, onDelete }) => {
                         <div className='w-full px-4 py-3 border border-border rounded-lg text-center cursor-pointer hover:bg-secondary-50 transition-colors duration-200'>
                           {isUploading ? (
                             <div className='flex items-center justify-center'>
-                              <Icon name='Loader2' size={20} className='animate-spin mr-2' />
+                              <Icon aria-hidden="true"  name='Loader2' size={20} className='animate-spin mr-2' />
                               Téléchargement en cours...
                             </div>
                           ) : (
                             <div className='flex items-center justify-center'>
-                              <Icon name='Upload' size={20} className='mr-2' />
+                              <Icon aria-hidden="true"  name='Upload' size={20} className='mr-2' />
                               Télécharger une vidéo
                             </div>
                           )}
@@ -338,12 +338,12 @@ const LessonEditor = ({ lesson, onSave, onDelete }) => {
 
                   <div className='space-y-4'>
                     <button className='w-full px-4 py-3 border border-border rounded-lg text-center hover:bg-secondary-50 transition-colors duration-200'>
-                      <Icon name='FileText' size={20} className='mx-auto mb-2' />
+                      <Icon aria-hidden="true"  name='FileText' size={20} className='mx-auto mb-2' />
                       <p className='text-text-secondary'>Ajouter des documents PDF</p>
                     </button>
 
                     <button className='w-full px-4 py-3 border border-border rounded-lg text-center hover:bg-secondary-50 transition-colors duration-200'>
-                      <Icon name='Image' size={20} className='mx-auto mb-2' />
+                      <Icon aria-hidden="true"  name='Image' size={20} className='mx-auto mb-2' />
                       <p className='text-text-secondary'>Ajouter des images</p>
                     </button>
                   </div>
@@ -442,11 +442,11 @@ const LessonEditor = ({ lesson, onSave, onDelete }) => {
                       </h1>
                       <div className='flex items-center space-x-4 text-sm text-text-secondary'>
                         <span className='flex items-center'>
-                          <Icon name='Clock' size={16} className='mr-1' />
+                          <Icon aria-hidden="true"  name='Clock' size={16} className='mr-1' />
                           {formData.duration} minutes
                         </span>
                         <span className='flex items-center'>
-                          <Icon name='User' size={16} className='mr-1' />
+                          <Icon aria-hidden="true"  name='User' size={16} className='mr-1' />
                           Leçon #{formData.order}
                         </span>
                       </div>
@@ -455,7 +455,7 @@ const LessonEditor = ({ lesson, onSave, onDelete }) => {
                     {formData.videoUrl && (
                       <div className='aspect-video bg-secondary-100 rounded-lg flex items-center justify-center'>
                         <div className='text-center'>
-                          <Icon name='Play' size={64} className='text-secondary-400 mx-auto mb-4' />
+                          <Icon aria-hidden="true"  name='Play' size={64} className='text-secondary-400 mx-auto mb-4' />
                           <p className='text-text-secondary'>Vidéo de la leçon</p>
                         </div>
                       </div>
@@ -474,7 +474,7 @@ const LessonEditor = ({ lesson, onSave, onDelete }) => {
                     {formData.hasQuiz && (
                       <div className='bg-primary-50 border border-primary-200 rounded-lg p-4'>
                         <div className='flex items-center'>
-                          <Icon name='HelpCircle' size={20} className='text-primary mr-2' />
+                          <Icon aria-hidden="true"  name='HelpCircle' size={20} className='text-primary mr-2' />
                           <span className='font-medium text-primary'>
                             Quiz de fin de leçon activé
                           </span>
@@ -532,7 +532,7 @@ const LessonEditor = ({ lesson, onSave, onDelete }) => {
 
               <div className='space-y-3'>
                 <div className='flex items-center'>
-                  <Icon
+                  <Icon aria-hidden="true" 
                     name={formData.hasQuiz ? 'CheckCircle' : 'Circle'}
                     size={16}
                     className={formData.hasQuiz ? 'text-accent' : 'text-secondary-400'}
@@ -541,7 +541,7 @@ const LessonEditor = ({ lesson, onSave, onDelete }) => {
                 </div>
 
                 <div className='flex items-center'>
-                  <Icon
+                  <Icon aria-hidden="true" 
                     name={formData.allowComments ? 'CheckCircle' : 'Circle'}
                     size={16}
                     className={formData.allowComments ? 'text-accent' : 'text-secondary-400'}
@@ -550,7 +550,7 @@ const LessonEditor = ({ lesson, onSave, onDelete }) => {
                 </div>
 
                 <div className='flex items-center'>
-                  <Icon
+                  <Icon aria-hidden="true" 
                     name={formData.isPreview ? 'CheckCircle' : 'Circle'}
                     size={16}
                     className={formData.isPreview ? 'text-accent' : 'text-secondary-400'}
@@ -559,7 +559,7 @@ const LessonEditor = ({ lesson, onSave, onDelete }) => {
                 </div>
 
                 <div className='flex items-center'>
-                  <Icon
+                  <Icon aria-hidden="true" 
                     name={formData.videoUrl ? 'CheckCircle' : 'Circle'}
                     size={16}
                     className={formData.videoUrl ? 'text-accent' : 'text-secondary-400'}
@@ -582,7 +582,7 @@ const LessonEditor = ({ lesson, onSave, onDelete }) => {
                   onClick={() => onDelete(lesson.id)}
                   className='w-full px-4 py-2 bg-error text-white rounded-lg hover:bg-error-600 transition-colors duration-200 font-medium'
                 >
-                  <Icon name='Trash2' size={16} className='mr-2' />
+                  <Icon aria-hidden="true"  name='Trash2' size={16} className='mr-2' />
                   Supprimer la leçon
                 </button>
               </div>

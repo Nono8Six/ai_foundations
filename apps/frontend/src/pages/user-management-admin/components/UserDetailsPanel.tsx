@@ -24,7 +24,7 @@ const UserDetailsPanel = ({ user, onClose }: UserDetailsPanelProps) => {
       <span
         className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${config.color}`}
       >
-        <Icon name={config.icon} size={14} className='mr-1' />
+        <Icon aria-hidden="true"  name={config.icon} size={14} className='mr-1' />
         {config.label}
       </span>
     );
@@ -41,7 +41,7 @@ const UserDetailsPanel = ({ user, onClose }: UserDetailsPanelProps) => {
       <span
         className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${config.color}`}
       >
-        <Icon name={config.icon} size={14} className='mr-1' />
+        <Icon aria-hidden="true"  name={config.icon} size={14} className='mr-1' />
         {config.label}
       </span>
     );
@@ -100,7 +100,7 @@ const UserDetailsPanel = ({ user, onClose }: UserDetailsPanelProps) => {
           onClick={onClose}
           className='p-2 hover:bg-secondary-50 rounded-lg transition-colors'
         >
-          <Icon name='X' size={20} className='text-text-secondary' />
+          <Icon name='X' size={20} aria-label='Fermer' className='text-text-secondary' />
         </button>
       </div>
 
@@ -125,15 +125,15 @@ const UserDetailsPanel = ({ user, onClose }: UserDetailsPanelProps) => {
         {/* Quick Actions */}
         <div className='flex space-x-2'>
           <button className='flex-1 inline-flex items-center justify-center px-3 py-2 border border-border text-sm font-medium rounded-lg text-text-secondary bg-surface hover:bg-secondary-50 transition-colors'>
-            <Icon name='MessageCircle' size={16} className='mr-2' />
+            <Icon aria-hidden="true"  name='MessageCircle' size={16} className='mr-2' />
             Message
           </button>
           <button className='flex-1 inline-flex items-center justify-center px-3 py-2 border border-border text-sm font-medium rounded-lg text-text-secondary bg-surface hover:bg-secondary-50 transition-colors'>
-            <Icon name='Edit' size={16} className='mr-2' />
+            <Icon aria-hidden="true"  name='Edit' size={16} className='mr-2' />
             Modifier
           </button>
           <button className='px-3 py-2 border border-border text-sm font-medium rounded-lg text-text-secondary bg-surface hover:bg-secondary-50 transition-colors'>
-            <Icon name='MoreVertical' size={16} />
+            <Icon aria-hidden="true"  name='MoreVertical' size={16} />
           </button>
         </div>
       </div>
@@ -151,7 +151,7 @@ const UserDetailsPanel = ({ user, onClose }: UserDetailsPanelProps) => {
                   : 'text-text-secondary hover:text-text-primary hover:bg-secondary-50'
               }`}
             >
-              <Icon name={tab.icon} size={16} className='mr-1' />
+              <Icon aria-hidden="true"  name={tab.icon} size={16} className='mr-1' />
               <span className='hidden sm:inline'>{tab.label}</span>
             </button>
           ))}
@@ -242,7 +242,7 @@ const UserDetailsPanel = ({ user, onClose }: UserDetailsPanelProps) => {
                     className='flex items-center justify-between p-3 bg-secondary-50 rounded-lg'
                   >
                     <span className='text-sm text-text-primary'>{course}</span>
-                    <Icon name='BookOpen' size={16} className='text-text-secondary' />
+                    <Icon aria-hidden="true"  name='BookOpen' size={16} className='text-text-secondary' />
                   </div>
                 ))}
               </div>
@@ -294,7 +294,7 @@ const UserDetailsPanel = ({ user, onClose }: UserDetailsPanelProps) => {
                 placeholder='Ajouter une note sur cet utilisateur...'
               ></textarea>
               <button className='mt-2 inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary-700 transition-colors'>
-                <Icon name='Plus' size={16} className='mr-2' />
+                <Icon aria-hidden="true"  name='Plus' size={16} className='mr-2' />
                 Ajouter
               </button>
             </div>

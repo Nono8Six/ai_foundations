@@ -114,7 +114,7 @@ const UserFilters = ({ filters, setFilters }: UserFiltersProps) => {
       {hasActiveFilters && (
         <div className='flex items-center justify-between pt-2 border-t border-border'>
           <div className='flex items-center space-x-2'>
-            <Icon name='Filter' size={16} className='text-text-secondary' />
+            <Icon aria-hidden="true"  name='Filter' size={16} className='text-text-secondary' />
             <span className='text-sm text-text-secondary'>Filtres actifs:</span>
             <div className='flex flex-wrap gap-2'>
               {Object.entries(filters).map(([key, value]) => {
@@ -157,7 +157,7 @@ const UserFilters = ({ filters, setFilters }: UserFiltersProps) => {
                       onClick={() => handleFilterChange(key, 'all')}
                       className='ml-1 hover:text-primary-900 transition-colors'
                     >
-                      <Icon name='X' size={12} />
+                      <Icon name='X' size={12} aria-label='Supprimer filtre' />
                     </button>
                   </span>
                 );
@@ -169,7 +169,7 @@ const UserFilters = ({ filters, setFilters }: UserFiltersProps) => {
             onClick={clearAllFilters}
             className='inline-flex items-center px-3 py-1 text-sm text-text-secondary hover:text-primary transition-colors'
           >
-            <Icon name='X' size={14} className='mr-1' />
+            <Icon aria-hidden="true"  name='X' size={14} className='mr-1' />
             Effacer tout
           </button>
         </div>

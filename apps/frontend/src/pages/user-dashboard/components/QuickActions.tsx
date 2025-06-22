@@ -18,13 +18,13 @@ const QuickActions = ({ actions = [], onAction }) => {
         >
           <div className='flex items-center space-x-3'>
             <div className='w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center group-hover:bg-opacity-30 transition-all duration-200'>
-              <Icon name={action.icon} size={20} color='white' />
+              <Icon aria-hidden="true"  name={action.icon} size={20} color='white' />
             </div>
             <div className='flex-1'>
               <h4 className='font-medium text-white'>{action.title}</h4>
               <p className='text-sm text-white opacity-90'>{action.description}</p>
             </div>
-            <Icon
+            <Icon aria-hidden="true" 
               name='ArrowRight'
               size={16}
               color='white'
@@ -43,13 +43,13 @@ const QuickActions = ({ actions = [], onAction }) => {
       >
         <div className='flex items-center space-x-3'>
           <div className='w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center group-hover:bg-opacity-30 transition-all duration-200'>
-            <Icon name={action.icon} size={20} color='white' />
+            <Icon aria-hidden="true"  name={action.icon} size={20} color='white' />
           </div>
           <div className='flex-1'>
             <h4 className='font-medium text-white'>{action.title}</h4>
             <p className='text-sm text-white opacity-90'>{action.description}</p>
           </div>
-          <Icon
+          <Icon aria-hidden="true" 
             name='ArrowRight'
             size={16}
             color='white'

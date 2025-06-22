@@ -91,7 +91,7 @@ const Header = () => {
           {/* Logo */}
           <Link to='/' className='flex items-center space-x-2'>
             <div className='w-10 h-10 bg-gradient-to-br from-primary to-primary-700 rounded-full flex items-center justify-center'>
-              <Icon name='GraduationCap' size={24} color='white' />
+              <Icon aria-hidden="true"  name='GraduationCap' size={24} color='white' />
             </div>
             <span className='text-xl font-bold text-text-primary'>AI Foundations</span>
           </Link>
@@ -108,7 +108,7 @@ const Header = () => {
                     : 'text-text-secondary hover:text-primary'
                 }`}
               >
-                <Icon name={item.icon} size={18} />
+                <Icon aria-hidden="true"  name={item.icon} size={18} />
                 <span>{item.name}</span>
               </Link>
             ))}
@@ -139,7 +139,7 @@ const Header = () => {
             className='lg:hidden p-2 rounded-lg hover:bg-secondary-50 transition-colors duration-200'
             aria-label='Toggle menu'
           >
-            <Icon name={isMenuOpen ? 'X' : 'Menu'} size={24} />
+            <Icon aria-hidden="true"  name={isMenuOpen ? 'X' : 'Menu'} size={24} />
           </button>
 
           {/* User Menu */}
@@ -160,7 +160,7 @@ const Header = () => {
                 ) : getInitials() ? (
                   <span className='text-white font-medium text-sm'>{getInitials()}</span>
                 ) : (
-                  <Icon name='User' size={20} color='white' />
+                  <Icon aria-hidden="true"  name='User' size={20} color='white' />
                 )}
               </button>
 
@@ -181,7 +181,7 @@ const Header = () => {
                         location.pathname === item.path.split('?')[0] ? 'bg-secondary-50 text-primary' : ''
                       }`}
                     >
-                      <Icon name={item.icon} size={18} />
+                      <Icon aria-hidden="true"  name={item.icon} size={18} />
                       <span>{item.name}</span>
                     </Link>
                   ))}
@@ -199,7 +199,7 @@ const Header = () => {
                             location.pathname === item.path ? 'bg-secondary-50 text-primary' : ''
                           }`}
                         >
-                          <Icon name={item.icon} size={18} />
+                          <Icon aria-hidden="true"  name={item.icon} size={18} />
                           <span>{item.name}</span>
                         </Link>
                       ))}
@@ -210,7 +210,7 @@ const Header = () => {
                     onClick={handleLogout}
                     className='w-full px-4 py-2 text-left text-text-primary hover:bg-secondary-50 transition-colors duration-200 flex items-center space-x-2 border-t border-border mt-2 pt-2'
                   >
-                    <Icon name='LogOut' size={16} />
+                    <Icon aria-hidden="true"  name='LogOut' size={16} />
                     <span>Déconnexion</span>
                   </button>
                 </div>
@@ -233,7 +233,7 @@ const Header = () => {
                   location.pathname === item.path ? 'bg-secondary-50 text-primary' : ''
                 }`}
               >
-                <Icon name={item.icon} size={18} />
+                <Icon aria-hidden="true"  name={item.icon} size={18} />
                 <span>{item.name}</span>
               </Link>
             ))}
@@ -248,7 +248,7 @@ const Header = () => {
                   location.pathname === item.path.split('?')[0] ? 'bg-secondary-50 text-primary' : ''
                 }`}
               >
-                <Icon name={item.icon} size={18} />
+                <Icon aria-hidden="true"  name={item.icon} size={18} />
                 <span>{item.name}</span>
               </Link>
             ))}
@@ -263,7 +263,7 @@ const Header = () => {
                   location.pathname === item.path ? 'bg-secondary-50 text-primary' : ''
                 }`}
               >
-                <Icon name={item.icon} size={18} />
+                <Icon aria-hidden="true"  name={item.icon} size={18} />
                 <span>{item.name}</span>
               </Link>
             ))}
@@ -273,7 +273,7 @@ const Header = () => {
                 onClick={handleLogout}
                 className='flex items-center space-x-2 w-full px-4 py-3 text-text-primary hover:bg-secondary-50 transition-colors duration-200 rounded-lg'
               >
-                <Icon name='LogOut' size={16} />
+                <Icon aria-hidden="true"  name='LogOut' size={16} />
                 <span>Déconnexion</span>
               </button>
             )}
@@ -284,7 +284,7 @@ const Header = () => {
                   onClick={() => setIsMenuOpen(false)}
                   className='flex items-center justify-center space-x-2 text-text-secondary hover:text-primary transition-colors duration-200'
                 >
-                  <Icon name='LogIn' size={18} />
+                  <Icon aria-hidden="true"  name='LogIn' size={18} />
                   <span>Connexion</span>
                 </Link>
                 <Link
@@ -292,7 +292,7 @@ const Header = () => {
                   onClick={() => setIsMenuOpen(false)}
                   className='flex items-center justify-center space-x-2 bg-primary text-white px-4 py-3 rounded-lg hover:bg-primary-700 transition-colors duration-200 font-medium'
                 >
-                  <Icon name='UserPlus' size={18} />
+                  <Icon aria-hidden="true"  name='UserPlus' size={18} />
                   <span>Rejoindre</span>
                 </Link>
               </div>

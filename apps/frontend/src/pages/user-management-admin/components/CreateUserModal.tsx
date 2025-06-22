@@ -125,7 +125,7 @@ const CreateUserModal = ({ onClose, onUserCreated }: CreateUserModalProps) => {
             onClick={onClose}
             className='p-2 hover:bg-secondary-50 rounded-lg transition-colors'
           >
-            <Icon name='X' size={20} className='text-text-secondary' />
+            <Icon name='X' size={20} aria-label='Fermer' className='text-text-secondary' />
           </button>
         </div>
 
@@ -281,12 +281,12 @@ const CreateUserModal = ({ onClose, onUserCreated }: CreateUserModalProps) => {
             >
               {isSubmitting ? (
                 <>
-                  <Icon name='Loader2' size={16} className='mr-2 animate-spin' />
+                  <Icon aria-hidden="true"  name='Loader2' size={16} className='mr-2 animate-spin' />
                   Création...
                 </>
               ) : (
                 <>
-                  <Icon name='Plus' size={16} className='mr-2' />
+                  <Icon aria-hidden="true"  name='Plus' size={16} className='mr-2' />
                   Créer l'utilisateur
                 </>
               )}

@@ -131,7 +131,7 @@ const UserManagementAdminContent = () => {
             onClick={() => setSidebarOpen(true)}
             className='lg:hidden p-2 rounded-md hover:bg-secondary-100 transition-colors'
           >
-            <Icon name='Menu' size={20} />
+            <Icon aria-hidden="true"  name='Menu' size={20} />
           </button>
           <h1 className='text-xl font-semibold text-text-primary ml-4'>Gestion des Utilisateurs</h1>
         </div>
@@ -151,11 +151,11 @@ const UserManagementAdminContent = () => {
                 onClick={() => setShowCreateModal(true)}
                 className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-200'
               >
-                <Icon name='Plus' size={16} className='mr-2' />
+                <Icon aria-hidden="true"  name='Plus' size={16} className='mr-2' />
                 Nouvel Utilisateur
               </button>
               <button className='inline-flex items-center px-4 py-2 border border-border text-sm font-medium rounded-lg text-text-secondary bg-surface hover:bg-secondary-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-200'>
-                <Icon name='Download' size={16} className='mr-2' />
+                <Icon aria-hidden="true"  name='Download' size={16} className='mr-2' />
                 Exporter
               </button>
             </div>
@@ -167,7 +167,7 @@ const UserManagementAdminContent = () => {
             <div className='flex items-center'>
               <div className='flex-shrink-0'>
                 <div className='w-8 h-8 bg-primary-100 rounded-lg flex items-center justify-center'>
-                  <Icon name='Users' size={16} color='var(--color-primary)' />
+                  <Icon aria-hidden="true"  name='Users' size={16} color='var(--color-primary)' />
                 </div>
               </div>
               <div className='ml-4'>
@@ -181,7 +181,7 @@ const UserManagementAdminContent = () => {
             <div className='flex items-center'>
               <div className='flex-shrink-0'>
                 <div className='w-8 h-8 bg-success-100 rounded-lg flex items-center justify-center'>
-                  <Icon name='UserCheck' size={16} color='var(--color-success)' />
+                  <Icon aria-hidden="true"  name='UserCheck' size={16} color='var(--color-success)' />
                 </div>
               </div>
               <div className='ml-4'>
@@ -197,7 +197,7 @@ const UserManagementAdminContent = () => {
             <div className='flex items-center'>
               <div className='flex-shrink-0'>
                 <div className='w-8 h-8 bg-warning-100 rounded-lg flex items-center justify-center'>
-                  <Icon name='Clock' size={16} color='var(--color-warning)' />
+                  <Icon aria-hidden="true"  name='Clock' size={16} color='var(--color-warning)' />
                 </div>
               </div>
               <div className='ml-4'>
@@ -213,7 +213,7 @@ const UserManagementAdminContent = () => {
             <div className='flex items-center'>
               <div className='flex-shrink-0'>
                 <div className='w-8 h-8 bg-error-100 rounded-lg flex items-center justify-center'>
-                  <Icon name='UserX' size={16} color='var(--color-error)' />
+                  <Icon aria-hidden="true"  name='UserX' size={16} color='var(--color-error)' />
                 </div>
               </div>
               <div className='ml-4'>
@@ -235,7 +235,7 @@ const UserManagementAdminContent = () => {
                 <div className='flex flex-col sm:flex-row gap-4 mb-4'>
                   <div className='flex-1'>
                     <div className='relative'>
-                      <Icon
+                      <Icon aria-hidden="true" 
                         name='Search'
                         size={20}
                         className='absolute left-3 top-1/2 transform -translate-y-1/2 text-text-secondary'
@@ -250,7 +250,7 @@ const UserManagementAdminContent = () => {
                     </div>
                   </div>
                   <button className='inline-flex items-center px-4 py-2 border border-border text-sm font-medium rounded-lg text-text-secondary bg-surface hover:bg-secondary-50 transition-colors'>
-                    <Icon name='Filter' size={16} className='mr-2' />
+                    <Icon aria-hidden="true"  name='Filter' size={16} className='mr-2' />
                     Filtres
                   </button>
                 </div>

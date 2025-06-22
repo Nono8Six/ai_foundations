@@ -102,7 +102,7 @@ const LearningStatsTab = () => {
   if (coursesLoading) {
     return (
       <div className='flex justify-center items-center h-64'>
-        <Icon name='Loader' className='animate-spin text-primary' size={40} />
+        <Icon aria-hidden="true"  name='Loader' className='animate-spin text-primary' size={40} />
         <p className='ml-4 text-text-secondary'>Chargement de vos statistiques...</p>
       </div>
     );
@@ -111,7 +111,7 @@ const LearningStatsTab = () => {
   if (!stats.hasData) {
     return (
         <div className='bg-surface rounded-lg border border-border p-12 text-center'>
-          <Icon name='BarChart3' size={64} className='mx-auto mb-6 text-secondary-300' />
+          <Icon aria-hidden="true"  name='BarChart3' size={64} className='mx-auto mb-6 text-secondary-300' />
           <h3 className='text-xl font-semibold text-text-primary mb-2'>
             Commencez votre parcours d'apprentissage
           </h3>
@@ -122,7 +122,7 @@ const LearningStatsTab = () => {
             to='/programmes'
             className='inline-flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors'
           >
-            <Icon name='BookOpen' size={20} className='mr-2' />
+            <Icon aria-hidden="true"  name='BookOpen' size={20} className='mr-2' />
             Découvrir les cours
           </Link>
         </div>
@@ -148,7 +148,7 @@ const LearningStatsTab = () => {
               <p className='text-2xl font-bold text-primary-700'>{stats.totalLearningTime}h</p>
             </div>
             <div className='w-12 h-12 bg-primary-500 rounded-lg flex items-center justify-center'>
-              <Icon name='Clock' size={24} color='white' />
+              <Icon aria-hidden="true"  name='Clock' size={24} color='white' />
             </div>
           </div>
         </div>
@@ -160,7 +160,7 @@ const LearningStatsTab = () => {
               <p className='text-2xl font-bold text-accent-700'>{stats.coursesCompleted}</p>
             </div>
             <div className='w-12 h-12 bg-accent-500 rounded-lg flex items-center justify-center'>
-              <Icon name='BookOpen' size={24} color='white' />
+              <Icon aria-hidden="true"  name='BookOpen' size={24} color='white' />
             </div>
           </div>
         </div>
@@ -172,7 +172,7 @@ const LearningStatsTab = () => {
               <p className='text-2xl font-bold text-orange-700'>{currentStreak} jours</p>
             </div>
             <div className='w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center'>
-              <Icon name='Flame' size={24} color='white' />
+              <Icon aria-hidden="true"  name='Flame' size={24} color='white' />
             </div>
           </div>
         </div>
@@ -184,7 +184,7 @@ const LearningStatsTab = () => {
               <p className='text-2xl font-bold text-purple-700'>{currentLevel}</p>
             </div>
             <div className='w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center'>
-              <Icon name='Trophy' size={24} color='white' />
+              <Icon aria-hidden="true"  name='Trophy' size={24} color='white' />
             </div>
           </div>
         </div>
@@ -217,7 +217,7 @@ const LearningStatsTab = () => {
             ) : (
               <div className='h-64 flex items-center justify-center text-text-secondary'>
                 <div className='text-center'>
-                  <Icon name='BarChart3' size={48} className='mx-auto mb-4 opacity-50' />
+                  <Icon aria-hidden="true"  name='BarChart3' size={48} className='mx-auto mb-4 opacity-50' />
                   <p>Aucune donnée d'apprentissage cette semaine</p>
                   <p className='text-sm'>Commencez une leçon pour voir vos statistiques</p>
                 </div>
@@ -256,7 +256,7 @@ const LearningStatsTab = () => {
             ) : (
               <div className='h-64 flex items-center justify-center text-text-secondary'>
                 <div className='text-center'>
-                  <Icon name='TrendingUp' size={48} className='mx-auto mb-4 opacity-50' />
+                  <Icon aria-hidden="true"  name='TrendingUp' size={48} className='mx-auto mb-4 opacity-50' />
                   <p>Aucun XP gagné cette semaine</p>
                   <p className='text-sm'>Terminez des leçons pour gagner de l'XP</p>
                 </div>
@@ -313,7 +313,7 @@ const LearningStatsTab = () => {
             ) : (
               <div className='h-64 flex items-center justify-center text-text-secondary'>
                 <div className='text-center'>
-                  <Icon name='PieChart' size={48} className='mx-auto mb-4 opacity-50' />
+                  <Icon aria-hidden="true"  name='PieChart' size={48} className='mx-auto mb-4 opacity-50' />
                   <p>Aucun cours inscrit</p>
                   <p className='text-sm'>Inscrivez-vous à des cours pour voir la répartition</p>
                 </div>
@@ -327,7 +327,7 @@ const LearningStatsTab = () => {
             <div className='space-y-4'>
               <div className='flex items-center justify-between p-3 bg-secondary-50 rounded-lg'>
                 <div className='flex items-center space-x-3'>
-                  <Icon name='BookOpen' size={20} className='text-primary' />
+                  <Icon aria-hidden="true"  name='BookOpen' size={20} className='text-primary' />
                   <span className='text-sm font-medium text-text-primary'>Leçons terminées</span>
                 </div>
                 <span className='text-lg font-bold text-primary'>
@@ -337,7 +337,7 @@ const LearningStatsTab = () => {
               
               <div className='flex items-center justify-between p-3 bg-secondary-50 rounded-lg'>
                 <div className='flex items-center space-x-3'>
-                  <Icon name='Clock' size={20} className='text-accent' />
+                  <Icon aria-hidden="true"  name='Clock' size={20} className='text-accent' />
                   <span className='text-sm font-medium text-text-primary'>Leçons en cours</span>
                 </div>
                 <span className='text-lg font-bold text-accent'>
@@ -347,7 +347,7 @@ const LearningStatsTab = () => {
 
               <div className='flex items-center justify-between p-3 bg-secondary-50 rounded-lg'>
                 <div className='flex items-center space-x-3'>
-                  <Icon name='Award' size={20} className='text-warning' />
+                  <Icon aria-hidden="true"  name='Award' size={20} className='text-warning' />
                   <span className='text-sm font-medium text-text-primary'>Réalisations</span>
                 </div>
                 <span className='text-lg font-bold text-warning'>
@@ -370,7 +370,7 @@ const LearningStatsTab = () => {
               >
                 <div className='flex items-start space-x-4'>
                   <div className='w-12 h-12 bg-gradient-to-br from-primary to-primary-700 rounded-lg flex items-center justify-center flex-shrink-0'>
-                    <Icon name='Award' size={24} color='white' />
+                    <Icon aria-hidden="true"  name='Award' size={24} color='white' />
                   </div>
                   <div className='flex-1 min-w-0'>
                     <h5 className='text-sm font-semibold text-text-primary mb-1'>
@@ -401,7 +401,7 @@ const LearningStatsTab = () => {
         <div className='space-y-4'>
           <div className='flex items-center justify-between p-4 bg-secondary-50 rounded-lg'>
             <div className='flex items-center space-x-3'>
-              <Icon name='Target' size={20} className='text-primary' />
+              <Icon aria-hidden="true"  name='Target' size={20} className='text-primary' />
               <div>
                 <p className='text-sm font-medium text-text-primary'>Objectif quotidien</p>
                 <p className='text-xs text-text-secondary'>Maintenir votre série d'apprentissage</p>
@@ -415,7 +415,7 @@ const LearningStatsTab = () => {
 
           <div className='flex items-center justify-between p-4 bg-secondary-50 rounded-lg'>
             <div className='flex items-center space-x-3'>
-              <Icon name='Calendar' size={20} className='text-primary' />
+              <Icon aria-hidden="true"  name='Calendar' size={20} className='text-primary' />
               <div>
                 <p className='text-sm font-medium text-text-primary'>Progression niveau</p>
                 <p className='text-xs text-text-secondary'>Vers le niveau {currentLevel + 1}</p>

@@ -15,13 +15,13 @@ const GeographicDistribution = () => {
             Exporter
           </button>
           <button className='p-1 rounded-md hover:bg-secondary-100 transition-colors'>
-            <Icon name='RefreshCw' size={16} className='text-text-secondary' />
+            <Icon aria-hidden="true"  name='RefreshCw' size={16} className='text-text-secondary' />
           </button>
         </div> */}
       </div>
 
       <div className='flex flex-col items-center justify-center h-64 text-center'>
-        <Icon name='MapPinOff' size={48} className='text-secondary-400 mb-4' />
+        <Icon aria-hidden="true"  name='MapPinOff' size={48} className='text-secondary-400 mb-4' />
         <p className='text-md font-medium text-text-primary mb-1'>
           Les données de distribution géographique ne sont pas actuellement disponibles.
         </p>

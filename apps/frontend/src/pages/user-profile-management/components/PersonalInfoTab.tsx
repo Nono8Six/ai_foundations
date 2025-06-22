@@ -108,7 +108,7 @@ const PersonalInfoTab = ({ userData }) => {
             onClick={() => setIsEditing(true)}
             className='inline-flex items-center px-4 py-2 border border-border rounded-lg text-sm font-medium text-text-primary bg-surface hover:bg-secondary-50 transition-colors'
           >
-            <Icon name='Edit' size={16} className='mr-2' />
+            <Icon aria-hidden="true"  name='Edit' size={16} className='mr-2' />
             Modifier
           </button>
         )}
@@ -129,7 +129,7 @@ const PersonalInfoTab = ({ userData }) => {
               </div>
               {isEditing && (
                 <label className='absolute bottom-0 right-0 w-6 h-6 bg-primary text-white rounded-full flex items-center justify-center cursor-pointer hover:bg-primary-700 transition-colors'>
-                  <Icon name='Camera' size={12} />
+                  <Icon aria-hidden="true"  name='Camera' size={12} />
                   <input
                     type='file'
                     accept='image/*'
@@ -156,7 +156,7 @@ const PersonalInfoTab = ({ userData }) => {
         {errors.root && (
           <div className='bg-error-50 border border-error-200 rounded-lg p-4'>
             <div className='flex items-center'>
-              <Icon name='AlertCircle' size={20} className='text-error mr-2' />
+              <Icon aria-hidden="true"  name='AlertCircle' size={20} className='text-error mr-2' />
               <p className='text-sm text-error-700'>{errors.root.message}</p>
             </div>
           </div>
@@ -264,7 +264,7 @@ const PersonalInfoTab = ({ userData }) => {
               disabled={isSubmitting}
               className='inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-primary hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors disabled:opacity-50'
             >
-              {isSubmitting && <Icon name='Loader2' size={16} className='mr-2 animate-spin' />}
+              {isSubmitting && <Icon aria-hidden="true"  name='Loader2' size={16} className='mr-2 animate-spin' />}
               {isSubmitting ? 'Enregistrement...' : 'Enregistrer'}
             </button>
           </div>
@@ -284,7 +284,7 @@ const PersonalInfoTab = ({ userData }) => {
           <div>
             <span className='text-text-secondary'>Statut du compte:</span>
             <span className='ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-success-100 text-success-700'>
-              <Icon name='CheckCircle' size={12} className='mr-1' />
+              <Icon aria-hidden="true"  name='CheckCircle' size={12} className='mr-1' />
               Actif
             </span>
           </div>

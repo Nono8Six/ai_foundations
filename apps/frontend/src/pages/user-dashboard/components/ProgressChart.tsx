@@ -63,7 +63,7 @@ const ProgressChart = () => {
   if (isLoading) {
      return (
       <div className='bg-surface rounded-xl border border-border p-6 text-center'>
-        <Icon name='Loader' size={32} className='mx-auto animate-spin text-primary mb-4' />
+        <Icon aria-hidden="true"  name='Loader' size={32} className='mx-auto animate-spin text-primary mb-4' />
         <p className='text-text-secondary'>Chargement des données de progression...</p>
       </div>
     );
@@ -79,7 +79,7 @@ const ProgressChart = () => {
         </div>
         
         <div className='text-center py-8'>
-          <Icon name='BarChart3' size={48} className='mx-auto text-secondary-300 mb-4' />
+          <Icon aria-hidden="true"  name='BarChart3' size={48} className='mx-auto text-secondary-300 mb-4' />
           <h3 className='text-lg font-medium text-text-primary mb-2'>Aucune donnée de progression disponible</h3>
           <p className='text-text-secondary mb-4'>
             Commencez à apprendre pour voir votre progression ici.
@@ -107,7 +107,7 @@ const ProgressChart = () => {
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ${activeTab === tab.id ? 'bg-white shadow-sm text-primary' : 'text-text-secondary hover:text-primary'}`}
             >
-              <Icon name={tab.icon} size={16} />
+              <Icon aria-hidden="true"  name={tab.icon} size={16} />
               <span>{tab.label}</span>
             </button>
           ))}
