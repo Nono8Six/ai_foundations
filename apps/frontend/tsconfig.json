@@ -2,10 +2,8 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "allowJs": true,
-    "checkJs": false,          // 💡 on réactivera plus tard
+    "checkJs": false, // 💡 on réactivera plus tard
     "jsx": "react-jsx"
   },
-  "exclude": [
-    "src/context/AuthContext.tsx" // ⏸️ temporaire, on le migre au Sprint 2
-  ]
+  "exclude": []
 }
