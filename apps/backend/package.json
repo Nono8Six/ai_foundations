@@ -4,6 +4,9 @@
   "private": true,
   "scripts": {
     "migrate": "./scripts/migrate.sh",
+    "supabase:start": "supabase start",
+    "db:reset": "supabase db reset",
+    "gen:types": "supabase gen types typescript --local > ../frontend/src/types/database.types.ts",
     "db:push": "supabase db push",
     "db:pull": "supabase db pull"
   },

@@ -19,7 +19,7 @@
    - La base de données en ligne n'est qu'un reflet de ce code
 
 2. **Les Types Suivent le Schéma** :
-   - `src/types/database.types.ts` doit TOUJOURS être à jour après chaque modification
+   - `apps/frontend/src/types/database.types.ts` doit TOUJOURS être à jour après chaque modification
    - C'est le pont vital entre votre base de données et votre code React
 
 3. **Tout est Versionné** :
@@ -128,7 +128,7 @@ pnpm gen:types
 
 Ce script exécute :
 ```bash
-supabase gen types typescript --local > src/types/database.types.ts
+supabase gen types typescript --local > ../frontend/src/types/database.types.ts
 ```
 
 **IMPORTANT** : Ces types sont utilisés par votre application React pour un typage fort. Sans cette étape, TypeScript ne connaîtra pas vos nouvelles tables/champs.
