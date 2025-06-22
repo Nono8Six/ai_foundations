@@ -38,7 +38,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 const PopularCoursesChart = () => {
-  const [chartData, setChartData] = useState([]);
+  const [chartData, setChartData] = useState<CourseData[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalEnrollments, setTotalEnrollments] = useState(0);
   const [totalCompletions, setTotalCompletions] = useState(0);

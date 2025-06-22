@@ -14,16 +14,18 @@ import BulkOperations from './components/BulkOperations';
 import ContentSearch from './components/ContentSearch';
 import MediaLibrary from './components/MediaLibrary';
 
+type CourseWithContent = Awaited<ReturnType<typeof fetchCoursesWithContent>>[number];
+
 const ContentManagementCoursesModulesLessonsContent = () => {
   const { setSidebarOpen } = useAdminSidebar();
   const [selectedContent, setSelectedContent] = useState(null);
   const [contentType, setContentType] = useState('course');
   const [showMediaLibrary, setShowMediaLibrary] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedItems, setSelectedItems] = useState([]);
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [showBulkOperations, setShowBulkOperations] = useState(false);
 
-  const [contentData, setContentData] = useState([]);
+  const [contentData, setContentData] = useState<CourseWithContent[]>([]);
   const [loading, setLoading] = useState(true);
 
   const { createCourse, updateCourse, deleteCourse } = useAdminCourses();

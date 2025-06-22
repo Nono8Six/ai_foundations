@@ -5,6 +5,9 @@ import { fetchCourses } from '../../services/courseService';
 import CourseCard from './components/CourseCard';
 import FilterSidebar from './components/FilterSidebar';
 import CoursePathway from './components/CoursePathway';
+import type { Database } from '../../types/database.types';
+
+type CoursesRow = Database['public']['Tables']['courses']['Row'];
 
 const ProgramOverview = () => {
   const { user } = useAuth();
@@ -19,7 +22,7 @@ const ProgramOverview = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [viewMode, setViewMode] = useState('grid');
   const [loading, setLoading] = useState(true);
-  const [courses, setCourses] = useState([]);
+  const [courses, setCourses] = useState<CoursesRow[]>([]);
   const [page, setPage] = useState(1);
   const [totalCourses, setTotalCourses] = useState(0);
   const pageSize = 12;

@@ -44,7 +44,7 @@ const getStartOfWeek = (date) => {
 
 
 const UserEngagementChart = ({ timeRange }) => {
-  const [engagementData, setEngagementData] = useState([]);
+  const [engagementData, setEngagementData] = useState<EngagementData[]>([]);
   const [loading, setLoading] = useState(true);
   const [_summaryStats, setSummaryStats] = useState({ peakUsers: 0, averageSessions: 0 });
 

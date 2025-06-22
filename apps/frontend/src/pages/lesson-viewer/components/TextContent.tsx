@@ -1,10 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Icon from '../../../components/AppIcon';
 
+interface Bookmark {
+  id: number;
+  position: number;
+  timestamp: string;
+  preview: string;
+}
+
 const TextContent = ({ content, onProgress }) => {
   const contentRef = useRef(null);
   const [readingProgress, setReadingProgress] = useState(0);
-  const [bookmarks, setBookmarks] = useState([]);
+  const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
   const [fontSize, setFontSize] = useState('base');
   const [theme, setTheme] = useState('light');
 

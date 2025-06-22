@@ -9,12 +9,21 @@ import {
   getPublicUrl,
 } from '../../../services/storageService';
 
+interface MediaItem {
+  id: string;
+  name: string;
+  url: string;
+  size: number;
+  uploadDate: string;
+  type: string;
+}
+
 const MediaLibrary = ({ onClose, onSelectMedia }) => {
   const [activeTab, setActiveTab] = useState('images');
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedItems, setSelectedItems] = useState([]);
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
-  const [mediaData, setMediaData] = useState([]);
+  const [mediaData, setMediaData] = useState<MediaItem[]>([]);
   const [tabCounts, setTabCounts] = useState({ images: 0, videos: 0, documents: 0 });
 
   const tabs = [
