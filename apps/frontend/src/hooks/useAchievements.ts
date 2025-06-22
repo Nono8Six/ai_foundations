@@ -1,14 +1,32 @@
 import { useEffect, useState } from 'react';
+import type { PostgrestError, SupabaseClient } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 import { safeQuery } from '../utils/supabaseClient';
+import type { Database } from '../types/database.types';
+
+type AchievementRow = Database['public']['Tables']['achievements']['Row'];
+
+interface UseAchievementsOptions {
+  limit?: number;
+  order?: 'asc' | 'desc';
+  filters?: Record<string, unknown>;
+}
+
+interface UseAchievementsResult {
+  achievements: AchievementRow[];
+  loading: boolean;
+  error: PostgrestError | null;
+}
+
+const supabaseClient = supabase as SupabaseClient<Database>;
 
 const useAchievements = (
-  userId,
-  { limit = 10, order = 'desc', filters = {} } = {}
-) => {
-  const [achievements, setAchievements] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  userId: string | undefined,
+  { limit = 10, order = 'desc', filters = {} }: UseAchievementsOptions = {}
+): UseAchievementsResult => {
+  const [achievements, setAchievements] = useState<AchievementRow[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<PostgrestError | null>(null);
 
   useEffect(() => {
     if (!userId) return;
@@ -19,15 +37,15 @@ const useAchievements = (
 
       // On combine les deux logiques : on construit la requête dynamique
       // et on l'exécute à l'intérieur de notre fonction sécurisée.
-      const { data, error } = await safeQuery(() => {
-        let query = supabase
-          .from('achievements')
+      const { data, error } = await safeQuery<AchievementRow[]>(() => {
+        let query = supabaseClient
+          .from<'achievements', AchievementRow>('achievements')
           .select('*')
           .eq('user_id', userId);
 
         // Applique les filtres dynamiques
         Object.entries(filters).forEach(([column, value]) => {
-          query = query.eq(column, value);
+          query = query.eq(column as keyof AchievementRow, value as never);
         });
 
         // Applique l'ordre de tri

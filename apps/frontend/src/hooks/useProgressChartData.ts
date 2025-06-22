@@ -1,9 +1,46 @@
-// src/hooks/useProgressChartData.js
+// src/hooks/useProgressChartData.ts
 import { useState, useEffect, useMemo } from 'react';
+import type { Database } from '../types/database.types';
+
+type UserProgressRow = Database['public']['Tables']['user_progress']['Row'];
+type LessonRow = Database['public']['Tables']['lessons']['Row'];
+type CourseRow = Database['public']['Tables']['courses']['Row'];
+type ModuleRow = Database['public']['Tables']['modules']['Row'];
+
+interface WeeklyData {
+  day: string;
+  lessons: number;
+  hours: number;
+  xp: number;
+}
+
+interface MonthlyData {
+  month: string;
+  lessons: number;
+  hours: number;
+  xp: number;
+}
+
+interface SubjectData {
+  name: string;
+  value: number;
+}
+
+interface ChartData {
+  weekly: WeeklyData[];
+  monthly: MonthlyData[];
+  subject: SubjectData[];
+}
+
 import { format, parseISO, eachDayOfInterval, subDays, eachMonthOfInterval, subMonths } from 'date-fns';
 
-const useProgressChartData = (userProgress, lessons, courses, modules) => {
-  const [chartData, setChartData] = useState({
+const useProgressChartData = (
+  userProgress: UserProgressRow[] | undefined,
+  lessons: LessonRow[] | undefined,
+  courses: CourseRow[] | undefined,
+  modules: ModuleRow[] | undefined
+): ChartData => {
+  const [chartData, setChartData] = useState<ChartData>({
     weekly: [],
     monthly: [],
     subject: [],
@@ -11,9 +48,15 @@ const useProgressChartData = (userProgress, lessons, courses, modules) => {
 
   const enrichedLessons = useMemo(() => {
     if (!lessons || lessons.length === 0 || !courses || courses.length === 0 || !modules || modules.length === 0) {
-      return {};
+      return {} as Record<string, EnrichedLesson>;
     }
-    const lessonMap = {};
+    interface EnrichedLesson extends LessonRow {
+      courseId: string | undefined;
+      category: string;
+      duration: number;
+    }
+
+    const lessonMap: Record<string, EnrichedLesson> = {};
     const moduleCourseMap = modules.reduce((acc, module) => {
       acc[module.id] = module.course_id;
       return acc;
@@ -94,7 +137,7 @@ const useProgressChartData = (userProgress, lessons, courses, modules) => {
     });
 
     // --- Subject Data Aggregation ---
-    const subjectCounts = {};
+    const subjectCounts: Record<string, number> = {};
     completedProgress.forEach(p => {
       const lessonDetails = enrichedLessons[p.lesson_id];
       if (lessonDetails) {
