@@ -130,8 +130,7 @@ pnpm gen:types
 
 Ce script exécute :
 ```bash
-supabase gen types typescript --local > apps/frontend/src/types/database.types.ts
-```
+supabase gen types typescript --local > ../frontend/src/types/database.types.ts
 
 **IMPORTANT** : Ces types sont utilisés par votre application React pour un typage fort. Sans cette étape, TypeScript ne connaîtra pas vos nouvelles tables/champs.
 
