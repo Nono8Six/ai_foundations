@@ -3,7 +3,11 @@
   "compilerOptions": {
     "allowJs": true,
     "checkJs": false, // 💡 on réactivera plus tard
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "composite": true,
+    "noEmit": false,
+    "emitDeclarationOnly": true,
+    "outDir": "dist-types"
   },
-  "exclude": []
+  "exclude": ["vite.config.mjs"]
 }

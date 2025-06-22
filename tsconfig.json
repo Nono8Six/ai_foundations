@@ -9,7 +9,7 @@
     "types": ["vite/client", "jest"],
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "noEmit": true
+    "noEmit": false
   },
   "references": [{ "path": "apps/frontend" }]
 }
