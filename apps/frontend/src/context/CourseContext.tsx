@@ -1,13 +1,26 @@
-// src/context/CourseContext.jsx
-import React, { createContext, useContext } from 'react';
-import { useQuery } from '@tanstack/react-query'; // Assurez-vous d'avoir installé @tanstack/react-query
+// src/context/CourseContext.tsx
+import React, { createContext, useContext, type ReactNode } from 'react';
+import type { QueryObserverResult } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useAuth } from './AuthContext';
 import { logError } from './ErrorContext';
 import { fetchCoursesFromSupabase } from '../services/courseService'; // Assurez-vous que cette fonction existe et est correcte
 
-const CourseContext = createContext();
+interface CourseData {
+  courses: unknown[];
+  lessons: unknown[];
+  modules: unknown[];
+  userProgress: unknown[];
+}
 
-export const CourseProvider = ({ children }) => {
+export interface CourseContextValue extends CourseData {
+  isLoading: boolean;
+  refetchCourses: () => Promise<QueryObserverResult<CourseData | null, unknown>>;
+}
+
+const CourseContext = createContext<CourseContextValue | undefined>(undefined);
+
+export const CourseProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
 
   const queryResult = useQuery({
@@ -28,7 +41,7 @@ export const CourseProvider = ({ children }) => {
   const userProgress = queryResult.data?.userProgress || [];
 
   // La valeur du contexte utilise directement les résultats de useQuery
-  const value = {
+  const value: CourseContextValue = {
     courses,
     userProgress,
     lessons,

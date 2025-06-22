@@ -1,13 +1,22 @@
-// src/context/AdminCourseContext.jsx
-import React, { createContext, useContext } from 'react';
+// src/context/AdminCourseContext.tsx
+import React, { createContext, useContext, type ReactNode } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
 import { safeQuery } from '../utils/supabaseClient';
 import { useAuth } from './AuthContext';
 
-const AdminCourseContext = createContext();
+export interface AdminCourseContextValue {
+  createCourse: (course: unknown) => Promise<unknown>;
+  updateCourse: (args: { id: string; updates: unknown }) => Promise<unknown>;
+  deleteCourse: (id: string) => Promise<unknown>;
+  createModule: (module: unknown) => Promise<unknown>;
+  updateModule: (args: { id: string; updates: unknown }) => Promise<unknown>;
+  deleteModule: (id: string) => Promise<unknown>;
+}
 
-export const AdminCourseProvider = ({ children }) => {
+const AdminCourseContext = createContext<AdminCourseContextValue | undefined>(undefined);
+
+export const AdminCourseProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
@@ -85,7 +94,7 @@ export const AdminCourseProvider = ({ children }) => {
     onSuccess: () => queryClient.invalidateQueries(['courses', user?.id]),
   });
 
-  const value = {
+  const value: AdminCourseContextValue = {
     createCourse: createCourse.mutateAsync,
     updateCourse: updateCourse.mutateAsync,
     deleteCourse: deleteCourse.mutateAsync,
@@ -104,3 +113,4 @@ export const useAdminCourses = () => {
   }
   return context;
 };
+
