@@ -1,15 +1,15 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "allowJs": true,
-    "checkJs": false, // 💡 on réactivera plus tard
-    "jsx": "react-jsx",
-    "allowImportingTsExtensions": true,
-    "strictNullChecks": true,
     "composite": true,
-    "noEmit": false,
-    "emitDeclarationOnly": true,
-    "outDir": "dist-types"
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "baseUrl": ".",
+    "types": ["vite/client", "node"],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
-  "exclude": ["vite.config.mjs", "dist-types"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.test.tsx"]
 }

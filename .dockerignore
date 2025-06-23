@@ -1,13 +1,17 @@
 # Dependencies
 node_modules
+**/node_modules
 
 # Version control
 .git
-.github
+.gitignore
+.github.dockerignore
 
 # Development environments
 .vscode
 .idea
+*.local
+.DS_Store
 
 # Logs
 npm-debug.log*

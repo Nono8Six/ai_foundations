@@ -1,146 +1,135 @@
-# Réseau personnalisé pour une meilleure isolation
+version: '3.8'
+
 networks:
   app-network:
     driver: bridge
 
-# Volumes pour la persistance des données
 volumes:
-  postgres_data:
-  pgadmin-data:
+  pnpm-store:
+  node_modules_frontend:
+  node_modules_backend:
 
 services:
+  # ===========================================
+  # FRONTEND - React/Vite
+  # ===========================================
   frontend:
     build:
       context: .
       dockerfile: Dockerfile
       target: development
     container_name: ai-foundations-frontend
-    working_dir: /app/apps/frontend  # Chemin absolu
+    working_dir: /app
     volumes:
-      - ./apps/frontend:/app/apps/frontend
-      - /app/node_modules
+      - .:/app
+      - node_modules_frontend:/app/apps/frontend/node_modules
+      - pnpm-store:/root/.local/share/pnpm
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=development
       - CHOKIDAR_USEPOLLING=true
+      # Variables Supabase Cloud
       - VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
       - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
-      - VITE_DEBUG=true
-    command: sh -c "pnpm install && pnpm dev"  # S'assure que les dépendances sont installées
+      - VITE_DEBUG=${VITE_DEBUG}
+      - VITE_APP_NAME=${VITE_APP_NAME}
+    command: |
+      sh -c "
+        echo '🔧 Installation des dépendances...' &&
+        pnpm install &&
+        echo '🚀 Démarrage du frontend...' &&
+        cd apps/frontend &&
+        pnpm dev --host 0.0.0.0 --port 3000
+      "
     networks:
       - app-network
-    depends_on:
-      - db
+    restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "--spider", "http://localhost:3000"]
-      interval: 10s
-      timeout: 3s
+      test: ["CMD-SHELL", "curl -f http://localhost:3000 || exit 1"]
+      interval: 30s
+      timeout: 10s
       retries: 3
-      start_period: 30s
+      start_period: 60s
     logging:
       driver: "json-file"
       options:
         max-size: "10m"
         max-file: "3"
 
-  # -------------------------------------------------------------------
-  # Base de données PostgreSQL + PostGIS (local)
-  # -------------------------------------------------------------------
-  db:
-    image: postgis/postgis:15-3.4
-    container_name: ai-foundations-db
+  # ===========================================
+  # BACKEND - Node.js API (optionnel si tout est sur Supabase)
+  # ===========================================
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: ai-foundations-backend
+    working_dir: /app
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - .:/app
+      - node_modules_backend:/app/apps/backend/node_modules
+      - pnpm-store:/root/.local/share/pnpm
     ports:
-      - "5433:5432"
+      - "3001:3001"
     environment:
-      POSTGRES_DB: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ${LOCAL_DB_PASSWORD:-postgres}
-    restart: unless-stopped
+      - NODE_ENV=development
+      - PORT=3001
+      # Variables Supabase Cloud
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+      - DATABASE_URL=${DATABASE_URL}
+      - DIRECT_URL=${DIRECT_URL}
+    command: |
+      sh -c "
+        echo '🔧 Installation des dépendances backend...' &&
+        pnpm install &&
+        echo '🚀 Démarrage du backend...' &&
+        cd apps/backend &&
+        pnpm dev
+      "
     networks:
       - app-network
+    restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
+      test: ["CMD-SHELL", "curl -f http://localhost:3001/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    profiles: ["backend"]  # Optionnel, activé avec --profile backend
 
-  # -------------------------------------------------------------------
-  # Interface d'administration de la base de données (optionnel)
-  # -------------------------------------------------------------------
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    container_name: ai-foundations-pgadmin
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL:-admin@example.com}
-      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD:-admin}
-      - PGADMIN_CONFIG_SERVER_MODE=False
-    volumes:
-      - pgadmin-data:/var/lib/pgadmin
-    ports:
-      - "5050:80"
-    restart: unless-stopped
-    networks:
-      - app-network
-    depends_on:
-      - db
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-
-  # -------------------------------------------------------------------
-  # -------------------------------------------------------------------
-  # Outil CLI Supabase pour la synchronisation cloud/local
-  # -------------------------------------------------------------------
-  supabase_cli:
-    image: ghcr.io/supabase/cli:1.153.0
+  # ===========================================
+  # SUPABASE CLI - Pour synchronisation
+  # ===========================================
+  supabase-cli:
+    image: supabase/cli:latest
     container_name: ai-foundations-supabase-cli
-    profiles: ["tools"]
     volumes:
-      - ./apps/backend/supabase:/supabase
-    working_dir: /supabase
-    entrypoint: ["sleep", "infinity"]
+      - ./apps/backend:/workspace
+      - ~/.supabase:/root/.supabase
+    working_dir: /workspace
+    environment:
+      - SUPABASE_ACCESS_TOKEN=${SUPABASE_ACCESS_TOKEN}
+      - SUPABASE_PROJECT_REF=${SUPABASE_PROJECT_REF}
+      - SUPABASE_DB_PASSWORD=${SUPABASE_DB_PASSWORD}
+    command: sleep infinity
     networks:
       - app-network
-    environment:
-      SUPABASE_ACCESS_TOKEN: ${SUPABASE_ACCESS_TOKEN}
-      SUPABASE_PROJECT_REF: ${SUPABASE_PROJECT_REF}
-      SUPABASE_DB_PASSWORD: ${SUPABASE_DB_PASSWORD}
-      SUPABASE_JWT_SECRET: ${SUPABASE_JWT_SECRET}
+    profiles: ["tools"]  # Activé avec --profile tools
 
-  # Service de surveillance (optionnel)
-  # -------------------------------------------------------------------
-  # Décommentez pour activer Portainer (interface de gestion des conteneurs)
-  # portainer:
-  #   image: portainer/portainer-ce:latest
-  #   container_name: portainer
-  #   ports:
-  #     - "9000:9000"
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #     - portainer_data:/data
-  #   restart: unless-stopped
-  #   networks:
-  #     - app-network
-
-# Configuration des politiques de redémarrage
-x-restart-policy: &restart-policy
-  restart: unless-stopped
-
-# Configuration des logs
-x-logging: &default-logging
-  logging:
-    driver: json-file
-    options:
-      max-size: "10m"
-      max-file: "3"
-
+  # ===========================================
+  # MONITORING (optionnel)
+  # ===========================================
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: ai-foundations-portainer
+    ports:
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    networks:
+      - app-network
+    restart: unless-stopped
+    profiles: ["monitoring"]

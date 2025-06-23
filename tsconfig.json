@@ -1,26 +1,27 @@
 {
   "compilerOptions": {
-    "target": "ES2019",
+    "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "lib": ["DOM", "DOM.Iterable", "ES2019"],
-    "baseUrl": ".",
-    "paths": { "@/*": ["apps/frontend/src/*"] },
-    "typeRoots": [
-      "./node_modules",
-      "./node_modules/@types",
-      "./apps/frontend/src/types"
-    ],
-    "types": [
-      "vite/client",
-      "jest",
-      "global"
-    ],
-    "allowImportingTsExtensions": true,
-    "strictNullChecks": true,
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "strict": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "noEmit": true
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./apps/frontend/src/*"],
+      "$lib/*": ["./apps/frontend/src/lib/*"]
+    },
+    "typeRoots": [
+  "./node_modules/@types"
+],
+    "types": ["node"]
   },
-  "references": [{ "path": "apps/frontend" }]
+  "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.test.tsx"]
 }

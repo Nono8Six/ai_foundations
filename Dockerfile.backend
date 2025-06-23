@@ -1,0 +1,36 @@
+# Dockerfile.backend
+FROM node:20-alpine AS base
+
+# Activer pnpm
+RUN corepack enable
+
+# Installer les outils nécessaires
+RUN apk add --no-cache curl git
+
+WORKDIR /app
+
+# Étape de développement
+FROM base AS development
+
+# Copier les fichiers de configuration du workspace
+COPY package.json pnpm-lock.yaml ./
+COPY pnpm-workspace.yaml ./
+
+# Installer toutes les dépendances
+RUN pnpm install --frozen-lockfile
+
+# Copier le code source
+COPY . .
+
+# Exposer le port
+EXPOSE 3001
+
+# Healthcheck
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:3001/health || exit 1
+
+# Commande par défaut
+CMD ["sh", "-c", "cd apps/backend && pnpm dev"]
+
+# Sélectionner l'étape de développement par défaut
+FROM development
