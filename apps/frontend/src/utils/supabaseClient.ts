@@ -2,7 +2,7 @@ import { PostgrestError } from '@supabase/supabase-js';
 import { logError } from '../context/ErrorContext';
 
 export async function safeQuery<T, E extends Error = PostgrestError>(
-  fn: () => Promise<{ data: T | null; error: E | null }>
+  fn: () => PromiseLike<{ data: T | null; error: E | null }>
 ): Promise<{ data: T | null; error: E | null }> {
   try {
     const { data, error } = await fn();
