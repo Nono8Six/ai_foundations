@@ -255,8 +255,10 @@ Le frontend est configuré pour le hot-reload automatique. Modifiez simplement l
 4. Créez une Pull Request sur GitHub
 ## 📚 Documentation supplémentaire
 
+- [Index de la documentation](docs/README.md) - Aperçu de tous les fichiers de documentation
  - [Guide du Développeur](docs/guides/README-DEV.md) - Documentation complète pour les développeurs
  - [Guide Supabase](docs/guides/README-SUPABASE.md) - Synchronisation de la base de données
+
 - [Documentation Supabase](https://supabase.com/docs)
 - [Documentation Docker](https://docs.docker.com/)
 - [Documentation React](https://reactjs.org/)
