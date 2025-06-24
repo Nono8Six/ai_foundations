@@ -21,16 +21,13 @@
   "./node_modules/@types"
 ],
     "types": ["node"],
-    "allowJs": true,
-    "checkJs": true
+    "allowJs": false,
+    "checkJs": false
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
-    "**/*.js",
-    "**/*.jsx",
-    "**/*.mjs",
-    "**/*.cjs"
+    "**/*.d.ts"
   ],
   "exclude": [
     "node_modules",
@@ -38,6 +35,8 @@
     "**/*.test.ts",
     "**/*.test.tsx",
     "**/*.test.js",
-    "**/*.test.jsx"
+    "**/*.test.jsx",
+    "scripts/**",
+    "apps/frontend/eslint.config.js"
   ]
 }
