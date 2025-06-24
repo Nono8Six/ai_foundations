@@ -3,10 +3,26 @@ import { Link, useLocation } from 'react-router-dom';
 import Icon from './AppIcon';
 import Image from './AppImage';
 
-const SidebarContext = createContext();
-export const useAdminSidebar = () => useContext(SidebarContext);
+interface SidebarContextValue {
+  setSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
-const navigationItems = [
+const SidebarContext = createContext<SidebarContextValue | undefined>(undefined);
+export const useAdminSidebar = (): SidebarContextValue => {
+  const ctx = useContext(SidebarContext);
+  if (!ctx) {
+    throw new Error('useAdminSidebar must be used within an AdminLayout');
+  }
+  return ctx;
+};
+
+interface NavItem {
+  name: string;
+  path: string;
+  icon: string;
+}
+
+const navigationItems: NavItem[] = [
   { name: 'Tableau de bord', path: '/admin-dashboard', icon: 'LayoutDashboard' },
   { name: 'Gestion utilisateurs', path: '/user-management-admin', icon: 'Users' },
   { name: 'Gestion contenu', path: '/cms', icon: 'BookOpen' },
@@ -14,7 +30,11 @@ const navigationItems = [
   { name: 'Profil utilisateur', path: '/profile', icon: 'User' },
 ];
 
-const AdminLayout = ({ children }) => {
+interface AdminLayoutProps {
+  children: React.ReactNode;
+}
+
+const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 

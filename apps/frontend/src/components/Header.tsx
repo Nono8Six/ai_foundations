@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import Icon from './AppIcon';
+import Icon, { type IconName } from './AppIcon';
 import Image from './AppImage';
 
-const Header = () => {
+interface NavItem {
+  name: string;
+  path: string;
+  icon: IconName;
+}
+
+const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { user, userProfile, loading, error, logout } = useAuth();
@@ -41,7 +47,7 @@ const Header = () => {
   };
 
   // Navigation items for the top navbar
-  const navItems = user 
+  const navItems: NavItem[] = user
     ? [
         { name: 'Accueil', path: '/', icon: 'Home' },
         { name: 'Catalogue', path: '/programmes', icon: 'BookOpen' },
@@ -53,7 +59,7 @@ const Header = () => {
       ];
 
   // Profile menu items (only shown in dropdown)
-  const profileItems = user
+  const profileItems: NavItem[] = user
     ? [
         { name: 'Mon Profil', path: '/profile', icon: 'User' },
         { name: 'Mes Statistiques', path: '/profile?tab=stats', icon: 'BarChart3' },
@@ -62,7 +68,7 @@ const Header = () => {
     : [];
 
   // Admin items (only shown for admins)
-  const adminItems = userProfile?.is_admin
+  const adminItems: NavItem[] = userProfile?.is_admin
     ? [
         { name: 'Administration', path: '/admin-dashboard', icon: 'Shield' },
         { name: 'Gestion Contenu', path: '/cms', icon: 'FileText' },
@@ -72,8 +78,8 @@ const Header = () => {
 
   // Close profile menu when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (isProfileOpen && !event.target.closest('.profile-menu')) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isProfileOpen && !(event.target as HTMLElement).closest('.profile-menu')) {
         setIsProfileOpen(false);
       }
     };
@@ -305,3 +311,4 @@ const Header = () => {
 };
 
 export default Header;
+

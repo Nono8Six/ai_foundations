@@ -135,9 +135,20 @@ const icons = {
   XCircle,
   Youtube,
   Zap,
-};
+} as const;
 
-function Icon({
+export type IconName = keyof typeof icons;
+
+interface IconProps extends React.SVGProps<SVGSVGElement> {
+  name: IconName;
+  size?: number;
+  color?: string;
+  className?: string;
+  strokeWidth?: number;
+  'aria-label'?: string;
+}
+
+const Icon: React.FC<IconProps> = ({
   name,
   size = 24,
   color = 'currentColor',
@@ -145,7 +156,7 @@ function Icon({
   strokeWidth = 2,
   'aria-label': ariaLabel,
   ...props
-}) {
+}) => {
   const IconComponent = icons[name];
 
   const commonProps = {
@@ -163,5 +174,6 @@ function Icon({
   }
 
   return <IconComponent {...commonProps} />;
-}
+};
+
 export default Icon;
