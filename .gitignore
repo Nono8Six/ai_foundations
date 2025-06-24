@@ -20,3 +20,6 @@ apps/backend/supabase/.branches/
 # Ignore temporary tsconfig
 tsconfig.tmp
 apps/frontend/dist-types/
+
+# Backup environment files
+.env.corrupted.backup.*
