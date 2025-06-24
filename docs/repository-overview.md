@@ -9,7 +9,8 @@ This document provides a quick tour of the project layout. For a visual project 
   - `backend/` – Supabase configuration and related scripts.
 - **`docs/`** – Additional documentation such as the style guide and UI references.
 - **`apps/frontend/nginx/`** – Template used when building the production container.
-- **`packages/`** – Shared package configurations (e.g., TypeScript config).
+- **`packages/`** – Shared package configurations. Includes `tsconfig-vite/` with
+  a reusable base TypeScript configuration for Vite projects.
 - **`scripts/`** – Utility scripts for maintenance and environment validation.
 - **`docker-compose.yml`** – Defines development containers.
 - **`Dockerfile` / `apps/backend/Dockerfile`** – Build instructions for frontend and backend images.
