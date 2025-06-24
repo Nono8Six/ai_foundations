@@ -4,9 +4,9 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "node --env-file=../../.env src/index.js",
-    "start": "node src/index.js",
-    "build": "echo 'Backend build completed'",
+    "dev": "pnpm build && node --env-file=../../.env dist/index.js",
+    "start": "node dist/index.js",
+    "build": "tsc -p tsconfig.json",
     
     "// === TESTS SUPABASE ===": "",
     "test:supabase": "node --env-file=../../.env scripts/test-supabase-connection.mjs",
@@ -26,9 +26,9 @@
     "lint": "eslint src/ --ext .js,.ts",
     "format": "prettier --write src/",
     "clean": "rm -rf dist/ node_modules/.cache/",
-    
+
     "// === TYPES & GÉNÉRATION ===": "",
-    "gen:types": "supabase gen types typescript --project-id oqmllypaarqvabuvbqga --schema public,auth,storage > src/types/database.types.ts",
+    "gen:types": "supabase gen types typescript --project-id oqmllypaarqvabuvbqa --schema public,auth,storage > src/types/database.types.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
