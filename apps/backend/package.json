@@ -9,7 +9,7 @@
     "build": "echo 'Backend build completed'",
     
     "// === TESTS SUPABASE ===": "",
-    "test:supabase": "node --env-file=../../.env scripts/test-supabase-connection.js",
+    "test:supabase": "node --env-file=../../.env scripts/test-supabase-connection.mjs",
     "test:supabase:full": "node --env-file=../../.env scripts/test-supabase-full.js",
     "test:db": "node --env-file=../../.env scripts/test-database.js",
     

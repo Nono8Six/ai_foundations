@@ -23,3 +23,6 @@ apps/frontend/dist-types/
 
 # Ignore pnpm script and logs
 pnpm*
+
+# Backup environment files
+.env.corrupted.backup.*

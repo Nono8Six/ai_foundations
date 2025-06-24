@@ -67,7 +67,13 @@ cp .env.example .env
 - `SUPABASE_ACCESS_TOKEN` : token personnel pour la CLI
 - `SUPABASE_SERVICE_ROLE_KEY` : clé service_role
 - `SUPABASE_DB_PASSWORD` : mot de passe PostgreSQL
-- `SUPABASE_JWT_SECRET` : secret JWT du projet
+
+> **Sécurité** : si l'une de ces clés est exposée (commit Git, capture d'écran,
+> etc.), révoquez-la immédiatement dans le tableau de bord Supabase et
+> générez-en une nouvelle. Ne comptez pas uniquement sur le nettoyage de
+> l'historique Git pour protéger vos données.
+
+## 🎯 Commandes Essentielles
 
 ## 🎯 Commandes Essentielles
 
