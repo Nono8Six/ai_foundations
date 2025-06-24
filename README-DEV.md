@@ -208,5 +208,8 @@ ai-foundations/
 - [Documentation React](https://reactjs.org/docs/getting-started.html)
 - [Guide Supabase](README-SUPABASE.md)
 - [Guide de Style](docs/STYLE_GUIDE.md)
-2. Les dépendances sont installées dans le conteneur, pas besoin de les installer sur votre machine.
-3. La base de données est persistante grâce au volume Docker.
+
+**Notes :**
+
+1. Les dépendances sont installées dans le conteneur, pas besoin de les installer sur votre machine.
+2. La base de données est persistante grâce au volume Docker.
