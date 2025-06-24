@@ -85,6 +85,14 @@ Plusieurs utilitaires sont disponibles dans le dossier `scripts/` :
 - `validate-env.js` : vérifie que les variables indispensables sont définies.
 
 Chaque script peut s\'exécuter via `pnpm run <nom-du-script>`.
+
+Pour vérifier le typage complet du monorepo :
+
+```bash
+pnpm typecheck
+```
+
+La vérification utilise maintenant `skipLibCheck: false`, ce qui peut rallonger le temps de compilation.
 ## 🚀 Mode Production
 
 Pour générer l'image optimisée et lancer l'application :

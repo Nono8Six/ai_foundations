@@ -1,6 +1,6 @@
 import React, { useState, createContext, useContext } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import Icon from './AppIcon';
+import Icon, { IconName } from './AppIcon';
 import Image from './AppImage';
 
 interface SidebarContextValue {
@@ -19,7 +19,7 @@ export const useAdminSidebar = (): SidebarContextValue => {
 interface NavItem {
   name: string;
   path: string;
-  icon: string;
+  icon: IconName;
 }
 
 const navigationItems: NavItem[] = [

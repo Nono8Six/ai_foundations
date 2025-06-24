@@ -6,7 +6,6 @@
     "// === RÉCUPÉRATION ===": "",
     "recovery": "bash scripts/recovery.sh",
     "cleanup": "bash scripts/cleanup.sh",
-    
     "// === DÉVELOPPEMENT ===": "",
     "dev": "docker-compose up --build frontend",
     "dev:full": "docker-compose --profile backend up --build",
@@ -14,18 +13,15 @@
     "dev:frontend": "cd apps/frontend && pnpm dev",
     "dev:tools": "docker-compose --profile tools up -d",
     "dev:logs": "docker-compose logs -f",
-    
     "// === SUPABASE CLOUD ===": "",
     "db:pull": "cd apps/backend && pnpm exec supabase db pull",
     "db:push": "cd apps/backend && pnpm exec supabase db push",
     "db:diff": "cd apps/backend && pnpm exec supabase db diff",
     "db:reset": "cd apps/backend && pnpm exec supabase db reset",
     "db:status": "cd apps/backend && pnpm exec supabase status",
-    
     "// === TYPES ===": "",
     "gen:types": "supabase gen types typescript --project-id oqmllypaarqvabuvbqga --schema public,auth,storage > apps/frontend/src/types/database.types.ts",
     "typecheck": "pnpm exec tsc -b --pretty",
-    
     "// === VALIDATION ===": "",
     "test:connection": "node --env-file=.env scripts/test-supabase-connection.mjs",
     "test:supabase": "cd apps/backend && pnpm test:supabase",
@@ -34,23 +30,19 @@
     "health": "curl -f http://localhost:3000 && echo '✅ Frontend OK' || echo '❌ Frontend KO'",
     "health:backend": "curl -f http://localhost:3001/health && echo '✅ Backend OK' || echo '❌ Backend KO'",
     "health:full": "pnpm health && pnpm health:backend",
-    
     "// === BUILD & DEPLOY ===": "",
     "build": "cd apps/frontend && pnpm build",
     "build:backend": "cd apps/backend && pnpm build",
     "preview": "cd apps/frontend && pnpm preview",
-    
     "// === MAINTENANCE ===": "",
     "clean:docker": "docker system prune -af --volumes",
     "clean:deps": "find . -name node_modules -type d -exec rm -rf {} + 2>/dev/null || true",
     "clean:cache": "pnpm store prune && npm cache clean --force",
     "reset:hard": "pnpm cleanup && pnpm recovery",
-    
     "// === SYNCHRONISATION ===": "",
     "sync:from-cloud": "pnpm db:pull && pnpm gen:types",
     "sync:to-cloud": "pnpm db:push",
     "sync:full": "pnpm db:pull && pnpm gen:types && pnpm typecheck",
-    
     "// === INSTALLATION & SETUP ===": "",
     "install:all": "pnpm install && cd apps/frontend && pnpm install && cd ../backend && pnpm install",
     "setup": "pnpm install:all && pnpm validate:env && pnpm test:supabase",
@@ -58,6 +50,7 @@
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
+    "@types/lodash": "^4.17.18",
     "@types/node": "^24.0.3",
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",
