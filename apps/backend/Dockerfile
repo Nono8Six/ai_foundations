@@ -1,4 +1,4 @@
-# Dockerfile.backend
+# apps/backend/Dockerfile
 FROM node:20-alpine AS base
 
 # Activer pnpm

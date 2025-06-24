@@ -145,7 +145,7 @@ ai-foundations/
 │       ├── supabase/      # Configuration Supabase
 │       │   ├── migrations/        # Migrations de la base de données
 │       │   └── config.toml        # Configuration Supabase
-├── nginx/                 # Configuration Nginx
+├── apps/frontend/nginx/   # Configuration Nginx
 ├── docker-compose.yml     # Configuration Docker Compose
 └── Dockerfile            # Définition des images Docker
 ```

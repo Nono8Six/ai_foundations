@@ -117,7 +117,7 @@ ai-foundations/
 │       │   ├── migrations/ # Migrations de la base de données
 │       │   └── functions/  # Fonctions PostgreSQL personnalisées
 │       └── package.json   # Scripts et dépendances backend
-├── nginx/                 # Configuration Nginx (pour la production)
+├── apps/frontend/nginx/   # Configuration Nginx (pour la production)
 ├── docker-compose.yml     # Configuration Docker Compose pour le développement
 ├── Dockerfile             # Définition des images Docker
 └── .env.example           # Modèle de configuration d'environnement
