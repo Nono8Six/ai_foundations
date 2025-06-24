@@ -1,4 +1,4 @@
-// scripts/test-supabase-connection.js (À LA RACINE)
+// scripts/test-supabase-connection.mjs (À LA RACINE)
 import { createClient } from '@supabase/supabase-js'
 
 // Les variables sont déjà chargées via --env-file=.env

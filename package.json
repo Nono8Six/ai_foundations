@@ -31,7 +31,7 @@
     "typecheck": "pnpm exec tsc -b --pretty",
     
     "// === VALIDATION ===": "",
-    "test:connection": "node --env-file=.env scripts/test-supabase-connection.js",
+    "test:connection": "node --env-file=.env scripts/test-supabase-connection.mjs",
     "test:supabase": "cd apps/backend && pnpm test:supabase",
     "test:supabase:full": "cd apps/backend && pnpm test:supabase:full",
     "validate:env": "node --env-file=.env scripts/validate-env.js",
