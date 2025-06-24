@@ -14,6 +14,7 @@ import type {
   AuthResponse,
   OAuthResponse,
   AuthError,
+  AuthChangeEvent,
 } from '@supabase/supabase-js';
 import type { Database } from '../types/database.types';
 import type {
@@ -74,8 +75,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const getInitialSession = async () => {
       try {
         logger.debug('🔍 Getting initial session...');
-        const { data, error } = await safeQuery(() =>
-          supabaseClient.auth.getSession()
+        const { data, error } = await safeQuery<{ session: Session | null }, AuthError>(
+          () => supabaseClient.auth.getSession()
         );
         if (error) throw error;
         const { session } = data;
@@ -100,7 +101,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     // Set up auth subscription
     const {
       data: { subscription },
-    } = supabaseClient.auth.onAuthStateChange(async (event, session) => {
+    } = supabaseClient.auth.onAuthStateChange(
+      async (event: AuthChangeEvent, session: Session | null) => {
       logger.debug('🔄 Auth state change event:', event);
       logger.debug('📋 Auth state change session:', session);
       logger.debug('⏰ Timestamp:', new Date().toISOString());
@@ -135,10 +137,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   // Fetch user profile data
-  const fetchUserProfile = async userId => {
+  const fetchUserProfile = async (userId: string) => {
     try {
       logger.debug('🔍 Fetching profile for user:', userId);
-      const { data, error } = await safeQuery(() =>
+      const { data, error } = await safeQuery<UserProfile[]>(() =>
         supabaseClient.from('profiles').select('*').eq('id', userId)
       );
 
@@ -151,7 +153,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (!data || data.length === 0) {
         logger.debug('⚠️ No profile found for user, creating default...');
         // Try to create a default profile
-        const { data: newProfile, error: createError } = await safeQuery(() =>
+        const { data: newProfile, error: createError } = await safeQuery<UserProfile>(() =>
           supabaseClient
             .from('profiles')
             .insert([
