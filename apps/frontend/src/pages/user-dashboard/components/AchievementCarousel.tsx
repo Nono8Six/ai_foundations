@@ -21,7 +21,7 @@ const AchievementCarousel: React.FC<AchievementCarouselProps> = ({
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const getRarityColor = rarity => {
+  const getRarityColor = (rarity: Achievement['rarity']): string => {
     switch (rarity) {
       case 'common':
         return 'border-secondary-300 bg-secondary-50';
@@ -38,7 +38,7 @@ const AchievementCarousel: React.FC<AchievementCarouselProps> = ({
     }
   };
 
-  const getRarityTextColor = rarity => {
+  const getRarityTextColor = (rarity: Achievement['rarity']): string => {
     switch (rarity) {
       case 'common':
         return 'text-secondary-600';
@@ -55,11 +55,11 @@ const AchievementCarousel: React.FC<AchievementCarouselProps> = ({
     }
   };
 
-  const nextAchievement = () => {
+  const nextAchievement = (): void => {
     setCurrentIndex(prev => (prev + 1) % achievements.length);
   };
 
-  const prevAchievement = () => {
+  const prevAchievement = (): void => {
     setCurrentIndex(prev => (prev - 1 + achievements.length) % achievements.length);
   };
 
