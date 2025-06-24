@@ -3,7 +3,31 @@ import { Link } from 'react-router-dom';
 import Icon from '../../../components/AppIcon';
 import Image from '../../../components/AppImage';
 
-const RecentActivity = ({ activities = [] }) => {
+export interface Activity {
+  id?: string;
+  type: string;
+  title: string;
+  description: string;
+  icon: string;
+  iconColor?: string;
+  timestamp: string;
+  course?: string;
+  xpEarned?: number;
+  badge?: string;
+  newLevel?: number;
+  status?: string;
+  score?: string;
+  instructor?: string;
+  thumbnail?: string;
+}
+
+export interface RecentActivityProps {
+  activities?: Activity[];
+}
+
+const RecentActivity: React.FC<RecentActivityProps> = ({
+  activities = [],
+}) => {
   const getActivityIcon = activity => (
     <div
       className={`w-10 h-10 rounded-full bg-surface border-2 border-border flex items-center justify-center ${activity.iconColor}`}

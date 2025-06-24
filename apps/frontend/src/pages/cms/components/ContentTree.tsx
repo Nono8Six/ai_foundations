@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import Icon from '../../../components/AppIcon';
 import logger from '../../../utils/logger';
 
+// Typages TypeScript détaillés pour chaque niveau
 interface LessonItem {
-  id?: string;
+  id: string;
   type: 'lesson';
   title: string;
   duration?: number;
@@ -12,7 +13,7 @@ interface LessonItem {
 }
 
 interface ModuleItem {
-  id?: string;
+  id: string;
   type: 'module';
   title: string;
   description?: string;
@@ -20,7 +21,7 @@ interface ModuleItem {
 }
 
 interface CourseItem {
-  id?: string;
+  id: string;
   type: 'course';
   title: string;
   description?: string;
@@ -32,18 +33,30 @@ interface CourseItem {
 
 type ContentItem = CourseItem | ModuleItem | LessonItem;
 
-const ContentTree = ({
+interface ContentTreeProps {
+  contentData: CourseItem[];
+  searchQuery: string;
+  selectedContent: ContentItem | null;
+  selectedItems: string[];
+  onContentSelect: (item: ContentItem) => void;
+  onItemsSelect: (items: string[]) => void;
+  onReorder?: (newOrder: ContentItem[]) => void;
+}
+
+const ContentTree: React.FC<ContentTreeProps> = ({
   contentData,
   searchQuery,
   selectedContent,
   selectedItems,
   onContentSelect,
   onItemsSelect,
+  onReorder,
 }) => {
-  const [expandedItems, setExpandedItems] = useState(new Set([1]));
+  // Par défaut, aucun élément n'est déplié
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const [draggedItem, setDraggedItem] = useState<ContentItem | null>(null);
 
-  const toggleExpanded = id => {
+  const toggleExpanded = (id: string): void => {
     const newExpanded = new Set(expandedItems);
     if (newExpanded.has(id)) {
       newExpanded.delete(id);
@@ -53,7 +66,10 @@ const ContentTree = ({
     setExpandedItems(newExpanded);
   };
 
-  const handleItemSelect = (item, event) => {
+  const handleItemSelect = (
+    item: ContentItem,
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ): void => {
     if (event.ctrlKey || event.metaKey) {
       const newSelected = selectedItems.includes(item.id)
         ? selectedItems.filter(id => id !== item.id)
@@ -65,50 +81,63 @@ const ContentTree = ({
     }
   };
 
-  const handleDragStart = (e, item) => {
+  const handleDragStart = (
+    e: React.DragEvent<HTMLDivElement>,
+    item: ContentItem
+  ): void => {
     setDraggedItem(item);
     e.dataTransfer.effectAllowed = 'move';
   };
 
-  const handleDragOver = e => {
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>): void => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
   };
 
-  const handleDrop = (e, targetItem) => {
+  const handleDrop = (
+    e: React.DragEvent<HTMLDivElement>,
+    targetItem: ContentItem
+  ): void => {
     e.preventDefault();
     if (draggedItem && draggedItem.id !== targetItem.id) {
       logger.debug('Reordering:', draggedItem, 'to', targetItem);
-      // Mock reorder logic
+      // Ici tu peux insérer ta logique de reorder réelle si besoin
+      if (onReorder) {
+        // Appelle onReorder avec le nouvel ordre souhaité
+      }
     }
     setDraggedItem(null);
   };
 
-  const getStatusIcon = status => {
+  const getStatusIcon = (status?: string): JSX.Element => {
     switch (status) {
       case 'published':
-        return <Icon aria-hidden="true"  name='CheckCircle' size={16} className='text-accent' />;
+        return <Icon aria-hidden="true" name='CheckCircle' size={16} className='text-accent' />;
       case 'draft':
-        return <Icon aria-hidden="true"  name='Clock' size={16} className='text-warning' />;
+        return <Icon aria-hidden="true" name='Clock' size={16} className='text-warning' />;
       default:
-        return <Icon aria-hidden="true"  name='Circle' size={16} className='text-secondary-400' />;
+        return <Icon aria-hidden="true" name='Circle' size={16} className='text-secondary-400' />;
     }
   };
 
-  const getTypeIcon = type => {
+  const getTypeIcon = (type?: string): JSX.Element => {
     switch (type) {
       case 'course':
-        return <Icon aria-hidden="true"  name='BookOpen' size={16} className='text-primary' />;
+        return <Icon aria-hidden="true" name='BookOpen' size={16} className='text-primary' />;
       case 'module':
-        return <Icon aria-hidden="true"  name='Folder' size={16} className='text-secondary-600' />;
+        return <Icon aria-hidden="true" name='Folder' size={16} className='text-secondary-600' />;
       case 'lesson':
-        return <Icon aria-hidden="true"  name='FileText' size={16} className='text-secondary-500' />;
+        return <Icon aria-hidden="true" name='FileText' size={16} className='text-secondary-500' />;
       default:
-        return <Icon aria-hidden="true"  name='File' size={16} className='text-secondary-400' />;
+        return <Icon aria-hidden="true" name='File' size={16} className='text-secondary-400' />;
     }
   };
 
-  const filterContent = (items, query) => {
+  // Recherche plein texte (intitulé ou description)
+  const filterContent = (
+    items: CourseItem[],
+    query: string
+  ): CourseItem[] => {
     if (!query) return items;
     return items.filter(
       item =>
@@ -117,9 +146,11 @@ const ContentTree = ({
     );
   };
 
-  const renderLessons = lessons => {
+  // Affiche les leçons d'un module
+  const renderLessons = (
+    lessons?: LessonItem[]
+  ): React.ReactNode => {
     if (!lessons || lessons.length === 0) return null;
-
     return (
       <div className='ml-6'>
         {lessons.map(lesson => (
@@ -179,9 +210,11 @@ const ContentTree = ({
     );
   };
 
-  const renderModules = modules => {
+  // Affiche les modules d'un cours
+  const renderModules = (
+    modules?: ModuleItem[]
+  ): React.ReactNode => {
     if (!modules || modules.length === 0) return null;
-
     return (
       <div className='ml-6'>
         {modules.map(module => (
@@ -220,7 +253,7 @@ const ContentTree = ({
                 }}
                 className='mr-2 p-1 hover:bg-secondary-100 rounded transition-colors duration-200'
               >
-                <Icon aria-hidden="true" 
+                <Icon aria-hidden="true"
                   name={expandedItems.has(module.id) ? 'ChevronDown' : 'ChevronRight'}
                   size={14}
                   className='text-secondary-500'
@@ -248,8 +281,7 @@ const ContentTree = ({
                 </button>
               </div>
             </div>
-
-            {expandedItems.has(module.id) && renderLessons(module.lessons, module.id)}
+            {expandedItems.has(module.id) && renderLessons(module.lessons)}
           </div>
         ))}
       </div>
@@ -296,7 +328,7 @@ const ContentTree = ({
               }}
               className='mr-3 p-1 hover:bg-secondary-100 rounded transition-colors duration-200'
             >
-              <Icon aria-hidden="true" 
+              <Icon aria-hidden="true"
                 name={expandedItems.has(course.id) ? 'ChevronDown' : 'ChevronRight'}
                 size={16}
                 className='text-secondary-500'
@@ -324,14 +356,13 @@ const ContentTree = ({
               </button>
             </div>
           </div>
-
-          {expandedItems.has(course.id) && renderModules(course.modules, course.id)}
+          {expandedItems.has(course.id) && renderModules(course.modules)}
         </div>
       ))}
 
       {filteredContent.length === 0 && (
         <div className='text-center py-8'>
-          <Icon aria-hidden="true"  name='Search' size={48} className='text-secondary-300 mx-auto mb-4' />
+          <Icon aria-hidden="true" name='Search' size={48} className='text-secondary-300 mx-auto mb-4' />
           <p className='text-text-secondary'>
             {searchQuery ? 'Aucun contenu trouvé' : 'Aucun contenu disponible'}
           </p>

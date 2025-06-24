@@ -2,7 +2,25 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Icon from '../../../components/AppIcon';
 
-const QuickActions = ({ actions = [], onAction }) => {
+export interface QuickAction {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  link?: string;
+  color?: string;
+  hoverColor?: string;
+}
+
+export interface QuickActionsProps {
+  actions?: QuickAction[];
+  onAction?: (action: QuickAction) => void;
+}
+
+const QuickActions: React.FC<QuickActionsProps> = ({
+  actions = [],
+  onAction,
+}) => {
   const handleAction = action => {
     if (action.link && action.link !== '#') return;
     if (onAction) onAction(action);

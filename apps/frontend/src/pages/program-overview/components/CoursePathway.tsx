@@ -2,8 +2,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Icon from '../../../components/AppIcon';
 import Image from '../../../components/AppImage';
+import type { Course } from '../../../types/course';
 
-const CoursePathway = ({ courses }) => {
+export interface CoursePathwayProps {
+  courses: Course[];
+}
+
+const CoursePathway: React.FC<CoursePathwayProps> = ({ courses }) => {
   // Group courses by difficulty level for pathway visualization
   const groupedCourses = courses.reduce((acc, course) => {
     const level = course.difficulty || 'Autre';
@@ -17,7 +22,7 @@ const CoursePathway = ({ courses }) => {
   const difficultyOrder = ['Débutant', 'Intermédiaire', 'Avancé', 'Autre'];
   const orderedGroups = difficultyOrder.filter(level => groupedCourses[level]);
 
-  const getDifficultyColor = difficulty => {
+  const getDifficultyColor = (difficulty?: string): string => {
     switch (difficulty) {
       case 'Débutant':
         return 'from-success to-success-600';
@@ -30,7 +35,7 @@ const CoursePathway = ({ courses }) => {
     }
   };
 
-  const getProgressColor = progress => {
+  const getProgressColor = (progress?: number): string => {
     if (progress === 100) return 'bg-success';
     if (progress > 0) return 'bg-primary';
     return 'bg-secondary-200';

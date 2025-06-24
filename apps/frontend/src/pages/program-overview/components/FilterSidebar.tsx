@@ -1,7 +1,23 @@
 import React from 'react';
 import Icon from '../../../components/AppIcon';
+import type { Course } from '../../../types/course';
 
-const FilterSidebar = ({ filters, onFilterChange, courses }) => {
+export interface FilterSidebarProps {
+  filters: {
+    skillLevel: string[];
+    duration: string[];
+    category: string[];
+    status: string[];
+  };
+  onFilterChange: (filters: FilterSidebarProps['filters']) => void;
+  courses: Course[];
+}
+
+const FilterSidebar: React.FC<FilterSidebarProps> = ({
+  filters,
+  onFilterChange,
+  courses,
+}) => {
   const skillLevels = ['Débutant', 'Intermédiaire', 'Avancé'];
   const durations = [
     { value: 'short', label: 'Court (≤ 3 semaines)' },
