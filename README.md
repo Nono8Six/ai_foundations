@@ -77,6 +77,16 @@ docker-compose exec frontend pnpm test
 # Vérifier le formatage
 docker-compose exec frontend pnpm format:check
 ```
+
+### Scripts internes
+
+Plusieurs utilitaires sont disponibles dans le dossier `scripts/` :
+
+- `cleanup.sh` : nettoyage local rapide (arrêt des conteneurs Docker et suppression des dépendances).
+- `recovery.sh` : réinstalle les dépendances pour repartir d\'un environnement sain.
+- `validate-env.js` : vérifie que les variables indispensables sont définies.
+
+Chaque script peut s\'exécuter via `pnpm run <nom-du-script>`.
 ## 🚀 Mode Production
 
 Pour générer l'image optimisée et lancer l'application :
