@@ -33,7 +33,7 @@
 
 ```bash
 # Dans le dossier racine du projet
-cd path/to/ai_foundations
+cd .
 
 # Installation de la CLI Supabase (si pas déjà fait)
 npm install -g supabase
