@@ -176,7 +176,7 @@ Quand vous travaillez avec des IA (Codex, Jules, etc.) :
 ### Bonnes Pratiques
 
 - Commit fréquent des fichiers de migration
-- Variables d'environnement never commités
+- Ne jamais commiter les variables d'environnement
 - Tests de connexion avant chaque session
 
 ## 🆘 Support
