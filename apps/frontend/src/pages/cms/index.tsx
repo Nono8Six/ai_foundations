@@ -16,9 +16,39 @@ import MediaLibrary from './components/MediaLibrary';
 
 type CourseWithContent = Awaited<ReturnType<typeof fetchCoursesWithContent>>[number];
 
+interface CmsLesson {
+  id?: string;
+  type: 'lesson';
+  title: string;
+  duration?: number;
+  status?: string;
+  completions?: number;
+}
+
+interface CmsModule {
+  id?: string;
+  type: 'module';
+  title: string;
+  description?: string;
+  lessons?: CmsLesson[];
+}
+
+interface CmsCourse {
+  id?: string;
+  type: 'course';
+  title: string;
+  description?: string;
+  price?: number;
+  status?: string;
+  enrollments?: number;
+  modules?: CmsModule[];
+}
+
+type CmsContentItem = CmsCourse | CmsModule | CmsLesson;
+
 const ContentManagementCoursesModulesLessonsContent = () => {
   const { setSidebarOpen } = useAdminSidebar();
-  const [selectedContent, setSelectedContent] = useState<Record<string, any> | null>(null);
+  const [selectedContent, setSelectedContent] = useState<CmsContentItem | null>(null);
   const [contentType, setContentType] = useState('course');
   const [showMediaLibrary, setShowMediaLibrary] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -47,12 +77,12 @@ const ContentManagementCoursesModulesLessonsContent = () => {
     load();
   }, [addToast]);
 
-  const handleContentSelect = content => {
+  const handleContentSelect = (content: CmsContentItem) => {
     setSelectedContent(content);
     setContentType(content.type);
   };
 
-  const handleSaveContent = async updatedContent => {
+  const handleSaveContent = async (updatedContent: CmsContentItem) => {
     // Note: This logic currently only handles the 'course' type.
     // It should be expanded to handle modules and lessons.
     if (contentType !== 'course') {
@@ -79,7 +109,7 @@ const ContentManagementCoursesModulesLessonsContent = () => {
     }
   };
 
-  const handleDeleteContent = async contentId => {
+  const handleDeleteContent = async (contentId: string) => {
     if (contentType !== 'course') {
       logger.info('Deleting non-course content (local state only):', contentId);
       setSelectedContent(null);

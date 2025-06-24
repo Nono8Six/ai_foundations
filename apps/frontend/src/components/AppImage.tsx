@@ -1,9 +1,21 @@
 import React from 'react';
 import logger from '../utils/logger';
 
-function Image({ src, alt = 'Image Name', className = '', ...props }) {
+export interface AppImageProps
+  extends React.ImgHTMLAttributes<HTMLImageElement> {
+  src?: string;
+  alt?: string;
+  className?: string;
+}
+
+const Image: React.FC<AppImageProps> = ({
+  src,
+  alt = 'Image Name',
+  className = '',
+  ...props
+}) => {
   // Ensure src is a valid URL
-  const getValidImageUrl = (url) => {
+  const getValidImageUrl = (url: string | undefined) => {
     if (!url) return '/assets/images/no_image.png';
 
     if (url.startsWith('/')) return url;
@@ -21,11 +33,11 @@ function Image({ src, alt = 'Image Name', className = '', ...props }) {
       className={className}
       onError={e => {
         logger.warn('Image load error for:', src);
-        e.target.src = '/assets/images/no_image.png';
+        (e.target as HTMLImageElement).src = '/assets/images/no_image.png';
       }}
       {...props}
     />
   );
-}
+};
 
 export default Image;

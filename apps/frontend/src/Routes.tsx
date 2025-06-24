@@ -19,14 +19,22 @@ const NotFound = lazy(() => import('./pages/not-found/index'));
 const VerifyEmail = lazy(() => import('./pages/verify-email/index'));
 
 // --- Composant de chargement ---
-const PageLoader = () => (
+const PageLoader: React.FC = () => (
   <div className='min-h-screen flex items-center justify-center bg-background'>
     <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-primary'></div>
   </div>
 );
 
 // --- Route Protégée ---
-const ProtectedRoute = ({ children, requireAdmin = false }) => {
+interface ProtectedRouteProps {
+  children: React.ReactElement;
+  requireAdmin?: boolean;
+}
+
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
+  children,
+  requireAdmin = false,
+}) => {
   const { user, userProfile, loading } = useAuth();
   if (loading) return <PageLoader />;
   if (!user) return <Navigate to='/login' replace />;
@@ -35,7 +43,7 @@ const ProtectedRoute = ({ children, requireAdmin = false }) => {
 };
 
 // --- Définition des Routes (sans BrowserRouter) ---
-const AppRoutes = () => {
+const AppRoutes: React.FC = () => {
   return (
     <ErrorBoundary>
       <ScrollToTop />

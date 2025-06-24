@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import Icon from './AppIcon';
+import Icon, { type IconName } from './AppIcon';
 import Image from './AppImage';
 
-export interface HeaderProps {}
+// Typage des éléments de navigation
+interface NavItem {
+  name: string;
+  path: string;
+  icon: IconName;
+}
 
-const Header: React.FC<HeaderProps> = () => {
+const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { user, userProfile, loading, error, logout } = useAuth();
@@ -18,16 +23,14 @@ const Header: React.FC<HeaderProps> = () => {
   }
 
   const getInitials = () => {
-    const name =
-      userProfile?.full_name || user?.user_metadata?.full_name || '';
+    const name = userProfile?.full_name || user?.user_metadata?.full_name || '';
     const [first, last] = name.split(' ');
     const initials = `${first?.charAt(0) ?? ''}${last?.charAt(0) ?? ''}`.toUpperCase();
     return initials || null;
   };
 
   const getFirstName = () => {
-    const name =
-      userProfile?.full_name || user?.user_metadata?.full_name || '';
+    const name = userProfile?.full_name || user?.user_metadata?.full_name || '';
     return name.split(' ')[0] ?? 'Utilisateur';
   };
 
@@ -42,8 +45,8 @@ const Header: React.FC<HeaderProps> = () => {
     }
   };
 
-  // Navigation items for the top navbar
-  const navItems = user 
+  // NavBar top
+  const navItems: NavItem[] = user
     ? [
         { name: 'Accueil', path: '/', icon: 'Home' },
         { name: 'Catalogue', path: '/programmes', icon: 'BookOpen' },
@@ -54,8 +57,8 @@ const Header: React.FC<HeaderProps> = () => {
         { name: 'Programmes', path: '/programmes', icon: 'BookOpen' },
       ];
 
-  // Profile menu items (only shown in dropdown)
-  const profileItems = user
+  // Menu profil
+  const profileItems: NavItem[] = user
     ? [
         { name: 'Mon Profil', path: '/profile', icon: 'User' },
         { name: 'Mes Statistiques', path: '/profile?tab=stats', icon: 'BarChart3' },
@@ -63,8 +66,8 @@ const Header: React.FC<HeaderProps> = () => {
       ]
     : [];
 
-  // Admin items (only shown for admins)
-  const adminItems = userProfile?.is_admin
+  // Menu admin (si admin)
+  const adminItems: NavItem[] = userProfile?.is_admin
     ? [
         { name: 'Administration', path: '/admin-dashboard', icon: 'Shield' },
         { name: 'Gestion Contenu', path: '/cms', icon: 'FileText' },
@@ -72,10 +75,10 @@ const Header: React.FC<HeaderProps> = () => {
       ]
     : [];
 
-  // Close profile menu when clicking outside
+  // Close profile menu on click outside
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (isProfileOpen && !event.target.closest('.profile-menu')) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isProfileOpen && !(event.target as HTMLElement).closest('.profile-menu')) {
         setIsProfileOpen(false);
       }
     };
@@ -93,7 +96,7 @@ const Header: React.FC<HeaderProps> = () => {
           {/* Logo */}
           <Link to='/' className='flex items-center space-x-2'>
             <div className='w-10 h-10 bg-gradient-to-br from-primary to-primary-700 rounded-full flex items-center justify-center'>
-              <Icon aria-hidden="true"  name='GraduationCap' size={24} color='white' />
+              <Icon aria-hidden="true" name='GraduationCap' size={24} color='white' />
             </div>
             <span className='text-xl font-bold text-text-primary'>AI Foundations</span>
           </Link>
@@ -105,12 +108,12 @@ const Header: React.FC<HeaderProps> = () => {
                 key={item.path}
                 to={item.path}
                 className={`flex items-center space-x-2 transition-colors duration-200 ${
-                  location.pathname === item.path 
-                    ? 'text-primary font-medium' 
+                  location.pathname === item.path
+                    ? 'text-primary font-medium'
                     : 'text-text-secondary hover:text-primary'
                 }`}
               >
-                <Icon aria-hidden="true"  name={item.icon} size={18} />
+                <Icon aria-hidden="true" name={item.icon} size={18} />
                 <span>{item.name}</span>
               </Link>
             ))}
@@ -141,7 +144,7 @@ const Header: React.FC<HeaderProps> = () => {
             className='lg:hidden p-2 rounded-lg hover:bg-secondary-50 transition-colors duration-200'
             aria-label='Toggle menu'
           >
-            <Icon aria-hidden="true"  name={isMenuOpen ? 'X' : 'Menu'} size={24} />
+            <Icon aria-hidden="true" name={isMenuOpen ? 'X' : 'Menu'} size={24} />
           </button>
 
           {/* User Menu */}
@@ -154,15 +157,15 @@ const Header: React.FC<HeaderProps> = () => {
                 {loading ? (
                   <div className='w-5 h-5 rounded-full bg-gray-200 animate-pulse' />
                 ) : userProfile?.avatar_url ? (
-                  <Image 
-                    src={userProfile.avatar_url} 
-                    alt='Profile' 
+                  <Image
+                    src={userProfile.avatar_url}
+                    alt='Profile'
                     className='w-full h-full rounded-full object-cover'
                   />
                 ) : getInitials() ? (
                   <span className='text-white font-medium text-sm'>{getInitials()}</span>
                 ) : (
-                  <Icon aria-hidden="true"  name='User' size={20} color='white' />
+                  <Icon aria-hidden="true" name='User' size={20} color='white' />
                 )}
               </button>
 
@@ -172,7 +175,7 @@ const Header: React.FC<HeaderProps> = () => {
                     <p className='font-medium text-text-primary'>{getFirstName()}</p>
                     <p className='text-sm text-text-secondary'>Niveau {userProfile?.level || 1}</p>
                   </div>
-                  
+
                   {/* Profile menu items */}
                   {profileItems.map(item => (
                     <Link
@@ -183,11 +186,11 @@ const Header: React.FC<HeaderProps> = () => {
                         location.pathname === item.path.split('?')[0] ? 'bg-secondary-50 text-primary' : ''
                       }`}
                     >
-                      <Icon aria-hidden="true"  name={item.icon} size={18} />
+                      <Icon aria-hidden="true" name={item.icon} size={18} />
                       <span>{item.name}</span>
                     </Link>
                   ))}
-                  
+
                   {/* Admin menu items */}
                   {adminItems.length > 0 && (
                     <>
@@ -201,18 +204,18 @@ const Header: React.FC<HeaderProps> = () => {
                             location.pathname === item.path ? 'bg-secondary-50 text-primary' : ''
                           }`}
                         >
-                          <Icon aria-hidden="true"  name={item.icon} size={18} />
+                          <Icon aria-hidden="true" name={item.icon} size={18} />
                           <span>{item.name}</span>
                         </Link>
                       ))}
                     </>
                   )}
-                  
+
                   <button
                     onClick={handleLogout}
                     className='w-full px-4 py-2 text-left text-text-primary hover:bg-secondary-50 transition-colors duration-200 flex items-center space-x-2 border-t border-border mt-2 pt-2'
                   >
-                    <Icon aria-hidden="true"  name='LogOut' size={16} />
+                    <Icon aria-hidden="true" name='LogOut' size={16} />
                     <span>Déconnexion</span>
                   </button>
                 </div>
@@ -235,11 +238,11 @@ const Header: React.FC<HeaderProps> = () => {
                   location.pathname === item.path ? 'bg-secondary-50 text-primary' : ''
                 }`}
               >
-                <Icon aria-hidden="true"  name={item.icon} size={18} />
+                <Icon aria-hidden="true" name={item.icon} size={18} />
                 <span>{item.name}</span>
               </Link>
             ))}
-            
+
             {/* Profile items in mobile menu */}
             {user && profileItems.map(item => (
               <Link
@@ -250,11 +253,11 @@ const Header: React.FC<HeaderProps> = () => {
                   location.pathname === item.path.split('?')[0] ? 'bg-secondary-50 text-primary' : ''
                 }`}
               >
-                <Icon aria-hidden="true"  name={item.icon} size={18} />
+                <Icon aria-hidden="true" name={item.icon} size={18} />
                 <span>{item.name}</span>
               </Link>
             ))}
-            
+
             {/* Admin items in mobile menu */}
             {adminItems.length > 0 && adminItems.map(item => (
               <Link
@@ -265,17 +268,17 @@ const Header: React.FC<HeaderProps> = () => {
                   location.pathname === item.path ? 'bg-secondary-50 text-primary' : ''
                 }`}
               >
-                <Icon aria-hidden="true"  name={item.icon} size={18} />
+                <Icon aria-hidden="true" name={item.icon} size={18} />
                 <span>{item.name}</span>
               </Link>
             ))}
-            
+
             {user && (
               <button
                 onClick={handleLogout}
                 className='flex items-center space-x-2 w-full px-4 py-3 text-text-primary hover:bg-secondary-50 transition-colors duration-200 rounded-lg'
               >
-                <Icon aria-hidden="true"  name='LogOut' size={16} />
+                <Icon aria-hidden="true" name='LogOut' size={16} />
                 <span>Déconnexion</span>
               </button>
             )}
@@ -286,7 +289,7 @@ const Header: React.FC<HeaderProps> = () => {
                   onClick={() => setIsMenuOpen(false)}
                   className='flex items-center justify-center space-x-2 text-text-secondary hover:text-primary transition-colors duration-200'
                 >
-                  <Icon aria-hidden="true"  name='LogIn' size={18} />
+                  <Icon aria-hidden="true" name='LogIn' size={18} />
                   <span>Connexion</span>
                 </Link>
                 <Link
@@ -294,7 +297,7 @@ const Header: React.FC<HeaderProps> = () => {
                   onClick={() => setIsMenuOpen(false)}
                   className='flex items-center justify-center space-x-2 bg-primary text-white px-4 py-3 rounded-lg hover:bg-primary-700 transition-colors duration-200 font-medium'
                 >
-                  <Icon aria-hidden="true"  name='UserPlus' size={18} />
+                  <Icon aria-hidden="true" name='UserPlus' size={18} />
                   <span>Rejoindre</span>
                 </Link>
               </div>

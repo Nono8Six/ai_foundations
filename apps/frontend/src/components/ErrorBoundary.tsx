@@ -1,9 +1,20 @@
 import React from 'react';
 import Icon from './AppIcon';
-import ErrorContext from '../context/ErrorContext';
+import ErrorContext, { type ErrorLogger } from '../context/ErrorContext';
 
-class ErrorBoundary extends React.Component {
-  constructor(props) {
+interface ErrorBoundaryProps {
+  children: React.ReactNode;
+}
+
+interface ErrorBoundaryState {
+  hasError: boolean;
+}
+
+class ErrorBoundary extends React.Component<
+  ErrorBoundaryProps,
+  ErrorBoundaryState
+> {
+  constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false };
   }
@@ -14,9 +25,10 @@ class ErrorBoundary extends React.Component {
     return { hasError: true };
   }
 
-  componentDidCatch(error, errorInfo) {
-    if (this.context && this.context.reportError) {
-      this.context.reportError({ error, errorInfo });
+  componentDidCatch(error: unknown, errorInfo: unknown) {
+    const logger = this.context as ErrorLogger;
+    if (logger) {
+      logger(error);
     } else {
       console.error('Error caught by ErrorBoundary:', error, errorInfo);
     }
@@ -86,3 +98,4 @@ class ErrorBoundary extends React.Component {
 }
 
 export default ErrorBoundary;
+

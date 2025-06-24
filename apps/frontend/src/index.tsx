@@ -4,7 +4,7 @@ import App from './App';
 import './styles/tailwind.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-const container = document.getElementById('root');
+const container = document.getElementById('root') as HTMLElement;
 const root = createRoot(container);
 const queryClient = new QueryClient();
 
@@ -15,3 +15,4 @@ root.render(
     </QueryClientProvider>
   </React.StrictMode>
 );
+
