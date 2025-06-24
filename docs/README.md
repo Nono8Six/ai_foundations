@@ -4,9 +4,9 @@ Voici un index rapide de tous les fichiers de documentation disponibles dans ce 
 
 ## Racine du dépôt
 
-- [README-DEV.md](../README-DEV.md) - Guide complet pour configurer et utiliser l'environnement de développement.
-- [README-SUPABASE.md](../README-SUPABASE.md) - Synchronisation de la base de données et bonnes pratiques Supabase.
-- [README-WORKFLOW.md](../README-WORKFLOW.md) - Procédure de récupération et workflow de développement.
+- [README-DEV.md](guides/README-DEV.md) - Guide complet pour configurer et utiliser l'environnement de développement.
+- [README-SUPABASE.md](guides/README-SUPABASE.md) - Synchronisation de la base de données et bonnes pratiques Supabase.
+- [README-WORKFLOW.md](guides/README-WORKFLOW.md) - Procédure de récupération et workflow de développement.
 
 ## Dossier `docs/`
 
