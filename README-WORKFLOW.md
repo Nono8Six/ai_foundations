@@ -121,7 +121,7 @@ docker-compose up --build --force-recreate
 | `pnpm db:push` | Envoyer changements vers cloud |
 | `pnpm gen:types` | Générer types TypeScript |
 | `pnpm test:connection` | Tester connexion Supabase |
-| `pnpm recovery` | Récupération complète |
+| `pnpm recovery` | Récupération de base de l'environnement |
 | `pnpm reset:hard` | Reset total (nettoyage + récupération) |
 
 ## 🏗️ Architecture
