@@ -7,7 +7,13 @@ import TextInput from '../../../components/ui/TextInput';
 import { useAuth } from '../../../context/AuthContext';
 import logger from '../../../utils/logger';
 
-const LoginForm = ({ onSuccess, isLoading, setIsLoading }) => {
+export interface LoginFormProps {
+  onSuccess: (user: unknown) => void;
+  isLoading: boolean;
+  setIsLoading: (value: boolean) => void;
+}
+
+const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, isLoading, setIsLoading }) => {
   const {
     register,
     handleSubmit,

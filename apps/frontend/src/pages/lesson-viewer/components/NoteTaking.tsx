@@ -1,7 +1,28 @@
 import React, { useState } from 'react';
 import Icon from '../../../components/AppIcon';
 
-const NoteTaking = ({ isOpen, onClose, notes, onAddNote, selectedText }) => {
+interface Note {
+  id: number;
+  content: string;
+  timestamp: string;
+  selectedText?: string;
+}
+
+export interface NoteTakingProps {
+  isOpen: boolean;
+  onClose: () => void;
+  notes: Note[];
+  onAddNote: (note: string) => void;
+  selectedText?: string;
+}
+
+const NoteTaking: React.FC<NoteTakingProps> = ({
+  isOpen,
+  onClose,
+  notes,
+  onAddNote,
+  selectedText,
+}) => {
   const [newNote, setNewNote] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [noteFilter, setNoteFilter] = useState('all'); // all, highlights, personal
