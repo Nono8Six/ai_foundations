@@ -1,7 +1,17 @@
 import React from 'react';
 import Icon from '../../../components/AppIcon';
 
-const ContentSearch = ({ searchQuery, onSearchChange, onCreateNew }) => {
+export interface ContentSearchProps {
+  searchQuery: string;
+  onSearchChange: (query: string) => void;
+  onCreateNew: () => void;
+}
+
+const ContentSearch: React.FC<ContentSearchProps> = ({
+  searchQuery,
+  onSearchChange,
+  onCreateNew,
+}) => {
   return (
     <div className='space-y-3'>
       {/* Search Input */}

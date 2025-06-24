@@ -8,7 +8,13 @@ import Spinner from '../../../components/ui/Spinner';
 import { uploadToBucket, BUCKETS } from '../../../services/storageService';
 import logger from '../../../utils/logger';
 
-const CourseEditor = ({ course, onSave, onDelete }) => {
+export interface CourseEditorProps {
+  course: Record<string, any> | null;
+  onSave: (data: Record<string, any>) => void;
+  onDelete: () => void;
+}
+
+const CourseEditor: React.FC<CourseEditorProps> = ({ course, onSave, onDelete }) => {
   const [formData, setFormData] = useState({
     title: course?.title || '',
     description: course?.description || '',

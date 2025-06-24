@@ -3,7 +3,12 @@ import { useForm } from 'react-hook-form';
 import Icon from '../../../components/AppIcon';
 import { useAuth } from '../../../context/AuthContext';
 
-const RegisterForm = ({ isLoading, setIsLoading }) => {
+export interface RegisterFormProps {
+  isLoading: boolean;
+  setIsLoading: (value: boolean) => void;
+}
+
+const RegisterForm: React.FC<RegisterFormProps> = ({ isLoading, setIsLoading }) => {
   const {
     register,
     handleSubmit,

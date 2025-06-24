@@ -1,7 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Icon from '../../../components/AppIcon';
 
-const VideoPlayer = ({ videoUrl, transcript, onProgress }) => {
+export interface VideoPlayerProps {
+  videoUrl: string | null;
+  transcript: string | null;
+  onProgress: (percent: number) => void;
+}
+
+const VideoPlayer: React.FC<VideoPlayerProps> = ({
+  videoUrl,
+  transcript,
+  onProgress,
+}) => {
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);

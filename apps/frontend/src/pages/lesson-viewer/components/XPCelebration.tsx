@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import Icon from '../../../components/AppIcon';
 
-const XPCelebration = ({ xpEarned, onClose }) => {
+export interface XPCelebrationProps {
+  xpEarned: number;
+  onClose: () => void;
+}
+
+const XPCelebration: React.FC<XPCelebrationProps> = ({ xpEarned, onClose }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [animationPhase, setAnimationPhase] = useState('enter');
 
