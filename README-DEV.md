@@ -15,7 +15,7 @@ Ce guide vous aidera à configurer et utiliser l'environnement de développement
 
 1. **Cloner le dépôt**
    ```bash
-   git clone https://github.com/votre-utilisateur/ai-foundations.git
+   git clone https://github.com/your-username/ai-foundations.git
    cd ai-foundations
    ```
 
@@ -45,9 +45,6 @@ Ce guide vous aidera à configurer et utiliser l'environnement de développement
    # JWT Secret (généré automatiquement)
    SUPABASE_JWT_SECRET=votre-jwt-secret-genere
    
-   # Configuration pgAdmin (à modifier pour la production)
-   PGADMIN_EMAIL=admin@votredomaine.com
-   PGADMIN_PASSWORD=change-me-please
    ```
 - `SUPABASE_PROJECT_REF` : identifiant de votre projet Supabase
 - `SUPABASE_ACCESS_TOKEN` : token personnel pour la CLI Supabase
@@ -71,9 +68,6 @@ docker-compose ps
 - **Supabase Studio** : http://localhost:54323
   - Email: votre-email@example.com
   - Mot de passe: défini dans `.env`
-- **pgAdmin** : http://localhost:5050
-  - Email: admin@example.com
-  - Mot de passe: admin (à changer dans `.env`)
 
 ## 🛠 Commandes Utiles
 
