@@ -122,14 +122,20 @@ ai-foundations/
 │   │   └── package.json   # Dépendances frontend
 │   └── backend/           # Configuration Supabase et logique métier
 │       ├── supabase/      # Configuration Supabase
-│       │   ├── migrations/ # Migrations de la base de données
-│       │   └── functions/  # Fonctions PostgreSQL personnalisées
-│       └── package.json   # Scripts et dépendances backend
+│       │   └── migrations/ # Migrations de la base de données
+│       └── package.json   # Dépendances Supabase CLI
 ├── apps/frontend/nginx/   # Configuration Nginx (pour la production)
 ├── docker-compose.yml     # Configuration Docker Compose pour le développement
 ├── Dockerfile             # Définition des images Docker
 └── .env.example           # Modèle de configuration d'environnement
 ```
+
+### État du Développement Backend
+
+Le dossier `apps/backend` contient uniquement la configuration Supabase et les
+scripts de migration. Aucune API Node.js n'est actuellement déployée. Le
+développement d'un service backend personnalisé reste donc optionnel et pourra
+être envisagé ultérieurement en fonction des besoins.
 
 ## 🔒 Sécurité
 
