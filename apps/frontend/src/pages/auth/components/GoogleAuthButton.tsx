@@ -1,7 +1,17 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 
-const GoogleAuthButton = ({ isLoading, setIsLoading, disabled }) => {
+export interface GoogleAuthButtonProps {
+  isLoading: boolean;
+  setIsLoading: (value: boolean) => void;
+  disabled?: boolean;
+}
+
+const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({
+  isLoading,
+  setIsLoading,
+  disabled,
+}) => {
   const { signInWithGoogle } = useAuth();
   const [error, setError] = useState<string | null>(null);
 

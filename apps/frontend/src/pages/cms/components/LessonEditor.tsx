@@ -3,7 +3,13 @@ import Icon from '../../../components/AppIcon';
 import { uploadToBucket, BUCKETS } from '../../../services/storageService';
 import logger from '../../../utils/logger';
 
-const LessonEditor = ({ lesson, onSave, onDelete }) => {
+export interface LessonEditorProps {
+  lesson: Record<string, any> | null;
+  onSave: (data: Record<string, any>) => void;
+  onDelete: () => void;
+}
+
+const LessonEditor: React.FC<LessonEditorProps> = ({ lesson, onSave, onDelete }) => {
   const [formData, setFormData] = useState({
     title: lesson?.title || '',
     content: lesson?.content || '',

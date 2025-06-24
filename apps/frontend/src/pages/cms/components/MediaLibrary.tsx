@@ -18,7 +18,12 @@ interface MediaItem {
   type: string;
 }
 
-const MediaLibrary = ({ onClose, onSelectMedia }) => {
+export interface MediaLibraryProps {
+  onClose: () => void;
+  onSelectMedia: (item: MediaItem) => void;
+}
+
+const MediaLibrary: React.FC<MediaLibraryProps> = ({ onClose, onSelectMedia }) => {
   const [activeTab, setActiveTab] = useState('images');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedItems, setSelectedItems] = useState<string[]>([]);

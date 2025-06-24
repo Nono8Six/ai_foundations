@@ -2,7 +2,11 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import Icon from '../../../components/AppIcon';
 
-const CookieNotice = ({ onAccept }) => {
+export interface CookieNoticeProps {
+  onAccept: () => void;
+}
+
+const CookieNotice: React.FC<CookieNoticeProps> = ({ onAccept }) => {
   return (
     <motion.div
       initial={{ y: 100, opacity: 0 }}

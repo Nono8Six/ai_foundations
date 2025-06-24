@@ -8,7 +8,12 @@ interface Bookmark {
   preview: string;
 }
 
-const TextContent = ({ content, onProgress }) => {
+export interface TextContentProps {
+  content: string;
+  onProgress: (percent: number) => void;
+}
+
+const TextContent: React.FC<TextContentProps> = ({ content, onProgress }) => {
   const contentRef = useRef(null);
   const [readingProgress, setReadingProgress] = useState(0);
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);

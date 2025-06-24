@@ -1,6 +1,10 @@
 import React from 'react';
 
-const ProgressBar = ({ progress }) => {
+export interface ProgressBarProps {
+  progress: number;
+}
+
+const ProgressBar: React.FC<ProgressBarProps> = ({ progress }) => {
   return (
     <div className='w-full'>
       <div className='flex items-center justify-between mb-1'>

@@ -1,7 +1,11 @@
 import React from 'react';
 import Icon from '../../../components/AppIcon';
 
-const PerformanceMetrics = ({ metrics }) => {
+export interface PerformanceMetricsProps {
+  metrics: Record<string, any> | null;
+}
+
+const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({ metrics }) => {
   // Filter and map available metrics from props
   const availableMetrics = [];
 

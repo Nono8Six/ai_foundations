@@ -1,7 +1,23 @@
 import React from 'react';
 import Icon from '../../../components/AppIcon';
 
-const ActionBar = ({ onPrevious, onNext, onComplete, onToggleNotes, isCompleted, progress }) => {
+export interface ActionBarProps {
+  onPrevious: () => void;
+  onNext: () => void;
+  onComplete: () => void;
+  onToggleNotes: () => void;
+  isCompleted: boolean;
+  progress: number;
+}
+
+const ActionBar: React.FC<ActionBarProps> = ({
+  onPrevious,
+  onNext,
+  onComplete,
+  onToggleNotes,
+  isCompleted,
+  progress,
+}) => {
   return (
     <div className='bg-surface border-t border-border p-4'>
       <div className='max-w-4xl mx-auto flex items-center justify-between'>
