@@ -33,12 +33,35 @@ interface ModuleItem {
   lessons: LessonItem[];
 }
 
+interface LessonResource {
+  id: string;
+  title: string;
+  url: string;
+  size: string;
+  type: string;
+}
+
+interface CurrentLesson {
+  id: string;
+  title: string;
+  type: string;
+  duration: string;
+  xpReward: number;
+  module: { id: string; title: string; course: { id: string; title: string } };
+  content: {
+    videoUrl: string | null;
+    transcript: string | null;
+    textContent: string | null;
+  };
+  resources: LessonResource[];
+}
+
 const LessonViewer = () => {
   const navigate = useNavigate();
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isNotesOpen, setIsNotesOpen] = useState(false);
-  const [currentLesson, setCurrentLesson] = useState<Record<string, any> | null>(null);
+  const [currentLesson, setCurrentLesson] = useState<CurrentLesson | null>(null);
   const [lessonProgress, setLessonProgress] = useState(0);
   const [showXPCelebration, setShowXPCelebration] = useState(false);
   const [userNotes, setUserNotes] = useState<Note[]>([]);
