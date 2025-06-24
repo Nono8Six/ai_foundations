@@ -5,6 +5,11 @@ apps\frontend\node_modules
 
 # Environment files
 .env
+!.env.example
+.env.corrupted.backup*
+
+# Misc build/debug artifacts
+pnpm*
 
 # Supabase directories
 apps/backend/supabase/.temp/
