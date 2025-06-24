@@ -2,18 +2,29 @@ import React, { useState } from 'react';
 import Icon from '../../../components/AppIcon';
 import logger from '../../../utils/logger';
 
-const ContentTree = ({
+export interface ContentTreeProps {
+  contentData: Record<string, any>[];
+  searchQuery: string;
+  selectedContent: Record<string, any> | null;
+  selectedItems: string[];
+  onContentSelect: (item: Record<string, any>) => void;
+  onItemsSelect: (items: string[]) => void;
+  onReorder?: (newOrder: Record<string, any>[]) => void;
+}
+
+const ContentTree: React.FC<ContentTreeProps> = ({
   contentData,
   searchQuery,
   selectedContent,
   selectedItems,
   onContentSelect,
   onItemsSelect,
+  onReorder,
 }) => {
   const [expandedItems, setExpandedItems] = useState(new Set([1]));
   const [draggedItem, setDraggedItem] = useState<Record<string, any> | null>(null);
 
-  const toggleExpanded = id => {
+  const toggleExpanded = (id: string | number): void => {
     const newExpanded = new Set(expandedItems);
     if (newExpanded.has(id)) {
       newExpanded.delete(id);
@@ -23,7 +34,10 @@ const ContentTree = ({
     setExpandedItems(newExpanded);
   };
 
-  const handleItemSelect = (item, event) => {
+  const handleItemSelect = (
+    item: Record<string, any>,
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ): void => {
     if (event.ctrlKey || event.metaKey) {
       const newSelected = selectedItems.includes(item.id)
         ? selectedItems.filter(id => id !== item.id)
@@ -35,17 +49,23 @@ const ContentTree = ({
     }
   };
 
-  const handleDragStart = (e, item) => {
+  const handleDragStart = (
+    e: React.DragEvent<HTMLDivElement>,
+    item: Record<string, any>
+  ): void => {
     setDraggedItem(item);
     e.dataTransfer.effectAllowed = 'move';
   };
 
-  const handleDragOver = e => {
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>): void => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
   };
 
-  const handleDrop = (e, targetItem) => {
+  const handleDrop = (
+    e: React.DragEvent<HTMLDivElement>,
+    targetItem: Record<string, any>
+  ): void => {
     e.preventDefault();
     if (draggedItem && draggedItem.id !== targetItem.id) {
       logger.debug('Reordering:', draggedItem, 'to', targetItem);
@@ -54,7 +74,7 @@ const ContentTree = ({
     setDraggedItem(null);
   };
 
-  const getStatusIcon = status => {
+  const getStatusIcon = (status?: string): JSX.Element => {
     switch (status) {
       case 'published':
         return <Icon aria-hidden="true"  name='CheckCircle' size={16} className='text-accent' />;
@@ -65,7 +85,7 @@ const ContentTree = ({
     }
   };
 
-  const getTypeIcon = type => {
+  const getTypeIcon = (type?: string): JSX.Element => {
     switch (type) {
       case 'course':
         return <Icon aria-hidden="true"  name='BookOpen' size={16} className='text-primary' />;
@@ -78,7 +98,10 @@ const ContentTree = ({
     }
   };
 
-  const filterContent = (items, query) => {
+  const filterContent = (
+    items: Record<string, any>[],
+    query: string
+  ): Record<string, any>[] => {
     if (!query) return items;
     return items.filter(
       item =>
@@ -87,7 +110,9 @@ const ContentTree = ({
     );
   };
 
-  const renderLessons = lessons => {
+  const renderLessons = (
+    lessons: Record<string, any>[]
+  ): React.ReactNode => {
     if (!lessons || lessons.length === 0) return null;
 
     return (
@@ -149,7 +174,9 @@ const ContentTree = ({
     );
   };
 
-  const renderModules = modules => {
+  const renderModules = (
+    modules: Record<string, any>[]
+  ): React.ReactNode => {
     if (!modules || modules.length === 0) return null;
 
     return (

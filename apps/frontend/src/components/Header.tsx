@@ -4,7 +4,9 @@ import { useAuth } from '../context/AuthContext';
 import Icon from './AppIcon';
 import Image from './AppImage';
 
-const Header = () => {
+export interface HeaderProps {}
+
+const Header: React.FC<HeaderProps> = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { user, userProfile, loading, error, logout } = useAuth();

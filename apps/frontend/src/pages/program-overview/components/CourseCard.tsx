@@ -2,9 +2,14 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Icon from '../../../components/AppIcon';
 import Image from '../../../components/AppImage';
+import type { Course } from '../../../types/course';
 
-const CourseCard = ({ course }) => {
-  const getDifficultyColor = difficulty => {
+export interface CourseCardProps {
+  course: Course;
+}
+
+const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
+  const getDifficultyColor = (difficulty?: string): string => {
     switch (difficulty) {
       case 'Débutant':
         return 'bg-success-100 text-success-700';
@@ -17,7 +22,7 @@ const CourseCard = ({ course }) => {
     }
   };
 
-  const getProgressColor = progress => {
+  const getProgressColor = (progress?: number): string => {
     if (progress === 100) return 'bg-success';
     if (progress > 0) return 'bg-primary';
     return 'bg-secondary-200';

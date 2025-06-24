@@ -2,7 +2,23 @@ import React, { useState } from 'react';
 import Icon from '../../../components/AppIcon';
 import Image from '../../../components/AppImage';
 
-const AchievementCarousel = ({ achievements = [] }) => {
+export interface Achievement {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  rarity: string;
+  xpReward: number;
+  earned?: boolean;
+}
+
+export interface AchievementCarouselProps {
+  achievements?: Achievement[];
+}
+
+const AchievementCarousel: React.FC<AchievementCarouselProps> = ({
+  achievements = [],
+}) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const getRarityColor = rarity => {
