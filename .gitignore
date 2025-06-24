@@ -1,13 +1,14 @@
 node_modules
+packages\tsconfig-vite\node_modules\@types
+apps\backend\node_modules
+apps\frontend\node_modules
 
 # Environment files
 .env
 
 # Supabase directories
 apps/backend/supabase/.temp/
-supabase/.temp/
 apps/backend/supabase/.branches/
-supabase/.branches/
 
 # Removed docs
 
