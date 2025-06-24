@@ -1,6 +1,6 @@
 # Repository Overview
 
-This document provides a quick tour of the project layout. For a visual project structure, see the "Structure du Projet" section in [README.md](../README.md) which includes an architecture diagram. Development setup steps are detailed in [README-DEV.md](../README-DEV.md) and database workflows in [README-SUPABASE.md](../README-SUPABASE.md).
+This document provides a quick tour of the project layout. For a visual project structure, see the "Structure du Projet" section in [README.md](../README.md) which includes an architecture diagram. Development setup steps are detailed in [README-DEV.md](guides/README-DEV.md) and database workflows in [README-SUPABASE.md](guides/README-SUPABASE.md).
 
 ## Top-Level Folders and Files
 
@@ -16,7 +16,7 @@ This document provides a quick tour of the project layout. For a visual project 
 - **`Makefile`** – Shortcuts for common commands.
 - **`pnpm-workspace.yaml` and lockfile** – Monorepo dependency management.
 - **`tsconfig.json`** – Base TypeScript configuration.
-- **`README.md`**, **`README-DEV.md`**, **`README-SUPABASE.md`**, **`README-WORKFLOW.md`** – Main documentation and workflow guides.
+- **`README.md`**, **`docs/guides/README-DEV.md`**, **`docs/guides/README-SUPABASE.md`**, **`docs/guides/README-WORKFLOW.md`** – Main documentation and workflow guides.
 
 ## Applications Directory – `apps/`
 
@@ -42,6 +42,6 @@ This document provides a quick tour of the project layout. For a visual project 
 - **`docs/`** – References for stored functions (`function_inventory.md`) and RLS policies (`rls_policies.md`).
 - **`package.json`** – Scripts for running the Supabase CLI and generating types.
 
-For the overall workflow of keeping the backend in sync with Supabase Cloud, consult the “Workflow de Développement” section in [README-WORKFLOW.md](../README-WORKFLOW.md).
+For the overall workflow of keeping the backend in sync with Supabase Cloud, consult the “Workflow de Développement” section in [README-WORKFLOW.md](guides/README-WORKFLOW.md).
 
 
