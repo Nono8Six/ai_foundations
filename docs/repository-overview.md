@@ -8,11 +8,11 @@ This document provides a quick tour of the project layout. For a visual project 
   - `frontend/` – React application (Vite). Includes components, pages and hooks.
   - `backend/` – Supabase configuration and related scripts.
 - **`docs/`** – Additional documentation such as the style guide and UI references.
-- **`nginx/`** – Template used when building the production container.
+- **`apps/frontend/nginx/`** – Template used when building the production container.
 - **`packages/`** – Shared package configurations (e.g., TypeScript config).
 - **`scripts/`** – Utility scripts for maintenance and environment validation.
 - **`docker-compose.yml`** – Defines development containers.
-- **`Dockerfile` / `Dockerfile.backend`** – Build instructions for frontend and backend images.
+- **`Dockerfile` / `apps/backend/Dockerfile`** – Build instructions for frontend and backend images.
 - **`Makefile`** – Shortcuts for common commands.
 - **`pnpm-workspace.yaml` and lockfile** – Monorepo dependency management.
 - **`tsconfig.json`** – Base TypeScript configuration.

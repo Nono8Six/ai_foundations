@@ -32,7 +32,7 @@ FROM nginx:1.27-alpine AS production
 RUN apk add --no-cache curl
 
 # Configuration Nginx
-COPY nginx/default.conf.template /etc/nginx/templates/default.conf.template
+COPY apps/frontend/nginx/default.conf.template /etc/nginx/templates/default.conf.template
 
 # Copie des fichiers construits depuis l'étape builder
 COPY --from=builder /app/apps/frontend/dist /usr/share/nginx/html

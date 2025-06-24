@@ -1,16 +1,52 @@
+# nginx/default.conf.template
+
 server {
-    listen       ${PORT};
-    server_name  localhost;
+  # La ligne magique :
+  # - Sur Google Cloud, ${PORT} sera remplacé par 8080.
+  # - En local avec Docker, si la variable PORT n'est pas définie, il utilisera 80 par défaut.
+  listen ${PORT};
 
-    location / {
-        root   /usr/share/nginx/html;
-        index  index.html index.htm;
-        try_files $uri $uri/ /index.html;
-    }
+  server_name localhost;
+  access_log /dev/stdout;
+  error_log /dev/stderr;
 
-    # Gestion des erreurs
-    error_page   500 502 503 504  /50x.html;
-    location = /50x.html {
-        root   /usr/share/nginx/html;
-    }
+  # Gestion des erreurs
+  error_page 500 502 503 504 /50x.html;
+  location = /50x.html {
+    root /usr/share/nginx/html;
+  }
+
+  # Configuration de la racine
+  root /usr/share/nginx/html;
+  index index.html;
+
+  # Gestion des routes pour les SPA (Single Page Application)
+  location / {
+    try_files $uri $uri/ /index.html;
+    add_header Cache-Control "no-cache";
+  }
+
+  # Configuration du cache pour les assets
+  location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
+    expires 1y;
+    add_header Cache-Control "public, max-age=31536000, immutable";
+    try_files $uri =404;
+  }
+
+  # Désactiver le logging des requêtes de santé
+  location = /healthz {
+    access_log off;
+    return 200 "healthy\n";
+  }
+
+  # Sécurité supplémentaire
+  add_header X-Content-Type-Options "nosniff" always;
+  add_header X-XSS-Protection "1; mode=block" always;
+  add_header X-Frame-Options "SAMEORIGIN" always;
+
+  # Limite du corps de la requête
+  client_max_body_size 10m;
+
+  # Désactiver l'affichage de la version de Nginx
+  server_tokens off;
 }
