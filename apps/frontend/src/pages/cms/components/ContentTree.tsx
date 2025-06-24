@@ -2,6 +2,36 @@ import React, { useState } from 'react';
 import Icon from '../../../components/AppIcon';
 import logger from '../../../utils/logger';
 
+interface LessonItem {
+  id?: string;
+  type: 'lesson';
+  title: string;
+  duration?: number;
+  status?: string;
+  completions?: number;
+}
+
+interface ModuleItem {
+  id?: string;
+  type: 'module';
+  title: string;
+  description?: string;
+  lessons?: LessonItem[];
+}
+
+interface CourseItem {
+  id?: string;
+  type: 'course';
+  title: string;
+  description?: string;
+  price?: number;
+  status?: string;
+  enrollments?: number;
+  modules?: ModuleItem[];
+}
+
+type ContentItem = CourseItem | ModuleItem | LessonItem;
+
 const ContentTree = ({
   contentData,
   searchQuery,
@@ -11,7 +41,7 @@ const ContentTree = ({
   onItemsSelect,
 }) => {
   const [expandedItems, setExpandedItems] = useState(new Set([1]));
-  const [draggedItem, setDraggedItem] = useState<Record<string, any> | null>(null);
+  const [draggedItem, setDraggedItem] = useState<ContentItem | null>(null);
 
   const toggleExpanded = id => {
     const newExpanded = new Set(expandedItems);
