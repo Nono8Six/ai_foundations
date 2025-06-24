@@ -2,45 +2,30 @@ import React, { useState } from 'react';
 import Icon from '../../../components/AppIcon';
 import logger from '../../../utils/logger';
 
-// Typages TypeScript détaillés pour chaque niveau
-interface LessonItem {
+// Unified representation of a content node in the tree
+export interface ContentNode {
   id: string;
-  type: 'lesson';
   title: string;
-  duration?: number;
+  type: 'course' | 'module' | 'lesson';
   status?: string;
-  completions?: number;
-}
-
-interface ModuleItem {
-  id: string;
-  type: 'module';
-  title: string;
-  description?: string;
-  lessons?: LessonItem[];
-}
-
-interface CourseItem {
-  id: string;
-  type: 'course';
-  title: string;
   description?: string;
   price?: number;
-  status?: string;
   enrollments?: number;
-  modules?: ModuleItem[];
+  duration?: number;
+  completions?: number;
+  children?: ContentNode[];
+  modules?: ContentNode[];
+  lessons?: ContentNode[];
 }
 
-type ContentItem = CourseItem | ModuleItem | LessonItem;
-
 interface ContentTreeProps {
-  contentData: CourseItem[];
+  contentData: ContentNode[];
   searchQuery: string;
-  selectedContent: ContentItem | null;
+  selectedContent: ContentNode | null;
   selectedItems: string[];
-  onContentSelect: (item: ContentItem) => void;
+  onContentSelect: (item: ContentNode) => void;
   onItemsSelect: (items: string[]) => void;
-  onReorder?: (newOrder: ContentItem[]) => void;
+  onReorder?: (newOrder: ContentNode[]) => void;
 }
 
 const ContentTree: React.FC<ContentTreeProps> = ({
@@ -54,7 +39,7 @@ const ContentTree: React.FC<ContentTreeProps> = ({
 }) => {
   // Par défaut, aucun élément n'est déplié
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
-  const [draggedItem, setDraggedItem] = useState<ContentItem | null>(null);
+  const [draggedItem, setDraggedItem] = useState<ContentNode | null>(null);
 
   const toggleExpanded = (id: string): void => {
     const newExpanded = new Set(expandedItems);
@@ -67,7 +52,7 @@ const ContentTree: React.FC<ContentTreeProps> = ({
   };
 
   const handleItemSelect = (
-    item: ContentItem,
+    item: ContentNode,
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ): void => {
     if (event.ctrlKey || event.metaKey) {
@@ -83,7 +68,7 @@ const ContentTree: React.FC<ContentTreeProps> = ({
 
   const handleDragStart = (
     e: React.DragEvent<HTMLDivElement>,
-    item: ContentItem
+    item: ContentNode
   ): void => {
     setDraggedItem(item);
     e.dataTransfer.effectAllowed = 'move';
@@ -96,7 +81,7 @@ const ContentTree: React.FC<ContentTreeProps> = ({
 
   const handleDrop = (
     e: React.DragEvent<HTMLDivElement>,
-    targetItem: ContentItem
+    targetItem: ContentNode
   ): void => {
     e.preventDefault();
     if (draggedItem && draggedItem.id !== targetItem.id) {
@@ -135,9 +120,9 @@ const ContentTree: React.FC<ContentTreeProps> = ({
 
   // Recherche plein texte (intitulé ou description)
   const filterContent = (
-    items: CourseItem[],
+    items: ContentNode[],
     query: string
-  ): CourseItem[] => {
+  ): ContentNode[] => {
     if (!query) return items;
     return items.filter(
       item =>
@@ -148,7 +133,7 @@ const ContentTree: React.FC<ContentTreeProps> = ({
 
   // Affiche les leçons d'un module
   const renderLessons = (
-    lessons?: LessonItem[]
+    lessons?: ContentNode[]
   ): React.ReactNode => {
     if (!lessons || lessons.length === 0) return null;
     return (
@@ -212,7 +197,7 @@ const ContentTree: React.FC<ContentTreeProps> = ({
 
   // Affiche les modules d'un cours
   const renderModules = (
-    modules?: ModuleItem[]
+    modules?: ContentNode[]
   ): React.ReactNode => {
     if (!modules || modules.length === 0) return null;
     return (
