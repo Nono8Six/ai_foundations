@@ -11,7 +11,7 @@ interface NavItem {
   icon: IconName;
 }
 
-const Header: React.FC = () => {
+const Header = (): JSX.Element => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { user, userProfile, loading, error, logout } = useAuth();
