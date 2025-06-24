@@ -177,7 +177,7 @@ Les variables sensibles sont gérées via des fichiers `.env` qui ne doivent JAM
 
 ## 📚 Documentation Supplémentaire
 
-- [Guide du Développeur](README-DEV.md) - Instructions détaillées pour le développement local
+ - [Guide du Développeur](docs/guides/README-DEV.md) - Instructions détaillées pour le développement local
 - [Documentation Supabase](https://supabase.com/docs) - Documentation officielle de Supabase
 - [Documentation Docker](https://docs.docker.com/) - Guide d'utilisation de Docker
 - [Documentation React](https://reactjs.org/) - Documentation officielle de React
@@ -255,8 +255,8 @@ Le frontend est configuré pour le hot-reload automatique. Modifiez simplement l
 4. Créez une Pull Request sur GitHub
 ## 📚 Documentation supplémentaire
 
-- [Guide du Développeur](README-DEV.md) - Documentation complète pour les développeurs
-- [Guide Supabase](README-SUPABASE.md) - Synchronisation de la base de données
+ - [Guide du Développeur](docs/guides/README-DEV.md) - Documentation complète pour les développeurs
+ - [Guide Supabase](docs/guides/README-SUPABASE.md) - Synchronisation de la base de données
 - [Documentation Supabase](https://supabase.com/docs)
 - [Documentation Docker](https://docs.docker.com/)
 - [Documentation React](https://reactjs.org/)
