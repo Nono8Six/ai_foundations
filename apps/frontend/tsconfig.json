@@ -5,10 +5,7 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "baseUrl": ".",
-    "types": ["vite/client", "node"],
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+    "types": ["vite/client", "node"]
   },
   "include": ["src/**/*"],
   "exclude": [
