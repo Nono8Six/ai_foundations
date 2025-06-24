@@ -6,7 +6,19 @@ import Icon from '../../../components/AppIcon';
 import Image from '../../../components/AppImage';
 import logger from '../../../utils/logger';
 
-const PersonalInfoTab = ({ userData }) => {
+export interface PersonalInfoTabProps {
+  userData: {
+    id: string;
+    name: string;
+    email: string;
+    avatar: string;
+    phone?: string | null;
+    profession?: string | null;
+    company?: string | null;
+  };
+}
+
+const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ userData }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState(userData.avatar);
   const [isSubmitting, setIsSubmitting] = useState(false);

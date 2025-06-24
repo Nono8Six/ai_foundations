@@ -32,8 +32,14 @@ export const AdminCourseProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
-  const createCourse = useMutation({
-    mutationFn: async course => {
+  const createCourse = useMutation<
+    Database['public']['Tables']['courses']['Row'],
+    Error,
+    Database['public']['Tables']['courses']['Insert']
+  >({
+    mutationFn: async (
+      course: Database['public']['Tables']['courses']['Insert']
+    ) => {
       const { data, error } = await safeQuery(() =>
         supabaseClient.from('courses').insert(course).select().single()
       );
@@ -43,8 +49,18 @@ export const AdminCourseProvider = ({ children }: { children: ReactNode }) => {
     onSuccess: () => queryClient.invalidateQueries(['courses', user?.id]),
   });
 
-  const updateCourse = useMutation({
-    mutationFn: async ({ id, updates }) => {
+  const updateCourse = useMutation<
+    Database['public']['Tables']['courses']['Row'],
+    Error,
+    { id: string; updates: Database['public']['Tables']['courses']['Update'] }
+  >({
+    mutationFn: async ({
+      id,
+      updates,
+    }: {
+      id: string;
+      updates: Database['public']['Tables']['courses']['Update'];
+    }) => {
       const { data, error } = await safeQuery(() =>
         supabaseClient
           .from('courses')
@@ -69,8 +85,14 @@ export const AdminCourseProvider = ({ children }: { children: ReactNode }) => {
     onSuccess: () => queryClient.invalidateQueries(['courses', user?.id]),
   });
 
-  const createModule = useMutation({
-    mutationFn: async module => {
+  const createModule = useMutation<
+    Database['public']['Tables']['modules']['Row'],
+    Error,
+    Database['public']['Tables']['modules']['Insert']
+  >({
+    mutationFn: async (
+      module: Database['public']['Tables']['modules']['Insert']
+    ) => {
       const { data, error } = await safeQuery(() =>
         supabaseClient.from('modules').insert(module).select().single()
       );
@@ -80,8 +102,18 @@ export const AdminCourseProvider = ({ children }: { children: ReactNode }) => {
     onSuccess: () => queryClient.invalidateQueries(['courses', user?.id]),
   });
 
-  const updateModule = useMutation({
-    mutationFn: async ({ id, updates }) => {
+  const updateModule = useMutation<
+    Database['public']['Tables']['modules']['Row'],
+    Error,
+    { id: string; updates: Database['public']['Tables']['modules']['Update'] }
+  >({
+    mutationFn: async ({
+      id,
+      updates,
+    }: {
+      id: string;
+      updates: Database['public']['Tables']['modules']['Update'];
+    }) => {
       const { data, error } = await safeQuery(() =>
         supabaseClient
           .from('modules')

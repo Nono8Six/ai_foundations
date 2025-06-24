@@ -1,7 +1,32 @@
 import React, { useState } from 'react';
 import Icon from '../../../components/AppIcon';
 
-const LessonNavigation = ({ isOpen, onClose, moduleStructure }) => {
+interface Lesson {
+  id: string;
+  title: string;
+  duration: string;
+  completed: boolean;
+  current: boolean;
+}
+
+interface Module {
+  id: string;
+  title: string;
+  lessons: Lesson[];
+}
+
+export interface LessonNavigationProps {
+  isOpen: boolean;
+  onClose: () => void;
+  moduleStructure: Module[];
+  currentLessonId?: string;
+}
+
+const LessonNavigation: React.FC<LessonNavigationProps> = ({
+  isOpen,
+  onClose,
+  moduleStructure,
+}) => {
   const [expandedModules, setExpandedModules] = useState(new Set([1])); // First module expanded by default
 
   const toggleModule = moduleId => {

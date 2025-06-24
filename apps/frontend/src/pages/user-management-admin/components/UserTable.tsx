@@ -3,7 +3,17 @@ import Icon from '../../../components/AppIcon';
 import Image from '../../../components/AppImage';
 import logger from '../../../utils/logger';
 
-const UserTable = ({
+export interface UserTableProps {
+  users: Record<string, any>[];
+  selectedUsers: string[];
+  sortConfig: { key: string; direction: 'asc' | 'desc' };
+  onSort: (key: string) => void;
+  onUserSelect: (id: string) => void;
+  onSelectAll: (checked: boolean) => void;
+  onUserClick: (id: string) => void;
+}
+
+const UserTable: React.FC<UserTableProps> = ({
   users,
   selectedUsers,
   sortConfig,

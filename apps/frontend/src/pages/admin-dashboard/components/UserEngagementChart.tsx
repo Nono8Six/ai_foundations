@@ -18,7 +18,7 @@ interface EngagementData {
   sessions: number;
 }
 
-const CustomTooltip = ({ active, payload, label }) => {
+const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: any[]; label?: string }) => {
   if (active && payload && payload.length) {
     return (
       <div className='bg-surface p-3 border border-border rounded-lg shadow-medium'>
@@ -43,7 +43,11 @@ const getStartOfWeek = (date) => {
 };
 
 
-const UserEngagementChart = ({ timeRange }) => {
+export interface UserEngagementChartProps {
+  timeRange: string;
+}
+
+const UserEngagementChart: React.FC<UserEngagementChartProps> = ({ timeRange }) => {
   const [engagementData, setEngagementData] = useState<EngagementData[]>([]);
   const [loading, setLoading] = useState(true);
   const [_summaryStats, setSummaryStats] = useState({ peakUsers: 0, averageSessions: 0 });

@@ -3,7 +3,13 @@ import Icon from '../../../components/AppIcon';
 import Button from '../../../components/ui/Button';
 import Spinner from '../../../components/ui/Spinner';
 
-const ModuleEditor = ({ module, onSave, onDelete }) => {
+export interface ModuleEditorProps {
+  module: Record<string, any> | null;
+  onSave: (data: Record<string, any>) => void;
+  onDelete: () => void;
+}
+
+const ModuleEditor: React.FC<ModuleEditorProps> = ({ module, onSave, onDelete }) => {
   const [formData, setFormData] = useState({
     title: module?.title || '',
     description: module?.description || '',
