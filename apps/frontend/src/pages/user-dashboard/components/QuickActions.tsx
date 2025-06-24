@@ -21,12 +21,12 @@ const QuickActions: React.FC<QuickActionsProps> = ({
   actions = [],
   onAction,
 }) => {
-  const handleAction = action => {
+  const handleAction = (action: QuickAction): void => {
     if (action.link && action.link !== '#') return;
     if (onAction) onAction(action);
   };
 
-  const renderAction = action => {
+  const renderAction = (action: QuickAction): JSX.Element => {
     if (action.link && action.link !== '#') {
       return (
         <Link

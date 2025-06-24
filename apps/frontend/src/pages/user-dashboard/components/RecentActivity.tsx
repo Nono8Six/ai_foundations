@@ -28,7 +28,7 @@ export interface RecentActivityProps {
 const RecentActivity: React.FC<RecentActivityProps> = ({
   activities = [],
 }) => {
-  const getActivityIcon = activity => (
+  const getActivityIcon = (activity: Activity): JSX.Element => (
     <div
       className={`w-10 h-10 rounded-full bg-surface border-2 border-border flex items-center justify-center ${activity.iconColor}`}
     >
@@ -36,7 +36,7 @@ const RecentActivity: React.FC<RecentActivityProps> = ({
     </div>
   );
 
-  const getActivityContent = activity => {
+  const getActivityContent = (activity: Activity): JSX.Element => {
     switch (activity.type) {
       case 'lesson_completed':
         return (
