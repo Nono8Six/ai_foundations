@@ -33,7 +33,7 @@
 
 ```bash
 # Dans le dossier racine du projet
-cd C:/Users/arnau/OneDrive/Documents/GitHub/ai_foundations_lms
+cd path/to/ai_foundations
 
 # Installation de la CLI Supabase (si pas déjà fait)
 npm install -g supabase
@@ -75,8 +75,6 @@ cp .env.example .env
 
 ## 🎯 Commandes Essentielles
 
-## 🎯 Commandes Essentielles
-
 Toutes les commandes suivantes se lancent depuis le dossier `apps/backend`.
 
 | Commande | Description |
@@ -95,7 +93,7 @@ Toutes les commandes suivantes se lancent depuis le dossier `apps/backend`.
 
 1. **Démarrer l'environnement**
    ```bash
-   cd C:/Users/arnau/OneDrive/Documents/GitHub/ai_foundations_lms/apps/backend
+   cd apps/backend
    pnpm supabase:start
    ```
 
@@ -163,48 +161,6 @@ Ce script exécute :
 supabase gen types typescript --local > ../frontend/src/types/database.types.ts
 
 **IMPORTANT** : Ces types sont utilisés par votre application React pour un typage fort. Sans cette étape, TypeScript ne connaîtra pas vos nouvelles tables/champs.
-
-## ⚙️ Configuration initiale
-
-### 1. Installation des outils requis
-
-```bash
-# Installation de la CLI Supabase
-npm install -g supabase
-
-# Vérification de l'installation
-supabase --version
-
-# Connexion à votre compte Supabase
-supabase login
-```
-
-### 2. Configuration du projet local
-
-```bash
-# Se placer dans le dossier backend
-cd apps/backend
-
-# Lier le projet local à votre projet Supabase
-supabase link --project-ref votre-reference-projet
-
-# Télécharger le schéma actuel
-supabase db pull
-```
-
-### 3. Vérification de la configuration
-
-Vérifiez que votre configuration est correcte avec :
-
-```bash
-# Voir la configuration actuelle
-pnpm exec supabase status
-
-# Voir les services en cours d'exécution
-docker ps | grep supabase
-```
-
-Les ports par défaut sont automatiquement configurés par Supabase et Docker.
 
 ## 🔄 Workflow de synchronisation
 
