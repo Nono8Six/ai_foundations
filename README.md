@@ -18,7 +18,6 @@ Plateforme complète pour les cours sur les Fondations de l'IA, construite avec 
 
 1. **Frontend** : Application React avec hot-reload
 2. **Supabase** : Base de données PostgreSQL complète avec authentification
-3. **pgAdmin** : Interface d'administration de base de données (optionnel)
 
 ## 🚀 Démarrage Rapide
 
@@ -51,7 +50,6 @@ Plateforme complète pour les cours sur les Fondations de l'IA, construite avec 
 4. **Accéder aux services**
    - Application : http://localhost:3000
    - Supabase Studio : http://localhost:54323
-   - pgAdmin : http://localhost:5050 (admin@example.com/admin)
 
 ## 🛠 Commandes Utiles
 
@@ -93,7 +91,7 @@ Pour générer l'image optimisée et lancer l'application :
 
 ```bash
 # Assurez-vous de disposer d'un fichier .env configuré
-docker compose -f docker-compose.prod.yml up --build -d
+docker compose up --build -d
 ```
 
 Vous pouvez aussi construire l'image manuellement :
@@ -231,12 +229,7 @@ Le frontend est configuré pour le hot-reload automatique. Modifiez simplement l
 
 ### Accès à la Base de Données
 
-1. **Via pgAdmin** : http://localhost:5050
-   - Email: admin@example.com
-   - Mot de passe: admin
-   - Créez une nouvelle connexion avec les identifiants de Supabase
-
-2. **En Ligne de Commande** :
+1. **En Ligne de Commande** :
    ```bash
    docker-compose exec db psql -U postgres
    ```
