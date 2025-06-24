@@ -33,4 +33,5 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 CMD ["sh", "-c", "cd apps/backend && pnpm dev"]
 
 # Sélectionner l'étape de développement par défaut
-FROM development
+FROM development AS final
+LABEL stage="final"
