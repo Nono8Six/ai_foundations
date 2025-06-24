@@ -32,7 +32,7 @@ Plateforme complète pour les cours sur les Fondations de l'IA, construite avec 
 
 1. **Cloner le dépôt**
    ```bash
-   git clone https://github.com/votre-utilisateur/ai-foundations.git
+   git clone https://github.com/your-username/ai-foundations.git
    cd ai-foundations
    ```
 
