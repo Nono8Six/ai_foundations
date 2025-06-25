@@ -27,7 +27,7 @@ export interface CoursesFromSupabase {
 
 export async function fetchCourses({ search = '', filters = {}, sortBy = 'popularity', page = 1, pageSize = 12 } = {}): Promise<{ data: CoursesRow[]; count: number }> {
   let query = supabaseClient
-    .from<'courses', CoursesRow>('courses')
+    .from('courses')
     .select('*', { count: 'exact' })
     .eq('is_published', true);
 
@@ -90,7 +90,7 @@ export async function fetchCourses({ search = '', filters = {}, sortBy = 'popula
 
 export async function fetchCoursesWithContent(): Promise<CourseWithContent[]> {
   const { data, error } = await supabaseClient
-    .from<'courses', CoursesRow>('courses')
+    .from('courses')
     .select('*, modules(*, lessons(*))')
     .order('created_at');
   if (error) throw error;
@@ -102,22 +102,22 @@ export async function fetchCoursesFromSupabase(userId: string): Promise<CoursesF
     await Promise.all([
       safeQuery(() =>
         supabaseClient
-          .from<'courses', CoursesRow>('courses')
+          .from('courses')
           .select('id, title, cover_image_url, category, thumbnail_url')
           .eq('is_published', true)
       ),
       safeQuery(() =>
         supabaseClient
-          .from<'lessons', LessonsRow>('lessons')
+          .from('lessons')
           .select('id, module_id, is_published, duration')
           .eq('is_published', true)
       ),
       safeQuery(() =>
-        supabaseClient.from<'modules', ModulesRow>('modules').select('id, course_id')
+        supabaseClient.from('modules').select('id, course_id')
       ),
       safeQuery(() =>
         supabaseClient
-          .from<'user_progress', UserProgressRow>('user_progress')
+          .from('user_progress')
           .select('lesson_id, status, completed_at')
           .eq('user_id', userId)
       ),
@@ -137,22 +137,28 @@ export async function fetchCoursesFromSupabase(userId: string): Promise<CoursesF
     progressData.filter(p => p.status === 'completed').map(p => p.lesson_id)
   );
 
-  const moduleCourseMap = modulesData.reduce((acc, module) => {
-    acc[module.id] = module.course_id;
-    return acc;
-  }, {});
-
-  const lessonsByCourse = lessonsData.reduce((acc, lesson) => {
-    const courseId = moduleCourseMap[lesson.module_id];
-    if (!courseId) {
+  const moduleCourseMap = modulesData.reduce<Record<string, string | null>>(
+    (acc, module) => {
+      acc[module.id] = module.course_id;
       return acc;
-    }
-    if (!acc[courseId]) {
-      acc[courseId] = [];
-    }
-    acc[courseId].push(lesson.id);
-    return acc;
-  }, {});
+    },
+    {}
+  );
+
+  const lessonsByCourse = lessonsData.reduce<Record<string, string[]>>(
+    (acc, lesson) => {
+      const courseId = moduleCourseMap[lesson.module_id];
+      if (!courseId) {
+        return acc;
+      }
+      if (!acc[courseId]) {
+        acc[courseId] = [];
+      }
+      acc[courseId].push(lesson.id);
+      return acc;
+    },
+    {}
+  );
 
   const coursesWithStats: CourseProgress[] = coursesData.map(course => {
     const courseLessonIds = lessonsByCourse[course.id] || [];

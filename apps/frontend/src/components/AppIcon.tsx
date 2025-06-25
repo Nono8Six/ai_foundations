@@ -140,7 +140,7 @@ const icons = {
 export type IconName = keyof typeof icons;
 
 interface IconProps extends React.SVGProps<SVGSVGElement> {
-  name: IconName;
+  name: string;
   size?: number;
   color?: string;
   className?: string;
@@ -157,7 +157,7 @@ const Icon: React.FC<IconProps> = ({
   'aria-label': ariaLabel,
   ...props
 }) => {
-  const IconComponent = icons[name];
+  const IconComponent = icons[name as IconName];
 
   const commonProps = {
     size,
