@@ -7,15 +7,16 @@ import Card from '../../../components/ui/Card';
 import Spinner from '../../../components/ui/Spinner';
 import { uploadToBucket, BUCKETS } from '../../../services/storageService';
 import logger from '../../../utils/logger';
+import type { CourseRow } from '../../../types/courseRow';
 
 export interface CourseEditorProps {
-  course: Record<string, any> | null;
-  onSave: (data: Record<string, any>) => void;
+  course: CourseRow | null;
+  onSave: (data: CourseRow) => void;
   onDelete: () => void;
 }
 
 const CourseEditor: React.FC<CourseEditorProps> = ({ course, onSave, onDelete }) => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<Partial<CourseRow>>({
     title: course?.title || '',
     description: course?.description || '',
     price: course?.price || 0,
@@ -28,11 +29,11 @@ const CourseEditor: React.FC<CourseEditorProps> = ({ course, onSave, onDelete })
     tags: course?.tags || [],
   });
 
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<Record<string, string | null>>({});
   const [isUploading, setIsUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  const handleInputChange = (field, value) => {
+  const handleInputChange = (field: keyof CourseRow, value: unknown) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: null }));
@@ -40,7 +41,7 @@ const CourseEditor: React.FC<CourseEditorProps> = ({ course, onSave, onDelete })
   };
 
   const validateForm = () => {
-    const newErrors = {};
+    const newErrors: Record<string, string> = {};
 
     if (!formData.title.trim()) {
       newErrors.title = 'Le titre est requis';

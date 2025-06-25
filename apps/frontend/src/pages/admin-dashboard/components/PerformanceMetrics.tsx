@@ -1,8 +1,9 @@
 import React from 'react';
 import Icon from '../../../components/AppIcon';
+import type { PerformanceMetricsData } from '../../../types/metrics';
 
 export interface PerformanceMetricsProps {
-  metrics: Record<string, any> | null;
+  metrics: PerformanceMetricsData | null;
 }
 
 const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({ metrics }) => {

@@ -2,15 +2,16 @@ import React, { useState } from 'react';
 import Icon from '../../../components/AppIcon';
 import Button from '../../../components/ui/Button';
 import Spinner from '../../../components/ui/Spinner';
+import type { ModuleRow } from '../../../types/moduleRow';
 
 export interface ModuleEditorProps {
-  module: Record<string, any> | null;
-  onSave: (data: Record<string, any>) => void;
+  module: ModuleRow | null;
+  onSave: (data: ModuleRow) => void;
   onDelete: () => void;
 }
 
 const ModuleEditor: React.FC<ModuleEditorProps> = ({ module, onSave, onDelete }) => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<Partial<ModuleRow>>({
     title: module?.title || '',
     description: module?.description || '',
     order: module?.order || 1,
@@ -19,10 +20,10 @@ const ModuleEditor: React.FC<ModuleEditorProps> = ({ module, onSave, onDelete })
     isOptional: module?.isOptional || false,
   });
 
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<Record<string, string | null>>({});
   const [isSaving, setIsSaving] = useState(false);
 
-  const handleInputChange = (field, value) => {
+  const handleInputChange = (field: keyof ModuleRow, value: unknown) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: null }));
@@ -30,7 +31,7 @@ const ModuleEditor: React.FC<ModuleEditorProps> = ({ module, onSave, onDelete })
   };
 
   const validateForm = () => {
-    const newErrors = {};
+    const newErrors: Record<string, string> = {};
 
     if (!formData.title.trim()) {
       newErrors.title = 'Le titre est requis';
