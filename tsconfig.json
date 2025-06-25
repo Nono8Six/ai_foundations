@@ -24,6 +24,7 @@
     "checkJs": false
   },
   "include": [
+    "src/env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     "**/*.d.ts"
