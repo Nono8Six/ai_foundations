@@ -2,15 +2,16 @@ import React from 'react';
 import Icon from '../../../components/AppIcon';
 import Image from '../../../components/AppImage';
 import logger from '../../../utils/logger';
+import type { UserTableRow } from '../../../types/userTableRow';
 
 export interface UserTableProps {
-  users: Record<string, any>[];
+  users: UserTableRow[];
   selectedUsers: string[];
   sortConfig: { key: string; direction: 'asc' | 'desc' };
   onSort: (key: string) => void;
   onUserSelect: (id: string) => void;
   onSelectAll: (checked: boolean) => void;
-  onUserClick: (id: string) => void;
+  onUserClick: (user: UserTableRow) => void;
 }
 
 const UserTable: React.FC<UserTableProps> = ({

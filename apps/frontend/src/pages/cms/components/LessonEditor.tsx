@@ -2,15 +2,16 @@ import React, { useState } from 'react';
 import Icon from '../../../components/AppIcon';
 import { uploadToBucket, BUCKETS } from '../../../services/storageService';
 import logger from '../../../utils/logger';
+import type { LessonRow } from '../../../types/lessonRow';
 
 export interface LessonEditorProps {
-  lesson: Record<string, any> | null;
-  onSave: (data: Record<string, any>) => void;
+  lesson: LessonRow | null;
+  onSave: (data: LessonRow) => void;
   onDelete: () => void;
 }
 
 const LessonEditor: React.FC<LessonEditorProps> = ({ lesson, onSave, onDelete }) => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<Partial<LessonRow>>({
     title: lesson?.title || '',
     content: lesson?.content || '',
     duration: lesson?.duration || 0,
@@ -22,11 +23,11 @@ const LessonEditor: React.FC<LessonEditorProps> = ({ lesson, onSave, onDelete })
     isPreview: lesson?.isPreview || false,
   });
 
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<Record<string, string | null>>({});
   const [isUploading, setIsUploading] = useState(false);
   const [activeTab, setActiveTab] = useState('content');
 
-  const handleInputChange = (field, value) => {
+  const handleInputChange = (field: keyof LessonRow, value: unknown) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: null }));
@@ -34,7 +35,7 @@ const LessonEditor: React.FC<LessonEditorProps> = ({ lesson, onSave, onDelete })
   };
 
   const validateForm = () => {
-    const newErrors = {};
+    const newErrors: Record<string, string> = {};
 
     if (!formData.title.trim()) {
       newErrors.title = 'Le titre est requis';
