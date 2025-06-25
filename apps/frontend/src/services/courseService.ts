@@ -18,6 +18,12 @@ type CourseProgress = CoursesRow & {
   progress: { completed: number; total: number };
 };
 
+export interface CourseFilters {
+  skillLevel?: string[];
+  duration?: string[];
+  category?: string[];
+}
+
 export interface CoursesFromSupabase {
   courses: CourseProgress[];
   lessons: LessonsRow[];
@@ -25,7 +31,22 @@ export interface CoursesFromSupabase {
   userProgress: UserProgressRow[];
 }
 
-export async function fetchCourses({ search = '', filters = {}, sortBy = 'popularity', page = 1, pageSize = 12 } = {}): Promise<{ data: CoursesRow[]; count: number }> {
+export async function fetchCourses(
+  {
+    search = '',
+    filters = {},
+    sortBy = 'popularity',
+    page = 1,
+    pageSize = 12,
+  }: {
+    search?: string;
+    filters?: CourseFilters;
+    sortBy?: string;
+    page?: number;
+    pageSize?: number;
+  } = {}
+): Promise<{ data: CoursesRow[]; count: number }> {
+  const { skillLevel = [], duration = [], category = [] } = filters;
   let query = supabaseClient
     .from('courses')
     .select('*', { count: 'exact' })
@@ -35,20 +56,20 @@ export async function fetchCourses({ search = '', filters = {}, sortBy = 'popula
     query = query.ilike('title', `%${search}%`);
   }
 
-  if (filters.skillLevel && filters.skillLevel.length) {
-    query = query.in('difficulty', filters.skillLevel);
+  if (skillLevel.length) {
+    query = query.in('difficulty', skillLevel);
   }
 
-  if (filters.category && filters.category.length) {
-    query = query.in('category', filters.category);
+  if (category.length) {
+    query = query.in('category', category);
   }
 
-  if (filters.duration && filters.duration.length) {
+  if (duration.length) {
     // Example assumes a "duration_weeks" column
     const durations = [];
-    if (filters.duration.includes('short')) durations.push('duration_weeks.lte.3');
-    if (filters.duration.includes('medium')) durations.push('duration_weeks.gte.4,duration_weeks.lte.6');
-    if (filters.duration.includes('long')) durations.push('duration_weeks.gte.7');
+    if (duration.includes('short')) durations.push('duration_weeks.lte.3');
+    if (duration.includes('medium')) durations.push('duration_weeks.gte.4,duration_weeks.lte.6');
+    if (duration.includes('long')) durations.push('duration_weeks.gte.7');
     if (durations.length) {
       query = query.or(durations.join(','));
     }
