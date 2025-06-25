@@ -2,7 +2,13 @@
 import { vi } from 'vitest';
 
 // Define a flexible mock for the Supabase query builder chain
-const mockQueryBuilder = (resolveData = { data: null, error: null, count: null }) => ({
+const mockQueryBuilder = (
+  resolveData: { data: unknown; error: unknown; count: number | null } = {
+    data: null,
+    error: null,
+    count: null,
+  }
+) => ({
   select: vi.fn().mockReturnThis(),
   insert: vi.fn().mockResolvedValue(resolveData), // Assuming insert might be used elsewhere
   update: vi.fn().mockResolvedValue(resolveData), // Assuming update might be used elsewhere
@@ -30,7 +36,7 @@ const mockQueryBuilder = (resolveData = { data: null, error: null, count: null }
     return Promise.resolve(resolveData).then(onFulfilled, onRejected);
   }),
   // Helper to easily set the resolved value for a specific chain
-  mockResolvedValueOnce: function(value) {
+  mockResolvedValueOnce: function (value: unknown) {
     this.mockResolvedValue = value;
     return this; // Return this to allow further chaining if needed, though usually it's the end
   }
@@ -46,7 +52,7 @@ export const supabase = {
 // Helper to reset mocks and set specific resolutions for chained calls
 // This is particularly useful if a single test makes multiple `from` calls
 // or if a component's `useEffect` makes multiple calls.
-supabase.from.mockImplementation((tableName) => {
+supabase.from.mockImplementation((tableName: string) => {
   // Default mock behavior for any table
   let defaultResponse = { data: [], error: null, count: 0 };
   if (tableName === 'profiles') {
@@ -64,7 +70,7 @@ supabase.from.mockImplementation((tableName) => {
   // This allows different resolutions for different `from('table')` calls in the same test
   const newBuilder = mockQueryBuilder(defaultResponse);
   // Attach a convenience method to the builder itself to set its specific resolution
-  newBuilder.mockResolvedValue = function(value) { // Renamed to avoid conflict
+  newBuilder.mockResolvedValue = function (value: unknown) { // Renamed to avoid conflict
     this.mockResolvedValue = value; // This sets the value on the builder instance
     return this;
   };

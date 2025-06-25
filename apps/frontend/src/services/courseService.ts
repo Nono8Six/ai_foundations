@@ -137,22 +137,28 @@ export async function fetchCoursesFromSupabase(userId: string): Promise<CoursesF
     progressData.filter(p => p.status === 'completed').map(p => p.lesson_id)
   );
 
-  const moduleCourseMap = modulesData.reduce((acc, module) => {
-    acc[module.id] = module.course_id;
-    return acc;
-  }, {});
-
-  const lessonsByCourse = lessonsData.reduce((acc, lesson) => {
-    const courseId = moduleCourseMap[lesson.module_id];
-    if (!courseId) {
+  const moduleCourseMap = modulesData.reduce<Record<string, string | null>>(
+    (acc, module) => {
+      acc[module.id] = module.course_id;
       return acc;
-    }
-    if (!acc[courseId]) {
-      acc[courseId] = [];
-    }
-    acc[courseId].push(lesson.id);
-    return acc;
-  }, {});
+    },
+    {}
+  );
+
+  const lessonsByCourse = lessonsData.reduce<Record<string, string[]>>(
+    (acc, lesson) => {
+      const courseId = moduleCourseMap[lesson.module_id];
+      if (!courseId) {
+        return acc;
+      }
+      if (!acc[courseId]) {
+        acc[courseId] = [];
+      }
+      acc[courseId].push(lesson.id);
+      return acc;
+    },
+    {}
+  );
 
   const coursesWithStats: CourseProgress[] = coursesData.map(course => {
     const courseLessonIds = lessonsByCourse[course.id] || [];
