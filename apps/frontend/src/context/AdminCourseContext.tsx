@@ -44,7 +44,7 @@ export const AdminCourseProvider = ({ children }: { children: ReactNode }) => {
         supabaseClient.from('courses').insert(course).select().single()
       );
       if (error) throw error;
-      return data;
+      return data!;
     },
     onSuccess: () => queryClient.invalidateQueries(['courses', user?.id]),
   });
@@ -70,13 +70,13 @@ export const AdminCourseProvider = ({ children }: { children: ReactNode }) => {
           .single()
       );
       if (error) throw error;
-      return data;
+      return data!;
     },
     onSuccess: () => queryClient.invalidateQueries(['courses', user?.id]),
   });
 
-  const deleteCourse = useMutation({
-    mutationFn: async id => {
+  const deleteCourse = useMutation<void, Error, string>({
+    mutationFn: async (id: string) => {
       const { error } = await safeQuery(() =>
         supabaseClient.from('courses').delete().eq('id', id)
       );
@@ -97,7 +97,7 @@ export const AdminCourseProvider = ({ children }: { children: ReactNode }) => {
         supabaseClient.from('modules').insert(module).select().single()
       );
       if (error) throw error;
-      return data;
+      return data!;
     },
     onSuccess: () => queryClient.invalidateQueries(['courses', user?.id]),
   });
@@ -123,13 +123,13 @@ export const AdminCourseProvider = ({ children }: { children: ReactNode }) => {
           .single()
       );
       if (error) throw error;
-      return data;
+      return data!;
     },
     onSuccess: () => queryClient.invalidateQueries(['courses', user?.id]),
   });
 
-  const deleteModule = useMutation({
-    mutationFn: async id => {
+  const deleteModule = useMutation<void, Error, string>({
+    mutationFn: async (id: string) => {
       const { error } = await safeQuery(() =>
         supabaseClient.from('modules').delete().eq('id', id)
       );
