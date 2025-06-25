@@ -29,6 +29,7 @@ import { supabase } from '../lib/supabase';
 import { safeQuery } from '../utils/supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import logger from '../utils/logger';
+import type { AuthErrorWithCode } from '../types/auth';
 
 const supabaseClient = supabase as SupabaseClient<Database>;
 
@@ -246,7 +247,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       // Provide more specific error messages based on what Supabase actually returns
       let userFriendlyMessage =
         'Les identifiants fournis sont incorrects. Vérifiez votre email et mot de passe.';
-      const enhancedError = new Error(userFriendlyMessage);
+      const enhancedError: AuthErrorWithCode = new Error(userFriendlyMessage);
       enhancedError.originalError = error;
 
       // Note: Supabase intentionally returns generic "Invalid login credentials"
