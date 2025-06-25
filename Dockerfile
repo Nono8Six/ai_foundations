@@ -14,11 +14,14 @@ WORKDIR /app
 # Copie des fichiers de dépendances (optimisation du cache Docker)
 COPY package.json pnpm-lock.yaml tsconfig.json pnpm-workspace.yaml ./
 
-# Installation des dépendances
-RUN pnpm install --frozen-lockfile
+# Installation des dépendances sans scripts pour tirer parti du cache
+RUN pnpm install --frozen-lockfile --ignore-scripts
 
 # Copie du reste du code source
 COPY . .
+
+# Installation complète pour déclencher les scripts postinstall
+RUN pnpm install --frozen-lockfile
 
 # Construction de l'application
 RUN pnpm --filter frontend build
