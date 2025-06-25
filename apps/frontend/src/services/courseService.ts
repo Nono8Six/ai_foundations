@@ -158,15 +158,17 @@ export async function fetchCoursesFromSupabase(userId: string): Promise<CoursesF
     progressData.filter(p => p.status === 'completed').map(p => p.lesson_id)
   );
 
-  const moduleCourseMap = modulesData.reduce<Record<string, string | null>>(
+  const moduleCourseMap: Record<string, string> = modulesData.reduce(
     (acc, module) => {
-      acc[module.id] = module.course_id;
+      if (module.course_id) {
+        acc[module.id] = module.course_id;
+      }
       return acc;
     },
-    {}
+    {} as Record<string, string>
   );
 
-  const lessonsByCourse = lessonsData.reduce<Record<string, string[]>>(
+  const lessonsByCourse: Record<string, string[]> = lessonsData.reduce(
     (acc, lesson) => {
       const courseId = moduleCourseMap[lesson.module_id];
       if (!courseId) {
@@ -178,7 +180,7 @@ export async function fetchCoursesFromSupabase(userId: string): Promise<CoursesF
       acc[courseId].push(lesson.id);
       return acc;
     },
-    {}
+    {} as Record<string, string[]>
   );
 
   const coursesWithStats: CourseProgress[] = coursesData.map(course => {
