@@ -88,10 +88,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           logger.debug('👤 User found, fetching profile...');
           await fetchUserProfile(session.user.id);
         }
-      } catch (error) {
-        console.error('❌ Error getting initial session:', error.message);
-        setError(error);
-      } finally {
+        } catch (error: unknown) {
+          console.error('❌ Error getting initial session:', error.message);
+          setError(error);
+        } finally {
         setLoading(false);
       }
     };
@@ -184,7 +184,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       logger.debug('✅ Profile fetched successfully:', data[0]);
       setUserProfile(data[0]);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('❌ Unexpected error in fetchUserProfile:', error);
       setError(error);
     }

@@ -127,7 +127,7 @@ const ContentManagementCoursesModulesLessonsContent = () => {
     }
   };
 
-  const handleBulkOperation = (operation, items) => {
+  const handleBulkOperation = (operation: string, items: string[]) => {
     logger.info('Bulk operation:', operation, items);
     setSelectedItems([]);
     setShowBulkOperations(false);

@@ -28,7 +28,7 @@ export const CourseProvider = ({ children }: { children: ReactNode }) => {
       return fetchCoursesFromSupabase(user.id);
     },
     enabled: !!user?.id, // La requête ne s'exécute que si user.id existe
-    onError: error =>
+    onError: (error: Error) =>
       logError(new Error(`[CourseContext] A critical error occurred: ${error.message}`)),
   });
 
