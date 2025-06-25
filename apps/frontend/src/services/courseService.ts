@@ -27,7 +27,7 @@ export interface CoursesFromSupabase {
 
 export async function fetchCourses({ search = '', filters = {}, sortBy = 'popularity', page = 1, pageSize = 12 } = {}): Promise<{ data: CoursesRow[]; count: number }> {
   let query = supabaseClient
-    .from<'courses', CoursesRow>('courses')
+    .from('courses')
     .select('*', { count: 'exact' })
     .eq('is_published', true);
 
@@ -90,7 +90,7 @@ export async function fetchCourses({ search = '', filters = {}, sortBy = 'popula
 
 export async function fetchCoursesWithContent(): Promise<CourseWithContent[]> {
   const { data, error } = await supabaseClient
-    .from<'courses', CoursesRow>('courses')
+    .from('courses')
     .select('*, modules(*, lessons(*))')
     .order('created_at');
   if (error) throw error;
@@ -102,22 +102,22 @@ export async function fetchCoursesFromSupabase(userId: string): Promise<CoursesF
     await Promise.all([
       safeQuery(() =>
         supabaseClient
-          .from<'courses', CoursesRow>('courses')
+          .from('courses')
           .select('id, title, cover_image_url, category, thumbnail_url')
           .eq('is_published', true)
       ),
       safeQuery(() =>
         supabaseClient
-          .from<'lessons', LessonsRow>('lessons')
+          .from('lessons')
           .select('id, module_id, is_published, duration')
           .eq('is_published', true)
       ),
       safeQuery(() =>
-        supabaseClient.from<'modules', ModulesRow>('modules').select('id, course_id')
+        supabaseClient.from('modules').select('id, course_id')
       ),
       safeQuery(() =>
         supabaseClient
-          .from<'user_progress', UserProgressRow>('user_progress')
+          .from('user_progress')
           .select('lesson_id, status, completed_at')
           .eq('user_id', userId)
       ),

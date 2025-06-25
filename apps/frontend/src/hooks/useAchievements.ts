@@ -43,7 +43,7 @@ const useAchievements = (
             (q, [column, value]) =>
               q.eq(column as keyof AchievementRow, value as never),
             supabaseClient
-              .from<'achievements', AchievementRow>('achievements')
+              .from('achievements')
               .select('*')
               .eq('user_id', userId)
           )

@@ -46,7 +46,7 @@ const useRecentActivity = (
             (q, [column, value]) =>
               q.eq(column as keyof ActivityRow, value as never),
             supabaseClient
-              .from<'activity_log', ActivityRow>('activity_log')
+              .from('activity_log')
               .select('*')
               .eq('user_id', userId)
           )
