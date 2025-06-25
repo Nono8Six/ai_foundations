@@ -24,7 +24,6 @@
     "checkJs": false
   },
   "include": [
-    "src/types/lodash.d.ts",
     "src/env.d.ts",
     "**/*.ts",
     "**/*.tsx",
