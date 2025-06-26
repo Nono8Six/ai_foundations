@@ -10,6 +10,7 @@ apps\frontend\node_modules
 
 # Misc build/debug artifacts
 pnpm*
+apps/backend/dist/
 
 # Supabase directories
 apps/backend/supabase/.temp/
