@@ -9,29 +9,63 @@ RUN apk add --no-cache curl git
 
 WORKDIR /app
 
-# Étape de développement
-FROM base AS development
+# ------------------------------------------------------------------------------
+# Étape 1 : Builder l'application backend
+# ------------------------------------------------------------------------------
+FROM base AS builder
 
 # Copier les fichiers de configuration du workspace
-COPY package.json pnpm-lock.yaml ./
-COPY pnpm-workspace.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
-# Installer toutes les dépendances
+# Installation des dépendances
 RUN pnpm install --frozen-lockfile
 
-# Copier le code source
+# Copier le code source complet
 COPY . .
 
-# Exposer le port
+# Compilation TypeScript
+RUN pnpm --filter backend build
+
+# ------------------------------------------------------------------------------
+# Étape 2 : Développement
+# ------------------------------------------------------------------------------
+FROM builder AS development
+
+WORKDIR /app/apps/backend
+
 EXPOSE 3001
 
-# Healthcheck
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:3001/health || exit 1
 
-# Commande par défaut
-CMD ["sh", "-c", "cd apps/backend && pnpm dev"]
+CMD ["pnpm", "dev"]
 
-# Sélectionner l'étape de développement par défaut
+# ------------------------------------------------------------------------------
+# Étape 3 : Production
+# ------------------------------------------------------------------------------
+FROM base AS production
+
+WORKDIR /app
+
+# Copier uniquement les dépendances nécessaires
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+RUN pnpm install --frozen-lockfile --prod --filter backend
+
+# Copier les fichiers compilés
+COPY --from=builder /app/apps/backend/dist ./apps/backend/dist
+COPY apps/backend/package.json ./apps/backend/package.json
+
+WORKDIR /app/apps/backend
+
+EXPOSE 3001
+
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:3001/health || exit 1
+
+CMD ["node", "dist/index.js"]
+
+# ------------------------------------------------------------------------------
+# Étape par défaut
+# ------------------------------------------------------------------------------
 FROM development AS final
 LABEL stage="final"
