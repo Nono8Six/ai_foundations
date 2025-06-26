@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import Icon from '../../../components/AppIcon';
-import Image from '../../../components/AppImage';
-import Button from '../../../components/ui/Button';
-import TextInput from '../../../components/ui/TextInput';
-import Card from '../../../components/ui/Card';
-import Spinner from '../../../components/ui/Spinner';
-import { uploadToBucket, BUCKETS } from '../../../services/storageService';
-import logger from '../../../utils/logger';
-import type { CourseRow } from '../../../types/courseRow';
+import Icon from '@frontend/components/AppIcon';
+import Image from '@frontend/components/AppImage';
+import Button from '@frontend/components/ui/Button';
+import TextInput from '@frontend/components/ui/TextInput';
+import Card from '@frontend/components/ui/Card';
+import Spinner from '@frontend/components/ui/Spinner';
+import { uploadToBucket, BUCKETS } from '@frontend/services/storageService';
+import logger from '@frontend/utils/logger';
+import type { CourseRow } from '@frontend/types/courseRow';
 
 export interface CourseEditorProps {
   course: CourseRow | null;

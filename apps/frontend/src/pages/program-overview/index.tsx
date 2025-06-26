@@ -1,11 +1,11 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { useAuth } from '../../context/AuthContext';
-import Icon from '../../components/AppIcon';
-import { fetchCourses } from '../../services/courseService';
+import { useAuth } from '@frontend/context/AuthContext';
+import Icon from '@frontend/components/AppIcon';
+import { fetchCourses } from '@frontend/services/courseService';
 import CourseCard from './components/CourseCard';
 import FilterSidebar from './components/FilterSidebar';
 import CoursePathway from './components/CoursePathway';
-import type { Database } from '../../types/database.types';
+import type { Database } from '@frontend/types/database.types';
 
 type CoursesRow = Database['public']['Tables']['courses']['Row'];
 

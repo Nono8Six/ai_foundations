@@ -1,8 +1,8 @@
 import React from 'react';
-import Icon from '../../../components/AppIcon';
-import Image from '../../../components/AppImage';
-import logger from '../../../utils/logger';
-import type { UserTableRow } from '../../../types/userTableRow';
+import Icon from '@frontend/components/AppIcon';
+import Image from '@frontend/components/AppImage';
+import logger from '@frontend/utils/logger';
+import type { UserTableRow } from '@frontend/types/userTableRow';
 
 export interface UserTableProps {
   users: UserTableRow[];

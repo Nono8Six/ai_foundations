@@ -1,5 +1,5 @@
 import { PostgrestError } from '@supabase/supabase-js';
-import { logError } from '../context/ErrorContext';
+import { logError } from '@frontend/context/ErrorContext';
 
 export async function safeQuery<T, E extends Error = PostgrestError>(
   fn: () => PromiseLike<{ data: T | null; error: E | null }>

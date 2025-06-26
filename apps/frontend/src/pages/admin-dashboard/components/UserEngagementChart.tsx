@@ -9,8 +9,8 @@ import {
   Area,
   AreaChart,
 } from 'recharts';
-import Icon from '../../../components/AppIcon';
-import { supabase } from '../../../lib/supabase';
+import Icon from '@frontend/components/AppIcon';
+import { supabase } from '@frontend/lib/supabase';
 
 interface EngagementData {
   time: string;

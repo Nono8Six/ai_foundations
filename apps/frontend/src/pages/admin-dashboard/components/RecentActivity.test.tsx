@@ -4,7 +4,7 @@ import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 import { MemoryRouter } from 'react-router-dom'; // If any Links are present
 import RecentActivity from './RecentActivity';
-import { supabase } from '../../../lib/supabase'; // Mocked
+import { supabase } from '@frontend/lib/supabase'; // Mocked
 
 // Mock AppIcon and AppImage if they are complex or cause issues
 vi.mock('../../../components/AppIcon', () => ({ default: ({ name, size, className }) => <svg data-testid={`icon-${name}`} className={className} width={size} height={size}></svg> }));

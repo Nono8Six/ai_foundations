@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { colors, theme } from '../../../utils/theme';
+import { colors, theme } from '@frontend/utils/theme';
 import { motion } from 'framer-motion';
 import {
   BarChart,
@@ -15,7 +15,7 @@ import {
   Pie,
   Cell,
 } from 'recharts';
-import Icon from '../../../components/AppIcon';
+import Icon from '@frontend/components/AppIcon';
 
 const DataVisualization = () => {
   // Mock data for AI impact across industries

@@ -1,6 +1,6 @@
 import React from 'react';
 import Icon from './AppIcon';
-import ErrorContext, { type ErrorLogger } from '../context/ErrorContext';
+import ErrorContext, { type ErrorLogger } from '@frontend/context/ErrorContext';
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;

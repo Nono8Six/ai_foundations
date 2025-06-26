@@ -3,7 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 import PopularCoursesChart from './PopularCoursesChart';
-import { supabase } from '../../../lib/supabase'; // Mocked
+import { supabase } from '@frontend/lib/supabase'; // Mocked
 
 // Mock Recharts components to avoid complex rendering in tests
 vi.mock('recharts', () => {

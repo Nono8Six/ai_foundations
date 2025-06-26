@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import Icon from '../../../components/AppIcon';
-import Image from '../../../components/AppImage';
+import Icon from '@frontend/components/AppIcon';
+import Image from '@frontend/components/AppImage';
 
 interface UserDetailsPanelProps {
   user: Record<string, unknown> | null;

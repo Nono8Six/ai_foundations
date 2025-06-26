@@ -1,11 +1,11 @@
 // src/pages/auth/components/LoginForm.jsx
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import Icon from '../../../components/AppIcon';
-import Button from '../../../components/ui/Button';
-import TextInput from '../../../components/ui/TextInput';
-import { useAuth } from '../../../context/AuthContext';
-import logger from '../../../utils/logger';
+import Icon from '@frontend/components/AppIcon';
+import Button from '@frontend/components/ui/Button';
+import TextInput from '@frontend/components/ui/TextInput';
+import { useAuth } from '@frontend/context/AuthContext';
+import logger from '@frontend/utils/logger';
 
 export interface LoginFormProps {
   onSuccess: (user: unknown) => void;

@@ -14,7 +14,9 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-      "$lib/*": ["./apps/frontend/src/lib/*"]
+      "$lib/*": ["./apps/frontend/src/lib/*"],
+      "@frontend/*": ["./apps/frontend/src/*"],
+      "@backend/*": ["./apps/backend/src/*"]
     },
     "typeRoots": [
   "./node_modules/@types"

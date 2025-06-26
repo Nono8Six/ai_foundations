@@ -1,7 +1,7 @@
-import { supabase } from '../lib/supabase';
-import { safeQuery } from '../utils/supabaseClient';
+import { supabase } from '@frontend/lib/supabase';
+import { safeQuery } from '@frontend/utils/supabaseClient';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '../types/database.types';
+import type { Database } from '@frontend/types/database.types';
 
 const supabaseClient = supabase as SupabaseClient<Database>;
 

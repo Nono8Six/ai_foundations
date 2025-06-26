@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import Icon from '../../../components/AppIcon';
-import { supabase } from '../../../lib/supabase';
+import Icon from '@frontend/components/AppIcon';
+import { supabase } from '@frontend/lib/supabase';
 
 interface CourseData {
   name: string;
