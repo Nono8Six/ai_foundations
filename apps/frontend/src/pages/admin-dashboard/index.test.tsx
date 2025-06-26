@@ -4,7 +4,7 @@ import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import AdminDashboard from './index';
-import { supabase } from '../../lib/supabase';
+import { supabase } from '@frontend/lib/supabase';
 
 // Mock Supabase client
 vi.mock('../../lib/supabase');

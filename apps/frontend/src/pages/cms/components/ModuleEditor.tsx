@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import Icon from '../../../components/AppIcon';
-import Button from '../../../components/ui/Button';
-import Spinner from '../../../components/ui/Spinner';
-import type { ModuleRow } from '../../../types/moduleRow';
+import Icon from '@frontend/components/AppIcon';
+import Button from '@frontend/components/ui/Button';
+import Spinner from '@frontend/components/ui/Spinner';
+import type { ModuleRow } from '@frontend/types/moduleRow';
 
 export interface ModuleEditorProps {
   module: ModuleRow | null;

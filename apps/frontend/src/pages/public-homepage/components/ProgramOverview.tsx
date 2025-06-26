@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import Icon from '../../../components/AppIcon';
-import Image from '../../../components/AppImage';
+import Icon from '@frontend/components/AppIcon';
+import Image from '@frontend/components/AppImage';
 
 const ProgramOverview = () => {
   const courses = [

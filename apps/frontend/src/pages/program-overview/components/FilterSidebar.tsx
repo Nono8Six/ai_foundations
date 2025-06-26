@@ -1,6 +1,6 @@
 import React from 'react';
-import Icon from '../../../components/AppIcon';
-import type { Course } from '../../../types/course';
+import Icon from '@frontend/components/AppIcon';
+import type { Course } from '@frontend/types/course';
 
 export interface FilterSidebarProps {
   filters: {

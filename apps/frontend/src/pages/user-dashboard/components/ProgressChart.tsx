@@ -1,6 +1,6 @@
 // src/pages/user-dashboard/components/ProgressChart.jsx
 import React, { useState, useEffect } from 'react';
-import { colors } from '../../../utils/theme';
+import { colors } from '@frontend/utils/theme';
 import {
   LineChart,
   Line,
@@ -10,9 +10,9 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import { useCourses } from '../../../context/CourseContext';
-import useProgressChartData from '../../../hooks/useProgressChartData';
-import Icon from '../../../components/AppIcon';
+import { useCourses } from '@frontend/context/CourseContext';
+import useProgressChartData from '@frontend/hooks/useProgressChartData';
+import Icon from '@frontend/components/AppIcon';
 
 interface WeeklyData {
   day: string;

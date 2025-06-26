@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Icon from '../../../components/AppIcon';
+import Icon from '@frontend/components/AppIcon';
 
 export interface XPCelebrationProps {
   xpEarned: number;

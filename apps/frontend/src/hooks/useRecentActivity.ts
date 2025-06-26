@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import type { PostgrestError, SupabaseClient } from '@supabase/supabase-js';
-import { supabase } from '../lib/supabase';
-import { safeQuery } from '../utils/supabaseClient';
-import type { Database } from '../types/database.types';
+import { supabase } from '@frontend/lib/supabase';
+import { safeQuery } from '@frontend/utils/supabaseClient';
+import type { Database } from '@frontend/types/database.types';
 
 type ActivityRow = Database['public']['Tables']['activity_log']['Row'];
 

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useAdminCourses } from '../../context/AdminCourseContext';
-import { useToast } from '../../context/ToastContext';
-import { fetchCoursesWithContent } from '../../services/courseService';
-import logger from '../../utils/logger';
+import { useAdminCourses } from '@frontend/context/AdminCourseContext';
+import { useToast } from '@frontend/context/ToastContext';
+import { fetchCoursesWithContent } from '@frontend/services/courseService';
+import logger from '@frontend/utils/logger';
 
-import Icon from '../../components/AppIcon';
-import AdminLayout, { useAdminSidebar } from '../../components/AdminLayout';
+import Icon from '@frontend/components/AppIcon';
+import AdminLayout, { useAdminSidebar } from '@frontend/components/AdminLayout';
 import ContentTree from './components/ContentTree';
 import CourseEditor from './components/CourseEditor';
 import ModuleEditor from './components/ModuleEditor';

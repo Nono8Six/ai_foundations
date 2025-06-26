@@ -16,20 +16,20 @@ import type {
   AuthError,
   AuthChangeEvent,
 } from '@supabase/supabase-js';
-import type { Database } from '../types/database.types';
+import type { Database } from '@frontend/types/database.types';
 import type {
   UpdateUserProfilePayload,
   UpdateUserProfileResponse,
   UpdateUserSettingsPayload,
   UpdateUserSettingsResponse,
   GetUserSettingsResponse,
-} from '../types/rpc.types';
-import type { UserProfile } from '../types/user';
-import { supabase } from '../lib/supabase';
-import { safeQuery } from '../utils/supabaseClient';
+} from '@frontend/types/rpc.types';
+import type { UserProfile } from '@frontend/types/user';
+import { supabase } from '@frontend/lib/supabase';
+import { safeQuery } from '@frontend/utils/supabaseClient';
 import { useNavigate } from 'react-router-dom';
-import logger from '../utils/logger';
-import type { AuthErrorWithCode } from '../types/auth';
+import logger from '@frontend/utils/logger';
+import type { AuthErrorWithCode } from '@frontend/types/auth';
 
 const supabaseClient = supabase as SupabaseClient<Database>;
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import Icon from '../../components/AppIcon';
-import { supabase } from '../../lib/supabase';
+import Icon from '@frontend/components/AppIcon';
+import { supabase } from '@frontend/lib/supabase';
 import AdminLayout, { useAdminSidebar } from "../../components/AdminLayout";
 import RecentActivity from './components/RecentActivity';
 import UserEngagementChart from './components/UserEngagementChart';

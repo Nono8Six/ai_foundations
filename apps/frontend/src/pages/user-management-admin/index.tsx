@@ -1,8 +1,8 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { supabase } from '../../lib/supabase';
-import Icon from '../../components/AppIcon';
+import { supabase } from '@frontend/lib/supabase';
+import Icon from '@frontend/components/AppIcon';
 import AdminLayout, { useAdminSidebar } from "../../components/AdminLayout";
-import logger from '../../utils/logger';
+import logger from '@frontend/utils/logger';
 import UserTable from './components/UserTable';
 import UserDetailsPanel from './components/UserDetailsPanel';
 import UserFilters from './components/UserFilters';

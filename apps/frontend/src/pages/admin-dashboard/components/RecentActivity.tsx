@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import Icon from '../../../components/AppIcon';
-import Image from '../../../components/AppImage';
-import { supabase } from '../../../lib/supabase';
+import Icon from '@frontend/components/AppIcon';
+import Image from '@frontend/components/AppImage';
+import { supabase } from '@frontend/lib/supabase';
 
 interface ActivityItem {
   id: string;
