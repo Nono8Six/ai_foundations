@@ -1,17 +1,18 @@
 import React, { createContext, useContext, type ReactNode } from 'react';
+import logger from '../utils/logger';
 
 export type ErrorLogger = (error: unknown) => void;
 
 const ErrorContext = createContext<ErrorLogger>(() => {});
 
-let externalLogger: ErrorLogger = console.error;
+let externalLogger: ErrorLogger = logger.error;
 
 export interface ErrorProviderProps {
   children: ReactNode;
   logger?: ErrorLogger;
 }
 
-export const ErrorProvider = ({ children, logger = console.error }: ErrorProviderProps) => {
+export const ErrorProvider = ({ children, logger = logger.error }: ErrorProviderProps) => {
   externalLogger = logger;
   return <ErrorContext.Provider value={logger}>{children}</ErrorContext.Provider>;
 };

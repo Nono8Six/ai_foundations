@@ -9,8 +9,14 @@ import {
   Area,
   AreaChart,
 } from 'recharts';
+<<<<<<< codex/refactor-console-methods-to-logger
+import Icon from '../../../components/AppIcon';
+import { supabase } from '../../../lib/supabase';
+import logger from '../../../utils/logger';
+=======
 import Icon from '@frontend/components/AppIcon';
 import { supabase } from '@frontend/lib/supabase';
+>>>>>>> main
 
 interface EngagementData {
   time: string;
@@ -88,7 +94,7 @@ const UserEngagementChart: React.FC<UserEngagementChartProps> = ({ timeRange }) 
           .lte('started_at', endDate.toISOString()); // Ensure we don't get future data if clock is off
 
         if (error) {
-          console.error(`Error fetching user_sessions for ${currentTimeRange}:`, error);
+          logger.error(`Error fetching user_sessions for ${currentTimeRange}:`, error);
           setEngagementData([]);
           throw error;
         }

@@ -45,7 +45,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, isLoading, setIsLoadin
         });
       }
     } catch (error) {
-      console.error('Login error:', error.message);
+      logger.error('Login error:', error.message);
       setIsLoading(false);
 
       const errorMessage = error.message || 'Email ou mot de passe incorrect';

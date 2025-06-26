@@ -66,7 +66,7 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ userData }) => {
       // Show success message
       addToast('Profil mis à jour avec succès !', 'success');
     } catch (error) {
-      console.error('Error updating profile:', error);
+      logger.error('Error updating profile:', error);
       setError('root', {
         type: 'manual',
         message: 'Erreur lors de la mise à jour du profil. Veuillez réessayer.',

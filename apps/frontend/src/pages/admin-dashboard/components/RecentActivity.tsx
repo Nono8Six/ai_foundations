@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import logger from '../../../utils/logger';
 import Icon from '@frontend/components/AppIcon';
 import Image from '@frontend/components/AppImage';
 import { supabase } from '@frontend/lib/supabase';
@@ -125,7 +126,7 @@ const RecentActivity = () => {
         .limit(10);
 
       if (error) {
-        console.error('Error fetching recent activity:', error);
+        logger.error('Error fetching recent activity:', error);
         setActivitiesData([]);
       } else {
         const transformedData = data.map(activity => {
@@ -148,7 +149,7 @@ const RecentActivity = () => {
         setActivitiesData(transformedData);
       }
     } catch (err) {
-      console.error('Unexpected error in fetchRecentActivity:', err);
+      logger.error('Unexpected error in fetchRecentActivity:', err);
       setActivitiesData([]);
     } finally {
       setLoading(false);

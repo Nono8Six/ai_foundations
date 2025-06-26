@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Icon from '@frontend/components/AppIcon';
 import { useAuth } from '@frontend/context/AuthContext';
+import logger from '../../../utils/logger';
 
 export interface RegisterFormProps {
   isLoading: boolean;
@@ -35,7 +36,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ isLoading, setIsLoading }) 
         window.location.href = '/verify-email';
       }
     } catch (error) {
-      console.error('Registration error:', error.message);
+      logger.error('Registration error:', error.message);
       setIsLoading(false);
       setAuthError(error.message || "Erreur lors de l'inscription");
     }
