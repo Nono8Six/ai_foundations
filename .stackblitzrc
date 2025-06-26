@@ -1,4 +1,4 @@
 {
   "installDependencies": false,
-  "startCommand": "bash setup-and-start.sh"
+  "startCommand": "sh simple-start.sh"
 }
