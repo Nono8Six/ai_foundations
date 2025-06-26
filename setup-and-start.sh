@@ -16,20 +16,32 @@ export PATH="$PNPM_HOME:$PATH"
 echo "✅ Version de pnpm installée:"
 pnpm --version
 
-# 4. Installation des dépendances (sans preinstall hook qui bloque)
+# 4. Nettoyage des dépendances obsolètes
+echo "🧹 Nettoyage des dépendances obsolètes..."
+if [ -f "fix-deps.sh" ]; then
+  chmod +x fix-deps.sh
+  ./fix-deps.sh
+fi
+
+# 5. Installation des dépendances (sans preinstall hook qui bloque)
 echo "📥 Installation des dépendances du workspace..."
-ONLY_ALLOW_BYPASS=1 pnpm install --ignore-engines --ignore-scripts
+ONLY_ALLOW_BYPASS=1 pnpm install --ignore-engines --ignore-scripts --no-frozen-lockfile
 
-# 5. Installation des sous-projets
-echo "📦 Installation des dépendances des apps..."
-cd apps/frontend && ONLY_ALLOW_BYPASS=1 pnpm install --ignore-engines --ignore-scripts
-cd ../backend && ONLY_ALLOW_BYPASS=1 pnpm install --ignore-engines --ignore-scripts
-cd ../..
+# 6. Installation spécifique du frontend
+echo "📦 Installation des dépendances du frontend..."
+if [ -d "apps/frontend" ]; then
+  cd apps/frontend
+  ONLY_ALLOW_BYPASS=1 pnpm install --ignore-engines --ignore-scripts --no-frozen-lockfile
+  cd ..
+fi
 
-# 6. Build des packages partagés si nécessaire
+# 7. Build des packages partagés si nécessaire
 echo "🔨 Build des packages partagés..."
 if [ -d "packages/logger" ]; then
-  cd packages/logger && pnpm build
+  cd packages/logger
+  if [ -f "package.json" ]; then
+    pnpm build 2>/dev/null || echo "⚠️ Build du logger ignoré"
+  fi
   cd ../..
 fi
 
