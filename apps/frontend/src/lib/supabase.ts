@@ -1,16 +1,15 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from '@frontend/types/database.types';
+import { z } from 'zod';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-if (typeof supabaseUrl !== 'string' || supabaseUrl.length === 0) {
-  throw new Error('VITE_SUPABASE_URL must be a non-empty string');
-}
+const envSchema = z.object({
+  VITE_SUPABASE_URL: z.string().url(),
+  VITE_SUPABASE_ANON_KEY: z.string().min(1),
+});
 
-if (typeof supabaseAnonKey !== 'string' || supabaseAnonKey.length === 0) {
-  throw new Error('VITE_SUPABASE_ANON_KEY must be a non-empty string');
-}
+const { VITE_SUPABASE_URL: supabaseUrl, VITE_SUPABASE_ANON_KEY: supabaseAnonKey } =
+  envSchema.parse(import.meta.env);
 
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   auth: {
