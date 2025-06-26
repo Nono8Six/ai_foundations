@@ -55,7 +55,7 @@ const UserManagementAdminContent = () => {
     const fetchUsers = async () => {
       const { data, error } = await supabase.from('profiles').select('*');
       if (error) {
-        console.error('Error fetching users:', error);
+        logger.error('Error fetching users:', error);
         return;
       }
       // Transforme les données de la base pour les adapter au format de l'application

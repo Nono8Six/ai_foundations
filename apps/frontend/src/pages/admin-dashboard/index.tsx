@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Icon from '../../components/AppIcon';
 import { supabase } from '../../lib/supabase';
 import AdminLayout, { useAdminSidebar } from "../../components/AdminLayout";
+import logger from '../../utils/logger';
 import RecentActivity from './components/RecentActivity';
 import UserEngagementChart from './components/UserEngagementChart';
 import PopularCoursesChart from './components/PopularCoursesChart';
@@ -78,7 +79,7 @@ const AdminDashboardContent = () => {
           systemUptime: "N/A", // Placeholder
         });
       } catch (error) {
-        console.error('Error fetching dashboard data:', error);
+        logger.error('Error fetching dashboard data:', error);
         // Set default/error state for dashboardData if needed
         setDashboardData({
           totalUsers: 0,

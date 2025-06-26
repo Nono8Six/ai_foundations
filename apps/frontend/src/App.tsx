@@ -8,6 +8,7 @@ import { AdminCourseProvider } from './context/AdminCourseContext';
 import { ToastProvider, useToast } from './context/ToastContext';
 import { ErrorProvider, type ErrorLogger } from './context/ErrorContext';
 import type { AuthErrorWithCode } from './types/auth';
+import logger from './utils/logger';
 
 // Un composant pour lier les deux contextes
 const AppWithErrorToasts: React.FC = () => {
@@ -37,7 +38,7 @@ const AppWithErrorToasts: React.FC = () => {
       (err?.requestUrl && err?.requestUrl.includes('/auth/v1/token'));
 
     if (!isExpectedAuthError) {
-      console.error('Error logged:', err);
+      logger.error('Error logged:', err);
     }
 
     // Toujours afficher le toast pour informer l'utilisateur (sauf si c'est une erreur technique)

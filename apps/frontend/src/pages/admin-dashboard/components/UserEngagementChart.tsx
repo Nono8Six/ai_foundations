@@ -11,6 +11,7 @@ import {
 } from 'recharts';
 import Icon from '../../../components/AppIcon';
 import { supabase } from '../../../lib/supabase';
+import logger from '../../../utils/logger';
 
 interface EngagementData {
   time: string;
@@ -88,7 +89,7 @@ const UserEngagementChart: React.FC<UserEngagementChartProps> = ({ timeRange }) 
           .lte('started_at', endDate.toISOString()); // Ensure we don't get future data if clock is off
 
         if (error) {
-          console.error(`Error fetching user_sessions for ${currentTimeRange}:`, error);
+          logger.error(`Error fetching user_sessions for ${currentTimeRange}:`, error);
           setEngagementData([]);
           throw error;
         }

@@ -78,7 +78,7 @@ const LessonViewer = () => {
         .single();
 
       if (lessonError) {
-        console.error('Error fetching lesson:', lessonError);
+        logger.error('Error fetching lesson:', lessonError);
       } else if (lessonData) {
         setCurrentLesson({
           id: lessonData.id,
@@ -102,7 +102,7 @@ const LessonViewer = () => {
         .order('id');
 
       if (modulesError) {
-        console.error('Error fetching modules:', modulesError);
+        logger.error('Error fetching modules:', modulesError);
       } else if (modulesData) {
         setModuleStructure(
           modulesData.map(m => ({

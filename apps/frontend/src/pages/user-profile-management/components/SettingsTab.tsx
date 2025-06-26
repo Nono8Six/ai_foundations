@@ -51,7 +51,7 @@ const SettingsTab = () => {
           }
         }
       } catch (error) {
-        console.error('Error loading user settings:', error);
+        logger.error('Error loading user settings:', error);
       } finally {
         setIsLoading(false);
       }
@@ -76,7 +76,7 @@ const SettingsTab = () => {
       alert('Paramètres sauvegardés avec succès !');
       
     } catch (error) {
-      console.error('Error saving settings:', error);
+      logger.error('Error saving settings:', error);
       alert('Erreur lors de la sauvegarde des paramètres. Veuillez réessayer.');
     } finally {
       setIsSubmitting(false);

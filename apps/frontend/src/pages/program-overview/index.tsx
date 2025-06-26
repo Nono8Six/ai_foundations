@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import Icon from '../../components/AppIcon';
 import { fetchCourses } from '../../services/courseService';
+import logger from '../../utils/logger';
 import CourseCard from './components/CourseCard';
 import FilterSidebar from './components/FilterSidebar';
 import CoursePathway from './components/CoursePathway';
@@ -41,7 +42,7 @@ const ProgramOverview = () => {
         setCourses(data);
         setTotalCourses(count);
       } catch (error) {
-        console.error('Error loading courses', error);
+        logger.error('Error loading courses', error);
         setCourses([]);
         setTotalCourses(0);
       } finally {

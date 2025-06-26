@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Icon, { type IconName } from './AppIcon';
 import Image from './AppImage';
+import logger from '../utils/logger';
 
 // Typage des éléments de navigation
 interface NavItem {
@@ -19,7 +20,7 @@ const Header = (): JSX.Element => {
   const location = useLocation();
 
   if (error) {
-    console.error('Erreur de chargement du profil:', error);
+    logger.error('Erreur de chargement du profil:', error);
   }
 
   const getInitials = () => {
@@ -41,7 +42,7 @@ const Header = (): JSX.Element => {
       setIsMenuOpen(false);
       navigate('/login');
     } catch (error) {
-      console.error('Erreur lors de la déconnexion:', error);
+      logger.error('Erreur lors de la déconnexion:', error);
     }
   };
 
