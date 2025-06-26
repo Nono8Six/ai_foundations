@@ -1,7 +1,12 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "noUnusedLocals": true,
+    "noImplicitReturns": true,
+    "exactOptionalPropertyTypes": true,
+    "noFallthroughCasesInSwitch": true,
     "types": ["vite/client", "node"],
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "skipLibCheck": false
   }
 }
