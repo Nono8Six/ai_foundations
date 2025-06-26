@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Icon from '../../../components/AppIcon';
+import Icon from '@frontend/components/AppIcon';
 
 export interface QuickAction {
   id: string;

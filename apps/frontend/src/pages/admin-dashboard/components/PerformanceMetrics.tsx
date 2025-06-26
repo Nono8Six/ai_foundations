@@ -1,6 +1,6 @@
 import React from 'react';
-import Icon from '../../../components/AppIcon';
-import type { PerformanceMetricsData } from '../../../types/metrics';
+import Icon from '@frontend/components/AppIcon';
+import type { PerformanceMetricsData } from '@frontend/types/metrics';
 
 export interface PerformanceMetricsProps {
   metrics: PerformanceMetricsData | null;

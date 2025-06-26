@@ -1,5 +1,5 @@
 import React from 'react';
-import logger from '../utils/logger';
+import logger from '@frontend/utils/logger';
 
 export interface AppImageProps
   extends React.ImgHTMLAttributes<HTMLImageElement> {

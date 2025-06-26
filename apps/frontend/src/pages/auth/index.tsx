@@ -1,13 +1,13 @@
 // src/pages/authentication-login-register/index.jsx
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '@frontend/context/AuthContext';
 
-import Icon from '../../components/AppIcon';
+import Icon from '@frontend/components/AppIcon';
 import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
 import GoogleAuthButton from './components/GoogleAuthButton';
-import Card from '../../components/ui/Card';
+import Card from '@frontend/components/ui/Card';
 
 const AuthenticationLoginRegister = () => {
   const location = useLocation();

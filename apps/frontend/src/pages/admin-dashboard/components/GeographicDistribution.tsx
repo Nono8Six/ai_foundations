@@ -1,5 +1,5 @@
 import React from 'react';
-import Icon from '../../../components/AppIcon';
+import Icon from '@frontend/components/AppIcon';
 
 const GeographicDistribution = () => {
   return (

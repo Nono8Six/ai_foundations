@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Icon from '../../../components/AppIcon';
+import Icon from '@frontend/components/AppIcon';
 import logger from '../../../utils/logger';
 
 interface CreateUserModalProps {

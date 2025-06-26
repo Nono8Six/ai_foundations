@@ -5,8 +5,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useAuth } from './AuthContext';
 
 import { logError } from './ErrorContext.tsx';
-import { fetchCoursesFromSupabase } from '../services/courseService';
-import type { CoursesFromSupabase } from '../services/courseService';
+import { fetchCoursesFromSupabase } from '@frontend/services/courseService';
+import type { CoursesFromSupabase } from '@frontend/services/courseService';
 
 
 type CourseData = CoursesFromSupabase;
