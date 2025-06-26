@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import Icon from '../../components/AppIcon';
-import { supabase } from '../../lib/supabase';
-import logger from '../../utils/logger';
+import Icon from '@frontend/components/AppIcon';
+import { supabase } from '@frontend/lib/supabase';
+import logger from '@frontend/utils/logger';
 
 import VideoPlayer from './components/VideoPlayer';
 import TextContent from './components/TextContent';
@@ -78,7 +78,7 @@ const LessonViewer = () => {
         .single();
 
       if (lessonError) {
-        console.error('Error fetching lesson:', lessonError);
+        logger.error('Error fetching lesson:', lessonError);
       } else if (lessonData) {
         setCurrentLesson({
           id: lessonData.id,
@@ -102,7 +102,7 @@ const LessonViewer = () => {
         .order('id');
 
       if (modulesError) {
-        console.error('Error fetching modules:', modulesError);
+        logger.error('Error fetching modules:', modulesError);
       } else if (modulesData) {
         setModuleStructure(
           modulesData.map(m => ({

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Icon from '../../../components/AppIcon';
-import Image from '../../../components/AppImage';
+import Icon from '@frontend/components/AppIcon';
+import Image from '@frontend/components/AppImage';
 
 export interface Activity {
   id?: string;

@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
+import type { Database } from '@frontend/types/database.types';
 import { z } from 'zod';
-import type { Database } from '../types/database.types';
+
 
 const envSchema = z.object({
   VITE_SUPABASE_URL: z.string().url(),

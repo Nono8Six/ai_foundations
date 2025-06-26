@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import Icon from '../../components/AppIcon';
-import Image from '../../components/AppImage';
+import { useAuth } from '@frontend/context/AuthContext';
+import Icon from '@frontend/components/AppIcon';
+import Image from '@frontend/components/AppImage';
 import PersonalInfoTab from './components/PersonalInfoTab';
 import LearningStatsTab from './components/LearningStatsTab';
 import SettingsTab from './components/SettingsTab';

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import Icon from '../../../components/AppIcon';
-import { uploadToBucket, BUCKETS } from '../../../services/storageService';
-import logger from '../../../utils/logger';
-import type { LessonRow } from '../../../types/lessonRow';
+import Icon from '@frontend/components/AppIcon';
+import { uploadToBucket, BUCKETS } from '@frontend/services/storageService';
+import logger from '@frontend/utils/logger';
+import type { LessonRow } from '@frontend/types/lessonRow';
 
 export interface LessonEditorProps {
   lesson: LessonRow | null;

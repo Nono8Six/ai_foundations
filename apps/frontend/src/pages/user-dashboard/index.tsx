@@ -3,15 +3,15 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from "../../context/AuthContext";
 import { useCourses } from "../../context/CourseContext";
-import Icon from '../../components/AppIcon';
-import Image from '../../components/AppImage';
-import ErrorBoundary from '../../components/ErrorBoundary';
+import Icon from '@frontend/components/AppIcon';
+import Image from '@frontend/components/AppImage';
+import ErrorBoundary from '@frontend/components/ErrorBoundary';
 import RecentActivity from './components/RecentActivity';
 import ProgressChart from './components/ProgressChart';
 import AchievementCarousel from './components/AchievementCarousel';
 import QuickActions from './components/QuickActions';
-import useRecentActivity from '../../hooks/useRecentActivity';
-import useAchievements from '../../hooks/useAchievements';
+import useRecentActivity from '@frontend/hooks/useRecentActivity';
+import useAchievements from '@frontend/hooks/useAchievements';
 
 const UserDashboard = () => {
   const [currentTime, setCurrentTime] = useState(new Date());

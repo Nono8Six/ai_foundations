@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { colors } from '../../../utils/theme';
+import { colors } from '@frontend/utils/theme';
 import {
   BarChart,
   Bar,
@@ -15,11 +15,11 @@ import {
   Pie,
   Cell,
 } from 'recharts';
-import { useAuth } from '../../../context/AuthContext';
-import { useCourses } from '../../../context/CourseContext';
-import useAchievements from '../../../hooks/useAchievements';
-import useRecentActivity from '../../../hooks/useRecentActivity';
-import Icon from '../../../components/AppIcon';
+import { useAuth } from '@frontend/context/AuthContext';
+import { useCourses } from '@frontend/context/CourseContext';
+import useAchievements from '@frontend/hooks/useAchievements';
+import useRecentActivity from '@frontend/hooks/useRecentActivity';
+import Icon from '@frontend/components/AppIcon';
 
 interface WeeklyData {
   day: string;

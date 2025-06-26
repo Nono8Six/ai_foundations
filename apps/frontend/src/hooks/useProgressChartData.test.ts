@@ -1,7 +1,7 @@
 // src/hooks/useProgressChartData.test.ts
 import { renderHook } from '@testing-library/react';
 import useProgressChartData from './useProgressChartData';
-import type { Database } from '../types/database.types';
+import type { Database } from '@frontend/types/database.types';
 
 type LessonRow = Database['public']['Tables']['lessons']['Row'];
 type CourseRow = Database['public']['Tables']['courses']['Row'];

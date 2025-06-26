@@ -16,20 +16,20 @@ import type {
   AuthError,
   AuthChangeEvent,
 } from '@supabase/supabase-js';
-import type { Database } from '../types/database.types';
+import type { Database } from '@frontend/types/database.types';
 import type {
   UpdateUserProfilePayload,
   UpdateUserProfileResponse,
   UpdateUserSettingsPayload,
   UpdateUserSettingsResponse,
   GetUserSettingsResponse,
-} from '../types/rpc.types';
-import type { UserProfile } from '../types/user';
-import { supabase } from '../lib/supabase';
-import { safeQuery } from '../utils/supabaseClient';
+} from '@frontend/types/rpc.types';
+import type { UserProfile } from '@frontend/types/user';
+import { supabase } from '@frontend/lib/supabase';
+import { safeQuery } from '@frontend/utils/supabaseClient';
 import { useNavigate } from 'react-router-dom';
-import logger from '../utils/logger';
-import type { AuthErrorWithCode } from '../types/auth';
+import logger from '@frontend/utils/logger';
+import type { AuthErrorWithCode } from '@frontend/types/auth';
 
 const supabaseClient = supabase as SupabaseClient<Database>;
 
@@ -90,7 +90,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           await fetchUserProfile(session.user.id);
         }
         } catch (error: unknown) {
-          console.error('❌ Error getting initial session:', error.message);
+          logger.error('❌ Error getting initial session:', error.message);
           setError(error);
         } finally {
         setLoading(false);
@@ -146,7 +146,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       );
 
       if (error) {
-        console.error('❌ Error fetching profile:', error.message);
+        logger.error('❌ Error fetching profile:', error.message);
         setError(error);
         return;
       }
@@ -173,7 +173,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         );
 
         if (createError) {
-          console.error('❌ Error creating profile:', createError.message);
+          logger.error('❌ Error creating profile:', createError.message);
           setError(createError);
           return;
         }
@@ -186,7 +186,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       logger.debug('✅ Profile fetched successfully:', data[0]);
       setUserProfile(data[0]);
     } catch (error: unknown) {
-      console.error('❌ Unexpected error in fetchUserProfile:', error);
+      logger.error('❌ Unexpected error in fetchUserProfile:', error);
       setError(error);
     }
   };
@@ -218,7 +218,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     );
 
     if (error) {
-      console.error('❌ Sign up error:', error.message);
+      logger.error('❌ Sign up error:', error.message);
       // Don't set global error state for sign up failures - let the form handle it
       throw error;
     }
@@ -317,7 +317,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       logger.debug('🚪 Logout initiated...');
       await signOut();
     } catch (err) {
-      console.error('❌ Erreur lors de la déconnexion:', err);
+      logger.error('❌ Erreur lors de la déconnexion:', err);
     } finally {
       logger.debug('🧹 Cleaning up user state...');
       setUser(null);

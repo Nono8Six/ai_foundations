@@ -1,6 +1,6 @@
 // src/hooks/useProgressChartData.ts
 import { useState, useEffect, useMemo } from 'react';
-import type { Database } from '../types/database.types';
+import type { Database } from '@frontend/types/database.types';
 
 type UserProgressRow = Database['public']['Tables']['user_progress']['Row'];
 type LessonRow = Database['public']['Tables']['lessons']['Row'];

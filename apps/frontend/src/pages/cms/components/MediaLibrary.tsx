@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import Icon from '../../../components/AppIcon';
-import Image from '../../../components/AppImage';
-import logger from '../../../utils/logger';
+import Icon from '@frontend/components/AppIcon';
+import Image from '@frontend/components/AppImage';
+import logger from '@frontend/utils/logger';
 import {
   BUCKETS,
   listBucketFiles,
   uploadToBucket,
   getPublicUrl,
-} from '../../../services/storageService';
+} from '@frontend/services/storageService';
 
 interface MediaItem {
   id: string;

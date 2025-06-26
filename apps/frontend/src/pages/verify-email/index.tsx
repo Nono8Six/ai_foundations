@@ -1,6 +1,6 @@
 import React from 'react';
-import { useAuth } from '../../context/AuthContext';
-import Icon from '../../components/AppIcon';
+import { useAuth } from '@frontend/context/AuthContext';
+import Icon from '@frontend/components/AppIcon';
 
 const VerifyEmail = () => {
   const { resendVerificationEmail } = useAuth();

@@ -1,6 +1,7 @@
 import React from 'react';
 import Icon from './AppIcon';
-import ErrorContext, { type ErrorLogger } from '../context/ErrorContext';
+import logger from '../utils/logger';
+import ErrorContext, { type ErrorLogger } from '@frontend/context/ErrorContext';
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
@@ -30,7 +31,7 @@ class ErrorBoundary extends React.Component<
     if (logger) {
       logger(error);
     } else {
-      console.error('Error caught by ErrorBoundary:', error, errorInfo);
+      logger.error('Error caught by ErrorBoundary:', error, errorInfo);
     }
   }
 

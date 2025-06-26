@@ -1,8 +1,8 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { supabase } from '../../lib/supabase';
-import Icon from '../../components/AppIcon';
+import { supabase } from '@frontend/lib/supabase';
+import Icon from '@frontend/components/AppIcon';
 import AdminLayout, { useAdminSidebar } from "../../components/AdminLayout";
-import logger from '../../utils/logger';
+import logger from '@frontend/utils/logger';
 import UserTable from './components/UserTable';
 import UserDetailsPanel from './components/UserDetailsPanel';
 import UserFilters from './components/UserFilters';
@@ -55,7 +55,7 @@ const UserManagementAdminContent = () => {
     const fetchUsers = async () => {
       const { data, error } = await supabase.from('profiles').select('*');
       if (error) {
-        console.error('Error fetching users:', error);
+        logger.error('Error fetching users:', error);
         return;
       }
       // Transforme les données de la base pour les adapter au format de l'application

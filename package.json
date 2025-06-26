@@ -35,6 +35,7 @@
     "build:packages": "pnpm -r --filter ./packages/logger build",
     "build": "pnpm build:packages && cd apps/frontend && pnpm build",
     "build:backend": "pnpm build:packages && cd apps/backend && pnpm build",
+
     "preview": "cd apps/frontend && pnpm preview",
     "// === MAINTENANCE ===": "",
     "clean:docker": "docker system prune -af --volumes",

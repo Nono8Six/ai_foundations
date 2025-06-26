@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useAuth } from '../../../context/AuthContext';
-import { useToast } from '../../../context/ToastContext';
-import Icon from '../../../components/AppIcon';
-import Image from '../../../components/AppImage';
-import logger from '../../../utils/logger';
+import { useAuth } from '@frontend/context/AuthContext';
+import { useToast } from '@frontend/context/ToastContext';
+import Icon from '@frontend/components/AppIcon';
+import Image from '@frontend/components/AppImage';
+import logger from '@frontend/utils/logger';
 
 export interface PersonalInfoTabProps {
   userData: {
@@ -66,7 +66,7 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ userData }) => {
       // Show success message
       addToast('Profil mis à jour avec succès !', 'success');
     } catch (error) {
-      console.error('Error updating profile:', error);
+      logger.error('Error updating profile:', error);
       setError('root', {
         type: 'manual',
         message: 'Erreur lors de la mise à jour du profil. Veuillez réessayer.',
