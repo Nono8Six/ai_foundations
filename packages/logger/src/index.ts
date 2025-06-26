@@ -15,7 +15,7 @@ const currentIndex = LEVELS.indexOf(getEnvLevel());
 
 function shouldLog(level: LogLevel): boolean {
   const idx = LEVELS.indexOf(level);
-  return idx >= 0 && (currentIndex === -1 ? true : idx >= currentIndex);
+  return idx >= currentIndex;
 }
 
 export type LogFunction = (...args: unknown[]) => void;
