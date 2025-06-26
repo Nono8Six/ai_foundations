@@ -7,12 +7,10 @@
     "dev": "pnpm build && node --env-file=../../.env dist/index.js",
     "start": "node dist/index.js",
     "build": "tsc -p tsconfig.json",
-    
     "// === TESTS SUPABASE ===": "",
     "test:supabase": "node --env-file=../../.env scripts/test-supabase-connection.mjs",
     "test:supabase:full": "node --env-file=../../.env scripts/test-supabase-full.js",
     "test:db": "node --env-file=../../.env scripts/test-database.js",
-    
     "// === SUPABASE CLI ===": "",
     "db:pull": "supabase db pull",
     "db:push": "supabase db push",
@@ -21,12 +19,10 @@
     "db:status": "supabase status",
     "db:start": "supabase start",
     "db:stop": "supabase stop",
-    
     "// === DÉVELOPPEMENT ===": "",
     "lint": "eslint src/ --ext .js,.ts",
     "format": "prettier --write src/",
     "clean": "rm -rf dist/ node_modules/.cache/",
-
     "// === TYPES & GÉNÉRATION ===": "",
     "gen:types": "supabase gen types typescript --project-id oqmllypaarqvabuvbqa --schema public,auth,storage > src/types/database.types.ts",
     "typecheck": "tsc --noEmit"
@@ -37,7 +33,8 @@
     "express": "^4.18.2",
     "cors": "^2.8.5",
     "helmet": "^7.1.0",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "@ai-foundations/logger": "workspace:*"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Icon from '../../../components/AppIcon';
 import { uploadToBucket, BUCKETS } from '../../../services/storageService';
-import logger from '../../../utils/logger';
+import logger from '@ai-foundations/logger';
 import type { LessonRow } from '../../../types/lessonRow';
 
 export interface LessonEditorProps {

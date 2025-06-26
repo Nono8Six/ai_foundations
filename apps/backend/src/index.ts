@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import logger from '@ai-foundations/logger';
 
 const app = express();
 app.use(cors());
@@ -15,5 +16,5 @@ app.get('/health', (_req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
+  logger.info(`Server listening on port ${PORT}`);
 });

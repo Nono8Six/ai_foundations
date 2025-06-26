@@ -1,7 +1,7 @@
 import React from 'react';
 import Icon from '../../../components/AppIcon';
 import Image from '../../../components/AppImage';
-import logger from '../../../utils/logger';
+import logger from '@ai-foundations/logger';
 import type { UserTableRow } from '../../../types/userTableRow';
 
 export interface UserTableProps {

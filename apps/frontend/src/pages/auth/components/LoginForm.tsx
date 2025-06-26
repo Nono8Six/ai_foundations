@@ -5,7 +5,7 @@ import Icon from '../../../components/AppIcon';
 import Button from '../../../components/ui/Button';
 import TextInput from '../../../components/ui/TextInput';
 import { useAuth } from '../../../context/AuthContext';
-import logger from '../../../utils/logger';
+import logger from '@ai-foundations/logger';
 
 export interface LoginFormProps {
   onSuccess: (user: unknown) => void;

@@ -4,7 +4,7 @@ import { useAuth } from '../../../context/AuthContext';
 import { useToast } from '../../../context/ToastContext';
 import Icon from '../../../components/AppIcon';
 import Image from '../../../components/AppImage';
-import logger from '../../../utils/logger';
+import logger from '@ai-foundations/logger';
 
 export interface PersonalInfoTabProps {
   userData: {

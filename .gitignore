@@ -30,4 +30,4 @@ apps/frontend/dist-types/
 pnpm*
 
 # Backup environment files
-.env.corrupted.backup.*
+.env.corrupted.backup.*packages/*/dist

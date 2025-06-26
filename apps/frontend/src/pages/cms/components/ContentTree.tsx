@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Icon from '../../../components/AppIcon';
-import logger from '../../../utils/logger';
+import logger from '@ai-foundations/logger';
 
 // Unified representation of a content node in the tree
 export interface ContentNode {

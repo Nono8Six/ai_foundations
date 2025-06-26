@@ -28,7 +28,7 @@ import type { UserProfile } from '../types/user';
 import { supabase } from '../lib/supabase';
 import { safeQuery } from '../utils/supabaseClient';
 import { useNavigate } from 'react-router-dom';
-import logger from '../utils/logger';
+import logger from '@ai-foundations/logger';
 import type { AuthErrorWithCode } from '../types/auth';
 
 const supabaseClient = supabase as SupabaseClient<Database>;
