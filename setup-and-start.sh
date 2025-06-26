@@ -33,6 +33,38 @@ if [ -d "packages/logger" ]; then
   cd ../..
 fi
 
-# 7. Lancement en mode développement (sans Docker)
-echo "🎯 Lancement du frontend..."
-cd apps/frontend && pnpm dev --host 0.0.0.0 --port 3000
+# 7. Vérification de la structure du projet
+echo "🔍 Vérification de la structure..."
+ls -la
+
+# 8. Navigation vers le frontend
+echo "📁 Navigation vers apps/frontend..."
+if [ -d "apps/frontend" ]; then
+  cd apps/frontend
+  echo "✅ Dans le répertoire frontend"
+  ls -la
+else
+  echo "❌ Répertoire apps/frontend non trouvé, essai avec frontend..."
+  if [ -d "frontend" ]; then
+    cd frontend
+  else
+    echo "❌ Aucun répertoire frontend trouvé, lancement depuis la racine..."
+  fi
+fi
+
+# 9. Lancement du serveur de développement
+echo "🎯 Lancement du serveur de développement..."
+if [ -f "package.json" ]; then
+  # Vérifier si le script dev existe
+  if grep -q '"dev"' package.json; then
+    echo "🚀 Lancement avec pnpm dev..."
+    pnpm dev --host 0.0.0.0 --port 3000
+  else
+    echo "🚀 Lancement avec vite..."
+    pnpm exec vite --host 0.0.0.0 --port 3000
+  fi
+else
+  echo "❌ Aucun package.json trouvé dans le répertoire courant"
+  pwd
+  ls -la
+fi
