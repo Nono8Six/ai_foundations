@@ -3,9 +3,7 @@ const LEVELS: LogLevel[] = ['debug', 'info', 'warn', 'error'];
 
 function getEnvLevel(): LogLevel {
   const env =
-    (typeof process !== 'undefined' && process.env) ||
-    (typeof import.meta !== 'undefined' && (import.meta as any).env) ||
-    {};
+    (typeof import.meta !== 'undefined' && import.meta.env) ||
   const lvl =
     (env.LOG_LEVEL || env.VITE_LOG_LEVEL || 'info')
       .toString()
