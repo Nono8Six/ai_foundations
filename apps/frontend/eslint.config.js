@@ -1,4 +1,5 @@
 // eslint.config.js
+import base from '../../eslint.config.js';
 import globals from "globals";
 import js from "@eslint/js";
 import pluginReact from "eslint-plugin-react";
@@ -7,6 +8,7 @@ import parserTs from "@typescript-eslint/parser";
 import prettierConfig from "eslint-config-prettier";
 
 export default [
+  ...base,
   // Configuration globale pour tous les fichiers
   {
     files: ["**/*.{js,jsx,mjs,cjs}"],

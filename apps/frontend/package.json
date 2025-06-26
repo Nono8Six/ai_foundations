@@ -24,7 +24,7 @@
     "dev": "vite",
     "build": "vite build --sourcemap",
     "serve": "vite preview",
-    "lint": "eslint src --ext .js,.jsx --fix",
+    "lint": "eslint src --fix",
     "format": "prettier --write \"src/**/*.{js,jsx,json,css,scss,md}\"",
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest watch",
