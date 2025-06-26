@@ -56,6 +56,7 @@
     "// === INSTALLATION & SETUP ===": "",
     "install:all": "pnpm install && cd apps/frontend && pnpm install && cd ../backend && pnpm install",
     "setup": "pnpm install:all && pnpm validate:env && pnpm test:supabase",
+    "setup:safe": "node scripts/safe-setup.js",
     "postinstall": "pnpm typecheck"
   },
   "devDependencies": {
