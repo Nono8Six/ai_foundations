@@ -1,0 +1,10 @@
+{Add commentMore actions
+  "installDependencies": false,
+  "startCommand": "export COREPACK_ENABLE_DOWNLOAD_PROMPT=1 && \
+corepack enable && \
+corepack prepare pnpm@10.12.2 --activate && \
+export PNPM_HOME=$HOME/.local/share/pnpm && \
+export PATH=$PNPM_HOME:$PATH && \
+pnpm install && \
+pnpm run dev:full"
+}
