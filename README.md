@@ -83,6 +83,8 @@ Plusieurs utilitaires sont disponibles dans le dossier `scripts/` :
 - `cleanup.sh` : nettoyage local rapide (arrêt des conteneurs Docker et suppression des dépendances).
 - `recovery.sh` : réinstalle les dépendances pour repartir d\'un environnement sain.
 - `validate-env.js` : vérifie que les variables indispensables sont définies.
+- `build:packages` : compile le package `logger` avant la construction des applications.
+  Les scripts `build` et `build:backend` exécutent d'abord cette étape.
 
 Chaque script peut s\'exécuter via `pnpm run <nom-du-script>`.
 
