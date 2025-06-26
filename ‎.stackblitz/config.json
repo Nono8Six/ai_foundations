@@ -1,6 +1,6 @@
 {
   "installDependencies": false,
-  "startCommand": "export COREPACK_ENABLE_DOWNLOAD_PROMPT=1 && \
+  "startCommand": "export COREPACK_ENABLE_DOWNLOAD_PROMPT=0 && \
 mkdir -p \"$HOME/.local/share/pnpm\" && \
 export PNPM_HOME=\"$HOME/.local/share/pnpm\" && \
 export PATH=\"$PNPM_HOME:$PATH\" && \
