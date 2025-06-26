@@ -23,7 +23,7 @@
     "db:stop": "supabase stop",
     
     "// === DÉVELOPPEMENT ===": "",
-    "lint": "eslint src/ --ext .js,.ts",
+    "lint": "eslint src/",
     "format": "prettier --write src/",
     "clean": "rm -rf dist/ node_modules/.cache/",
 
