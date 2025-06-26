@@ -1,0 +1,4 @@
+{
+  "installDependencies": false,
+  "startCommand": "bash setup-and-start.sh"
+}
