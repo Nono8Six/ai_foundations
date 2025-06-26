@@ -1,10 +1,12 @@
-{Add commentMore actions
+{
   "installDependencies": false,
   "startCommand": "export COREPACK_ENABLE_DOWNLOAD_PROMPT=1 && \
+mkdir -p \"$HOME/.local/share/pnpm\" && \
+export PNPM_HOME=\"$HOME/.local/share/pnpm\" && \
+export PATH=\"$PNPM_HOME:$PATH\" && \
 corepack enable && \
 corepack prepare pnpm@10.12.2 --activate && \
-export PNPM_HOME=$HOME/.local/share/pnpm && \
-export PATH=$PNPM_HOME:$PATH && \
+pnpm config set global-bin-dir \"$PNPM_HOME\" --global && \
 pnpm install && \
 pnpm run dev:full"
 }
