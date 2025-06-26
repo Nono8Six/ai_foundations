@@ -237,6 +237,27 @@ VITE_DEBUG=true
 VITE_LOG_LEVEL=debug
 ```
 
+## 📝 Logger
+
+Le package `@ai-foundations/logger` fournit un utilitaire de journalisation
+simple utilisable aussi bien dans le backend que dans le frontend.
+
+### Variables d'environnement
+
+- `LOG_LEVEL` : niveau pour le backend (par défaut `info`)
+- `VITE_LOG_LEVEL` : niveau pour le frontend (par défaut `info`)
+
+Les niveaux disponibles sont `debug`, `info`, `warn` et `error`.
+
+### Exemple
+
+```ts
+import logger from '@ai-foundations/logger'
+
+logger.info('Service prêt')
+logger.debug('Détails supplémentaires')
+```
+
 ### Développement avec Hot-Reload
 
 Le frontend est configuré pour le hot-reload automatique. Modifiez simplement les fichiers dans le dossier `apps/frontend/src` et les changements seront rechargés automatiquement dans le navigateur.
