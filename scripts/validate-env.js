@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 import fs from 'fs'
 import path from 'path'
+import { log } from '../apps/backend/logger.ts'
 
 const envPath = path.resolve('.env')
 
 if (!fs.existsSync(envPath)) {
-  console.error('❌ Fichier .env introuvable. Copiez .env.example vers .env')
+  log.error('❌ Fichier .env introuvable. Copiez .env.example vers .env')
   process.exit(1)
 }
 
@@ -19,8 +20,8 @@ const required = ['VITE_SUPABASE_URL', 'VITE_SUPABASE_ANON_KEY']
 const missing = required.filter(v => !env[v])
 
 if (missing.length) {
-  console.error(`❌ Variables manquantes: ${missing.join(', ')}`)
+  log.error(`❌ Variables manquantes: ${missing.join(', ')}`)
   process.exit(1)
 }
 
-console.log('✅ Toutes les variables requises sont présentes')
+log.info('✅ Toutes les variables requises sont présentes')
