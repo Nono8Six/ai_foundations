@@ -1,12 +1,14 @@
+version: '3.8'
+
 networks:
   app-network:
     driver: bridge
 
 volumes:
-  pnpm-store:
-  node_modules_frontend:
-  node_modules_backend:
-  portainer_data:
+  # pnpm_store_volume: # Utilisé par les Dockerfiles pour le cache de build, pas directement ici
+  # node_modules_frontend_volume: # Les node_modules sont dans l'image de dev ou bind-mountés
+  # node_modules_backend_volume:  # Idem
+  portainer_data: {} # Pour la persistance des données Portainer si utilisé
 
 services:
   # ===========================================
@@ -16,119 +18,85 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      target: development
+      target: development # Cible l'étape de développement du Dockerfile racine
     container_name: ai-foundations-frontend
-    working_dir: /app
+    # Le working_dir est défini dans le Dockerfile (USER node, WORKDIR /app/apps/frontend)
+    # WORKDIR /app/apps/frontend # Non nécessaire si bien défini dans le Dockerfile
     volumes:
-      - .:/app
-      - node_modules_frontend:/app/apps/frontend/node_modules
-      - pnpm-store:/root/.local/share/pnpm
+      # Montage du code source pour le hot-reloading
+      # Assurez-vous que les chemins correspondent à la structure de votre projet
+      - ./apps/frontend:/app/apps/frontend
+      - ./packages:/app/packages # Si vous avez des packages locaux partagés
+      # Les node_modules sont dans l'image de dev, mais on peut les masquer pour utiliser ceux du host si besoin (non recommandé généralement)
+      # Ou utiliser un volume pour persister les node_modules entre les `down` et `up` si non inclus dans l'image de dev.
+      # Pour l'instant, on se fie à ceux de l'image `development` qui les copie de `build-assets`.
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=development
-      - CHOKIDAR_USEPOLLING=true
-      # Variables Supabase Cloud
+      - CHOKIDAR_USEPOLLING=true # Souvent nécessaire pour le hot-reload dans Docker
+      # Transmettre les variables d'environnement du fichier .env au conteneur
       - VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
       - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
       - VITE_DEBUG=${VITE_DEBUG}
       - VITE_APP_NAME=${VITE_APP_NAME}
-    command: |
-      sh -c "
-        echo '🔧 Installation des dépendances...' &&
-        pnpm install &&
-        echo '🚀 Démarrage du frontend...' &&
-        cd apps/frontend &&
-        pnpm dev --host 0.0.0.0 --port 3000
-      "
+    # La commande est définie dans le Dockerfile (CMD ["pnpm", "dev", "--host", "0.0.0.0"])
+    # command: pnpm --filter frontend dev # Redondant si CMD dans Dockerfile est correct
     networks:
       - app-network
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:3000 || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
+    # Le healthcheck est défini dans le Dockerfile de développement
 
   # ===========================================
-  # BACKEND - Node.js API (optionnel si tout est sur Supabase)
+  # BACKEND - Node.js API (Optionnel)
   # ===========================================
-  backend:
+  backend-api: # Renommé pour clarté
+    # Conditionner la construction et le lancement de ce service
+    # Cela nécessite une vérification manuelle ou un script externe, car `build.if` n'existe pas.
+    # On utilise un profil Docker Compose pour le rendre optionnel.
+    profiles: ["api"]
     build:
       context: .
       dockerfile: apps/backend/Dockerfile
-    container_name: ai-foundations-backend
-    working_dir: /app
+      target: development-backend # Cible l'étape de développement du Dockerfile backend
+      # args: # Si des args de build sont nécessaires
+      #   NODE_ENV: development
+    container_name: ai-foundations-backend-api
     volumes:
-      - .:/app
-      - node_modules_backend:/app/apps/backend/node_modules
-      - pnpm-store:/root/.local/share/pnpm
+      - ./apps/backend:/app/apps/backend
+      - ./packages:/app/packages # Si partagé
     ports:
-      - "3001:3001"
+      - "3001:3001" # Si le backend écoute sur le port 3001
     environment:
       - NODE_ENV=development
       - PORT=3001
-      # Variables Supabase Cloud
-      - SUPABASE_URL=${SUPABASE_URL}
-      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
-      - DATABASE_URL=${DATABASE_URL}
-      - DIRECT_URL=${DIRECT_URL}
-    command: |
-      sh -c "
-        echo '🔧 Installation des dépendances backend...' &&
-        pnpm install &&
-        echo '🚀 Démarrage du backend...' &&
-        cd apps/backend &&
-        pnpm dev
-      "
+      # Variables nécessaires pour le backend API, chargées depuis .env
+      - SUPABASE_URL=${SUPABASE_URL} # Si l'API backend doit appeler Supabase
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY} # Attention à la sécurité ici
+      # Autres variables d'environnement pour l'API backend
+    # La commande est définie dans le Dockerfile backend (CMD ["pnpm", "dev"])
     networks:
       - app-network
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:3001/health || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
-    profiles: ["backend"]  # Optionnel, activé avec --profile backend
+    # Le healthcheck est défini dans le Dockerfile de développement du backend
 
   # ===========================================
-  # SUPABASE CLI - Pour synchronisation
-  # ===========================================
-  supabase-cli:
-    image: supabase/cli:latest
-    container_name: ai-foundations-supabase-cli
-    volumes:
-      - ./apps/backend:/workspace
-      - ~/.supabase:/root/.supabase
-    working_dir: /workspace
-    environment:
-      - SUPABASE_ACCESS_TOKEN=${SUPABASE_ACCESS_TOKEN}
-      - SUPABASE_PROJECT_REF=${SUPABASE_PROJECT_REF}
-      - SUPABASE_DB_PASSWORD=${SUPABASE_DB_PASSWORD}
-    command: sleep infinity
-    networks:
-      - app-network
-    profiles: ["tools"]  # Activé avec --profile tools
-
-  # ===========================================
-  # MONITORING (optionnel)
+  # MONITORING (Optionnel - Portainer)
   # ===========================================
   portainer:
+    profiles: ["monitoring"]
     image: portainer/portainer-ce:latest
     container_name: ai-foundations-portainer
     ports:
       - "9000:9000"
+      - "8000:8000" # Pour le tunnel Edge si utilisé
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
     networks:
       - app-network
     restart: unless-stopped
-    profiles: ["monitoring"]
+
+# Note: L'environnement Supabase local (Postgres, Studio, etc.) est géré par `pnpm db:start`
+# et n'est pas défini directement dans ce fichier docker-compose.yml pour éviter les conflits
+# et simplifier la gestion, conformément à la stratégie "pnpm db:start manuel".
