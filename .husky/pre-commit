@@ -1,0 +1,29 @@
+#!/bin/sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🐶 Running pre-commit hook..."
+
+echo "   Validating environment variables..."
+pnpm validate:env || {
+  echo "   ❌ Environment validation failed. Please check your .env file."
+  exit 1
+}
+echo "   ✅ Environment variables validated."
+
+echo "   Running lint-staged..."
+npx lint-staged || {
+  echo "   ❌ lint-staged failed. Please check the errors above."
+  exit 1
+}
+echo "   ✅ lint-staged completed."
+
+# Optionnel: Exécuter les tests relatifs aux fichiers modifiés.
+# echo "   Running related tests..."
+# pnpm test --related --run --passWithNoTests || {
+#   echo "   ❌ Tests failed. Please check the errors above."
+#   exit 1
+# }
+# echo "   ✅ Related tests passed."
+
+echo "✅ Pre-commit hook passed."
+exit 0

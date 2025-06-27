@@ -38,6 +38,7 @@
     "@types/node": "^20.10.5",
     "eslint": "^8.57.1",
     "prettier": "^3.1.1",
+    "supabase": "^2.26.9",
     "typescript": "^5.3.3"
   },
   "engines": {

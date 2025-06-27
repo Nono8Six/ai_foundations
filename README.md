@@ -19,295 +19,243 @@ Plateforme complète pour les cours sur les Fondations de l'IA, construite avec 
 1. **Frontend** : Application React avec hot-reload
 2. **Supabase** : Base de données PostgreSQL complète avec authentification
 
-## 🚀 Démarrage Rapide
+## 🚀 Démarrage Rapide (Quick Start)
 
-### Prérequis
+Suivez ces étapes pour lancer l'environnement de développement :
 
-- [Docker](https://www.docker.com/get-started) (v20.10+)
-- [Docker Compose](https://docs.docker.com/compose/install/) (v2.0+)
-- [Git](https://git-scm.com/)
-- Compte [Supabase](https://supabase.com/)
+1.  **Prérequis :**
+    *   [Node.js](https://nodejs.org/) (>= 20.x.x)
+    *   [pnpm](https://pnpm.io/installation) (>= 9.x.x), géré via [corepack](https://nodejs.org/api/corepack.html). La version exacte est définie dans `package.json` (`packageManager`).
+    *   [Docker Desktop](https://www.docker.com/products/docker-desktop/) (dernière version stable) pour lancer le frontend conteneurisé et optionnellement le backend API.
+    *   [Git](https://git-scm.com/)
+    *   Un compte [Supabase](https://supabase.com/) pour votre projet Cloud.
 
-### Configuration Initiale
+2.  **Cloner le dépôt :**
+    ```bash
+    git clone https://github.com/Nono8Six/ai_foundations.git # Adaptez avec l'URL de votre dépôt
+    cd ai_foundations
+    ```
 
-1. **Cloner le dépôt**
-   ```bash
-   git clone https://github.com/your-username/ai-foundations.git
-   cd ai-foundations
-   ```
+3.  **Activer pnpm via corepack (une seule fois par environnement ou projet) :**
+    ```bash
+    corepack enable
+    # pnpm sera installé à la version spécifiée dans package.json (packageManager)
+    # Si vous souhaitez forcer une version spécifique globalement (ex: pnpm 9.x.x) :
+    # corepack prepare pnpm@9.x.x --activate
+    ```
 
-2. **Installer les dépendances**
-   ```bash
-   pnpm install
-   ```
-   Le projet s'appuie exclusivement sur **pnpm**. N'utilisez pas `npm install`
-   ou `yarn install` afin d'éviter la création d'un `package-lock.json` ou d'un
-   `yarn.lock` qui ne sont pas pris en charge.
+4.  **Installer les dépendances :**
+    ```bash
+    pnpm install
+    ```
+    *(Cela exécutera aussi `husky install` grâce au script `prepare`)*
 
-3. **Configurer les variables d'environnement**
-   ```bash
-   cp .env.example .env
-   ```
-   Éditez ensuite le fichier `.env` créé depuis `.env.example` avec vos clés Supabase et autres configurations.
+5.  **Configurer les variables d'environnement :**
+    *   Copiez le fichier d'exemple :
+        ```bash
+        cp .env.example .env
+        ```
+    *   Éditez `.env` et remplissez **impérativement** les variables suivantes avec les informations de **votre projet Supabase Cloud** :
+        *   `VITE_SUPABASE_URL`: L'URL de votre projet Supabase Cloud (ex: `https://<votre-ref>.supabase.co`).
+        *   `VITE_SUPABASE_ANON_KEY`: La clé anonyme (publique) de votre projet Supabase Cloud.
+        *   `SUPABASE_ACCESS_TOKEN`: Votre token d'accès personnel Supabase (généré depuis `app.supabase.com/account/tokens`).
+        *   `SUPABASE_PROJECT_REF`: La référence de votre projet Supabase Cloud (ex: `<votre-ref>`).
+    *   Validez votre configuration :
+        ```bash
+        pnpm validate:env
+        ```
 
-4. **Démarrer l'environnement**
-   ```bash
-   docker-compose up --build -d
-   ```
+6.  **Lier le projet local à Supabase Cloud (une seule fois par clone du projet) :**
+    *   Assurez-vous d'être connecté à la CLI Supabase. Si c'est la première fois, exécutez :
+        ```bash
+        pnpm --filter backend exec supabase login
+        ```
+    *   Ensuite, pour lier le projet (la CLI devrait lire `SUPABASE_PROJECT_REF` depuis `.env`):
+        ```bash
+        pnpm --filter backend exec supabase link
+        ```
+    *   Alternativement, spécifiez le project-ref explicitement :
+        ```bash
+        # pnpm --filter backend exec supabase link --project-ref <votre_project_ref_ici>
+        ```
+    *   *Cette commande stocke des informations de liaison dans `apps/backend/supabase/.temp` (qui est ignoré par Git).*
 
-5. **Accéder aux services**
-   - Application : http://localhost:3000
-   - Supabase Studio : http://localhost:54323
+7.  **Démarrer l'instance Supabase locale (optionnel, pour tests ou exploration hors ligne) :**
+    *   Cette instance est distincte de votre Supabase Cloud. Elle utilisera les migrations locales (qui devraient être le reflet du cloud après un `pnpm db:pull`).
+    ```bash
+    pnpm db:start
+    ```
+    *   Accès à Supabase Studio local : `http://localhost:54323` (par défaut).
+    *   Pour arrêter : `pnpm db:stop`.
 
-## 🛠 Commandes Utiles
+8.  **Démarrer les services applicatifs (Frontend et API Backend si activée) :**
+    *   **Option A : Avec Docker Compose (Recommandé pour un environnement isolé)**
+        ```bash
+        # Pour démarrer uniquement le frontend (se connecte au Supabase Cloud défini dans .env)
+        docker-compose up --build -d frontend
 
-### Gestion des Conteneurs
+        # OU pour démarrer le frontend ET l'API backend Node.js (si vous l'utilisez)
+        # docker-compose --profile api up --build -d frontend backend-api
+        ```
+    *   **Option B : Localement sans Docker (pour le frontend)**
+        ```bash
+        pnpm dev:frontend
+        ```
+        *(Le backend API, s'il est utilisé, devrait aussi avoir un script `pnpm dev:backend` pour un lancement local direct).*
 
-| Commande | Description |
-|----------|-------------|
-| `docker-compose up -d` | Démarrer les services en arrière-plan |
-| `docker-compose down` | Arrêter et supprimer les conteneurs |
-| `docker-compose logs -f` | Voir les logs en temps réel |
-| `docker-compose ps` | Voir l'état des conteneurs |
-| `docker-compose exec frontend sh` | Se connecter au conteneur frontend |
+9.  **Accéder à l'application Frontend :**
+    *   `http://localhost:3000` (si lancé via Docker ou `pnpm dev:frontend`).
 
-### Développement
+## 🛠 Commandes PNPM Utiles (depuis la racine)
 
-```bash
-# Installer les dépendances (si nécessaire)
-docker-compose exec frontend pnpm install
+| Commande                         | Description                                                                                                |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `pnpm install`                   | Installe toutes les dépendances du monorepo.                                                               |
+| `pnpm dev`                       | Lance le frontend et le backend API (si configuré) en mode développement.                                    |
+| `pnpm dev:frontend`              | Lance uniquement le serveur de développement du frontend.                                                      |
+| `pnpm dev:backend`               | Lance uniquement le serveur de développement du backend API (si `apps/backend/src` est utilisé).             |
+| `pnpm build`                     | Construit l'application frontend pour la production.                                                       |
+| `pnpm lint`                      | Exécute ESLint sur tout le projet pour vérifier la qualité du code.                                          |
+| `pnpm test`                      | Lance les tests (avec Vitest).                                                                             |
+| `pnpm typecheck`                 | Vérifie les types TypeScript pour l'ensemble du projet.                                                    |
+| `pnpm validate:env`              | Vérifie que les variables d'environnement requises sont présentes dans `.env`.                               |
+| **Supabase (Cloud-First Workflow)** |                                                                                                            |
+| `pnpm db:pull`                   | Récupère le schéma de la base de données Supabase Cloud et génère les fichiers de migration locaux.          |
+| `pnpm gen:types`                 | Génère les types TypeScript à partir du schéma de la base de données Supabase (à utiliser après `db:pull`). |
+| **Supabase (Instance Locale)**     |                                                                                                            |
+| `pnpm db:start`                  | Démarre l'instance Supabase locale (conteneurs Docker gérés par la CLI Supabase).                          |
+| `pnpm db:stop`                   | Arrête l'instance Supabase locale.                                                                         |
 
-# Lancer les tests
-docker-compose exec frontend pnpm test
+*Pour plus de détails sur le workflow Supabase, consultez `docs/guides/supabase-workflow.md`.*
 
-# Vérifier le formatage
-docker-compose exec frontend pnpm format:check
-```
-
-### Scripts internes
-
-Plusieurs utilitaires sont disponibles dans le dossier `scripts/` :
-
-- `cleanup.sh` : nettoyage local rapide (arrêt des conteneurs Docker et suppression des dépendances).
-- `recovery.sh` : réinstalle les dépendances pour repartir d\'un environnement sain.
-- `validate-env.js` : vérifie que les variables indispensables sont définies.
-- `build:packages` : compile le package `logger` avant la construction des applications.
-  Les scripts `build` et `build:backend` exécutent d'abord cette étape.
-
-Chaque script peut s\'exécuter via `pnpm run <nom-du-script>`.
-
-Pour vérifier le typage complet du monorepo :
-
-```bash
-pnpm typecheck
-```
-
-La vérification utilise maintenant `skipLibCheck: false`, ce qui peut rallonger le temps de compilation.
 ## 🚀 Mode Production
 
-Pour générer l'image optimisée et lancer l'application :
+Pour construire et lancer l'image de production du frontend :
 
-```bash
-# Assurez-vous de disposer d'un fichier .env configuré
-docker compose up --build -d
-```
+1.  Assurez-vous que votre fichier `.env` contient les variables de production pour `VITE_SUPABASE_URL` et `VITE_SUPABASE_ANON_KEY` (ou que votre environnement de déploiement les fournira).
+2.  Construire l'image de production :
+    ```bash
+    docker build --target production -t ai-foundations-frontend:latest .
+    ```
+3.  Lancer l'image (exemple) :
+    ```bash
+    docker run -d -p 8080:80 --env-file .env ai-foundations-frontend:latest
+    ```
+    *(Adaptez le port et la gestion des variables d'environnement selon votre plateforme de déploiement.)*
 
-Vous pouvez aussi construire l'image manuellement :
+## 🐳 Commandes Docker Compose Utiles
+
+| Commande                                       | Description                                                                 |
+| ---------------------------------------------- | --------------------------------------------------------------------------- |
+| `docker-compose up -d frontend`                | Démarre le service frontend en arrière-plan.                                |
+| `docker-compose --profile api up -d backend-api` | Démarre le service backend API (si le profil `api` est utilisé).            |
+| `docker-compose down`                          | Arrête et supprime les conteneurs définis dans `docker-compose.yml`.        |
+| `docker-compose down -v`                       | Idem + supprime les volumes anonymes associés.                              |
+| `docker-compose logs -f frontend`              | Affiche les logs en temps réel du service frontend.                         |
+| `docker-compose ps`                            | Liste les conteneurs actifs gérés par Docker Compose.                       |
+| `docker-compose exec frontend sh`              | Ouvre un shell dans le conteneur du service frontend en cours d'exécution.    |
+
+### Scripts Utilitaires (`scripts/`)
+
+-   `scripts/validateEnv.js`: Vérifie la présence des variables d'environnement nécessaires.
+-   `scripts/cleanup.sh`: Nettoie l'environnement de développement (node_modules, conteneurs Docker Compose).
+-   `scripts/recovery.sh`: Tente une récupération de base de l'environnement.
 
 ```bash
 docker build --target production -t ai-foundations:prod .
 ```
 
-Les variables requises sont lues depuis le même fichier `.env`.
+Les variables requises sont lues depuis le même fichier `.env`.*
+*(Adaptez le port et la gestion des variables d'environnement selon votre plateforme de déploiement.)*
 
+## 🐳 Commandes Docker Compose Utiles
 
-## 🏗 Structure du Projet
+| Commande                                       | Description                                                                 |
+| ---------------------------------------------- | --------------------------------------------------------------------------- |
+| `docker-compose up -d frontend`                | Démarre le service frontend en arrière-plan.                                |
+| `docker-compose --profile api up -d backend-api` | Démarre le service backend API (si le profil `api` est utilisé).            |
+| `docker-compose down`                          | Arrête et supprime les conteneurs définis dans `docker-compose.yml`.        |
+| `docker-compose down -v`                       | Idem + supprime les volumes anonymes associés.                              |
+| `docker-compose logs -f frontend`              | Affiche les logs en temps réel du service frontend.                         |
+| `docker-compose ps`                            | Liste les conteneurs actifs gérés par Docker Compose.                       |
+| `docker-compose exec frontend sh`              | Ouvre un shell dans le conteneur du service frontend en cours d'exécution.    |
 
+### Scripts Utilitaires (`scripts/`)
+
+-   `scripts/validateEnv.js`: Vérifie la présence des variables d'environnement nécessaires.
+-   `scripts/cleanup.sh`: Nettoie l'environnement de développement (node_modules, conteneurs Docker Compose).
+-   `scripts/recovery.sh`: Tente une récupération de base de l'environnement.
+
+## 🏗 Structure du Projet (Simplifiée)
 ```
-ai-foundations/
+.
 ├── apps/
-│   ├── frontend/          # Application React (Vite + React 18)
-│   │   ├── public/        # Fichiers statiques
-│   │   ├── src/           # Code source de l'application
-│   │   └── package.json   # Dépendances frontend
-│   └── backend/           # Configuration Supabase et logique métier
-│       ├── supabase/      # Configuration Supabase
-│       │   └── migrations/ # Migrations de la base de données
-│       └── package.json   # Dépendances Supabase CLI
-├── apps/frontend/nginx/   # Configuration Nginx (pour la production)
-├── docker-compose.yml     # Configuration Docker Compose pour le développement
-├── Dockerfile             # Définition des images Docker
-└── .env.example           # Modèle de configuration d'environnement
+│   ├── frontend/          # Application React (Vite)
+│   └── backend/           # Configuration Supabase, API Node.js optionnelle
+│       ├── supabase/      # Config Supabase locale (migrations, seeds)
+│       │   ├── migrations/ # Générées par `pnpm db:pull`
+│       │   └── seeds.sql   # Données initiales pour `supabase db reset` (local)
+│       └── src/           # Code source de l'API Node.js (si utilisée)
+├── docker-compose.yml     # Pour les services applicatifs (frontend, backend-api)
+├── Dockerfile             # Dockerfile multi-stage pour le frontend
+├── .env.example           # Modèle pour les variables d'environnement
+├── package.json           # Scripts PNPM racine, dépendances du workspace
+└── docs/
+    └── guides/
+        └── supabase-workflow.md # Guide détaillé du workflow Supabase
 ```
 
-### État du Développement Backend
+### État du Développement Backend API (Node.js)
 
-Le dossier `apps/backend` contient uniquement la configuration Supabase et les
-scripts de migration. Aucune API Node.js n'est actuellement déployée. Le
-développement d'un service backend personnalisé reste donc optionnel et pourra
-être envisagé ultérieurement en fonction des besoins.
+Le dossier `apps/backend/src/` peut contenir une API Node.js personnalisée (par exemple, avec Express). Son lancement est optionnel et géré par le profil `api` dans `docker-compose.yml`. Si ce dossier est vide ou si l'API n'est pas nécessaire, vous pouvez omettre le profil `api` lors du lancement de Docker Compose.
 
 ## 🔒 Sécurité
 
 ### Variables d'Environnement
 
-Les variables sensibles sont gérées via des fichiers `.env` qui ne doivent JAMAIS être commités dans Git. Le fichier `.env.example` fournit un modèle des variables nécessaires.
+Les variables sensibles (clés API, tokens) sont gérées via un fichier `.env` qui **ne doit JAMAIS être commité sur Git**. Le fichier `.env.example` sert de modèle.
 
-### Bonnes Pratiques de Sécurité
+### Bonnes Pratiques de Sécurité Docker
 
-- Tous les conteneurs s'exécutent avec des utilisateurs non-privilégiés
-- Isolation des réseaux Docker pour limiter l'exposition
-- Healthchecks pour surveiller l'état des services
-- Mise à jour régulière des dépendances
-- Validation des entrées utilisateur côté serveur
-- Protection contre les attaques CSRF et XSS
+-   Les images finales de production utilisent des utilisateurs non-privilégiés (ex: `nginx` pour le frontend, `node` pour le backend API).
+-   Les Healthchecks sont configurés pour surveiller l'état des services conteneurisés.
 
 ## 🛠 Dépannage
 
 ### Problèmes Courants
 
-1. **Erreurs de connexion à Supabase**
-   - Vérifiez que les variables d'environnement sont correctement définies
-   - Vérifiez que le service Supabase est en cours d'exécution : `docker-compose ps`
-   - Consultez les logs : `docker-compose logs supabase_cli`
-
-2. **Problèmes de permissions**
-   ```bash
-   # Sur Linux/Mac
-   sudo chown -R $USER:$USER .
-   
-   # Sur Windows (PowerShell en tant qu'administrateur)
-   icacls . /grant "%USERNAME%":(OI)(CI)F /T
-   ```
-
-3. **Nettoyer l'environnement**
-   ```bash
-   # Arrêter et supprimer les conteneurs
-   docker-compose down -v
-   
-   # Nettoyer les ressources inutilisées
-   docker system prune -f
-   
-   # Réinstaller les dépendances
-   docker-compose run --rm frontend pnpm install
-   ```
-
-4. **Problèmes de ports**
-   ```bash
-   # Vérifier les ports utilisés
-   netstat -tuln | grep LISTEN  # Linux/Mac
-   netstat -ano | findstr LISTEN  # Windows
-   ```
+1.  **Erreurs de connexion à Supabase (Cloud) :**
+    *   Vérifiez que les variables `VITE_SUPABASE_URL` et `VITE_SUPABASE_ANON_KEY` dans `.env` sont correctes et correspondent à votre projet Supabase Cloud.
+    *   Exécutez `pnpm validate:env`.
+2.  **Problèmes avec l'instance Supabase locale (`pnpm db:start`) :**
+    *   Consultez les logs de la CLI Supabase : `pnpm --filter backend exec supabase status` (pour voir les services actifs) et les logs Docker des conteneurs Supabase (ex: `docker logs supabase-db-<project_ref>`).
+    *   Essayez `pnpm db:stop && pnpm db:start`.
+    *   En dernier recours : `pnpm --filter backend exec supabase db reset` (attention, cela supprime les données de votre base locale).
+3.  **Problèmes de permissions (rares avec Docker Desktop moderne) :**
+    *   Assurez-vous que Docker Desktop a les permissions nécessaires pour accéder aux fichiers du projet.
+4.  **Nettoyer l'environnement Docker Compose :**
+    ```bash
+    docker-compose down -v # Arrête et supprime les conteneurs et volumes anonymes
+    # Pour un nettoyage plus global (attention, cela affecte tout Docker) :
+    # docker system prune -af
+    ```
 
 ## 📚 Documentation Supplémentaire
 
- - [Guide du Développeur](docs/guides/README-DEV.md) - Instructions détaillées pour le développement local
-- [Documentation Supabase](https://supabase.com/docs) - Documentation officielle de Supabase
-- [Documentation Docker](https://docs.docker.com/) - Guide d'utilisation de Docker
-- [Documentation React](https://reactjs.org/) - Documentation officielle de React
+-   [Guide du Workflow Supabase](docs/guides/supabase-workflow.md) - **À LIRE ABSOLUMENT** pour comprendre comment gérer le schéma de la base de données.
+-   [Documentation Supabase](https://supabase.com/docs)
+-   [Documentation Docker](https://docs.docker.com/)
+-   [Documentation pnpm](https://pnpm.io/)
+-   [Documentation Vite](https://vitejs.dev/)
+-   [Style Guide](docs/STYLE_GUIDE.md) (si pertinent)
 
 ## 📄 Licence
 
-Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
-
-## 🛠 Configuration Avancée
-
-### Migrations de Base de Données
-
-Pour gérer les migrations de la base de données, utilisez les commandes suivantes :
-
-```bash
-# Appliquer les migrations
-docker-compose exec backend pnpm migrate
-
-# Créer une nouvelle migration (après avoir modifié le schéma)
-docker-compose exec backend pnpm migrate:create nom_de_la_migration
-```
-
-### Variables d'Environnement
-
-Créez un fichier `.env` en copiant le modèle `.env.example` :
-
-```bash
-cp .env.example .env
-```
-
-Variables essentielles à configurer :
-
-```env
-# Configuration Supabase
-VITE_SUPABASE_URL=http://localhost:54321
-VITE_SUPABASE_ANON_KEY=votre_cle_anon_supabase
-
-# Configuration de l'application
-VITE_APP_NAME="AI Foundations"
-VITE_APP_ENV=development
-VITE_APP_VERSION=0.1.0
-VITE_DEBUG=true
-VITE_LOG_LEVEL=debug
-```
-
-## 📝 Logger
-
-Le package `@ai-foundations/logger` fournit un utilitaire de journalisation
-simple utilisable aussi bien dans le backend que dans le frontend.
-
-### Variables d'environnement
-
-- `LOG_LEVEL` : niveau pour le backend (par défaut `info`)
-- `VITE_LOG_LEVEL` : niveau pour le frontend (par défaut `info`)
-
-Les niveaux disponibles sont `debug`, `info`, `warn` et `error`.
-
-### Exemple
-
-```ts
-import logger from '@ai-foundations/logger'
-
-logger.info('Service prêt')
-logger.debug('Détails supplémentaires')
-```
-
-### Développement avec Hot-Reload
-
-Le frontend est configuré pour le hot-reload automatique. Modifiez simplement les fichiers dans le dossier `apps/frontend/src` et les changements seront rechargés automatiquement dans le navigateur.
-
-### Accès à la Base de Données
-
-1. **En Ligne de Commande** :
-   ```bash
-   docker-compose exec db psql -U postgres
-   ```
+Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
 
 ## 🤝 Contribution
 
-1. Créez une branche pour votre fonctionnalité :
-   ```bash
-   git checkout -b feature/nouvelle-fonctionnalite
-   ```
+Les contributions sont les bienvenues ! Veuillez suivre les conventions de commit (voir configuration de `commitlint` et les hooks Husky) et vous assurer que les hooks pre-commit passent.
 
-2. Committez vos modifications :
-   ```bash
-   git add .
-   git commit -m "feat: ajouter nouvelle fonctionnalité"
-   ```
-
-3. Poussez vos changements :
-   ```bash
-   git push origin feature/nouvelle-fonctionnalite
-   ```
-
-4. Créez une Pull Request sur GitHub
-## 📚 Documentation supplémentaire
-
-- [Index de la documentation](docs/README.md) - Aperçu de tous les fichiers de documentation
- - [Guide du Développeur](docs/guides/README-DEV.md) - Documentation complète pour les développeurs
- - [Guide Supabase](docs/guides/README-SUPABASE.md) - Synchronisation de la base de données
-
-- [Documentation Supabase](https://supabase.com/docs)
-- [Documentation Docker](https://docs.docker.com/)
-- [Documentation React](https://reactjs.org/)
-
-## 📄 Licence
-
-Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
+---
+*Ce README a été mis à jour pour refléter la nouvelle configuration du projet.*
