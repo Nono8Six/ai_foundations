@@ -1,4 +1,0 @@
-{
-  "installDependencies": false,
-  "startCommand": "sh direct-frontend.sh"
-}
