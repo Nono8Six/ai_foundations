@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 
 echo "🚀 Configuration de l'environnement Bolt.new pour monorepo..."
 

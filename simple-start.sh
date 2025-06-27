@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 
 echo "🚀 Démarrage rapide pour Bolt.new..."
 
