@@ -24,7 +24,7 @@ COPY . .
 RUN pnpm install --frozen-lockfile
 
 # Construction de l'application
-RUN pnpm --filter frontend build
+RUN pnpm --filter ./apps/frontend build
 
 # ==============================================================================
 # Étape 2 : Image de production
