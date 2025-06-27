@@ -18,6 +18,7 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
+      "@/*": ["./*"],
       "$lib/*": ["./apps/frontend/src/lib/*"],
       "@frontend/*": ["./apps/frontend/src/*"],
       "@backend/*": ["./apps/backend/src/*"]
