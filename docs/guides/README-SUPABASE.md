@@ -55,7 +55,7 @@ cd apps/backend
 pnpm exec supabase link --project-ref votre-reference-projet
 
 # Démarrer l'environnement local (utilise Docker)
-pnpm run supabase:start
+pnpm db:start
 ```
 Préparez ensuite le fichier `.env` à la racine :
 ```bash
@@ -79,7 +79,7 @@ Toutes les commandes suivantes se lancent depuis le dossier `apps/backend`.
 
 | Commande | Description |
 |----------|-------------|
-| `pnpm supabase:start` | Démarrer l'environnement local |
+| `pnpm db:start` | Démarrer l'environnement local |
 | `pnpm db:reset` | Réinitialiser complètement la base locale |
 
 | `pnpm db:pull` | Synchroniser le dossier `migrations` depuis Supabase Cloud |
@@ -94,7 +94,7 @@ Toutes les commandes suivantes se lancent depuis le dossier `apps/backend`.
 1. **Démarrer l'environnement**
    ```bash
    cd apps/backend
-   pnpm supabase:start
+   pnpm db:start
    ```
 
 2. **Synchroniser avec la base en ligne**
@@ -232,7 +232,7 @@ pnpm gen:types
 
 ```bash
 # Vérifier que Supabase est bien démarré
-pnpm supabase:status
+pnpm db:status
 
 # Voir les logs
 docker logs -f ai-foundations-supabase-cli
