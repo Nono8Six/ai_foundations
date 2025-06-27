@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-<<<<<<< codex/refactor-console-methods-to-logger
-import Icon from '../../../components/AppIcon';
-import { supabase } from '../../../lib/supabase';
-import logger from '../../../utils/logger';
-=======
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts';
 import Icon from '@frontend/components/AppIcon';
 import { supabase } from '@frontend/lib/supabase';
->>>>>>> main
+import logger from '@frontend/utils/logger';
 
 interface CourseData {
   name: string;
