@@ -9,6 +9,7 @@ Plateforme complète pour les cours sur les Fondations de l'IA, construite avec 
 - **Frontend** : React 18 avec Vite 6.3.5
 - **Styling** : Tailwind CSS
 - **Backend** : Supabase (PostgreSQL, Auth, Storage)
+- **API Backend** : Node.js/Express avec hot-reload via nodemon (optionnel)
 - **Base de données** : PostgreSQL via Supabase
 - **Conteneurisation** : Docker + Docker Compose
 - **Gestion de paquets** : pnpm
@@ -18,6 +19,7 @@ Plateforme complète pour les cours sur les Fondations de l'IA, construite avec 
 
 1. **Frontend** : Application React avec hot-reload
 2. **Supabase** : Base de données PostgreSQL complète avec authentification
+3. **Backend API** (optionnel) : Serveur Node.js avec hot-reload (nodemon)
 
 ## 🚀 Démarrage Rapide (Quick Start)
 
@@ -101,7 +103,7 @@ Suivez ces étapes pour lancer l'environnement de développement :
         ```bash
         pnpm dev:frontend
         ```
-        *(Le backend API, s'il est utilisé, devrait aussi avoir un script `pnpm dev:backend` pour un lancement local direct).*
+        *(Le backend API, s'il est utilisé, peut être lancé via `pnpm dev:backend`, qui utilise nodemon pour le hot-reload).* 
 
 9.  **Accéder à l'application Frontend :**
     *   `http://localhost:3000` (si lancé via Docker ou `pnpm dev:frontend`).
@@ -113,7 +115,7 @@ Suivez ces étapes pour lancer l'environnement de développement :
 | `pnpm install`                   | Installe toutes les dépendances du monorepo.                                                               |
 | `pnpm dev`                       | Lance le frontend et le backend API (si configuré) en mode développement.                                    |
 | `pnpm dev:frontend`              | Lance uniquement le serveur de développement du frontend.                                                      |
-| `pnpm dev:backend`               | Lance uniquement le serveur de développement du backend API (si `apps/backend/src` est utilisé).             |
+| `pnpm dev:backend`               | Lance uniquement le serveur de développement du backend API avec hot-reload (nodemon). |
 | `pnpm build`                     | Construit l'application frontend pour la production.                                                       |
 | `pnpm lint`                      | Exécute ESLint sur tout le projet pour vérifier la qualité du code.                                          |
 | `pnpm test`                      | Lance les tests (avec Vitest).                                                                             |
@@ -207,7 +209,7 @@ Les variables requises sont lues depuis le même fichier `.env`.*
 
 ### État du Développement Backend API (Node.js)
 
-Le dossier `apps/backend/src/` peut contenir une API Node.js personnalisée (par exemple, avec Express). Son lancement est optionnel et géré par le profil `api` dans `docker-compose.yml`. Si ce dossier est vide ou si l'API n'est pas nécessaire, vous pouvez omettre le profil `api` lors du lancement de Docker Compose.
+Le dossier `apps/backend/src/` peut contenir une API Node.js personnalisée (par exemple, avec Express). Son lancement est optionnel et géré par le profil `api` dans `docker-compose.yml`. En développement, le script `pnpm dev:backend` utilise **nodemon** pour recharger automatiquement le serveur lors des modifications du code. Si ce dossier est vide ou si l'API n'est pas nécessaire, vous pouvez omettre le profil `api` lors du lancement de Docker Compose.
 
 ## 🔒 Sécurité
 
