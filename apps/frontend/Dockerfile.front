@@ -1,0 +1,7 @@
+FROM node:20-alpine
+RUN corepack enable && corepack prepare pnpm@latest --activate
+WORKDIR /workspace
+COPY apps/frontend/package.json apps/frontend/pnpm-lock.yaml ./
+RUN pnpm fetch --prod && pnpm install -r --offline
+COPY apps/frontend .
+EXPOSE 5173
