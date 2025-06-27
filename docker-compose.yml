@@ -5,9 +5,6 @@ networks:
     driver: bridge
 
 volumes:
-  # pnpm_store_volume: # Utilisé par les Dockerfiles pour le cache de build, pas directement ici
-  # node_modules_frontend_volume: # Les node_modules sont dans l'image de dev ou bind-mountés
-  # node_modules_backend_volume:  # Idem
   portainer_data: {} # Pour la persistance des données Portainer si utilisé
   pnpm-store:
   node-modules:
@@ -37,48 +34,15 @@ services:
     restart: unless-stopped
 
   # ===========================================
-  # BACKEND - Node.js API (Optionnel)
-  # ===========================================
-  backend-api: # Renommé pour clarté
-    # Conditionner la construction et le lancement de ce service
-    # Cela nécessite une vérification manuelle ou un script externe, car `build.if` n'existe pas.
-    # On utilise un profil Docker Compose pour le rendre optionnel.
-    profiles: ["api"]
-    build:
-      context: .
-      dockerfile: apps/backend/Dockerfile
-      target: development-backend # Cible l'étape de développement du Dockerfile backend
-      # args: # Si des args de build sont nécessaires
-      #   NODE_ENV: development
-    container_name: ai-foundations-backend-api
-    volumes:
-      - ./apps/backend:/app/apps/backend
-      - ./packages:/app/packages # Si partagé
-    ports:
-      - "3001:3001" # Si le backend écoute sur le port 3001
-    environment:
-      - NODE_ENV=development
-      - PORT=3001
-      # Variables nécessaires pour le backend API, chargées depuis .env
-      - SUPABASE_URL=${SUPABASE_URL} # Si l'API backend doit appeler Supabase
-      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY} # Attention à la sécurité ici
-      # Autres variables d'environnement pour l'API backend
-    # La commande est définie dans le Dockerfile backend (CMD ["pnpm", "dev"])
-    networks:
-      - app-network
-    restart: unless-stopped
-    # Le healthcheck est défini dans le Dockerfile de développement du backend
-
-  # ===========================================
   # MONITORING (Optionnel - Portainer)
   # ===========================================
   portainer:
-    profiles: ["monitoring"]
+    profiles: ['monitoring']
     image: portainer/portainer-ce:latest
     container_name: ai-foundations-portainer
     ports:
-      - "9000:9000"
-      - "8000:8000" # Pour le tunnel Edge si utilisé
+      - '9000:9000'
+      - '8000:8000' # Pour le tunnel Edge si utilisé
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
