@@ -1,7 +1,11 @@
-export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
+export type LogLevel = 'debug' | 'info' | 'warn' | 'error' | 'fatal';
 
-const LEVELS: LogLevel[] = ['debug', 'info', 'warn', 'error'];
-const envLevel = (import.meta.env?.VITE_LOG_LEVEL || 'info').toLowerCase() as LogLevel;
+const LEVELS: LogLevel[] = ['debug', 'info', 'warn', 'error', 'fatal'];
+const envLevel = (
+  (globalThis.process?.env?.LOG_LEVEL as string | undefined) ||
+  import.meta.env?.VITE_LOG_LEVEL ||
+  'info'
+).toLowerCase() as LogLevel;
 const currentIndex = LEVELS.indexOf(envLevel);
 
 const shouldLog = (level: LogLevel): boolean => {
@@ -16,6 +20,7 @@ const logger: Record<LogLevel, LogFn> = {
   info: (...args: unknown[]) => { if (shouldLog('info')) console.info(...args); },
   warn: (...args: unknown[]) => { if (shouldLog('warn')) console.warn(...args); },
   error: (...args: unknown[]) => { if (shouldLog('error')) console.error(...args); },
+  fatal: (...args: unknown[]) => { if (shouldLog('fatal')) console.error(...args); },
 };
 
 export default logger;
