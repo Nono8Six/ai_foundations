@@ -2,17 +2,24 @@
   "name": "ai-foundations-monorepo",
   "private": true,
   "packageManager": "pnpm@10.12.2+sha512.a32540185b964ee30bb4e979e405adc6af59226b438ee4cc19f9e8773667a66d302f5bfee60a39d3cac69e35e4b96e708a71dd002b7e9359c4112a1722ac323f",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
   "scripts": {
+    "// === DÉVELOPPEMENT BOLT.NEW ===": "",
+    "dev:bolt": "cd apps/frontend && pnpm dev --host 0.0.0.0 --port 3000",
+    "dev:backend:local": "cd apps/backend && pnpm dev",
     "// === RÉCUPÉRATION ===": "",
-    "recovery": "bash scripts/recovery.sh",
-    "cleanup": "bash scripts/cleanup.sh",
-    "// === DÉVELOPPEMENT ===": "",
-    "dev": "docker-compose up --build frontend",
-    "dev:full": "docker-compose --profile backend up --build",
+    "recovery": "sh scripts/recovery.sh",
+    "cleanup": "sh scripts/cleanup.sh",
+    "// === DÉVELOPPEMENT LOCAL (Docker) ===": "",
+    "dev": "docker compose up --build frontend",
+    "dev:full": "docker compose --profile backend up --build",
     "dev:backend": "cd apps/backend && pnpm dev",
     "dev:frontend": "cd apps/frontend && pnpm dev",
-    "dev:tools": "docker-compose --profile tools up -d",
-    "dev:logs": "docker-compose logs -f",
+    "dev:tools": "docker compose --profile tools up -d",
+    "dev:logs": "docker compose logs -f",
     "// === SUPABASE CLOUD ===": "",
     "db:pull": "cd apps/backend && pnpm exec supabase db pull",
     "db:push": "cd apps/backend && pnpm exec supabase db push",
@@ -35,7 +42,6 @@
     "build:packages": "pnpm -r --filter ./packages/logger build",
     "build": "pnpm build:packages && cd apps/frontend && pnpm build",
     "build:backend": "pnpm build:packages && cd apps/backend && pnpm build",
-
     "preview": "cd apps/frontend && pnpm preview",
     "// === MAINTENANCE ===": "",
     "clean:docker": "docker system prune -af --volumes",
@@ -49,7 +55,7 @@
     "// === INSTALLATION & SETUP ===": "",
     "install:all": "pnpm install && cd apps/frontend && pnpm install && cd ../backend && pnpm install",
     "setup": "pnpm install:all && pnpm validate:env && pnpm test:supabase",
-    "postinstall": "pnpm typecheck"
+    "setup:safe": "node scripts/safe-setup.js"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
