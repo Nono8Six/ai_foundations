@@ -31,9 +31,6 @@ RUN pnpm --filter frontend build
 # ==============================================================================
 FROM nginx:1.27-alpine AS production
 
-# Installation des outils de débogage (utile en développement)
-RUN apk add --no-cache curl
-
 # Configuration Nginx
 COPY apps/frontend/nginx/default.conf.template /etc/nginx/templates/default.conf.template
 
@@ -45,7 +42,7 @@ EXPOSE 80
 
 # Healthcheck pour surveiller l'état du conteneur
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:80/healthz || exit 1
+  CMD curl -fsS http://localhost:80/healthz || exit 1
 
 # Utilisateur non-root pour la sécurité
 USER nginx:nginx
@@ -69,7 +66,7 @@ WORKDIR /app/apps/frontend
 
 # Healthcheck simplifié pour le développement
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=2 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:3000 || exit 1
+  CMD curl -fsS http://localhost:3000 || exit 1
 
 # Commande par défaut pour le développement
 CMD ["pnpm", "dev", "--host", "--port", "3000"]
