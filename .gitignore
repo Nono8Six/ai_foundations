@@ -31,5 +31,3 @@ apps/frontend/dist-types/
 packages/*/dist
 
 ts-errors-full.log
-# Allow NPM lockfile for Bolt.new compatibility
-!package-lock.json
