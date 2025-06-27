@@ -90,23 +90,23 @@ Suivez ces étapes pour lancer l'environnement de développement :
     *   Accès à Supabase Studio local : `http://localhost:54323` (par défaut).
     *   Pour arrêter : `pnpm db:stop`.
 
-8.  **Démarrer les services applicatifs (Frontend et API Backend si activée) :**
-    *   **Option A : Avec Docker Compose (Recommandé pour un environnement isolé)**
+8.  **Démarrer les services applicatifs (Frontend et éventuelle API Node.js) :**
+    *   **Option A : Avec Docker Compose (recommandé)**
         ```bash
-        # Pour démarrer uniquement le frontend (se connecte au Supabase Cloud défini dans .env)
-        docker-compose up --build -d frontend
+        # Lancement standard connecté à Supabase Cloud
+        docker compose up --build
 
-        # OU pour démarrer le frontend ET l'API backend Node.js (si vous l'utilisez)
-        # docker-compose --profile api up --build -d frontend backend-api
+        # OU pour inclure également une instance Supabase locale
+        docker compose --profile supabase-local up --build
         ```
     *   **Option B : Localement sans Docker (pour le frontend)**
         ```bash
         pnpm dev:frontend
         ```
-        *(Le backend API, s'il est utilisé, peut être lancé via `pnpm dev:backend`, qui utilise nodemon pour le hot-reload).* 
+        *(L'API Node.js, si elle est utilisée, se lance via `pnpm dev:backend`, qui utilise nodemon pour le hot‑reload).*
 
 9.  **Accéder à l'application Frontend :**
-    *   `http://localhost:3000` (si lancé via Docker ou `pnpm dev:frontend`).
+    *   `http://localhost:5173` (hot reload activé).
 
 ## 🛠 Commandes PNPM Utiles (depuis la racine)
 
@@ -149,13 +149,13 @@ Pour construire et lancer l'image de production du frontend :
 
 | Commande                                       | Description                                                                 |
 | ---------------------------------------------- | --------------------------------------------------------------------------- |
-| `docker-compose up -d frontend`                | Démarre le service frontend en arrière-plan.                                |
-| `docker-compose --profile api up -d backend-api` | Démarre le service backend API (si le profil `api` est utilisé).            |
-| `docker-compose down`                          | Arrête et supprime les conteneurs définis dans `docker-compose.yml`.        |
-| `docker-compose down -v`                       | Idem + supprime les volumes anonymes associés.                              |
-| `docker-compose logs -f frontend`              | Affiche les logs en temps réel du service frontend.                         |
-| `docker-compose ps`                            | Liste les conteneurs actifs gérés par Docker Compose.                       |
-| `docker-compose exec frontend sh`              | Ouvre un shell dans le conteneur du service frontend en cours d'exécution.    |
+| `docker compose up -d`                          | Démarre le frontend (et l'API si configurée).                                |
+| `docker compose --profile supabase-local up -d` | Lance aussi l'instance Supabase locale.                                      |
+| `docker compose down`                          | Arrête et supprime les conteneurs définis dans `docker-compose.yml`.        |
+| `docker compose down -v`                       | Idem + supprime les volumes anonymes associés.                              |
+| `docker compose logs -f frontend`              | Affiche les logs en temps réel du service frontend.                         |
+| `docker compose ps`                            | Liste les conteneurs actifs gérés par Docker Compose.                       |
+| `docker compose exec frontend sh`              | Ouvre un shell dans le conteneur du service frontend en cours d'exécution.    |
 
 ### Scripts Utilitaires (`scripts/`)
 
@@ -174,13 +174,13 @@ Les variables requises sont lues depuis le même fichier `.env`.*
 
 | Commande                                       | Description                                                                 |
 | ---------------------------------------------- | --------------------------------------------------------------------------- |
-| `docker-compose up -d frontend`                | Démarre le service frontend en arrière-plan.                                |
-| `docker-compose --profile api up -d backend-api` | Démarre le service backend API (si le profil `api` est utilisé).            |
-| `docker-compose down`                          | Arrête et supprime les conteneurs définis dans `docker-compose.yml`.        |
-| `docker-compose down -v`                       | Idem + supprime les volumes anonymes associés.                              |
-| `docker-compose logs -f frontend`              | Affiche les logs en temps réel du service frontend.                         |
-| `docker-compose ps`                            | Liste les conteneurs actifs gérés par Docker Compose.                       |
-| `docker-compose exec frontend sh`              | Ouvre un shell dans le conteneur du service frontend en cours d'exécution.    |
+| `docker compose up -d`                          | Démarre le frontend (et l'API si configurée).                                |
+| `docker compose --profile supabase-local up -d` | Lance aussi l'instance Supabase locale.                                      |
+| `docker compose down`                          | Arrête et supprime les conteneurs définis dans `docker-compose.yml`.        |
+| `docker compose down -v`                       | Idem + supprime les volumes anonymes associés.                              |
+| `docker compose logs -f frontend`              | Affiche les logs en temps réel du service frontend.                         |
+| `docker compose ps`                            | Liste les conteneurs actifs gérés par Docker Compose.                       |
+| `docker compose exec frontend sh`              | Ouvre un shell dans le conteneur du service frontend en cours d'exécution.    |
 
 ### Scripts Utilitaires (`scripts/`)
 
@@ -198,7 +198,7 @@ Les variables requises sont lues depuis le même fichier `.env`.*
 │       │   ├── migrations/ # Générées par `pnpm db:pull`
 │       │   └── seeds.sql   # Données initiales pour `supabase db reset` (local)
 │       └── src/           # Code source de l'API Node.js (si utilisée)
-├── docker-compose.yml     # Pour les services applicatifs (frontend, backend-api)
+├── docker-compose.yml     # Pour les services applicatifs (frontend et outils divers)
 ├── Dockerfile             # Dockerfile multi-stage pour le frontend
 ├── .env.example           # Modèle pour les variables d'environnement
 ├── package.json           # Scripts PNPM racine, dépendances du workspace
@@ -209,7 +209,7 @@ Les variables requises sont lues depuis le même fichier `.env`.*
 
 ### État du Développement Backend API (Node.js)
 
-Le dossier `apps/backend/src/` peut contenir une API Node.js personnalisée (par exemple, avec Express). Son lancement est optionnel et géré par le profil `api` dans `docker-compose.yml`. En développement, le script `pnpm dev:backend` utilise **nodemon** pour recharger automatiquement le serveur lors des modifications du code. Si ce dossier est vide ou si l'API n'est pas nécessaire, vous pouvez omettre le profil `api` lors du lancement de Docker Compose.
+Le dossier `apps/backend/src/` peut contenir une API Node.js personnalisée (par exemple, avec Express). Son utilisation est totalement facultative. En développement, lancez-la via `pnpm dev:backend` ou intégrez-la à vos conteneurs selon vos besoins.
 
 ## 🔒 Sécurité
 
@@ -237,7 +237,7 @@ Les variables sensibles (clés API, tokens) sont gérées via un fichier `.env` 
     *   Assurez-vous que Docker Desktop a les permissions nécessaires pour accéder aux fichiers du projet.
 4.  **Nettoyer l'environnement Docker Compose :**
     ```bash
-    docker-compose down -v # Arrête et supprime les conteneurs et volumes anonymes
+    docker compose down -v # Arrête et supprime les conteneurs et volumes anonymes
     # Pour un nettoyage plus global (attention, cela affecte tout Docker) :
     # docker system prune -af
     ```

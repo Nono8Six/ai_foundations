@@ -87,16 +87,16 @@ Si vous souhaitez travailler avec une instance Supabase tournant entièrement su
     *   Votre base de données locale sera construite à partir des migrations présentes dans `apps/backend/supabase/migrations/` (qui devraient être le reflet de votre Cloud après `pnpm db:pull`).
     *   Pour cette option, votre frontend devrait être configuré pour pointer vers l'API Supabase locale (ex: `VITE_SUPABASE_URL=http://localhost:54321` et la clé anon locale correspondante dans `.env`). **Attention : le `.env.example` actuel est configuré pour le Cloud.** Adaptez votre `.env` si vous utilisez cette option.
 
-2.  **Démarrez vos applications** (Frontend et/ou Backend API) :
+2.  **Démarrez vos applications** (Frontend et éventuelle API Node.js) :
     ```bash
-    # Pour le frontend (avec Docker)
-    docker-compose up --build -d frontend
+    # Lancement standard connecté au Supabase Cloud
+    docker compose up --build
 
-    # OU pour le frontend (localement sans Docker)
+    # OU avec une instance Supabase locale en plus
+    docker compose --profile supabase-local up --build
+
+    # Pour lancer le frontend sans Docker
     # pnpm dev:frontend
-
-    # Si vous utilisez l'API backend Node.js (avec Docker, nécessite le profil "api")
-    # docker-compose --profile api up --build -d backend-api
     ```
 
 ### Option B : Développement contre Supabase Cloud (Workflow principal)
@@ -107,19 +107,19 @@ C'est le workflow recommandé. Votre frontend se connecte directement à votre i
 
 2.  **Démarrez vos applications** :
     ```bash
-    # Pour le frontend (avec Docker)
-    docker-compose up --build -d frontend
+    # Pour un lancement standard
+    docker compose up --build
 
-    # OU pour le frontend (localement sans Docker)
+    # Avec l'instance Supabase locale
+    docker compose --profile supabase-local up --build
+
+    # Ou en local sans Docker pour le frontend
     # pnpm dev:frontend
-
-    # Si vous utilisez l'API backend Node.js (avec Docker, nécessite le profil "api")
-    # docker-compose --profile api up --build -d backend-api
     ```
 
 ## 5. Accès à l'Application
 
-*   Frontend : `http://localhost:3000` (si lancé via Docker ou `pnpm dev:frontend`).
+*   Frontend : `http://localhost:5173` (hot reload actif).
 
 ---
 
