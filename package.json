@@ -9,6 +9,8 @@
   "scripts": {
     "// === DÉVELOPPEMENT BOLT.NEW ===": "",
     "dev:bolt": "cd apps/frontend && pnpm dev --host 0.0.0.0 --port 3000",
+    "start": "pnpm dev:bolt",
+    "prestart": "npm install --package-lock-only --ignore-scripts",
     "dev:backend:local": "cd apps/backend && pnpm dev",
     "// === RÉCUPÉRATION ===": "",
     "recovery": "sh scripts/recovery.sh",
