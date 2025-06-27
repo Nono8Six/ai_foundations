@@ -9,6 +9,9 @@ export default [
         ...globals.node,
         ...globals.browser
       }
+    },
+    rules: {
+      'no-console': 'error'
     }
   },
   js.configs.recommended,

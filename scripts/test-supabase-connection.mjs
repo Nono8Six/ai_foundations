@@ -1,4 +1,5 @@
 // scripts/test-supabase-connection.mjs (À LA RACINE)
+/* eslint-disable no-console */
 import { createClient } from '@supabase/supabase-js'
 
 // Les variables sont déjà chargées via --env-file=.env
