@@ -16,10 +16,12 @@
 ## 🛡️ Les 3 Règles d'Or
 
 1. **La Base en Ligne est la Source** :
+
    - La base Supabase Cloud est la **référence principale** pour le schéma
    - `pnpm db:pull` sert à synchroniser le dossier `/apps/backend/supabase/migrations`
 
 2. **Les Types Suivent le Schéma** :
+
    - `apps/frontend/src/types/database.types.ts` doit TOUJOURS être à jour après chaque modification
    - C'est le pont vital entre votre base de données et votre code React
 
@@ -57,12 +59,15 @@ pnpm exec supabase link --project-ref votre-reference-projet
 # Démarrer l'environnement local (utilise Docker)
 pnpm db:start
 ```
+
 Préparez ensuite le fichier `.env` à la racine :
+
 ```bash
 cp .env.example .env
 # Renseignez SUPABASE_PROJECT_REF, SUPABASE_ACCESS_TOKEN,
 # SUPABASE_SERVICE_ROLE_KEY, SUPABASE_DB_PASSWORD et SUPABASE_JWT_SECRET
 ```
+
 - `SUPABASE_PROJECT_REF` : identifiant du projet Supabase
 - `SUPABASE_ACCESS_TOKEN` : token personnel pour la CLI
 - `SUPABASE_SERVICE_ROLE_KEY` : clé service_role
@@ -77,9 +82,9 @@ cp .env.example .env
 
 Toutes les commandes suivantes se lancent depuis le dossier `apps/backend`.
 
-| Commande | Description |
-|----------|-------------|
-| `pnpm db:start` | Démarrer l'environnement local |
+| Commande        | Description                               |
+| --------------- | ----------------------------------------- |
+| `pnpm db:start` | Démarrer l'environnement local            |
 | `pnpm db:reset` | Réinitialiser complètement la base locale |
 
 | `pnpm db:pull` | Synchroniser le dossier `migrations` depuis Supabase Cloud |
@@ -92,28 +97,33 @@ Toutes les commandes suivantes se lancent depuis le dossier `apps/backend`.
 ### A. Développement Local (Recommandé)
 
 1. **Démarrer l'environnement**
+
    ```bash
    cd apps/backend
    pnpm db:start
    ```
 
 2. **Synchroniser avec la base en ligne**
+
    ```bash
    pnpm db:pull
    ```
 
 3. **Créer une migration**
+
    ```bash
    pnpm exec supabase migration new nom_descriptif
    # Éditez le fichier créé dans supabase/migrations/
    ```
 
 4. **Tester la migration**
+
    ```bash
    pnpm db:reset
    ```
 
 5. **Mettre à jour les types**
+
    ```bash
    pnpm gen:types
    ```
@@ -126,6 +136,7 @@ Toutes les commandes suivantes se lancent depuis le dossier `apps/backend`.
 ### B. Quand un collègue a fait des changements
 
 1. **Récupérer les changements**
+
    ```bash
    git pull
    cd apps/backend
@@ -133,11 +144,13 @@ Toutes les commandes suivantes se lancent depuis le dossier `apps/backend`.
    ```
 
 2. **Synchroniser les migrations**
+
    ```bash
    pnpm db:pull
    ```
 
 3. **Mettre à jour votre base locale**
+
    ```bash
    pnpm db:reset
    ```
@@ -157,7 +170,8 @@ pnpm gen:types
 ```
 
 Ce script exécute :
-```bash
+
+````bash
 supabase gen types typescript --local > ../frontend/src/types/database.types.ts
 
 **IMPORTANT** : Ces types sont utilisés par votre application React pour un typage fort. Sans cette étape, TypeScript ne connaîtra pas vos nouvelles tables/champs.
@@ -182,7 +196,7 @@ supabase migration new nom_de_la_migration
 
 # 4. Vérifier que tout fonctionne en local
 supabase db reset
-```
+````
 
 ### 2. Du local vers l'interface web
 
@@ -200,6 +214,7 @@ supabase db push
 En cas de conflit de schéma :
 
 1. Sauvegarder l'état actuel :
+
    ```bash
    supabase db dump -f backup_avant_conflit.sql
    ```
@@ -238,6 +253,8 @@ pnpm db:status
 docker logs -f ai-foundations-supabase-cli
 ```
 
+Le niveau de log par défaut est `info` (modifiable via `LOG_LEVEL` dans `.env`).
+
 ### 2. Problèmes de Migrations
 
 ```bash
@@ -251,6 +268,7 @@ pnpm db:reset --force
 ### 3. Types Obsolètes
 
 Si TypeScript se plaint de types manquants :
+
 1. Arrêtez votre serveur de développement
 2. `pnpm gen:types`
 3. Redémarrez le serveur
@@ -305,6 +323,7 @@ echo "  ./sync.sh --quick  # Mise à jour rapide"
 ```
 
 Rendez-le exécutable :
+
 ```bash
 chmod +x sync.sh
 ```
@@ -312,6 +331,7 @@ chmod +x sync.sh
 ## 📞 Support
 
 Pour toute question ou problème :
+
 1. Vérifiez d'abord les logs avec `docker logs`
 2. Consultez [la documentation officielle](https://supabase.com/docs)
 3. Si le problème persiste, contactez l'équipe avec les logs d'erreur
@@ -323,15 +343,17 @@ Dernière mise à jour : 22/06/2025
 ## ✅ Bonnes pratiques
 
 1. **Toujours utiliser des migrations**
+
    - Créez une migration pour chaque modification de schéma
    - Nommez clairement les migrations (ex: `20230101_ajout_table_utilisateurs.sql`)
 
 2. **Synchronisation régulière**
+
    ```bash
    # Avant de commencer à travailler
    git pull
    supabase db pull
-   
+
     # Après des modifications (opération exceptionnelle)
     supabase db push
    git add .
@@ -348,25 +370,28 @@ Dernière mise à jour : 22/06/2025
 ### Problèmes courants
 
 1. **Erreur de permission**
+
    ```bash
    # Régénérer le schéma de type
    supabase gen types typescript --linked > types/supabase.ts
    ```
 
 2. **Conflits de schéma**
+
    ```bash
    # Voir les différences
    supabase db diff
-   
+
    # Forcer une synchronisation (attention aux pertes de données)
    supabase db reset --force
    ```
 
 3. **Problèmes de connexion**
+
    ```bash
    # Vérifier la configuration
    supabase status
-   
+
    # Redémarrer les services
    supabase stop
    supabase start
@@ -398,18 +423,19 @@ fi
 echo "Usage: $0 [--pull|--push]"
 exit 1
 ```
+
 Rendez-le executable :
+
 ```bash
 chmod +x scripts/sync-supabase.sh
 ```
 
 Utilisation rapide :
+
 ```bash
 ./scripts/sync-supabase.sh         # Récupérer les modifications
 ./scripts/sync-supabase.sh --push  # Envoyer vos migrations
 ```
-
-
 
 ### Hooks Git
 
