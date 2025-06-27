@@ -13,7 +13,14 @@
     "lint": "eslint src/",
     "format": "prettier --write src/",
     "clean": "rm -rf dist/ node_modules/.cache/",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "db:pull": "supabase db pull",
+    "db:push": "supabase db push",
+    "db:diff": "supabase db diff",
+    "db:reset": "supabase db reset",
+    "db:status": "supabase db status",
+    "db:start": "supabase start",
+    "gen:types": "supabase gen types typescript --local > ../frontend/src/types/database.types.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",
