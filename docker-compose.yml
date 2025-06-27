@@ -5,10 +5,9 @@ networks:
     driver: bridge
 
 volumes:
-  # pnpm_store_volume: # Utilisé par les Dockerfiles pour le cache de build, pas directement ici
-  # node_modules_frontend_volume: # Les node_modules sont dans l'image de dev ou bind-mountés
-  # node_modules_backend_volume:  # Idem
   portainer_data: {} # Pour la persistance des données Portainer si utilisé
+  pnpm-store:
+  node-modules:
 
 services:
   # ===========================================
@@ -17,35 +16,22 @@ services:
   frontend:
     build:
       context: .
-      dockerfile: Dockerfile
-      target: development # Cible l'étape de développement du Dockerfile racine
-    container_name: ai-foundations-frontend
-    # Le working_dir est défini dans le Dockerfile (USER node, WORKDIR /app/apps/frontend)
-    # WORKDIR /app/apps/frontend # Non nécessaire si bien défini dans le Dockerfile
-    volumes:
-      # Montage du code source pour le hot-reloading
-      # Assurez-vous que les chemins correspondent à la structure de votre projet
-      - ./apps/frontend:/app/apps/frontend
-      - ./packages:/app/packages # Si vous avez des packages locaux partagés
-      # Les node_modules sont dans l'image de dev, mais on peut les masquer pour utiliser ceux du host si besoin (non recommandé généralement)
-      # Ou utiliser un volume pour persister les node_modules entre les `down` et `up` si non inclus dans l'image de dev.
-      # Pour l'instant, on se fie à ceux de l'image `development` qui les copie de `build-assets`.
-    ports:
-      - '3000:3000'
+      dockerfile: apps/frontend/Dockerfile.front
+    command: pnpm --filter apps/frontend dev --host 0.0.0.0
+    env_file:
+      - .env
     environment:
-      - NODE_ENV=development
-      - CHOKIDAR_USEPOLLING=true # Souvent nécessaire pour le hot-reload dans Docker
-      # Transmettre les variables d'environnement du fichier .env au conteneur
       - VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
       - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
-      - VITE_DEBUG=${VITE_DEBUG}
-      - VITE_APP_NAME=${VITE_APP_NAME}
-    # La commande est définie dans le Dockerfile (CMD ["pnpm", "dev", "--host", "0.0.0.0"])
-    # command: pnpm --filter frontend dev # Redondant si CMD dans Dockerfile est correct
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./apps/frontend:/app/apps/frontend
+      - pnpm-store:/root/.local/share/pnpm/store
+      - node-modules:/app/apps/frontend/node_modules
     networks:
       - app-network
     restart: unless-stopped
-    # Le healthcheck est défini dans le Dockerfile de développement
 
   # ===========================================
   # MONITORING (Optionnel - Portainer)
@@ -63,6 +49,15 @@ services:
     networks:
       - app-network
     restart: unless-stopped
-# Note: L'environnement Supabase local (Postgres, Studio, etc.) est géré par `pnpm db:start`
-# et n'est pas défini directement dans ce fichier docker-compose.yml pour éviter les conflits
-# et simplifier la gestion, conformément à la stratégie "pnpm db:start manuel".
+
+  supabase:
+    profiles: ["supabase-local"]
+    image: supabase/postgres
+    ports:
+      - "54322:5432"
+    networks:
+      - app-network
+    restart: unless-stopped
+
+# Note: Une instance Supabase locale peut être lancée via le service `supabase` (profil
+# `supabase-local`) ou via la commande `pnpm db:start` de la CLI Supabase.

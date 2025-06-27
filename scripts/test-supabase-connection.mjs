@@ -42,7 +42,7 @@ async function testSupabaseConnection() {
     // Test 1: Ping basique
     console.log('1️⃣ Test ping basique...')
     const startTime = Date.now()
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('_health_check')
       .select('*')
       .limit(1)
@@ -56,7 +56,7 @@ async function testSupabaseConnection() {
 
     // Test 2: Connexion admin
     console.log('2️⃣ Test connexion admin...')
-    const { data: adminData, error: adminError } = await supabaseAdmin
+    const { error: adminError } = await supabaseAdmin
       .from('_health_check')
       .select('*')
       .limit(1)
@@ -86,7 +86,7 @@ async function testSupabaseConnection() {
 
     // Test 4: Auth
     console.log('4️⃣ Test Auth...')
-    const { data: authData, error: authError } = await supabase.auth.getSession()
+    await supabase.auth.getSession()
     console.log('✅ Auth service OK')
 
     // Test 5: Storage
