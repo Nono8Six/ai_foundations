@@ -36,18 +36,26 @@ Plateforme complète pour les cours sur les Fondations de l'IA, construite avec 
    cd ai-foundations
    ```
 
-2. **Configurer les variables d'environnement**
+2. **Installer les dépendances**
+   ```bash
+   pnpm install
+   ```
+   Le projet s'appuie exclusivement sur **pnpm**. N'utilisez pas `npm install`
+   ou `yarn install` afin d'éviter la création d'un `package-lock.json` ou d'un
+   `yarn.lock` qui ne sont pas pris en charge.
+
+3. **Configurer les variables d'environnement**
    ```bash
    cp .env.example .env
    ```
    Éditez ensuite le fichier `.env` créé depuis `.env.example` avec vos clés Supabase et autres configurations.
 
-3. **Démarrer l'environnement**
+4. **Démarrer l'environnement**
    ```bash
    docker-compose up --build -d
    ```
 
-4. **Accéder aux services**
+5. **Accéder aux services**
    - Application : http://localhost:3000
    - Supabase Studio : http://localhost:54323
 
