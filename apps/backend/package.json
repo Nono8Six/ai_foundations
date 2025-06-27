@@ -4,7 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "node --env-file=../../.env dist/index.js",
+    "dev": "tsc -w & nodemon --watch \"apps/backend/src/\" --exec node --esm --signal SIGINT dist/index.js",
     "start": "node dist/index.js",
     "build": "tsc -p tsconfig.json",
     "test:supabase": "node --env-file=../../.env ../../scripts/test-supabase-connection.mjs",
@@ -37,6 +37,7 @@
     "@types/morgan": "^1.9.9",
     "@types/node": "^20.10.5",
     "eslint": "^8.57.1",
+    "nodemon": "^3.1.10",
     "prettier": "^3.1.1",
     "supabase": "^2.26.9",
     "typescript": "^5.3.3"
