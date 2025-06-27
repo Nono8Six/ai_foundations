@@ -12,7 +12,7 @@
     "start": "pnpm dev:frontend",
     "build": "pnpm --filter frontend build",
     "preview": "pnpm --filter frontend preview",
-    "test": "vitest run --passWithNoTests",
+    "test": "LOG_LEVEL=fatal vitest run --passWithNoTests",
     "lint": "eslint . --max-warnings 0",
     "typecheck": "tsc --noEmit",
     "db:pull": "pnpm --filter backend exec supabase db pull",
