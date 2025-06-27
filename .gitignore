@@ -31,3 +31,4 @@ apps/frontend/dist-types/
 packages/*/dist
 
 ts-errors-full.log
+package-lock.json
