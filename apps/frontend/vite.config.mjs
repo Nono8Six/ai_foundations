@@ -22,10 +22,10 @@ export default defineConfig(() => {
 
   // --- AJOUT DE CETTE SECTION ---
   // C'est ici qu'on résout le problème.
-  // On dit explicitement à Vite que "@" correspond au dossier "src".
+  // On dit explicitement à Vite que "@" correspond à la racine du dépôt.
   resolve: {
     alias: {
-      "@": path.resolve(new URL(".", import.meta.url).pathname, "src"),
+      "@": path.resolve(new URL(".", import.meta.url).pathname, "..", ".."),
     },
   },
   // ------------------------------
