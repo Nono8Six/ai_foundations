@@ -9,14 +9,9 @@ import {
   Area,
   AreaChart,
 } from 'recharts';
-<<<<<<< codex/refactor-console-methods-to-logger
-import Icon from '../../../components/AppIcon';
-import { supabase } from '../../../lib/supabase';
-import logger from '../../../utils/logger';
-=======
 import Icon from '@frontend/components/AppIcon';
 import { supabase } from '@frontend/lib/supabase';
->>>>>>> main
+import logger from '@frontend/utils/logger';
 
 interface EngagementData {
   time: string;
