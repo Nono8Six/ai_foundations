@@ -56,15 +56,15 @@ Ce guide vous aidera à configurer et utiliser l'environnement de développement
 
 ```bash
 # Construire et démarrer les conteneurs
-docker-compose up --build -d
+docker compose up --build -d
 
 # Vérifier l'état des conteneurs
-docker-compose ps
+docker compose ps
 ```
 
 ### 3. Accès aux Services
 
-- **Application Frontend** : http://localhost:3000
+- **Application Frontend** : http://localhost:5173
 - **Supabase Studio** : http://localhost:54323
   - Email: votre-email@example.com
   - Mot de passe: défini dans `.env`
@@ -75,39 +75,39 @@ docker-compose ps
 
 | Commande | Description |
 |----------|-------------|
-| `docker-compose up -d` | Démarrer en arrière-plan |
-| `docker-compose down` | Arrêter les conteneurs |
-| `docker-compose down -v` | Arrêter et supprimer les volumes |
-| `docker-compose logs -f` | Afficher les logs en temps réel |
-| `docker-compose ps` | Voir l'état des conteneurs |
+| `docker compose up -d` | Démarrer en arrière-plan |
+| `docker compose down` | Arrêter les conteneurs |
+| `docker compose down -v` | Arrêter et supprimer les volumes |
+| `docker compose logs -f` | Afficher les logs en temps réel |
+| `docker compose ps` | Voir l'état des conteneurs |
 
 ### Développement Frontend
 
 ```bash
 # Se connecter au conteneur frontend
-docker-compose exec frontend sh
+docker compose exec frontend sh
 
 # Installer une nouvelle dépendance
-docker-compose exec frontend pnpm add package-name
+docker compose exec frontend pnpm add package-name
 
 # Lancer les tests
-docker-compose exec frontend pnpm test
+docker compose exec frontend pnpm test
 
 # Lancer le linter
-docker-compose exec frontend pnpm lint
+docker compose exec frontend pnpm lint
 ```
 
 ### Base de Données
 
 ```bash
 # Se connecter à la base de données PostgreSQL
-docker-compose exec db psql -U postgres
+docker compose exec db psql -U postgres
 
 # Exécuter les migrations (opération exceptionnelle)
-docker-compose exec supabase_cli supabase db push
+docker compose exec supabase_cli supabase db push
 
 # Redémarrer uniquement le service Supabase CLI
-docker-compose restart supabase_cli
+docker compose restart supabase_cli
 ```
 
 ## 🔍 Débogage
@@ -116,10 +116,10 @@ docker-compose restart supabase_cli
 
 ```bash
 # Tous les logs
-docker-compose logs -f
+docker compose logs -f
 
 # Logs d'un service spécifique
-docker-compose logs -f frontend
+docker compose logs -f frontend
 ```
 
 ### Inspecter un Conteneur
@@ -163,8 +163,8 @@ ai-foundations/
 
 3. **Tester**
    ```bash
-   docker-compose exec frontend pnpm test
-   docker-compose exec frontend pnpm lint
+   docker compose exec frontend pnpm test
+   docker compose exec frontend pnpm lint
    ```
 
 4. **Valider les changements**
@@ -181,7 +181,7 @@ ai-foundations/
 1. **Ports déjà utilisés**
    ```bash
    # Voir les processus utilisant un port
-   sudo lsof -i :3000
+   sudo lsof -i :5173
    
    # Tuer un processus
    kill -9 <PID>
@@ -195,7 +195,7 @@ ai-foundations/
 3. **Nettoyer Docker**
    ```bash
    # Arrêter tous les conteneurs
-   docker-compose down -v
+   docker compose down -v
    
    # Nettoyer les ressources inutilisées
    docker system prune -f

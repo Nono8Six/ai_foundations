@@ -108,7 +108,7 @@ pnpm sync:from-cloud
 ```bash
 # Nettoyage Docker complet
 pnpm clean:docker
-docker-compose up --build --force-recreate
+docker compose up --build --force-recreate
 ```
 
 ## 🔧 Scripts Disponibles

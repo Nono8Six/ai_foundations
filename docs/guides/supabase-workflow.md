@@ -69,7 +69,7 @@ graph LR;
 
 2.  **Pendant le développement (Frontend se connecte au Cloud)** :
 
-    - Votre frontend (`pnpm dev:frontend` ou via `docker-compose up frontend`) se connecte à l'instance Supabase Cloud définie dans votre `.env`.
+    - Votre frontend (`pnpm dev:frontend` ou via `docker compose up frontend`) se connecte à l'instance Supabase Cloud définie dans votre `.env`.
     - **Si vous avez besoin de modifier le schéma** :
       1.  Allez sur l'interface web de votre projet Supabase Cloud.
       2.  Effectuez vos modifications (créer une table, ajouter une colonne, écrire une fonction SQL, définir une policy RLS).

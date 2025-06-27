@@ -15,10 +15,6 @@ export default defineConfig(() => {
 
     plugins: [
       react(),
-      // checker({
-      //   typescript: true,
-      //   eslint: { lintCommand: 'eslint "./src/**/*.{ts,tsx,js,jsx}"' }
-      // }),
       shouldAnalyze &&
         visualizer({ filename: 'docs/bundle/stats.html', open: false }),
       // Removed tsconfigPaths() to avoid conflict with manual alias resolution
