@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 
 echo "🚀 Lancement direct du frontend..."
 

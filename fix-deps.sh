@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 
 echo "🔧 Correction des dépendances obsolètes..."
 
