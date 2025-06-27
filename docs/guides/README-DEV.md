@@ -14,25 +14,27 @@ Ce guide vous aidera à configurer et utiliser l'environnement de développement
 ### 1. Configuration de l'Environnement
 
 1. **Cloner le dépôt**
+
    ```bash
    git clone https://github.com/your-username/ai-foundations.git
    cd ai-foundations
    ```
 
 2. **Configurer les variables d'environnement**
+
    ```bash
    # Copier le fichier d'exemple `.env.example`
    cp .env.example .env
-   
+
    # Éditer le fichier .env avec vos clés
    # Utilisez un éditeur de texte sécurisé
    notepad .env
    ```
 
 3. **Variables d'environnement requises**
-   
+
    Assurez-vous de configurer au minimum ces variables dans votre fichier `.env` :
-   
+
    ```bash
    # Clés Supabase (à obtenir depuis le tableau de bord Supabase)
    VITE_SUPABASE_URL=https://votre-projet.supabase.co
@@ -41,16 +43,17 @@ Ce guide vous aidera à configurer et utiliser l'environnement de développement
    SUPABASE_ACCESS_TOKEN=votre-token-acces
    SUPABASE_DB_PASSWORD=votre-mot-de-passe-securise
    SUPABASE_SERVICE_ROLE_KEY=votre-cle-service-role
-   
+
    # JWT Secret (généré automatiquement)
    SUPABASE_JWT_SECRET=votre-jwt-secret-genere
-   
+
    ```
+
 - `SUPABASE_PROJECT_REF` : identifiant de votre projet Supabase
 - `SUPABASE_ACCESS_TOKEN` : token personnel pour la CLI Supabase
 - `SUPABASE_SERVICE_ROLE_KEY` : clé service_role pour les scripts sécurisés
-   
-   ⚠️ **Sécurité** : Ne partagez jamais votre fichier `.env` ou vos clés secrètes. Le fichier `.env` est dans `.gitignore` pour éviter les fuites accidentelles.
+- `VITE_LOG_LEVEL` / `LOG_LEVEL` : règlent le niveau de verbosité des logs (par défaut `info`)
+  ⚠️ **Sécurité** : Ne partagez jamais votre fichier `.env` ou vos clés secrètes. Le fichier `.env` est dans `.gitignore` pour éviter les fuites accidentelles.
 
 ### 2. Démarrer l'Environnement
 
@@ -73,13 +76,13 @@ docker compose ps
 
 ### Gestion des Conteneurs
 
-| Commande | Description |
-|----------|-------------|
-| `docker compose up -d` | Démarrer en arrière-plan |
-| `docker compose down` | Arrêter les conteneurs |
+| Commande                 | Description                      |
+| ------------------------ | -------------------------------- |
+| `docker compose up -d`   | Démarrer en arrière-plan         |
+| `docker compose down`    | Arrêter les conteneurs           |
 | `docker compose down -v` | Arrêter et supprimer les volumes |
-| `docker compose logs -f` | Afficher les logs en temps réel |
-| `docker compose ps` | Voir l'état des conteneurs |
+| `docker compose logs -f` | Afficher les logs en temps réel  |
+| `docker compose ps`      | Voir l'état des conteneurs       |
 
 ### Développement Frontend
 
@@ -153,15 +156,18 @@ ai-foundations/
 ## 🔄 Workflow de Développement
 
 1. **Créer une nouvelle branche**
+
    ```bash
    git checkout -b feature/nouvelle-fonctionnalite
    ```
 
 2. **Développer**
+
    - Le code est monté en volume, les changements sont visibles immédiatement
    - Utilisez les outils de développement de votre navigateur
 
 3. **Tester**
+
    ```bash
    docker compose exec frontend pnpm test
    docker compose exec frontend pnpm lint
@@ -179,24 +185,27 @@ ai-foundations/
 ### Problèmes Courants
 
 1. **Ports déjà utilisés**
+
    ```bash
    # Voir les processus utilisant un port
    sudo lsof -i :5173
-   
+
    # Tuer un processus
    kill -9 <PID>
    ```
 
 2. **Problèmes de permissions**
+
    ```bash
    sudo chown -R $USER:$USER .
    ```
 
 3. **Nettoyer Docker**
+
    ```bash
    # Arrêter tous les conteneurs
    docker compose down -v
-   
+
    # Nettoyer les ressources inutilisées
    docker system prune -f
    ```
@@ -208,5 +217,6 @@ ai-foundations/
 - [Documentation React](https://reactjs.org/docs/getting-started.html)
 - [Guide Supabase](README-SUPABASE.md)
 - [Guide de Style](../STYLE_GUIDE.md)
+
 2. Les dépendances sont installées dans le conteneur, pas besoin de les installer sur votre machine.
 3. La base de données est persistante grâce au volume Docker.
