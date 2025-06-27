@@ -9,7 +9,6 @@ apps\frontend\node_modules
 .env.corrupted.backup*
 
 # Misc build/debug artifacts
-pnpm*
 apps/backend/dist/
 
 # Supabase directories
@@ -26,9 +25,6 @@ apps/backend/supabase/.branches/
 # Ignore temporary tsconfig
 tsconfig.tmp
 apps/frontend/dist-types/
-
-# Ignore pnpm script and logs
-pnpm*
 
 # Backup environment files
 .env.corrupted.backup.*
