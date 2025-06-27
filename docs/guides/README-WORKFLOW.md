@@ -33,7 +33,7 @@ pnpm validate:env
 pnpm dev
 
 # OU avec backend local si nécessaire
-pnpm dev:full
+pnpm dev:full:docker
 ```
 
 ## 🎯 Principe Fondamental : Cloud-First
@@ -116,7 +116,8 @@ docker-compose up --build --force-recreate
 | Script | Description |
 |-------|-------------|
 | `pnpm dev` | Démarrage frontend (cloud-first) |
-| `pnpm dev:full` | Frontend + Backend local |
+| `pnpm dev:docker` | Lancement via Docker Compose |
+| `pnpm dev:full:docker` | Frontend + Backend local |
 | `pnpm db:pull` | Récupérer schéma depuis cloud |
 | `pnpm db:push` | Envoyer changements vers cloud |
 | `pnpm gen:types` | Générer types TypeScript |

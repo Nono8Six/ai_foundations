@@ -304,7 +304,7 @@ function main() {
     
     log('\n🎉 Next steps:', 'green');
     log('- Run "pnpm dev" to start the development server', 'green');
-    log('- Run "pnpm dev:full" to start with backend services', 'green');
+    log('- Run "pnpm dev:full:docker" to start with backend services', 'green');
     
     process.exit(0);
   } else {
