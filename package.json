@@ -7,14 +7,16 @@
     "pnpm": ">=8.0.0"
   },
   "scripts": {
-    "dev": "cd apps/frontend && npm run dev",
-    "start": "npm run dev",
-    "dev:backend": "cd apps/backend && npm run dev",
-    "dev:frontend": "cd apps/frontend && npm run dev",
-    "lint": "cd apps/frontend && npm run lint",
-    "build": "cd apps/frontend && npm run build",
-    "preview": "cd apps/frontend && npm run preview",
-    "test": "cd apps/frontend && npm run test",
+    "dev": "pnpm --filter ./apps/frontend dev",
+    "start": "pnpm run dev",
+    "dev:backend": "pnpm --filter ./apps/backend dev",
+    "dev:frontend": "pnpm --filter ./apps/frontend dev",
+    "dev:docker": "docker compose up --build",
+    "dev:full:docker": "docker compose --profile backend up --build",
+    "lint": "pnpm --filter ./apps/frontend lint",
+    "build": "pnpm --filter ./apps/frontend build",
+    "preview": "pnpm --filter ./apps/frontend preview",
+    "test": "pnpm --filter ./apps/frontend test",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
