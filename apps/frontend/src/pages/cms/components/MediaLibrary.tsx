@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Icon from '@frontend/components/AppIcon';
 import Image from '@frontend/components/AppImage';
-import logger from '@frontend/utils/logger';
+import { log } from '@/logger'
 import {
   BUCKETS,
   listBucketFiles,
@@ -51,7 +51,7 @@ const MediaLibrary: React.FC<MediaLibraryProps> = ({ onClose, onSelectMedia }) =
       setMediaData(items);
       setTabCounts(prev => ({ ...prev, [tab]: items.length }));
     } catch (err) {
-      logger.error('Failed to load media', err);
+      log.error('Failed to load media', err);
       setMediaData([]);
       setTabCounts(prev => ({ ...prev, [tab]: 0 }));
     }
@@ -71,7 +71,7 @@ const MediaLibrary: React.FC<MediaLibraryProps> = ({ onClose, onSelectMedia }) =
         );
         fetchMedia(activeTab);
       } catch (err) {
-        logger.error('Upload failed', err);
+        log.error('Upload failed', err);
       }
       setIsUploading(false);
     }

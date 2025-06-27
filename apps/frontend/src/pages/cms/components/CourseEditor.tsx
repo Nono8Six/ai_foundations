@@ -6,7 +6,7 @@ import TextInput from '@frontend/components/ui/TextInput';
 import Card from '@frontend/components/ui/Card';
 import Spinner from '@frontend/components/ui/Spinner';
 import { uploadToBucket, BUCKETS } from '@frontend/services/storageService';
-import logger from '@frontend/utils/logger';
+import { log } from '@/logger'
 import type { CourseRow } from '@frontend/types/courseRow';
 
 export interface CourseEditorProps {
@@ -77,7 +77,7 @@ const CourseEditor: React.FC<CourseEditorProps> = ({ course, onSave, onDelete })
         const { url } = await uploadToBucket(BUCKETS.images, file);
         handleInputChange('thumbnail', url);
       } catch (err) {
-        logger.error('Thumbnail upload failed', err);
+        log.error('Thumbnail upload failed', err);
       }
       setIsUploading(false);
     }

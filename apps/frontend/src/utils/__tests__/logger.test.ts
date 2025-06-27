@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
 
 async function loadLogger() {
-  const mod = await import('../logger');
-  return mod.default;
+  const mod = await import('@/logger');
+  return mod.log;
 }
 
 describe('logger', () => {

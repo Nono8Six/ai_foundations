@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Icon from '@frontend/components/AppIcon';
-import logger from '@frontend/utils/logger';
+import { log } from '@/logger'
 
 // Unified representation of a content node in the tree
 export interface ContentNode {
@@ -85,7 +85,7 @@ const ContentTree: React.FC<ContentTreeProps> = ({
   ): void => {
     e.preventDefault();
     if (draggedItem && draggedItem.id !== targetItem.id) {
-      logger.debug('Reordering:', draggedItem, 'to', targetItem);
+      log.debug('Reordering:', draggedItem, 'to', targetItem);
       // Ici tu peux insérer ta logique de reorder réelle si besoin
       if (onReorder) {
         // Appelle onReorder avec le nouvel ordre souhaité

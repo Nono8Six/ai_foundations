@@ -20,7 +20,8 @@
     "paths": {
       "$lib/*": ["./apps/frontend/src/lib/*"],
       "@frontend/*": ["./apps/frontend/src/*"],
-      "@backend/*": ["./apps/backend/src/*"]
+      "@backend/*": ["./apps/backend/src/*"],
+      "@/*": ["./libs/*"],
     },
     "typeRoots": [
   "./node_modules/@types"

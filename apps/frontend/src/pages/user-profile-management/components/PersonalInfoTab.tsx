@@ -4,7 +4,7 @@ import { useAuth } from '@frontend/context/AuthContext';
 import { useToast } from '@frontend/context/ToastContext';
 import Icon from '@frontend/components/AppIcon';
 import Image from '@frontend/components/AppImage';
-import logger from '@frontend/utils/logger';
+import { log } from '@/logger'
 
 export interface PersonalInfoTabProps {
   userData: {
@@ -55,18 +55,18 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ userData }) => {
         ...(avatarPreview !== userData.avatar && { avatar_url: avatarPreview }),
       };
 
-      logger.debug('Submitting profile updates:', updates);
+      log.debug('Submitting profile updates:', updates);
 
       // Update the profile in Supabase using RPC function
       await updateProfile(updates);
 
-      logger.info('Profile updated successfully');
+      log.info('Profile updated successfully');
       setIsEditing(false);
 
       // Show success message
       addToast('Profil mis à jour avec succès !', 'success');
     } catch (error) {
-      logger.error('Error updating profile:', error);
+      log.error('Error updating profile:', error);
       setError('root', {
         type: 'manual',
         message: 'Erreur lors de la mise à jour du profil. Veuillez réessayer.',

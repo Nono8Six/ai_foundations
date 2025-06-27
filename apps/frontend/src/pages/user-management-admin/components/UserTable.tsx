@@ -1,7 +1,7 @@
 import React from 'react';
 import Icon from '@frontend/components/AppIcon';
 import Image from '@frontend/components/AppImage';
-import logger from '@frontend/utils/logger';
+import { log } from '@/logger'
 import type { UserTableRow } from '@frontend/types/userTableRow';
 
 export interface UserTableProps {
@@ -220,7 +220,7 @@ const UserTable: React.FC<UserTableProps> = ({
                       <button
                         onClick={e => {
                           e.stopPropagation();
-                          logger.info('Edit user:', user.id);
+                          log.info('Edit user:', user.id);
                         }}
                         className='text-primary hover:text-primary-700 transition-colors'
                       >
@@ -229,7 +229,7 @@ const UserTable: React.FC<UserTableProps> = ({
                       <button
                         onClick={e => {
                           e.stopPropagation();
-                          logger.info('Message user:', user.id);
+                          log.info('Message user:', user.id);
                         }}
                         className='text-text-secondary hover:text-primary transition-colors'
                       >
@@ -238,7 +238,7 @@ const UserTable: React.FC<UserTableProps> = ({
                       <button
                         onClick={e => {
                           e.stopPropagation();
-                          logger.info('More actions for user:', user.id);
+                          log.info('More actions for user:', user.id);
                         }}
                         className='text-text-secondary hover:text-primary transition-colors'
                       >

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@frontend/context/AuthContext';
 import Icon from '@frontend/components/AppIcon';
-import logger from '@frontend/utils/logger';
+import { log } from '@/logger'
 
 const SettingsTab = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -51,7 +51,7 @@ const SettingsTab = () => {
           }
         }
       } catch (error) {
-        logger.error('Error loading user settings:', error);
+        log.error('Error loading user settings:', error);
       } finally {
         setIsLoading(false);
       }
@@ -76,7 +76,7 @@ const SettingsTab = () => {
       alert('Paramètres sauvegardés avec succès !');
       
     } catch (error) {
-      logger.error('Error saving settings:', error);
+      log.error('Error saving settings:', error);
       alert('Erreur lors de la sauvegarde des paramètres. Veuillez réessayer.');
     } finally {
       setIsSubmitting(false);
@@ -106,7 +106,7 @@ const SettingsTab = () => {
 
   const handleDeleteAccount = () => {
     // Simulate account deletion
-    logger.info('Account deletion requested');
+    log.info('Account deletion requested');
     setShowDeleteConfirm(false);
   };
 

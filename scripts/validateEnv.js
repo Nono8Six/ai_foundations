@@ -1,7 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { log } from '../libs/logger/index.js';
 
-console.log('🔍 Vérification des variables d\'environnement...');
+log.info('🔍 Vérification des variables d\'environnement...');
 
 const requiredEnvVars = [
   'VITE_SUPABASE_URL',
@@ -13,8 +14,8 @@ const requiredEnvVars = [
 const envFilePath = path.resolve(process.cwd(), '.env');
 
 if (!fs.existsSync(envFilePath)) {
-  console.error(`❌ ERREUR: Le fichier .env est introuvable à la racine du projet.`);
-  console.error('   Veuillez copier .env.example en .env et le configurer.');
+  log.error(`❌ ERREUR: Le fichier .env est introuvable à la racine du projet.`);
+  log.error('   Veuillez copier .env.example en .env et le configurer.');
   process.exit(1);
 }
 
@@ -35,10 +36,10 @@ for (const varName of requiredEnvVars) {
 }
 
 if (missingVars.length > 0) {
-  console.error(`❌ ERREUR: Variables d'environnement manquantes ou vides dans le fichier .env:`);
-  missingVars.forEach(mv => console.error(`   - ${mv}`));
-  console.error('   Veuillez les configurer pour continuer.');
+  log.error(`❌ ERREUR: Variables d'environnement manquantes ou vides dans le fichier .env:`);
+  missingVars.forEach(mv => log.error(`   - ${mv}`));
+  log.error('   Veuillez les configurer pour continuer.');
   process.exit(1);
 }
 
-console.log('✅ Toutes les variables d\'environnement requises sont présentes et configurées.');
+log.info('✅ Toutes les variables d\'environnement requises sont présentes et configurées.');

@@ -1,14 +1,8 @@
 import React, { useState, useMemo, useEffect } from 'react';
-<<<<<<< codex/refactor-console-methods-to-logger
-import { useAuth } from '../../context/AuthContext';
-import Icon from '../../components/AppIcon';
-import { fetchCourses } from '../../services/courseService';
-import logger from '../../utils/logger';
-=======
 import { useAuth } from '@frontend/context/AuthContext';
 import Icon from '@frontend/components/AppIcon';
 import { fetchCourses } from '@frontend/services/courseService';
->>>>>>> main
+import { log } from '@/logger';
 import CourseCard from './components/CourseCard';
 import FilterSidebar from './components/FilterSidebar';
 import CoursePathway from './components/CoursePathway';
@@ -48,7 +42,7 @@ const ProgramOverview = () => {
         setCourses(data);
         setTotalCourses(count);
       } catch (error) {
-        logger.error('Error loading courses', error);
+        log.error('Error loading courses', error);
         setCourses([]);
         setTotalCourses(0);
       } finally {

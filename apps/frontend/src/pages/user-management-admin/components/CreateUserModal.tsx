@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Icon from '@frontend/components/AppIcon';
-import logger from '../../../utils/logger';
+import { log } from '@/logger'
 
 interface CreateUserModalProps {
   onClose: () => void;
@@ -110,7 +110,7 @@ const CreateUserModal = ({ onClose, onUserCreated }: CreateUserModalProps) => {
 
       onUserCreated(newUser);
     } catch (error) {
-      logger.error('Error creating user:', error);
+      log.error('Error creating user:', error);
     } finally {
       setIsSubmitting(false);
     }

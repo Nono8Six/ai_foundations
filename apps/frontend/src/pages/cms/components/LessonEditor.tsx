@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Icon from '@frontend/components/AppIcon';
 import { uploadToBucket, BUCKETS } from '@frontend/services/storageService';
-import logger from '@frontend/utils/logger';
+import { log } from '@/logger'
 import type { LessonRow } from '@frontend/types/lessonRow';
 
 export interface LessonEditorProps {
@@ -67,7 +67,7 @@ const LessonEditor: React.FC<LessonEditorProps> = ({ lesson, onSave, onDelete })
         const { url } = await uploadToBucket(BUCKETS.videos, file);
         handleInputChange('videoUrl', url);
       } catch (err) {
-        logger.error('Video upload failed', err);
+        log.error('Video upload failed', err);
       }
       setIsUploading(false);
     }

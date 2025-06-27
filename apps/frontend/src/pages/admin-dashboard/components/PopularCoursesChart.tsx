@@ -1,13 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-<<<<<<< codex/refactor-console-methods-to-logger
-import Icon from '../../../components/AppIcon';
-import { supabase } from '../../../lib/supabase';
-import logger from '../../../utils/logger';
-=======
 import Icon from '@frontend/components/AppIcon';
 import { supabase } from '@frontend/lib/supabase';
->>>>>>> main
+import { log } from '@/logger';
 
 interface CourseData {
   name: string;
@@ -59,7 +54,7 @@ const PopularCoursesChart = () => {
           .eq('is_published', true);
 
         if (coursesError) {
-          logger.error('Error fetching courses:', coursesError);
+          log.error('Error fetching courses:', coursesError);
           throw coursesError;
         }
 
@@ -74,7 +69,7 @@ const PopularCoursesChart = () => {
           .select('user_id, lesson_id, status');
 
         if (progressError) {
-          logger.error('Error fetching user progress:', progressError);
+          log.error('Error fetching user progress:', progressError);
           throw progressError;
         }
 
@@ -156,7 +151,7 @@ const PopularCoursesChart = () => {
         setTotalCompletions(currentTotalCompletions);
 
       } catch (error) {
-        logger.error('Failed to process popular courses data:', error);
+        log.error('Failed to process popular courses data:', error);
         setChartData([]); // Set to empty on error
       } finally {
         setLoading(false);

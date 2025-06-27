@@ -1,5 +1,5 @@
 import React from 'react';
-import logger from '@frontend/utils/logger';
+import { log } from '@/logger'
 
 export interface AppImageProps
   extends React.ImgHTMLAttributes<HTMLImageElement> {
@@ -32,7 +32,7 @@ const Image: React.FC<AppImageProps> = ({
       alt={alt}
       className={className}
       onError={e => {
-        logger.warn('Image load error for:', src);
+        log.warn('Image load error for:', src);
         (e.target as HTMLImageElement).src = '/assets/images/no_image.png';
       }}
       {...props}

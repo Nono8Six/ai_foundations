@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAdminCourses } from '@frontend/context/AdminCourseContext';
 import { useToast } from '@frontend/context/ToastContext';
 import { fetchCoursesWithContent } from '@frontend/services/courseService';
-import logger from '@frontend/utils/logger';
+import { log } from '@/logger'
 
 import Icon from '@frontend/components/AppIcon';
 import AdminLayout, { useAdminSidebar } from '@frontend/components/AdminLayout';
@@ -68,7 +68,7 @@ const ContentManagementCoursesModulesLessonsContent = () => {
         const courses = await fetchCoursesWithContent();
         setContentData(courses);
       } catch (err) {
-        logger.error('Failed to fetch courses', err);
+        log.error('Failed to fetch courses', err);
         addToast('Erreur lors du chargement du contenu', 'error');
       } finally {
         setLoading(false);
@@ -86,7 +86,7 @@ const ContentManagementCoursesModulesLessonsContent = () => {
     // Note: This logic currently only handles the 'course' type.
     // It should be expanded to handle modules and lessons.
     if (contentType !== 'course') {
-      logger.info('Saving non-course content (local state only):', updatedContent);
+      log.info('Saving non-course content (local state only):', updatedContent);
       setSelectedContent(updatedContent);
       return;
     }
@@ -104,14 +104,14 @@ const ContentManagementCoursesModulesLessonsContent = () => {
       }
       setSelectedContent(savedCourse);
     } catch (error) {
-      logger.error('Erreur lors de la sauvegarde du cours:', error);
+      log.error('Erreur lors de la sauvegarde du cours:', error);
       addToast('Erreur lors de la sauvegarde du cours', 'error');
     }
   };
 
   const handleDeleteContent = async (contentId: string) => {
     if (contentType !== 'course') {
-      logger.info('Deleting non-course content (local state only):', contentId);
+      log.info('Deleting non-course content (local state only):', contentId);
       setSelectedContent(null);
       return;
     }
@@ -122,13 +122,13 @@ const ContentManagementCoursesModulesLessonsContent = () => {
       setSelectedContent(null);
       addToast('Cours supprimé avec succès !', 'success');
     } catch (error) {
-      logger.error('Erreur lors de la suppression du cours:', error);
+      log.error('Erreur lors de la suppression du cours:', error);
       addToast('Erreur lors de la suppression du cours', 'error');
     }
   };
 
   const handleBulkOperation = (operation: string, items: string[]) => {
-    logger.info('Bulk operation:', operation, items);
+    log.info('Bulk operation:', operation, items);
     setSelectedItems([]);
     setShowBulkOperations(false);
   };
@@ -254,7 +254,7 @@ const ContentManagementCoursesModulesLessonsContent = () => {
           <MediaLibrary
             onClose={() => setShowMediaLibrary(false)}
             onSelectMedia={media => {
-              logger.info('Selected media:', media);
+              log.info('Selected media:', media);
               setShowMediaLibrary(false);
             }}
           />

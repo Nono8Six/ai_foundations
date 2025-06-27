@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { supabase } from '@frontend/lib/supabase';
 import Icon from '@frontend/components/AppIcon';
 import AdminLayout, { useAdminSidebar } from "../../components/AdminLayout";
-import logger from '@frontend/utils/logger';
+import { log } from '@/logger'
 import UserTable from './components/UserTable';
 import UserDetailsPanel from './components/UserDetailsPanel';
 import UserFilters from './components/UserFilters';
@@ -55,7 +55,7 @@ const UserManagementAdminContent = () => {
     const fetchUsers = async () => {
       const { data, error } = await supabase.from('profiles').select('*');
       if (error) {
-        logger.error('Error fetching users:', error);
+        log.error('Error fetching users:', error);
         return;
       }
       // Transforme les données de la base pour les adapter au format de l'application
@@ -143,7 +143,7 @@ const UserManagementAdminContent = () => {
   };
 
   const handleBulkAction = action => {
-    logger.info(`Bulk action: ${action} for users:`, selectedUsers);
+    log.info(`Bulk action: ${action} for users:`, selectedUsers);
     setSelectedUsers([]);
   };
 
@@ -311,7 +311,7 @@ const UserManagementAdminContent = () => {
         <CreateUserModal
           onClose={() => setShowCreateModal(false)}
           onUserCreated={newUser => {
-            logger.info('New user created:', newUser);
+            log.info('New user created:', newUser);
             setShowCreateModal(false);
           }}
         />

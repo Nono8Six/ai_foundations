@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Icon from '@frontend/components/AppIcon';
 import { supabase } from '@frontend/lib/supabase';
-import logger from '@frontend/utils/logger';
+import { log } from '@/logger'
 
 import VideoPlayer from './components/VideoPlayer';
 import TextContent from './components/TextContent';
@@ -78,7 +78,7 @@ const LessonViewer = () => {
         .single();
 
       if (lessonError) {
-        logger.error('Error fetching lesson:', lessonError);
+        log.error('Error fetching lesson:', lessonError);
       } else if (lessonData) {
         setCurrentLesson({
           id: lessonData.id,
@@ -102,7 +102,7 @@ const LessonViewer = () => {
         .order('id');
 
       if (modulesError) {
-        logger.error('Error fetching modules:', modulesError);
+        log.error('Error fetching modules:', modulesError);
       } else if (modulesData) {
         setModuleStructure(
           modulesData.map(m => ({
@@ -131,12 +131,12 @@ const LessonViewer = () => {
 
   const handleNextLesson = () => {
     // Navigate to next lesson logic
-    logger.debug('Navigating to next lesson');
+    log.debug('Navigating to next lesson');
   };
 
   const handlePreviousLesson = () => {
     // Navigate to previous lesson logic
-    logger.debug('Navigating to previous lesson');
+    log.debug('Navigating to previous lesson');
   };
 
   const handleAddNote = note => {

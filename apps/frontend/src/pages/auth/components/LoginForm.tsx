@@ -5,7 +5,7 @@ import Icon from '@frontend/components/AppIcon';
 import Button from '@frontend/components/ui/Button';
 import TextInput from '@frontend/components/ui/TextInput';
 import { useAuth } from '@frontend/context/AuthContext';
-import logger from '@frontend/utils/logger';
+import { log } from '@/logger'
 
 export interface LoginFormProps {
   onSuccess: (user: unknown) => void;
@@ -45,7 +45,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, isLoading, setIsLoadin
         });
       }
     } catch (error) {
-      logger.error('Login error:', error.message);
+      log.error('Login error:', error.message);
       setIsLoading(false);
 
       const errorMessage = error.message || 'Email ou mot de passe incorrect';
@@ -152,7 +152,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, isLoading, setIsLoadin
             disabled={isLoading}
             onClick={() => {
               // This would typically open a forgot password modal or navigate to a forgot password page
-              logger.info('Forgot password clicked');
+              log.info('Forgot password clicked');
             }}
           >
             Mot de passe oublié ?
