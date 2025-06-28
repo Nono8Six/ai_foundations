@@ -82,7 +82,8 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
             <div className='flex items-center gap-2'>
               <div className='flex items-center'>
                 {[...Array(5)].map((_, i) => (
-                  <Icon aria-hidden="true" 
+                  <Icon
+                    aria-hidden='true'
                     key={i}
                     name='Star'
                     size={14}
@@ -110,13 +111,13 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
             <div className='flex items-center gap-4 text-sm text-text-secondary'>
               {course.duration && (
                 <div className='flex items-center gap-1'>
-                  <Icon aria-hidden="true"  name='Clock' size={14} />
+                  <Icon aria-hidden='true' name='Clock' size={14} />
                   <span>{course.duration}</span>
                 </div>
               )}
               {course.modules && (
                 <div className='flex items-center gap-1'>
-                  <Icon aria-hidden="true"  name='BookOpen' size={14} />
+                  <Icon aria-hidden='true' name='BookOpen' size={14} />
                   <span>{course.modules} modules</span>
                 </div>
               )}
@@ -126,13 +127,13 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
               <div className='flex items-center gap-4 text-sm text-text-secondary'>
                 {course.xpReward && (
                   <div className='flex items-center gap-1'>
-                    <Icon aria-hidden="true"  name='Award' size={14} />
+                    <Icon aria-hidden='true' name='Award' size={14} />
                     <span>{course.xpReward} XP</span>
                   </div>
                 )}
                 {course.lessons && (
                   <div className='flex items-center gap-1'>
-                    <Icon aria-hidden="true"  name='Users' size={14} />
+                    <Icon aria-hidden='true' name='Users' size={14} />
                     <span>{course.lessons} leçons</span>
                   </div>
                 )}
@@ -208,7 +209,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
         <div className='mt-4 pt-4 border-t border-border'>
           <div className='flex items-center gap-2'>
             <div className='w-8 h-8 bg-gradient-to-br from-primary to-primary-700 rounded-full flex items-center justify-center'>
-              <Icon aria-hidden="true"  name='User' size={14} color='white' />
+              <Icon aria-hidden='true' name='User' size={14} color='white' />
             </div>
             <div>
               <p className='text-sm font-medium text-text-primary'>

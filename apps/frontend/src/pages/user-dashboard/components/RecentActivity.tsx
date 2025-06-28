@@ -25,14 +25,12 @@ export interface RecentActivityProps {
   activities?: Activity[];
 }
 
-const RecentActivity: React.FC<RecentActivityProps> = ({
-  activities = [],
-}) => {
+const RecentActivity: React.FC<RecentActivityProps> = ({ activities = [] }) => {
   const getActivityIcon = (activity: Activity): JSX.Element => (
     <div
       className={`w-10 h-10 rounded-full bg-surface border-2 border-border flex items-center justify-center ${activity.iconColor}`}
     >
-      <Icon aria-hidden="true"  name={activity.icon} size={20} />
+      <Icon aria-hidden='true' name={activity.icon} size={20} />
     </div>
   );
 
@@ -48,7 +46,7 @@ const RecentActivity: React.FC<RecentActivityProps> = ({
                 <p className='text-xs text-text-secondary mt-1'>{activity.course}</p>
               </div>
               <div className='flex items-center space-x-1 bg-success-50 text-success px-2 py-1 rounded-full'>
-                <Icon aria-hidden="true"  name='Plus' size={12} />
+                <Icon aria-hidden='true' name='Plus' size={12} />
                 <span className='text-xs font-medium'>{activity.xpEarned} XP</span>
               </div>
             </div>
@@ -160,7 +158,7 @@ const RecentActivity: React.FC<RecentActivityProps> = ({
         icon: 'BookOpen',
         iconColor: 'text-primary',
         timestamp: 'Maintenant',
-      }
+      },
     ];
   };
 
@@ -171,8 +169,8 @@ const RecentActivity: React.FC<RecentActivityProps> = ({
       <div className='flex items-center justify-between mb-6'>
         <h2 className='text-xl font-semibold text-text-primary'>Activité récente</h2>
         {activities.length > 0 && (
-          <Link 
-            to="/profile?tab=stats" 
+          <Link
+            to='/profile?tab=stats'
             className='text-primary hover:text-primary-700 transition-colors text-sm font-medium'
           >
             Voir tout
@@ -199,8 +197,8 @@ const RecentActivity: React.FC<RecentActivityProps> = ({
 
       {activities.length > 0 && (
         <div className='mt-6 pt-4 border-t border-border'>
-          <Link 
-            to="/profile?tab=stats"
+          <Link
+            to='/profile?tab=stats'
             className='w-full text-center text-primary hover:text-primary-700 transition-colors text-sm font-medium py-2 block'
           >
             Afficher toute l'activité

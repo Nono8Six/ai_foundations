@@ -28,7 +28,7 @@ import type { UserProfile } from '@frontend/types/user';
 import { supabase } from '@frontend/lib/supabase';
 import { safeQuery } from '@frontend/utils/supabaseClient';
 import { useNavigate } from 'react-router-dom';
-import logger from '@frontend/utils/logger';
+import { log } from '@/logger';
 import type { AuthErrorWithCode } from '@frontend/types/auth';
 
 const supabaseClient = supabase as SupabaseClient<Database>;
@@ -75,24 +75,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     // Get session on initial load
     const getInitialSession = async () => {
       try {
-        logger.debug('🔍 Getting initial session...');
-        const { data, error } = await safeQuery<{ session: Session | null }, AuthError>(
-          () => supabaseClient.auth.getSession()
+        log.debug('🔍 Getting initial session...');
+        const { data, error } = await safeQuery<{ session: Session | null }, AuthError>(() =>
+          supabaseClient.auth.getSession()
         );
         if (error) throw error;
         const { session } = data;
-        logger.debug('📋 Initial session:', session);
+        log.debug('📋 Initial session:', session);
         setSession(session);
         setUser(session?.user ?? null);
 
         if (session?.user) {
-          logger.debug('👤 User found, fetching profile...');
+          log.debug('👤 User found, fetching profile...');
           await fetchUserProfile(session.user.id);
         }
-        } catch (error: unknown) {
-          logger.error('❌ Error getting initial session:', error.message);
-          setError(error);
-        } finally {
+      } catch (error: unknown) {
+        log.error('❌ Error getting initial session:', error.message);
+        setError(error);
+      } finally {
         setLoading(false);
       }
     };
@@ -104,35 +104,36 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       data: { subscription },
     } = supabaseClient.auth.onAuthStateChange(
       async (event: AuthChangeEvent, session: Session | null) => {
-      logger.debug('🔄 Auth state change event:', event);
-      logger.debug('📋 Auth state change session:', session);
-      logger.debug('⏰ Timestamp:', new Date().toISOString());
+        log.debug('🔄 Auth state change event:', event);
+        log.debug('📋 Auth state change session:', session);
+        log.debug('⏰ Timestamp:', new Date().toISOString());
 
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
+        setSession(session);
+        setUser(session?.user ?? null);
+        setLoading(false);
 
-      if (event === 'SIGNED_IN' && session?.user) {
-        logger.debug('✅ User signed in, fetching profile...');
-        await fetchUserProfile(session.user.id);
-        if (window.location.pathname === '/verify-email') {
-          navigate('/espace');
-        }
-      } else if (event === 'SIGNED_OUT') {
-        logger.debug('🚪 User signed out, clearing profile...');
-        setUserProfile(null);
-      } else if (event === 'TOKEN_REFRESHED') {
-        logger.debug('🔄 Token refreshed');
-      } else if (event === 'USER_UPDATED') {
-        logger.debug('👤 User updated');
-        if (window.location.pathname === '/verify-email') {
-          navigate('/espace');
+        if (event === 'SIGNED_IN' && session?.user) {
+          log.debug('✅ User signed in, fetching profile...');
+          await fetchUserProfile(session.user.id);
+          if (window.location.pathname === '/verify-email') {
+            navigate('/espace');
+          }
+        } else if (event === 'SIGNED_OUT') {
+          log.debug('🚪 User signed out, clearing profile...');
+          setUserProfile(null);
+        } else if (event === 'TOKEN_REFRESHED') {
+          log.debug('🔄 Token refreshed');
+        } else if (event === 'USER_UPDATED') {
+          log.debug('👤 User updated');
+          if (window.location.pathname === '/verify-email') {
+            navigate('/espace');
+          }
         }
       }
-    });
+    );
 
     return () => {
-      logger.debug('🧹 Cleaning up auth subscription...');
+      log.debug('🧹 Cleaning up auth subscription...');
       subscription.unsubscribe();
     };
   }, []);
@@ -140,19 +141,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // Fetch user profile data
   const fetchUserProfile = async (userId: string) => {
     try {
-      logger.debug('🔍 Fetching profile for user:', userId);
+      log.debug('🔍 Fetching profile for user:', userId);
       const { data, error } = await safeQuery<UserProfile[]>(() =>
         supabaseClient.from('profiles').select('*').eq('id', userId)
       );
 
       if (error) {
-        logger.error('❌ Error fetching profile:', error.message);
+        log.error('❌ Error fetching profile:', error.message);
         setError(error);
         return;
       }
 
       if (!data || data.length === 0) {
-        logger.debug('⚠️ No profile found for user, creating default...');
+        log.debug('⚠️ No profile found for user, creating default...');
         // Try to create a default profile
         const { data: newProfile, error: createError } = await safeQuery<UserProfile>(() =>
           supabaseClient
@@ -173,20 +174,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         );
 
         if (createError) {
-          logger.error('❌ Error creating profile:', createError.message);
+          log.error('❌ Error creating profile:', createError.message);
           setError(createError);
           return;
         }
 
-        logger.info('✅ Default profile created:', newProfile);
+        log.info('✅ Default profile created:', newProfile);
         setUserProfile(newProfile);
         return;
       }
 
-      logger.debug('✅ Profile fetched successfully:', data[0]);
+      log.debug('✅ Profile fetched successfully:', data[0]);
       setUserProfile(data[0]);
     } catch (error: unknown) {
-      logger.error('❌ Unexpected error in fetchUserProfile:', error);
+      log.error('❌ Unexpected error in fetchUserProfile:', error);
       setError(error);
     }
   };
@@ -203,7 +204,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     firstName: string;
     lastName: string;
   }): Promise<AuthResponse> => {
-    logger.debug('📝 Signing up user:', email);
+    log.debug('📝 Signing up user:', email);
     const { data, error } = await safeQuery(() =>
       supabaseClient.auth.signUp({
         email,
@@ -218,11 +219,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     );
 
     if (error) {
-      logger.error('❌ Sign up error:', error.message);
+      log.error('❌ Sign up error:', error.message);
       // Don't set global error state for sign up failures - let the form handle it
       throw error;
     }
-    logger.info('✅ Sign up successful');
+    log.info('✅ Sign up successful');
     return data;
   };
 
@@ -234,7 +235,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     email: string;
     password: string;
   }): Promise<AuthResponse> => {
-    logger.debug('🔐 Signing in user:', email);
+    log.debug('🔐 Signing in user:', email);
 
     const { data, error } = await safeQuery(() =>
       supabaseClient.auth.signInWithPassword({
@@ -276,13 +277,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       throw enhancedError;
     }
 
-    logger.info('✅ Sign in successful');
+    log.info('✅ Sign in successful');
     return data;
   };
 
   // Sign In with Google
   const signInWithGoogle = async (): Promise<OAuthResponse> => {
-    logger.debug('🔐 Signing in with Google...');
+    log.debug('🔐 Signing in with Google...');
     const { data, error } = await safeQuery(() =>
       supabaseClient.auth.signInWithOAuth({
         provider: 'google',
@@ -296,34 +297,34 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setError(error);
       throw error;
     }
-    logger.info('✅ Google sign in initiated');
+    log.info('✅ Google sign in initiated');
     return data;
   };
 
   // Sign Out
   const signOut = async (): Promise<void> => {
-    logger.debug('🚪 Signing out user...');
+    log.debug('🚪 Signing out user...');
     const { error } = await safeQuery(() => supabaseClient.auth.signOut());
     if (error) {
       setError(error);
       throw error;
     }
-    logger.info('✅ Sign out successful');
+    log.info('✅ Sign out successful');
   };
 
   // Logout helper used by UI
   const logout = async (): Promise<void> => {
     try {
-      logger.debug('🚪 Logout initiated...');
+      log.debug('🚪 Logout initiated...');
       await signOut();
     } catch (err) {
-      logger.error('❌ Erreur lors de la déconnexion:', err);
+      log.error('❌ Erreur lors de la déconnexion:', err);
     } finally {
-      logger.debug('🧹 Cleaning up user state...');
+      log.debug('🧹 Cleaning up user state...');
       setUser(null);
       setUserProfile(null);
       localStorage.removeItem('authToken');
-      logger.debug('🏠 Navigating to home...');
+      log.debug('🏠 Navigating to home...');
       navigate('/');
     }
   };
@@ -333,7 +334,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     async (
       updates: UpdateUserProfilePayload['profile_data']
     ): Promise<UpdateUserProfileResponse> => {
-      logger.debug('📝 Updating profile:', updates);
+      log.debug('📝 Updating profile:', updates);
 
       const { data, error } = await safeQuery(() =>
         supabaseClient.rpc('update_user_profile', {
@@ -342,14 +343,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         })
       );
 
-    if (error) {
-      setError(error);
-      throw error;
-    }
+      if (error) {
+        setError(error);
+        throw error;
+      }
 
-    logger.info('✅ Profile updated successfully:', data);
+      log.info('✅ Profile updated successfully:', data);
 
-    setUserProfile(data);
+      setUserProfile(data);
 
       return data;
     },
@@ -361,7 +362,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     async (
       settings: UpdateUserSettingsPayload['settings_data']
     ): Promise<UpdateUserSettingsResponse> => {
-      logger.debug('📝 Updating user settings:', settings);
+      log.debug('📝 Updating user settings:', settings);
 
       const { data, error } = await safeQuery(() =>
         supabaseClient.rpc('update_user_settings', {
@@ -369,12 +370,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         })
       );
 
-    if (error) {
-      setError(error);
-      throw error;
-    }
+      if (error) {
+        setError(error);
+        throw error;
+      }
 
-    logger.info('✅ Settings updated successfully:', data);
+      log.info('✅ Settings updated successfully:', data);
       return data;
     },
     []
@@ -382,24 +383,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   // Get user settings using RPC function
   const getUserSettings = useCallback(async (): Promise<GetUserSettingsResponse> => {
-    logger.debug('🔍 Getting user settings...');
+    log.debug('🔍 Getting user settings...');
 
-    const { data, error } = await safeQuery(() =>
-      supabaseClient.rpc('get_user_settings').single()
-    );
+    const { data, error } = await safeQuery(() => supabaseClient.rpc('get_user_settings').single());
 
     if (error) {
       setError(error);
       throw error;
     }
 
-    logger.debug('✅ Settings retrieved successfully:', data);
+    log.debug('✅ Settings retrieved successfully:', data);
     return data;
   }, []);
 
   // Reset password
   const resetPassword = async (email: string): Promise<void> => {
-    logger.debug('🔄 Resetting password for:', email);
+    log.debug('🔄 Resetting password for:', email);
     const { error } = await safeQuery(() =>
       supabaseClient.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/reset-password`,
@@ -409,11 +408,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setError(error);
       throw error;
     }
-    logger.info('✅ Password reset email sent');
+    log.info('✅ Password reset email sent');
   };
 
   const resendVerificationEmail = async (email: string): Promise<void> => {
-    logger.debug('🔄 Resending verification email for:', email);
+    log.debug('🔄 Resending verification email for:', email);
     const { error } = await safeQuery(() =>
       supabaseClient.auth.resend({
         type: 'signup',
@@ -424,7 +423,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (error) {
       throw error;
     }
-    logger.info('✅ Verification email resent');
+    log.info('✅ Verification email resent');
   };
 
   const value: AuthContextValue = {

@@ -31,21 +31,19 @@ export interface CoursesFromSupabase {
   userProgress: UserProgressRow[];
 }
 
-export async function fetchCourses(
-  {
-    search = '',
-    filters = {},
-    sortBy = 'popularity',
-    page = 1,
-    pageSize = 12,
-  }: {
-    search?: string;
-    filters?: CourseFilters;
-    sortBy?: string;
-    page?: number;
-    pageSize?: number;
-  } = {}
-): Promise<{ data: CoursesRow[]; count: number }> {
+export async function fetchCourses({
+  search = '',
+  filters = {},
+  sortBy = 'popularity',
+  page = 1,
+  pageSize = 12,
+}: {
+  search?: string;
+  filters?: CourseFilters;
+  sortBy?: string;
+  page?: number;
+  pageSize?: number;
+} = {}): Promise<{ data: CoursesRow[]; count: number }> {
   const { skillLevel = [], duration = [], category = [] } = filters;
   let query = supabaseClient
     .from('courses')
@@ -119,30 +117,27 @@ export async function fetchCoursesWithContent(): Promise<CourseWithContent[]> {
 }
 
 export async function fetchCoursesFromSupabase(userId: string): Promise<CoursesFromSupabase> {
-  const [coursesResult, lessonsResult, modulesResult, progressResult] =
-    await Promise.all([
-      safeQuery(() =>
-        supabaseClient
-          .from('courses')
-          .select('id, title, cover_image_url, category, thumbnail_url')
-          .eq('is_published', true)
-      ),
-      safeQuery(() =>
-        supabaseClient
-          .from('lessons')
-          .select('id, module_id, is_published, duration')
-          .eq('is_published', true)
-      ),
-      safeQuery(() =>
-        supabaseClient.from('modules').select('id, course_id')
-      ),
-      safeQuery(() =>
-        supabaseClient
-          .from('user_progress')
-          .select('lesson_id, status, completed_at')
-          .eq('user_id', userId)
-      ),
-    ]);
+  const [coursesResult, lessonsResult, modulesResult, progressResult] = await Promise.all([
+    safeQuery(() =>
+      supabaseClient
+        .from('courses')
+        .select('id, title, cover_image_url, category, thumbnail_url')
+        .eq('is_published', true)
+    ),
+    safeQuery(() =>
+      supabaseClient
+        .from('lessons')
+        .select('id, module_id, is_published, duration')
+        .eq('is_published', true)
+    ),
+    safeQuery(() => supabaseClient.from('modules').select('id, course_id')),
+    safeQuery(() =>
+      supabaseClient
+        .from('user_progress')
+        .select('lesson_id, status, completed_at')
+        .eq('user_id', userId)
+    ),
+  ]);
 
   if (coursesResult.error) throw coursesResult.error;
   if (lessonsResult.error) throw lessonsResult.error;

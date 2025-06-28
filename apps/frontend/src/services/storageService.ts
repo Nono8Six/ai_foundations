@@ -20,9 +20,7 @@ export function getPublicUrl(bucket: BucketName, path: string): string {
 }
 
 export async function listBucketFiles(bucket: BucketName): Promise<FileObject[]> {
-  const { data, error } = await safeQuery(() =>
-    supabaseClient.storage.from(bucket).list('')
-  );
+  const { data, error } = await safeQuery(() => supabaseClient.storage.from(bucket).list(''));
   if (error) throw error;
   return data || [];
 }

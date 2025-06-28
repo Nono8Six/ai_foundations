@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Icon from '@frontend/components/AppIcon';
-import logger from '../../../utils/logger';
+import { log } from '@/logger';
 
 interface CreateUserModalProps {
   onClose: () => void;
@@ -110,7 +110,7 @@ const CreateUserModal = ({ onClose, onUserCreated }: CreateUserModalProps) => {
 
       onUserCreated(newUser);
     } catch (error) {
-      logger.error('Error creating user:', error);
+      log.error('Error creating user:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -282,12 +282,12 @@ const CreateUserModal = ({ onClose, onUserCreated }: CreateUserModalProps) => {
             >
               {isSubmitting ? (
                 <>
-                  <Icon aria-hidden="true"  name='Loader2' size={16} className='mr-2 animate-spin' />
+                  <Icon aria-hidden='true' name='Loader2' size={16} className='mr-2 animate-spin' />
                   Création...
                 </>
               ) : (
                 <>
-                  <Icon aria-hidden="true"  name='Plus' size={16} className='mr-2' />
+                  <Icon aria-hidden='true' name='Plus' size={16} className='mr-2' />
                   Créer l'utilisateur
                 </>
               )}

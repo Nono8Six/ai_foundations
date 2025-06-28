@@ -1,57 +1,57 @@
 // eslint.config.js
 import base from '../../eslint.config.js';
-import globals from "globals";
-import js from "@eslint/js";
-import pluginReact from "eslint-plugin-react";
-import pluginTs from "@typescript-eslint/eslint-plugin";
-import parserTs from "@typescript-eslint/parser";
-import prettierConfig from "eslint-config-prettier";
+import globals from 'globals';
+import js from '@eslint/js';
+import pluginReact from 'eslint-plugin-react';
+import pluginTs from '@typescript-eslint/eslint-plugin';
+import parserTs from '@typescript-eslint/parser';
+import prettierConfig from 'eslint-config-prettier';
 
 export default [
   ...base,
   // Configuration globale pour tous les fichiers
   {
-    files: ["**/*.{js,jsx,mjs,cjs}"],
+    files: ['**/*.{js,jsx,mjs,cjs}'],
     languageOptions: {
       globals: {
         ...globals.browser, // Pour les variables globales du navigateur comme `window`, `document`
-        ...globals.node     // Pour les variables globales de Node.js comme `process`
+        ...globals.node, // Pour les variables globales de Node.js comme `process`
       },
       parserOptions: {
         ecmaVersion: 'latest',
         sourceType: 'module',
-        ecmaFeatures: { jsx: true }
-      }
-    }
+        ecmaFeatures: { jsx: true },
+      },
+    },
   },
   {
-    files: ["**/*.{ts,tsx}"],
+    files: ['**/*.{ts,tsx}'],
     languageOptions: {
       parser: parserTs,
       globals: {
         ...globals.browser,
-        ...globals.node
+        ...globals.node,
       },
       parserOptions: {
         ecmaVersion: 'latest',
         sourceType: 'module',
-        ecmaFeatures: { jsx: true }
-      }
+        ecmaFeatures: { jsx: true },
+      },
     },
     plugins: {
-      '@typescript-eslint': pluginTs
+      '@typescript-eslint': pluginTs,
     },
     rules: {
-      ...pluginTs.configs.recommended.rules
-    }
+      ...pluginTs.configs.recommended.rules,
+    },
   },
   {
-    files: ["src/lib/__mocks__/**"],
+    files: ['src/lib/__mocks__/**'],
     languageOptions: {
       globals: {
-        ...globals.jest
-      }
-    }
+        ...globals.jest,
+      },
+    },
   },
 
   // Importe les règles recommandées par ESLint
@@ -60,25 +60,25 @@ export default [
   // Configuration spécifique pour React
   {
     plugins: {
-      react: pluginReact
+      react: pluginReact,
     },
     rules: {
       // On importe les règles recommandées pour React
       ...pluginReact.configs.recommended.rules,
-      
+
       // On applique vos règles personnalisées pour React
-      "react/react-in-jsx-scope": "off", // Pas nécessaire avec les nouvelles versions de React
-      "react/prop-types": "off",         // Utile si vous utilisez TypeScript pour les props
-      "react/no-unescaped-entities": "off"
+      'react/react-in-jsx-scope': 'off', // Pas nécessaire avec les nouvelles versions de React
+      'react/prop-types': 'off', // Utile si vous utilisez TypeScript pour les props
+      'react/no-unescaped-entities': 'off',
     },
     settings: {
       // Détecte automatiquement la version de React
       react: {
-        version: "detect"
-      }
-    }
+        version: 'detect',
+      },
+    },
   },
-  
+
   // Applique la configuration de Prettier.
   // Cela désactive les règles ESLint qui pourraient entrer en conflit avec Prettier.
   // IMPORTANT : Cette ligne doit être à la fin du tableau.
@@ -87,19 +87,19 @@ export default [
   // On ajoute vos autres règles personnalisées
   {
     rules: {
-        "no-unused-vars": "warn"
-    }
+      'no-unused-vars': 'warn',
+    },
   },
   {
-    files: ["**/*.test.{js,jsx,ts,tsx}"],
+    files: ['**/*.test.{js,jsx,ts,tsx}'],
     languageOptions: {
       globals: {
         ...globals.vitest,
-        ...globals.jest
-      }
+        ...globals.jest,
+      },
     },
     rules: {
-      'react/display-name': 'off'
-    }
-  }
+      'react/display-name': 'off',
+    },
+  },
 ];

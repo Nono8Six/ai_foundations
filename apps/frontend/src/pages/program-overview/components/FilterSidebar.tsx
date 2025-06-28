@@ -13,11 +13,7 @@ export interface FilterSidebarProps {
   courses: Course[];
 }
 
-const FilterSidebar: React.FC<FilterSidebarProps> = ({
-  filters,
-  onFilterChange,
-  courses,
-}) => {
+const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, onFilterChange, courses }) => {
   const skillLevels = ['Débutant', 'Intermédiaire', 'Avancé'];
   const durations = [
     { value: 'short', label: 'Court (≤ 3 semaines)' },
@@ -73,7 +69,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
       {/* Skill Level Filter */}
       <div className='mb-6'>
         <h4 className='text-sm font-medium text-text-primary mb-3 flex items-center gap-2'>
-          <Icon aria-hidden="true"  name='TrendingUp' size={16} />
+          <Icon aria-hidden='true' name='TrendingUp' size={16} />
           Niveau de difficulté
         </h4>
         <div className='space-y-2'>
@@ -96,7 +92,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
       {/* Duration Filter */}
       <div className='mb-6'>
         <h4 className='text-sm font-medium text-text-primary mb-3 flex items-center gap-2'>
-          <Icon aria-hidden="true"  name='Clock' size={16} />
+          <Icon aria-hidden='true' name='Clock' size={16} />
           Durée
         </h4>
         <div className='space-y-2'>
@@ -119,7 +115,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
       {/* Category Filter */}
       <div className='mb-6'>
         <h4 className='text-sm font-medium text-text-primary mb-3 flex items-center gap-2'>
-          <Icon aria-hidden="true"  name='FolderOpen' size={16} />
+          <Icon aria-hidden='true' name='FolderOpen' size={16} />
           Catégorie
         </h4>
         <div className='space-y-2'>
@@ -142,7 +138,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
       {/* Status Filter */}
       <div className='mb-6'>
         <h4 className='text-sm font-medium text-text-primary mb-3 flex items-center gap-2'>
-          <Icon aria-hidden="true"  name='CheckCircle' size={16} />
+          <Icon aria-hidden='true' name='CheckCircle' size={16} />
           Statut
         </h4>
         <div className='space-y-2'>

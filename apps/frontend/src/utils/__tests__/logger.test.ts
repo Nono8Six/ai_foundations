@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 async function loadLogger() {
-  const mod = await import('../logger');
-  return mod.default;
+  const mod = await import('@/logger');
+  return mod.log;
 }
 
 const originalViteLevel = process.env.VITE_LOG_LEVEL;

@@ -56,7 +56,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
           <div className='flex items-center justify-between h-16 px-6 border-b border-border'>
             <div className='flex items-center space-x-3'>
               <div className='w-8 h-8 bg-gradient-to-br from-primary to-primary-700 rounded-full flex items-center justify-center'>
-                <Icon aria-hidden="true"  name='GraduationCap' size={20} color='white' />
+                <Icon aria-hidden='true' name='GraduationCap' size={20} color='white' />
               </div>
               <span className='text-lg font-semibold text-text-primary'>AI Foundations</span>
             </div>
@@ -80,7 +80,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                       : 'text-text-secondary hover:bg-secondary-100 hover:text-text-primary'
                   }`}
                 >
-                  <Icon aria-hidden="true"  name={item.icon} size={18} className='mr-3' />
+                  <Icon aria-hidden='true' name={item.icon} size={18} className='mr-3' />
                   {item.name}
                 </Link>
               ))}

@@ -16,12 +16,16 @@ const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({ metrics }) => {
         id: 'systemUptime',
         title: 'Disponibilité système',
         value: metrics.systemUptime,
-        status: metrics.systemUptime === "N/A" || metrics.systemUptime === "Error" ? 'unknown' : 'excellent', // Or derive from value if it's a percentage
+        status:
+          metrics.systemUptime === 'N/A' || metrics.systemUptime === 'Error'
+            ? 'unknown'
+            : 'excellent', // Or derive from value if it's a percentage
         icon: 'Shield',
         description: 'Uptime mensuel',
       });
     }
-    if (metrics.activeUsers !== undefined) { // activeUsers can be 0, so check for undefined
+    if (metrics.activeUsers !== undefined) {
+      // activeUsers can be 0, so check for undefined
       availableMetrics.push({
         id: 'activeSessions',
         title: 'Sessions actives',
@@ -35,37 +39,53 @@ const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({ metrics }) => {
 
   const getStatusColor = status => {
     switch (status) {
-      case 'excellent': return 'text-success';
-      case 'info': return 'text-primary'; // For neutral info like active sessions
-      case 'unknown': return 'text-text-secondary';
-      default: return 'text-text-secondary';
+      case 'excellent':
+        return 'text-success';
+      case 'info':
+        return 'text-primary'; // For neutral info like active sessions
+      case 'unknown':
+        return 'text-text-secondary';
+      default:
+        return 'text-text-secondary';
     }
   };
 
   const getStatusBg = status => {
     switch (status) {
-      case 'excellent': return 'bg-success-50';
-      case 'info': return 'bg-primary-50';
-      case 'unknown': return 'bg-secondary-100';
-      default: return 'bg-secondary-50';
+      case 'excellent':
+        return 'bg-success-50';
+      case 'info':
+        return 'bg-primary-50';
+      case 'unknown':
+        return 'bg-secondary-100';
+      default:
+        return 'bg-secondary-50';
     }
   };
 
   const getStatusIndicator = status => {
     switch (status) {
-      case 'excellent': return 'bg-success';
-      case 'info': return 'bg-primary';
-      case 'unknown': return 'bg-secondary-400';
-      default: return 'bg-secondary-400';
+      case 'excellent':
+        return 'bg-success';
+      case 'info':
+        return 'bg-primary';
+      case 'unknown':
+        return 'bg-secondary-400';
+      default:
+        return 'bg-secondary-400';
     }
   };
 
   const getStatusLabel = status => {
     switch (status) {
-      case 'excellent': return 'Excellent';
-      case 'info': return 'Info';
-      case 'unknown': return 'N/A';
-      default: return 'N/A';
+      case 'excellent':
+        return 'Excellent';
+      case 'info':
+        return 'Info';
+      case 'unknown':
+        return 'N/A';
+      default:
+        return 'N/A';
     }
   };
 
@@ -79,9 +99,13 @@ const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({ metrics }) => {
         <div className='flex items-center space-x-2'>
           {/* Online status can be dynamic if a specific metric indicates it */}
           <div className='flex items-center space-x-1'>
-            <div className={`w-2 h-2 ${metrics && metrics.systemUptime !== "N/A" && metrics.systemUptime !== "Error" ? "bg-success" : "bg-text-secondary"} rounded-full animate-pulse`}></div>
+            <div
+              className={`w-2 h-2 ${metrics && metrics.systemUptime !== 'N/A' && metrics.systemUptime !== 'Error' ? 'bg-success' : 'bg-text-secondary'} rounded-full animate-pulse`}
+            ></div>
             <span className='text-xs text-text-secondary'>
-              {metrics && metrics.systemUptime !== "N/A" && metrics.systemUptime !== "Error" ? "En ligne" : "Statut inconnu"}
+              {metrics && metrics.systemUptime !== 'N/A' && metrics.systemUptime !== 'Error'
+                ? 'En ligne'
+                : 'Statut inconnu'}
             </span>
           </div>
           {/* <button className='p-1 rounded-md hover:bg-secondary-100 transition-colors'>
@@ -100,7 +124,12 @@ const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({ metrics }) => {
               <div className='flex items-center justify-between mb-2'>
                 <div className='flex items-center space-x-3'>
                   <div className={`p-2 rounded-lg ${getStatusBg(metric.status)}`}>
-                    <Icon aria-hidden="true"  name={metric.icon} size={16} className={getStatusColor(metric.status)} />
+                    <Icon
+                      aria-hidden='true'
+                      name={metric.icon}
+                      size={16}
+                      className={getStatusColor(metric.status)}
+                    />
                   </div>
                   <div>
                     <h4 className='text-sm font-medium text-text-primary'>{metric.title}</h4>
@@ -121,19 +150,24 @@ const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({ metrics }) => {
               </div>
             </div>
           ))}
-           <div className="mt-4 p-4 border border-dashed border-border rounded-lg text-center">
-            <Icon aria-hidden="true"  name="Info" size={20} className="text-text-secondary mx-auto mb-2" />
-            <p className="text-sm text-text-secondary">
+          <div className='mt-4 p-4 border border-dashed border-border rounded-lg text-center'>
+            <Icon
+              aria-hidden='true'
+              name='Info'
+              size={20}
+              className='text-text-secondary mx-auto mb-2'
+            />
+            <p className='text-sm text-text-secondary'>
               Les données de performance détaillées (CPU, mémoire, etc.) ne sont pas disponibles.
             </p>
-            <p className="text-xs text-text-tertiary mt-1">
+            <p className='text-xs text-text-tertiary mt-1'>
               Celles-ci proviennent généralement d'outils de surveillance système spécifiques.
             </p>
           </div>
         </div>
       ) : (
         <div className='flex flex-col items-center justify-center h-48 text-center'>
-          <Icon aria-hidden="true"  name='ServerOff' size={32} className='text-secondary-400 mb-3' />
+          <Icon aria-hidden='true' name='ServerOff' size={32} className='text-secondary-400 mb-3' />
           <p className='text-md font-medium text-text-primary mb-1'>
             Aucune métrique système disponible.
           </p>
@@ -142,7 +176,9 @@ const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({ metrics }) => {
 
       <div className='mt-6 pt-4 border-t border-border'>
         <div className='text-center'>
-          <p className='text-sm text-text-secondary'>Informations de maintenance non disponibles.</p>
+          <p className='text-sm text-text-secondary'>
+            Informations de maintenance non disponibles.
+          </p>
         </div>
       </div>
     </div>

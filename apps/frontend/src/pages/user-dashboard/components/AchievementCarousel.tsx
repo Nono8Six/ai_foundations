@@ -16,9 +16,7 @@ export interface AchievementCarouselProps {
   achievements?: Achievement[];
 }
 
-const AchievementCarousel: React.FC<AchievementCarouselProps> = ({
-  achievements = [],
-}) => {
+const AchievementCarousel: React.FC<AchievementCarouselProps> = ({ achievements = [] }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const getRarityColor = (rarity: Achievement['rarity']): string => {
@@ -88,7 +86,7 @@ const AchievementCarousel: React.FC<AchievementCarouselProps> = ({
       >
         {currentAchievement.earned && (
           <div className='absolute -top-2 -right-2 w-6 h-6 bg-success rounded-full flex items-center justify-center'>
-            <Icon aria-hidden="true"  name='Check' size={14} color='white' />
+            <Icon aria-hidden='true' name='Check' size={14} color='white' />
           </div>
         )}
         <div className='flex items-center gap-4'>
@@ -115,7 +113,7 @@ const AchievementCarousel: React.FC<AchievementCarouselProps> = ({
           className='p-2 rounded-full hover:bg-secondary-100 transition-colors'
           disabled={achievements.length <= 1}
         >
-          <Icon aria-hidden="true"  name='ChevronLeft' size={16} className='text-text-secondary' />
+          <Icon aria-hidden='true' name='ChevronLeft' size={16} className='text-text-secondary' />
         </button>
         <div className='flex space-x-2'>
           {achievements.map((_, index) => (
@@ -130,7 +128,7 @@ const AchievementCarousel: React.FC<AchievementCarouselProps> = ({
           className='p-2 rounded-full hover:bg-secondary-100 transition-colors'
           disabled={achievements.length <= 1}
         >
-          <Icon aria-hidden="true"  name='ChevronRight' size={16} className='text-text-secondary' />
+          <Icon aria-hidden='true' name='ChevronRight' size={16} className='text-text-secondary' />
         </button>
       </div>
 

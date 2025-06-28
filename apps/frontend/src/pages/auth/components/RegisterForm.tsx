@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Icon from '@frontend/components/AppIcon';
 import { useAuth } from '@frontend/context/AuthContext';
-import logger from '../../../utils/logger';
+import { log } from '@/logger';
 
 export interface RegisterFormProps {
   isLoading: boolean;
@@ -36,12 +36,11 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ isLoading, setIsLoading }) 
         window.location.href = '/verify-email';
       }
     } catch (error) {
-      logger.error('Registration error:', error.message);
+      log.error('Registration error:', error.message);
       setIsLoading(false);
       setAuthError(error.message || "Erreur lors de l'inscription");
     }
   };
-
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
@@ -53,7 +52,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ isLoading, setIsLoading }) 
           </label>
           <div className='relative'>
             <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-              <Icon aria-hidden="true"  name='User' size={18} className='text-text-secondary' />
+              <Icon aria-hidden='true' name='User' size={18} className='text-text-secondary' />
             </div>
             <input
               id='firstName'
@@ -76,7 +75,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ isLoading, setIsLoading }) 
           </div>
           {errors.firstName && (
             <p className='mt-1 text-sm text-error flex items-center'>
-              <Icon aria-hidden="true"  name='AlertCircle' size={16} className='mr-1' />
+              <Icon aria-hidden='true' name='AlertCircle' size={16} className='mr-1' />
               {errors.firstName.message}
             </p>
           )}
@@ -106,7 +105,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ isLoading, setIsLoading }) 
           />
           {errors.lastName && (
             <p className='mt-1 text-sm text-error flex items-center'>
-              <Icon aria-hidden="true"  name='AlertCircle' size={16} className='mr-1' />
+              <Icon aria-hidden='true' name='AlertCircle' size={16} className='mr-1' />
               {errors.lastName.message}
             </p>
           )}
@@ -120,7 +119,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ isLoading, setIsLoading }) 
         </label>
         <div className='relative'>
           <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-            <Icon aria-hidden="true"  name='Mail' size={18} className='text-text-secondary' />
+            <Icon aria-hidden='true' name='Mail' size={18} className='text-text-secondary' />
           </div>
           <input
             id='email'
@@ -143,7 +142,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ isLoading, setIsLoading }) 
         </div>
         {errors.email && (
           <p className='mt-1 text-sm text-error flex items-center'>
-            <Icon aria-hidden="true"  name='AlertCircle' size={16} className='mr-1' />
+            <Icon aria-hidden='true' name='AlertCircle' size={16} className='mr-1' />
             {errors.email.message}
           </p>
         )}
@@ -156,7 +155,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ isLoading, setIsLoading }) 
         </label>
         <div className='relative'>
           <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-            <Icon aria-hidden="true"  name='Lock' size={18} className='text-text-secondary' />
+            <Icon aria-hidden='true' name='Lock' size={18} className='text-text-secondary' />
           </div>
           <input
             id='password'
@@ -184,7 +183,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ isLoading, setIsLoading }) 
         </div>
         {errors.password && (
           <p className='mt-1 text-sm text-error flex items-center'>
-            <Icon aria-hidden="true"  name='AlertCircle' size={16} className='mr-1' />
+            <Icon aria-hidden='true' name='AlertCircle' size={16} className='mr-1' />
             {errors.password.message}
           </p>
         )}
@@ -200,7 +199,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ isLoading, setIsLoading }) 
         </label>
         <div className='relative'>
           <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-            <Icon aria-hidden="true"  name='Lock' size={18} className='text-text-secondary' />
+            <Icon aria-hidden='true' name='Lock' size={18} className='text-text-secondary' />
           </div>
           <input
             id='confirmPassword'
@@ -220,7 +219,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ isLoading, setIsLoading }) 
         </div>
         {errors.confirmPassword && (
           <p className='mt-1 text-sm text-error flex items-center'>
-            <Icon aria-hidden="true"  name='AlertCircle' size={16} className='mr-1' />
+            <Icon aria-hidden='true' name='AlertCircle' size={16} className='mr-1' />
             {errors.confirmPassword.message}
           </p>
         )}
@@ -230,7 +229,12 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ isLoading, setIsLoading }) 
       {authError && (
         <div className='p-3 bg-error-50 border border-error-200 rounded-lg'>
           <p className='text-sm text-error-700 flex items-center'>
-            <Icon aria-hidden="true"  name='AlertTriangle' size={16} className='mr-2 flex-shrink-0' />
+            <Icon
+              aria-hidden='true'
+              name='AlertTriangle'
+              size={16}
+              className='mr-2 flex-shrink-0'
+            />
             {authError}
           </p>
         </div>
@@ -268,7 +272,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ isLoading, setIsLoading }) 
           </label>
           {errors.terms && (
             <p className='mt-1 text-error flex items-center'>
-              <Icon aria-hidden="true"  name='AlertCircle' size={16} className='mr-1' />
+              <Icon aria-hidden='true' name='AlertCircle' size={16} className='mr-1' />
               {errors.terms.message}
             </p>
           )}
@@ -288,7 +292,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ isLoading, setIsLoading }) 
           </>
         ) : (
           <>
-            <Icon aria-hidden="true"  name='UserPlus' size={18} className='mr-2' />
+            <Icon aria-hidden='true' name='UserPlus' size={18} className='mr-2' />
             Créer mon compte
           </>
         )}

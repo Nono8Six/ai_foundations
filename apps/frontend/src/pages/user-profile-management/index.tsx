@@ -30,11 +30,13 @@ const UserProfileManagement = () => {
     phone: '', // This would need to be added to the profiles table if needed
     profession: '', // This would need to be added to the profiles table if needed
     company: '', // This would need to be added to the profiles table if needed
-    avatar: userProfile?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(userProfile?.full_name || user?.email || 'User')}&background=1e40af&color=fff`,
+    avatar:
+      userProfile?.avatar_url ||
+      `https://ui-avatars.com/api/?name=${encodeURIComponent(userProfile?.full_name || user?.email || 'User')}&background=1e40af&color=fff`,
     joinDate: user?.created_at || new Date().toISOString(),
     level: userProfile?.level || 1,
     xp: userProfile?.xp || 0,
-    nextLevelXp: Math.floor(100 * Math.pow((userProfile?.level || 1), 1.5)),
+    nextLevelXp: Math.floor(100 * Math.pow(userProfile?.level || 1, 1.5)),
     streak: userProfile?.current_streak || 0,
     totalLearningTime: 0, // This would need to be calculated from user progress
     coursesCompleted: 0, // This would need to be calculated from user progress
@@ -106,7 +108,7 @@ const UserProfileManagement = () => {
               <div className='space-y-3'>
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center space-x-2'>
-                    <Icon aria-hidden="true"  name='Flame' size={16} className='text-orange-500' />
+                    <Icon aria-hidden='true' name='Flame' size={16} className='text-orange-500' />
                     <span className='text-sm text-text-secondary'>Série actuelle</span>
                   </div>
                   <span className='text-sm font-medium text-text-primary'>
@@ -115,7 +117,7 @@ const UserProfileManagement = () => {
                 </div>
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center space-x-2'>
-                    <Icon aria-hidden="true"  name='BookOpen' size={16} className='text-primary' />
+                    <Icon aria-hidden='true' name='BookOpen' size={16} className='text-primary' />
                     <span className='text-sm text-text-secondary'>Cours terminés</span>
                   </div>
                   <span className='text-sm font-medium text-text-primary'>
@@ -124,7 +126,7 @@ const UserProfileManagement = () => {
                 </div>
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center space-x-2'>
-                    <Icon aria-hidden="true"  name='Award' size={16} className='text-accent' />
+                    <Icon aria-hidden='true' name='Award' size={16} className='text-accent' />
                     <span className='text-sm text-text-secondary'>Certificats</span>
                   </div>
                   <span className='text-sm font-medium text-text-primary'>
@@ -155,7 +157,7 @@ const UserProfileManagement = () => {
                       }`}
                     >
                       <div className='flex items-center space-x-2'>
-                        <Icon aria-hidden="true"  name={tab.icon} size={16} />
+                        <Icon aria-hidden='true' name={tab.icon} size={16} />
                         <span className='hidden sm:inline'>{tab.label}</span>
                       </div>
                     </button>

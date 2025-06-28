@@ -11,7 +11,12 @@ vi.mock('../../../components/AppImage', () => ({ default: () => <img alt='' /> }
 describe('CourseEditor', () => {
   test('disables save button while saving', async () => {
     let resolveSave;
-    const onSave = vi.fn(() => new Promise(r => { resolveSave = r; }));
+    const onSave = vi.fn(
+      () =>
+        new Promise(r => {
+          resolveSave = r;
+        })
+    );
     render(<CourseEditor course={{}} onSave={onSave} onDelete={() => {}} />);
     const saveButton = screen.getByRole('button', { name: 'Enregistrer' });
     fireEvent.click(saveButton);

@@ -31,22 +31,21 @@ const TestConsumer = () => {
   const { courses, lessons, modules, userProgress, isLoading } = useCourses();
 
   if (isLoading) {
-    return <div data-testid="loading">Chargement...</div>;
+    return <div data-testid='loading'>Chargement...</div>;
   }
 
   return (
     <div>
-      <div data-testid="courses-count">{courses.length}</div>
-      <div data-testid="lessons-count">{lessons.length}</div>
-      <div data-testid="modules-count">{modules.length}</div>
-      <div data-testid="progress-count">{userProgress.length}</div>
+      <div data-testid='courses-count'>{courses.length}</div>
+      <div data-testid='lessons-count'>{lessons.length}</div>
+      <div data-testid='modules-count'>{modules.length}</div>
+      <div data-testid='progress-count'>{userProgress.length}</div>
     </div>
   );
 };
 
 // Suite de tests
 describe('CourseContext', () => {
-
   let queryClient;
 
   beforeEach(() => {
@@ -99,9 +98,9 @@ describe('CourseContext', () => {
   it('should not fetch data if user is not authenticated', () => {
     // On simule un utilisateur non connecté pour ce test
     vi.mock('../AuthContext', () => ({
-        useAuth: () => ({ user: null }),
+      useAuth: () => ({ user: null }),
     }));
-    
+
     render(
       <QueryClientProvider client={queryClient}>
         <CourseProvider>
@@ -109,10 +108,10 @@ describe('CourseContext', () => {
         </CourseProvider>
       </QueryClientProvider>
     );
-    
+
     // La fonction de fetch ne doit JAMAIS être appelée si l'utilisateur n'est pas là
     expect(fetchCoursesFromSupabase).not.toHaveBeenCalled();
-    
+
     // Les données doivent être des tableaux vides
     expect(screen.getByTestId('courses-count').textContent).toBe('0');
   });

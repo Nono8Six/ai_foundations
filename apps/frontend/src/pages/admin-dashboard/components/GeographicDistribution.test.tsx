@@ -5,7 +5,11 @@ import { vi } from 'vitest';
 import GeographicDistribution from './GeographicDistribution';
 
 // Mock AppIcon
-vi.mock('../../../components/AppIcon', () => ({ default: ({ name, size, className }) => <svg data-testid={`icon-${name}`} className={className} width={size} height={size}></svg> }));
+vi.mock('../../../components/AppIcon', () => ({
+  default: ({ name, size, className }) => (
+    <svg data-testid={`icon-${name}`} className={className} width={size} height={size}></svg>
+  ),
+}));
 
 describe('GeographicDistribution', () => {
   afterEach(() => {
@@ -19,8 +23,16 @@ describe('GeographicDistribution', () => {
     expect(screen.getByText('Répartition des utilisateurs par pays')).toBeInTheDocument();
 
     // Check for the "unavailable" message and icon
-    expect(screen.getByText('Les données de distribution géographique ne sont pas actuellement disponibles.')).toBeInTheDocument();
-    expect(screen.getByText('Pour activer cette fonctionnalité, des informations de localisation des utilisateurs seraient nécessaires.')).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'Les données de distribution géographique ne sont pas actuellement disponibles.'
+      )
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'Pour activer cette fonctionnalité, des informations de localisation des utilisateurs seraient nécessaires.'
+      )
+    ).toBeInTheDocument();
     expect(screen.getByTestId('icon-MapPinOff')).toBeInTheDocument();
 
     // Check that the footer shows N/A

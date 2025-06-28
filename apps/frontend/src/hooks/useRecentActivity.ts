@@ -30,8 +30,8 @@ const useRecentActivity = (
 
   useEffect(() => {
     if (!userId) {
-        setLoading(false);
-        return;
+      setLoading(false);
+      return;
     }
 
     const fetchActivities = async () => {
@@ -43,12 +43,8 @@ const useRecentActivity = (
       const { data, error } = await safeQuery<ActivityRow[]>(() =>
         Object.entries(filters)
           .reduce(
-            (q, [column, value]) =>
-              q.eq(column as keyof ActivityRow, value as never),
-            supabaseClient
-              .from('activity_log')
-              .select('*')
-              .eq('user_id', userId)
+            (q, [column, value]) => q.eq(column as keyof ActivityRow, value as never),
+            supabaseClient.from('activity_log').select('*').eq('user_id', userId)
           )
           .order('created_at', { ascending: order === 'asc' })
           .limit(limit)

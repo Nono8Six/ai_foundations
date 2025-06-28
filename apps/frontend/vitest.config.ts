@@ -11,8 +11,8 @@ export default defineConfig({
     threads: false,
     poolOptions: {
       vmThreads: {
-        memoryLimit: 256
-      }
-    }
-  }
+        memoryLimit: 256,
+      },
+    },
+  },
 });

@@ -162,7 +162,6 @@ ai-foundations/
    ```
 
 2. **Développer**
-
    - Le code est monté en volume, les changements sont visibles immédiatement
    - Utilisez les outils de développement de votre navigateur
 

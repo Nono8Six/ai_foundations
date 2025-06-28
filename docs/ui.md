@@ -11,7 +11,7 @@ import Card from '../components/ui/Card';
 ## Button
 
 ```jsx
-<Button variant="primary" size="md" onClick={handleClick}>
+<Button variant='primary' size='md' onClick={handleClick}>
   Valider
 </Button>
 ```
@@ -22,8 +22,8 @@ Variants disponibles : `primary`, `secondary`, `outline`, `danger`. Les tailles 
 
 ```jsx
 <TextInput
-  label="Email"
-  type="email"
+  label='Email'
+  type='email'
   value={email}
   onChange={e => setEmail(e.target.value)}
   error={errorMsg}
@@ -33,7 +33,5 @@ Variants disponibles : `primary`, `secondary`, `outline`, `danger`. Les tailles 
 ## Card
 
 ```jsx
-<Card className="p-4">
-  Contenu...
-</Card>
+<Card className='p-4'>Contenu...</Card>
 ```

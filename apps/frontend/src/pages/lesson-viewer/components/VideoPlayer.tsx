@@ -7,11 +7,7 @@ export interface VideoPlayerProps {
   onProgress: (percent: number) => void;
 }
 
-const VideoPlayer: React.FC<VideoPlayerProps> = ({
-  videoUrl,
-  transcript,
-  onProgress,
-}) => {
+const VideoPlayer: React.FC<VideoPlayerProps> = ({ videoUrl, transcript, onProgress }) => {
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -160,7 +156,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
                 </button>
 
                 <div className='flex items-center space-x-2'>
-                  <Icon aria-hidden="true"  name='Volume2' size={16} color='white' />
+                  <Icon aria-hidden='true' name='Volume2' size={16} color='white' />
                   <input
                     type='range'
                     min='0'

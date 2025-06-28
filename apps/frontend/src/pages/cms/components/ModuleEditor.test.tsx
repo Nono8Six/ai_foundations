@@ -9,7 +9,12 @@ vi.mock('../../../components/AppIcon', () => ({ default: () => <svg aria-hidden=
 describe('ModuleEditor', () => {
   test('disables save button while saving', async () => {
     let resolveSave;
-    const onSave = vi.fn(() => new Promise(r => { resolveSave = r; }));
+    const onSave = vi.fn(
+      () =>
+        new Promise(r => {
+          resolveSave = r;
+        })
+    );
     render(<ModuleEditor module={{}} onSave={onSave} onDelete={() => {}} />);
     const saveButton = screen.getByRole('button', { name: 'Enregistrer' });
     fireEvent.click(saveButton);

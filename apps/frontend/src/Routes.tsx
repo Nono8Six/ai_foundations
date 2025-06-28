@@ -31,10 +31,7 @@ interface ProtectedRouteProps {
   requireAdmin?: boolean;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
-  children,
-  requireAdmin = false,
-}) => {
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireAdmin = false }) => {
   const { user, userProfile, loading } = useAuth();
   if (loading) return <PageLoader />;
   if (!user) return <Navigate to='/login' replace />;
@@ -56,16 +53,72 @@ const AppRoutes: React.FC = () => {
           <Route path='/program-overview' element={<ProgramOverview />} />
           <Route path='/login' element={<AuthenticationLoginRegister />} />
           <Route path='/register' element={<AuthenticationLoginRegister />} />
-          <Route path='/espace' element={<ProtectedRoute><UserDashboard /></ProtectedRoute>} />
-          <Route path='/user-dashboard' element={<Navigate to="/espace" replace />} />
-          <Route path='/profile' element={<ProtectedRoute><UserProfileManagement /></ProtectedRoute>} />
-          <Route path='/user-profile-management' element={<Navigate to="/profile" replace />} />
-          <Route path='/lesson-viewer' element={<ProtectedRoute><LessonViewer /></ProtectedRoute>} />
-          <Route path='/lesson-viewer/:lessonId' element={<ProtectedRoute><LessonViewer /></ProtectedRoute>} />
-          <Route path='/admin-dashboard' element={<ProtectedRoute requireAdmin={true}><AdminDashboard /></ProtectedRoute>} />
-          <Route path='/user-management-admin' element={<ProtectedRoute requireAdmin={true}><UserManagementAdmin /></ProtectedRoute>} />
-          <Route path='/cms' element={<ProtectedRoute requireAdmin={true}><ContentManagementCoursesModulesLessons /></ProtectedRoute>} />
-          <Route path='/content-management' element={<ProtectedRoute requireAdmin={true}><ContentManagementCoursesModulesLessons /></ProtectedRoute>} />
+          <Route
+            path='/espace'
+            element={
+              <ProtectedRoute>
+                <UserDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route path='/user-dashboard' element={<Navigate to='/espace' replace />} />
+          <Route
+            path='/profile'
+            element={
+              <ProtectedRoute>
+                <UserProfileManagement />
+              </ProtectedRoute>
+            }
+          />
+          <Route path='/user-profile-management' element={<Navigate to='/profile' replace />} />
+          <Route
+            path='/lesson-viewer'
+            element={
+              <ProtectedRoute>
+                <LessonViewer />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/lesson-viewer/:lessonId'
+            element={
+              <ProtectedRoute>
+                <LessonViewer />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/admin-dashboard'
+            element={
+              <ProtectedRoute requireAdmin={true}>
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/user-management-admin'
+            element={
+              <ProtectedRoute requireAdmin={true}>
+                <UserManagementAdmin />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/cms'
+            element={
+              <ProtectedRoute requireAdmin={true}>
+                <ContentManagementCoursesModulesLessons />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/content-management'
+            element={
+              <ProtectedRoute requireAdmin={true}>
+                <ContentManagementCoursesModulesLessons />
+              </ProtectedRoute>
+            }
+          />
           <Route path='/verify-email' element={<VerifyEmail />} />
           <Route path='*' element={<NotFound />} />
         </RouterRoutes>

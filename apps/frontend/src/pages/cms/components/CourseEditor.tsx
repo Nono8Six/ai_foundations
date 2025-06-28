@@ -6,7 +6,7 @@ import TextInput from '@frontend/components/ui/TextInput';
 import Card from '@frontend/components/ui/Card';
 import Spinner from '@frontend/components/ui/Spinner';
 import { uploadToBucket, BUCKETS } from '@frontend/services/storageService';
-import logger from '@frontend/utils/logger';
+import { log } from '@/logger';
 import type { CourseRow } from '@frontend/types/courseRow';
 
 export interface CourseEditorProps {
@@ -77,7 +77,7 @@ const CourseEditor: React.FC<CourseEditorProps> = ({ course, onSave, onDelete })
         const { url } = await uploadToBucket(BUCKETS.images, file);
         handleInputChange('thumbnail', url);
       } catch (err) {
-        logger.error('Thumbnail upload failed', err);
+        log.error('Thumbnail upload failed', err);
       }
       setIsUploading(false);
     }
@@ -115,7 +115,8 @@ const CourseEditor: React.FC<CourseEditorProps> = ({ course, onSave, onDelete })
               }`}
               variant='outline'
             >
-              <Icon aria-hidden="true" 
+              <Icon
+                aria-hidden='true'
                 name={formData.status === 'published' ? 'Eye' : 'EyeOff'}
                 size={16}
                 className='mr-2'
@@ -127,7 +128,7 @@ const CourseEditor: React.FC<CourseEditorProps> = ({ course, onSave, onDelete })
               {isSaving ? (
                 <Spinner size={16} className='mr-2' />
               ) : (
-                <Icon aria-hidden="true"  name='Save' size={16} className='mr-2' />
+                <Icon aria-hidden='true' name='Save' size={16} className='mr-2' />
               )}
               {isSaving ? 'Enregistrement...' : 'Enregistrer'}
             </Button>
@@ -271,7 +272,12 @@ const CourseEditor: React.FC<CourseEditorProps> = ({ course, onSave, onDelete })
                 ) : (
                   <div className='w-full h-32 border-2 border-dashed border-secondary-300 rounded-lg flex items-center justify-center'>
                     <div className='text-center'>
-                      <Icon aria-hidden="true"  name='Image' size={32} className='text-secondary-400 mx-auto mb-2' />
+                      <Icon
+                        aria-hidden='true'
+                        name='Image'
+                        size={32}
+                        className='text-secondary-400 mx-auto mb-2'
+                      />
                       <p className='text-sm text-text-secondary'>Aucune image</p>
                     </div>
                   </div>
@@ -287,12 +293,17 @@ const CourseEditor: React.FC<CourseEditorProps> = ({ course, onSave, onDelete })
                   <div className='w-full px-4 py-2 border border-border rounded-lg text-center cursor-pointer hover:bg-secondary-50 transition-colors duration-200'>
                     {isUploading ? (
                       <div className='flex items-center justify-center'>
-                        <Icon aria-hidden="true"  name='Loader2' size={16} className='animate-spin mr-2' />
+                        <Icon
+                          aria-hidden='true'
+                          name='Loader2'
+                          size={16}
+                          className='animate-spin mr-2'
+                        />
                         Téléchargement...
                       </div>
                     ) : (
                       <div className='flex items-center justify-center'>
-                        <Icon aria-hidden="true"  name='Upload' size={16} className='mr-2' />
+                        <Icon aria-hidden='true' name='Upload' size={16} className='mr-2' />
                         Choisir une image
                       </div>
                     )}
@@ -317,7 +328,12 @@ const CourseEditor: React.FC<CourseEditorProps> = ({ course, onSave, onDelete })
                   <div className='flex justify-between items-center'>
                     <span className='text-text-secondary'>Note moyenne</span>
                     <div className='flex items-center'>
-                      <Icon aria-hidden="true"  name='Star' size={16} className='text-warning mr-1' />
+                      <Icon
+                        aria-hidden='true'
+                        name='Star'
+                        size={16}
+                        className='text-warning mr-1'
+                      />
                       <span className='font-semibold text-text-primary'>
                         {course.rating || 0}/5
                       </span>
@@ -349,7 +365,7 @@ const CourseEditor: React.FC<CourseEditorProps> = ({ course, onSave, onDelete })
                   className='w-full px-4 py-2 bg-error text-white hover:bg-error-600'
                   variant='danger'
                 >
-                  <Icon aria-hidden="true"  name='Trash2' size={16} className='mr-2' />
+                  <Icon aria-hidden='true' name='Trash2' size={16} className='mr-2' />
                   Supprimer le cours
                 </Button>
               </Card>

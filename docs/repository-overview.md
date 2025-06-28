@@ -46,5 +46,3 @@ This document provides a quick tour of the project layout. For a visual project 
 - **`package.json`** – Scripts for running the Supabase CLI and generating types.
 
 For the overall workflow of keeping the backend in sync with Supabase Cloud, consult the “Workflow de Développement” section in [README-WORKFLOW.md](guides/README-WORKFLOW.md).
-
-

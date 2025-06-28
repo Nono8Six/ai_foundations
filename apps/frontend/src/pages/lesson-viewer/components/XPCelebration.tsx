@@ -55,7 +55,7 @@ const XPCelebration: React.FC<XPCelebrationProps> = ({ xpEarned, onClose }) => {
             ${animationPhase === 'celebrate' ? 'animate-bounce' : ''}
           `}
           >
-            <Icon aria-hidden="true"  name='Trophy' size={32} color='white' />
+            <Icon aria-hidden='true' name='Trophy' size={32} color='white' />
           </div>
 
           {/* Sparkle Effects */}
@@ -86,7 +86,7 @@ const XPCelebration: React.FC<XPCelebrationProps> = ({ xpEarned, onClose }) => {
         <div className='bg-gradient-to-r from-primary-50 to-accent-50 rounded-xl p-4 mb-6'>
           <div className='flex items-center justify-center space-x-3'>
             <div className='w-12 h-12 bg-gradient-to-br from-primary to-primary-700 rounded-full flex items-center justify-center'>
-              <Icon aria-hidden="true"  name='Zap' size={20} color='white' />
+              <Icon aria-hidden='true' name='Zap' size={20} color='white' />
             </div>
             <div>
               <p className='text-sm text-text-secondary'>XP gagné</p>
@@ -99,21 +99,21 @@ const XPCelebration: React.FC<XPCelebrationProps> = ({ xpEarned, onClose }) => {
         <div className='flex justify-center space-x-4 mb-6'>
           <div className='flex flex-col items-center'>
             <div className='w-10 h-10 bg-accent-100 rounded-full flex items-center justify-center mb-1'>
-              <Icon aria-hidden="true"  name='BookOpen' size={16} className='text-accent' />
+              <Icon aria-hidden='true' name='BookOpen' size={16} className='text-accent' />
             </div>
             <span className='text-xs text-text-secondary'>Leçon terminée</span>
           </div>
 
           <div className='flex flex-col items-center'>
             <div className='w-10 h-10 bg-warning-100 rounded-full flex items-center justify-center mb-1'>
-              <Icon aria-hidden="true"  name='Target' size={16} className='text-warning' />
+              <Icon aria-hidden='true' name='Target' size={16} className='text-warning' />
             </div>
             <span className='text-xs text-text-secondary'>Objectif atteint</span>
           </div>
 
           <div className='flex flex-col items-center'>
             <div className='w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center mb-1'>
-              <Icon aria-hidden="true"  name='TrendingUp' size={16} className='text-primary' />
+              <Icon aria-hidden='true' name='TrendingUp' size={16} className='text-primary' />
             </div>
             <span className='text-xs text-text-secondary'>Progression</span>
           </div>

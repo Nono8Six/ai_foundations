@@ -22,15 +22,16 @@ pnpm install
 ## 2. Configuration des Variables d'Environnement
 
 1.  **Copiez le fichier d'exemple `.env.example` en `.env`** à la racine du projet :
+
     ```bash
     cp .env.example .env
     ```
 
 2.  **Éditez le fichier `.env`** avec vos propres informations :
-    *   **`VITE_SUPABASE_URL`**: L'URL de votre projet Supabase Cloud (ex: `https://<votre-project-ref>.supabase.co`).
-    *   **`VITE_SUPABASE_ANON_KEY`**: La clé anonyme (publique) de votre projet Supabase Cloud.
-    *   **`SUPABASE_ACCESS_TOKEN`**: Votre token d'accès personnel Supabase. Vous pouvez le générer depuis votre compte Supabase sur [app.supabase.com/account/tokens](https://app.supabase.com/account/tokens). Ce token est nécessaire pour que la CLI Supabase puisse interagir avec votre projet Cloud (notamment pour `pnpm db:pull`).
-    *   **`SUPABASE_PROJECT_REF`**: La référence de votre projet Supabase Cloud (la partie `<votre-project-ref>` de l'URL).
+    - **`VITE_SUPABASE_URL`**: L'URL de votre projet Supabase Cloud (ex: `https://<votre-project-ref>.supabase.co`).
+    - **`VITE_SUPABASE_ANON_KEY`**: La clé anonyme (publique) de votre projet Supabase Cloud.
+    - **`SUPABASE_ACCESS_TOKEN`**: Votre token d'accès personnel Supabase. Vous pouvez le générer depuis votre compte Supabase sur [app.supabase.com/account/tokens](https://app.supabase.com/account/tokens). Ce token est nécessaire pour que la CLI Supabase puisse interagir avec votre projet Cloud (notamment pour `pnpm db:pull`).
+    - **`SUPABASE_PROJECT_REF`**: La référence de votre projet Supabase Cloud (la partie `<votre-project-ref>` de l'URL).
 
 3.  **Validez votre configuration d'environnement** :
     ```bash
@@ -41,24 +42,31 @@ pnpm install
 ## 3. Liaison à Supabase Cloud et Génération des Types
 
 1.  **Connectez-vous à la CLI Supabase** (si ce n'est pas déjà fait) :
+
     ```bash
     pnpm --filter backend exec supabase login
     ```
+
     Suivez les instructions pour vous authentifier dans votre navigateur.
 
 2.  **Liez votre projet local à votre projet Supabase Cloud** :
     La CLI devrait automatiquement utiliser `SUPABASE_PROJECT_REF` de votre `.env`.
+
     ```bash
     pnpm --filter backend exec supabase link
     ```
+
     Si cela ne fonctionne pas, vous pouvez spécifier le project-ref manuellement :
+
     ```bash
     # pnpm --filter backend exec supabase link --project-ref <votre_project_ref_ici>
     ```
+
     Cette étape est cruciale pour que `db:pull` et `gen:types` ciblent le bon projet.
 
 3.  **Récupérez le schéma de votre base de données Cloud** :
     Cette commande va créer/mettre à jour les fichiers de migration dans `apps/backend/supabase/migrations/` pour qu'ils correspondent à votre schéma Cloud.
+
     ```bash
     pnpm db:pull
     ```
@@ -79,15 +87,18 @@ Vous avez deux options principales pour lancer les services :
 Si vous souhaitez travailler avec une instance Supabase tournant entièrement sur votre machine (isolée du cloud) :
 
 1.  **Démarrez l'instance Supabase locale** :
+
     ```bash
     pnpm db:start
     ```
+
     Cela lancera plusieurs conteneurs Docker (PostgreSQL, Supabase Studio, etc.).
-    *   Supabase Studio local sera accessible à `http://localhost:54323` (par défaut).
-    *   Votre base de données locale sera construite à partir des migrations présentes dans `apps/backend/supabase/migrations/` (qui devraient être le reflet de votre Cloud après `pnpm db:pull`).
-    *   Pour cette option, votre frontend devrait être configuré pour pointer vers l'API Supabase locale (ex: `VITE_SUPABASE_URL=http://localhost:54321` et la clé anon locale correspondante dans `.env`). **Attention : le `.env.example` actuel est configuré pour le Cloud.** Adaptez votre `.env` si vous utilisez cette option.
+    - Supabase Studio local sera accessible à `http://localhost:54323` (par défaut).
+    - Votre base de données locale sera construite à partir des migrations présentes dans `apps/backend/supabase/migrations/` (qui devraient être le reflet de votre Cloud après `pnpm db:pull`).
+    - Pour cette option, votre frontend devrait être configuré pour pointer vers l'API Supabase locale (ex: `VITE_SUPABASE_URL=http://localhost:54321` et la clé anon locale correspondante dans `.env`). **Attention : le `.env.example` actuel est configuré pour le Cloud.** Adaptez votre `.env` si vous utilisez cette option.
 
 2.  **Démarrez vos applications** (Frontend et éventuelle API Node.js) :
+
     ```bash
     # Lancement standard connecté au Supabase Cloud
     docker compose up --build
@@ -106,6 +117,7 @@ C'est le workflow recommandé. Votre frontend se connecte directement à votre i
 1.  **Assurez-vous que votre `.env` est configuré avec les URL et clés de VOTRE PROJET SUPABASE CLOUD.** (C'est la configuration par défaut de `.env.example`).
 
 2.  **Démarrez vos applications** :
+
     ```bash
     # Pour un lancement standard
     docker compose up --build
@@ -119,7 +131,7 @@ C'est le workflow recommandé. Votre frontend se connecte directement à votre i
 
 ## 5. Accès à l'Application
 
-*   Frontend : `http://localhost:5173` (hot reload actif).
+- Frontend : `http://localhost:5173` (hot reload actif).
 
 ---
 

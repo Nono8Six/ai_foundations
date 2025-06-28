@@ -4,7 +4,7 @@ import { useAuth } from '@frontend/context/AuthContext';
 import { useToast } from '@frontend/context/ToastContext';
 import Icon from '@frontend/components/AppIcon';
 import Image from '@frontend/components/AppImage';
-import logger from '@frontend/utils/logger';
+import { log } from '@/logger';
 
 export interface PersonalInfoTabProps {
   userData: {
@@ -55,18 +55,18 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ userData }) => {
         ...(avatarPreview !== userData.avatar && { avatar_url: avatarPreview }),
       };
 
-      logger.debug('Submitting profile updates:', updates);
+      log.debug('Submitting profile updates:', updates);
 
       // Update the profile in Supabase using RPC function
       await updateProfile(updates);
 
-      logger.info('Profile updated successfully');
+      log.info('Profile updated successfully');
       setIsEditing(false);
 
       // Show success message
       addToast('Profil mis à jour avec succès !', 'success');
     } catch (error) {
-      logger.error('Error updating profile:', error);
+      log.error('Error updating profile:', error);
       setError('root', {
         type: 'manual',
         message: 'Erreur lors de la mise à jour du profil. Veuillez réessayer.',
@@ -120,7 +120,7 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ userData }) => {
             onClick={() => setIsEditing(true)}
             className='inline-flex items-center px-4 py-2 border border-border rounded-lg text-sm font-medium text-text-primary bg-surface hover:bg-secondary-50 transition-colors'
           >
-            <Icon aria-hidden="true"  name='Edit' size={16} className='mr-2' />
+            <Icon aria-hidden='true' name='Edit' size={16} className='mr-2' />
             Modifier
           </button>
         )}
@@ -141,7 +141,7 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ userData }) => {
               </div>
               {isEditing && (
                 <label className='absolute bottom-0 right-0 w-6 h-6 bg-primary text-white rounded-full flex items-center justify-center cursor-pointer hover:bg-primary-700 transition-colors'>
-                  <Icon aria-hidden="true"  name='Camera' size={12} />
+                  <Icon aria-hidden='true' name='Camera' size={12} />
                   <input
                     type='file'
                     accept='image/*'
@@ -168,7 +168,7 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ userData }) => {
         {errors.root && (
           <div className='bg-error-50 border border-error-200 rounded-lg p-4'>
             <div className='flex items-center'>
-              <Icon aria-hidden="true"  name='AlertCircle' size={20} className='text-error mr-2' />
+              <Icon aria-hidden='true' name='AlertCircle' size={20} className='text-error mr-2' />
               <p className='text-sm text-error-700'>{errors.root.message}</p>
             </div>
           </div>
@@ -276,7 +276,9 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ userData }) => {
               disabled={isSubmitting}
               className='inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-primary hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors disabled:opacity-50'
             >
-              {isSubmitting && <Icon aria-hidden="true"  name='Loader2' size={16} className='mr-2 animate-spin' />}
+              {isSubmitting && (
+                <Icon aria-hidden='true' name='Loader2' size={16} className='mr-2 animate-spin' />
+              )}
               {isSubmitting ? 'Enregistrement...' : 'Enregistrer'}
             </button>
           </div>
@@ -296,7 +298,7 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ userData }) => {
           <div>
             <span className='text-text-secondary'>Statut du compte:</span>
             <span className='ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-success-100 text-success-700'>
-              <Icon aria-hidden="true"  name='CheckCircle' size={12} className='mr-1' />
+              <Icon aria-hidden='true' name='CheckCircle' size={12} className='mr-1' />
               Actif
             </span>
           </div>

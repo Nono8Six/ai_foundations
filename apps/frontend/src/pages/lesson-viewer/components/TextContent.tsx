@@ -134,7 +134,7 @@ const TextContent: React.FC<TextContentProps> = ({ content, onProgress }) => {
       <div className='bg-surface border-b border-border p-4 flex items-center justify-between'>
         <div className='flex items-center space-x-4'>
           <div className='flex items-center space-x-2'>
-            <Icon aria-hidden="true"  name='Type' size={16} className='text-text-secondary' />
+            <Icon aria-hidden='true' name='Type' size={16} className='text-text-secondary' />
             <select
               value={fontSize}
               onChange={e => setFontSize(e.target.value)}
@@ -148,7 +148,7 @@ const TextContent: React.FC<TextContentProps> = ({ content, onProgress }) => {
           </div>
 
           <div className='flex items-center space-x-2'>
-            <Icon aria-hidden="true"  name='Palette' size={16} className='text-text-secondary' />
+            <Icon aria-hidden='true' name='Palette' size={16} className='text-text-secondary' />
             <select
               value={theme}
               onChange={e => setTheme(e.target.value)}
@@ -164,14 +164,14 @@ const TextContent: React.FC<TextContentProps> = ({ content, onProgress }) => {
             onClick={addBookmark}
             className='flex items-center space-x-2 px-3 py-1 bg-primary text-white rounded hover:bg-primary-700 transition-colors'
           >
-            <Icon aria-hidden="true"  name='Bookmark' size={16} />
+            <Icon aria-hidden='true' name='Bookmark' size={16} />
             <span className='text-sm'>Signet</span>
           </button>
         </div>
 
         <div className='flex items-center space-x-4'>
           <div className='flex items-center space-x-2'>
-            <Icon aria-hidden="true"  name='BookOpen' size={16} className='text-text-secondary' />
+            <Icon aria-hidden='true' name='BookOpen' size={16} className='text-text-secondary' />
             <span className='text-sm text-text-secondary'>{Math.round(readingProgress)}% lu</span>
           </div>
 
@@ -200,7 +200,7 @@ const TextContent: React.FC<TextContentProps> = ({ content, onProgress }) => {
           <div className='w-64 bg-surface border-l border-border flex flex-col'>
             <div className='p-4 border-b border-border'>
               <h3 className='font-semibold text-text-primary flex items-center'>
-                <Icon aria-hidden="true"  name='Bookmark' size={16} className='mr-2' />
+                <Icon aria-hidden='true' name='Bookmark' size={16} className='mr-2' />
                 Signets ({bookmarks.length})
               </h3>
             </div>
@@ -231,7 +231,12 @@ const TextContent: React.FC<TextContentProps> = ({ content, onProgress }) => {
                       }}
                       className='opacity-0 group-hover:opacity-100 p-1 hover:bg-error-100 rounded transition-all'
                     >
-                      <Icon name='X' size={12} className='text-error' aria-label='Supprimer signet' />
+                      <Icon
+                        name='X'
+                        size={12}
+                        className='text-error'
+                        aria-label='Supprimer signet'
+                      />
                     </button>
                   </div>
                 </div>

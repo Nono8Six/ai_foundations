@@ -30,7 +30,7 @@ const mockQueryBuilder = (
   then: vi.fn(function (onFulfilled, onRejected) {
     // If this.mockResolvedValueOnce has been called, use its value
     if (this.mockResolvedValue) {
-        return Promise.resolve(this.mockResolvedValue).then(onFulfilled, onRejected);
+      return Promise.resolve(this.mockResolvedValue).then(onFulfilled, onRejected);
     }
     // Default resolution
     return Promise.resolve(resolveData).then(onFulfilled, onRejected);
@@ -39,7 +39,7 @@ const mockQueryBuilder = (
   mockResolvedValueOnce: function (value: unknown) {
     this.mockResolvedValue = value;
     return this; // Return this to allow further chaining if needed, though usually it's the end
-  }
+  },
 });
 
 // The main Supabase client mock
@@ -70,7 +70,8 @@ supabase.from.mockImplementation((tableName: string) => {
   // This allows different resolutions for different `from('table')` calls in the same test
   const newBuilder = mockQueryBuilder(defaultResponse);
   // Attach a convenience method to the builder itself to set its specific resolution
-  newBuilder.mockResolvedValue = function (value: unknown) { // Renamed to avoid conflict
+  newBuilder.mockResolvedValue = function (value: unknown) {
+    // Renamed to avoid conflict
     this.mockResolvedValue = value; // This sets the value on the builder instance
     return this;
   };

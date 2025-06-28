@@ -5,7 +5,7 @@ import Icon from '@frontend/components/AppIcon';
 import Button from '@frontend/components/ui/Button';
 import TextInput from '@frontend/components/ui/TextInput';
 import { useAuth } from '@frontend/context/AuthContext';
-import logger from '@frontend/utils/logger';
+import { log } from '@/logger';
 
 export interface LoginFormProps {
   onSuccess: (user: unknown) => void;
@@ -34,7 +34,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, isLoading, setIsLoadin
         email: data.email,
         password: data.password,
       });
-      
+
       // Call the onSuccess callback with the user data
       if (result?.session?.user) {
         onSuccess({
@@ -45,13 +45,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, isLoading, setIsLoadin
         });
       }
     } catch (error) {
-      logger.error('Login error:', error.message);
+      log.error('Login error:', error.message);
       setIsLoading(false);
 
       const errorMessage = error.message || 'Email ou mot de passe incorrect';
       setAuthError(errorMessage);
       setAuthErrorCode(error.code || '');
-      
+
       // Set form field errors
       setError('email', { type: 'manual' });
       setError('password', { type: 'manual' });
@@ -98,23 +98,25 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, isLoading, setIsLoadin
       {authError && (
         <div className='p-4 bg-error-50 border border-error-200 rounded-lg'>
           <div className='flex items-start'>
-            <Icon aria-hidden="true"  name='AlertTriangle' size={20} className='mr-3 flex-shrink-0 text-error-600 mt-0.5' />
+            <Icon
+              aria-hidden='true'
+              name='AlertTriangle'
+              size={20}
+              className='mr-3 flex-shrink-0 text-error-600 mt-0.5'
+            />
             <div className='flex-1'>
-              <p className='text-sm text-error-700 font-medium mb-1'>
-                Erreur de connexion
-              </p>
-              <p className='text-sm text-error-600'>
-                {authError}
-              </p>
+              <p className='text-sm text-error-700 font-medium mb-1'>Erreur de connexion</p>
+              <p className='text-sm text-error-600'>{authError}</p>
               <div className='mt-3 p-3 bg-blue-50 border border-blue-200 rounded-md'>
-                <p className='text-xs text-blue-700 font-medium mb-1'>
-                  💡 Besoin d'aide ?
-                </p>
+                <p className='text-xs text-blue-700 font-medium mb-1'>💡 Besoin d'aide ?</p>
                 <ul className='text-xs text-blue-600 space-y-1'>
                   <li>• Vérifiez que votre compte a été créé</li>
                   <li>• Assurez-vous d'utiliser la bonne adresse email</li>
                   <li>• Vérifiez que votre mot de passe est correct</li>
-                  <li>• Si vous avez oublié votre mot de passe, utilisez la fonction "Mot de passe oublié"</li>
+                  <li>
+                    • Si vous avez oublié votre mot de passe, utilisez la fonction "Mot de passe
+                    oublié"
+                  </li>
                 </ul>
                 {authErrorCode === 'email_not_confirmed' && (
                   <button
@@ -152,7 +154,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, isLoading, setIsLoadin
             disabled={isLoading}
             onClick={() => {
               // This would typically open a forgot password modal or navigate to a forgot password page
-              logger.info('Forgot password clicked');
+              log.info('Forgot password clicked');
             }}
           >
             Mot de passe oublié ?
@@ -161,7 +163,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, isLoading, setIsLoadin
       </div>
 
       {/* Submit Button */}
-      <Button type='submit' className='w-full flex justify-center items-center' disabled={isLoading}>
+      <Button
+        type='submit'
+        className='w-full flex justify-center items-center'
+        disabled={isLoading}
+      >
         {isLoading ? (
           <>
             <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2'></div>
@@ -169,7 +175,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, isLoading, setIsLoadin
           </>
         ) : (
           <>
-            <Icon aria-hidden="true"  name='LogIn' size={18} className='mr-2' />
+            <Icon aria-hidden='true' name='LogIn' size={18} className='mr-2' />
             Se connecter
           </>
         )}

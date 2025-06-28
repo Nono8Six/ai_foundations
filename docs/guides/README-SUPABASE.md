@@ -16,12 +16,10 @@
 ## 🛡️ Les 3 Règles d'Or
 
 1. **La Base en Ligne est la Source** :
-
    - La base Supabase Cloud est la **référence principale** pour le schéma
    - `pnpm db:pull` sert à synchroniser le dossier `/apps/backend/supabase/migrations`
 
 2. **Les Types Suivent le Schéma** :
-
    - `apps/frontend/src/types/database.types.ts` doit TOUJOURS être à jour après chaque modification
    - C'est le pont vital entre votre base de données et votre code React
 
@@ -343,7 +341,6 @@ Dernière mise à jour : 22/06/2025
 ## ✅ Bonnes pratiques
 
 1. **Toujours utiliser des migrations**
-
    - Créez une migration pour chaque modification de schéma
    - Nommez clairement les migrations (ex: `20230101_ajout_table_utilisateurs.sql`)
 

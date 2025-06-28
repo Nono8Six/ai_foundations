@@ -40,12 +40,8 @@ const useAchievements = (
       const { data, error } = await safeQuery<AchievementRow[]>(() =>
         Object.entries(filters)
           .reduce(
-            (q, [column, value]) =>
-              q.eq(column as keyof AchievementRow, value as never),
-            supabaseClient
-              .from('achievements')
-              .select('*')
-              .eq('user_id', userId)
+            (q, [column, value]) => q.eq(column as keyof AchievementRow, value as never),
+            supabaseClient.from('achievements').select('*').eq('user_id', userId)
           )
           .order('created_at', { ascending: order === 'asc' })
           .limit(limit)

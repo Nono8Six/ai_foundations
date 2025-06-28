@@ -117,7 +117,7 @@ const BenefitsSection = () => {
           className='text-center mb-16'
         >
           <div className='inline-flex items-center px-4 py-2 bg-success-100 text-success-700 rounded-full text-sm font-medium mb-6'>
-            <Icon aria-hidden="true"  name='Zap' size={16} className='mr-2' />
+            <Icon aria-hidden='true' name='Zap' size={16} className='mr-2' />
             Gains de productivité
           </div>
           <h2 className='text-3xl lg:text-4xl font-bold text-text-primary mb-6'>
@@ -152,7 +152,12 @@ const BenefitsSection = () => {
                   <div
                     className={`w-12 h-12 ${colorClasses.bg} rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-200`}
                   >
-                    <Icon aria-hidden="true"  name={benefit.icon} size={24} className={colorClasses.icon} />
+                    <Icon
+                      aria-hidden='true'
+                      name={benefit.icon}
+                      size={24}
+                      className={colorClasses.icon}
+                    />
                   </div>
                   <span
                     className={`px-3 py-1 ${colorClasses.badge} text-sm font-semibold rounded-full`}
@@ -175,7 +180,8 @@ const BenefitsSection = () => {
                       key={featureIndex}
                       className='flex items-center text-sm text-text-secondary'
                     >
-                      <Icon aria-hidden="true" 
+                      <Icon
+                        aria-hidden='true'
                         name='Check'
                         size={16}
                         className={`${colorClasses.icon} mr-2 flex-shrink-0`}
@@ -197,7 +203,12 @@ const BenefitsSection = () => {
           transition={{ duration: 0.6 }}
           className='bg-gradient-to-r from-primary to-accent rounded-2xl p-8 lg:p-12 text-white text-center'
         >
-          <Icon aria-hidden="true"  name='Calculator' size={48} className='mx-auto mb-6 opacity-90' />
+          <Icon
+            aria-hidden='true'
+            name='Calculator'
+            size={48}
+            className='mx-auto mb-6 opacity-90'
+          />
           <h3 className='text-2xl lg:text-3xl font-bold mb-4'>
             Calculez votre retour sur investissement
           </h3>
@@ -231,7 +242,7 @@ const BenefitsSection = () => {
             whileTap={{ scale: 0.95 }}
             className='inline-flex items-center justify-center px-8 py-4 bg-surface text-primary font-semibold rounded-lg hover:bg-secondary-50 transition-colors duration-200 shadow-lg'
           >
-            <Icon aria-hidden="true"  name='Calculator' size={20} className='mr-2' />
+            <Icon aria-hidden='true' name='Calculator' size={20} className='mr-2' />
             Calculer mon ROI personnalisé
           </motion.button>
         </motion.div>

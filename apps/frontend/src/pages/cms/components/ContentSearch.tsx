@@ -16,7 +16,8 @@ const ContentSearch: React.FC<ContentSearchProps> = ({
     <div className='space-y-3'>
       {/* Search Input */}
       <div className='relative'>
-        <Icon aria-hidden="true" 
+        <Icon
+          aria-hidden='true'
           name='Search'
           size={20}
           className='absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary-400'
@@ -43,7 +44,7 @@ const ContentSearch: React.FC<ContentSearchProps> = ({
         onClick={onCreateNew}
         className='w-full px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors duration-200 flex items-center justify-center font-medium'
       >
-        <Icon aria-hidden="true"  name='Plus' size={20} className='mr-2' />
+        <Icon aria-hidden='true' name='Plus' size={20} className='mr-2' />
         Nouveau contenu
       </button>
 

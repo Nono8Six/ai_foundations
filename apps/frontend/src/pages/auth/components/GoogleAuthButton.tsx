@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '@frontend/context/AuthContext';
-import logger from '../../../utils/logger';
+import { log } from '@/logger';
 
 export interface GoogleAuthButtonProps {
   isLoading: boolean;
@@ -22,7 +22,7 @@ const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({
       setError(null);
       await signInWithGoogle();
     } catch (error) {
-      logger.error('Google sign-in error:', error.message);
+      log.error('Google sign-in error:', error.message);
       setError('Erreur de connexion avec Google. Veuillez réessayer.');
       setIsLoading(false);
     }
@@ -66,7 +66,7 @@ const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({
           </>
         )}
       </button>
-      
+
       {error && (
         <div className='mt-2 p-2 bg-error-50 border border-error-200 rounded-lg'>
           <p className='text-sm text-error-700'>{error}</p>

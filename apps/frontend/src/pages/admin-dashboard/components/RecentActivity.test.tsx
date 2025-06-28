@@ -7,8 +7,14 @@ import RecentActivity from './RecentActivity';
 import { supabase } from '@frontend/lib/supabase'; // Mocked
 
 // Mock AppIcon and AppImage if they are complex or cause issues
-vi.mock('../../../components/AppIcon', () => ({ default: ({ name, size, className }) => <svg data-testid={`icon-${name}`} className={className} width={size} height={size}></svg> }));
-vi.mock('../../../components/AppImage', () => ({ default: ({ src, alt, className }) => <img src={src} alt={alt} className={className} /> }));
+vi.mock('../../../components/AppIcon', () => ({
+  default: ({ name, size, className }) => (
+    <svg data-testid={`icon-${name}`} className={className} width={size} height={size}></svg>
+  ),
+}));
+vi.mock('../../../components/AppImage', () => ({
+  default: ({ src, alt, className }) => <img src={src} alt={alt} className={className} />,
+}));
 
 // Tell Jest to use the mock
 vi.mock('../../../lib/supabase');
@@ -20,23 +26,23 @@ describe('RecentActivity', () => {
     // Ensure each call to `from` returns a new chainable mock with its own resolution capability
     // This setup relies on the global __mocks__/supabase.ts structure
     const mockBuilderInstance = {
-        select: vi.fn().mockReturnThis(),
-        order: vi.fn().mockReturnThis(),
-        limit: vi.fn().mockReturnThis(),
-        // This 'then' function will be called when the promise resolves
-        then: vi.fn(function(callback) {
-            // Access the mockResolvedValue that was set on this instance
-            if (this.mockResolvedValue) {
-                return Promise.resolve(this.mockResolvedValue).then(callback);
-            }
-            // Default empty response
-            return Promise.resolve({ data: [], error: null }).then(callback);
-        }),
-        // Custom function on the instance to set its resolve value
-        mockResolvedValueOnce: function(value) {
-            this.mockResolvedValue = value;
-            return this;
+      select: vi.fn().mockReturnThis(),
+      order: vi.fn().mockReturnThis(),
+      limit: vi.fn().mockReturnThis(),
+      // This 'then' function will be called when the promise resolves
+      then: vi.fn(function (callback) {
+        // Access the mockResolvedValue that was set on this instance
+        if (this.mockResolvedValue) {
+          return Promise.resolve(this.mockResolvedValue).then(callback);
         }
+        // Default empty response
+        return Promise.resolve({ data: [], error: null }).then(callback);
+      }),
+      // Custom function on the instance to set its resolve value
+      mockResolvedValueOnce: function (value) {
+        this.mockResolvedValue = value;
+        return this;
+      },
     };
     supabase.from.mockReturnValue(mockBuilderInstance);
   });
@@ -65,9 +71,18 @@ describe('RecentActivity', () => {
       },
     ];
     // Configure the mock for this specific test case
-    supabase.from('activity_log').select().order().limit().mockResolvedValueOnce({ data: mockActivities, error: null });
+    supabase
+      .from('activity_log')
+      .select()
+      .order()
+      .limit()
+      .mockResolvedValueOnce({ data: mockActivities, error: null });
 
-    render(<MemoryRouter><RecentActivity /></MemoryRouter>);
+    render(
+      <MemoryRouter>
+        <RecentActivity />
+      </MemoryRouter>
+    );
 
     expect(screen.getByText('Chargement des activités...')).toBeInTheDocument();
 
@@ -88,9 +103,18 @@ describe('RecentActivity', () => {
   });
 
   test('displays "No recent activity" message when no activities are fetched', async () => {
-    supabase.from('activity_log').select().order().limit().mockResolvedValueOnce({ data: [], error: null });
+    supabase
+      .from('activity_log')
+      .select()
+      .order()
+      .limit()
+      .mockResolvedValueOnce({ data: [], error: null });
 
-    render(<MemoryRouter><RecentActivity /></MemoryRouter>);
+    render(
+      <MemoryRouter>
+        <RecentActivity />
+      </MemoryRouter>
+    );
 
     expect(screen.getByText('Chargement des activités...')).toBeInTheDocument();
 
@@ -100,9 +124,18 @@ describe('RecentActivity', () => {
   });
 
   test('handles error during fetch', async () => {
-    supabase.from('activity_log').select().order().limit().mockResolvedValueOnce({ data: null, error: { message: 'Fetch error' } });
+    supabase
+      .from('activity_log')
+      .select()
+      .order()
+      .limit()
+      .mockResolvedValueOnce({ data: null, error: { message: 'Fetch error' } });
 
-    render(<MemoryRouter><RecentActivity /></MemoryRouter>);
+    render(
+      <MemoryRouter>
+        <RecentActivity />
+      </MemoryRouter>
+    );
 
     expect(screen.getByText('Chargement des activités...')).toBeInTheDocument();
 
@@ -111,18 +144,29 @@ describe('RecentActivity', () => {
       // A more specific error message could be added to the component.
       expect(screen.getByText('Aucune activité récente.')).toBeInTheDocument();
     });
-     // Check console.error was called (optional, but good for confirming error handling)
-     // This requires spying on console.error before render and restoring after.
-     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-     supabase.from('activity_log').select().order().limit().mockResolvedValueOnce({ data: null, error: { message: 'Fetch error' } });
-     render(<MemoryRouter><RecentActivity /></MemoryRouter>);
-     await waitFor(() => {
-        expect(consoleErrorSpy).toHaveBeenCalledWith('Error fetching recent activity:', { message: 'Fetch error' });
-     });
-     consoleErrorSpy.mockRestore();
+    // Check console.error was called (optional, but good for confirming error handling)
+    // This requires spying on console.error before render and restoring after.
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    supabase
+      .from('activity_log')
+      .select()
+      .order()
+      .limit()
+      .mockResolvedValueOnce({ data: null, error: { message: 'Fetch error' } });
+    render(
+      <MemoryRouter>
+        <RecentActivity />
+      </MemoryRouter>
+    );
+    await waitFor(() => {
+      expect(consoleErrorSpy).toHaveBeenCalledWith('Error fetching recent activity:', {
+        message: 'Fetch error',
+      });
+    });
+    consoleErrorSpy.mockRestore();
   });
 
-   test('displays correct user information when profile is null (e.g. system update)', async () => {
+  test('displays correct user information when profile is null (e.g. system update)', async () => {
     const mockActivities = [
       {
         id: 1,
@@ -133,9 +177,18 @@ describe('RecentActivity', () => {
         profiles: null, // No user associated
       },
     ];
-    supabase.from('activity_log').select().order().limit().mockResolvedValueOnce({ data: mockActivities, error: null });
+    supabase
+      .from('activity_log')
+      .select()
+      .order()
+      .limit()
+      .mockResolvedValueOnce({ data: mockActivities, error: null });
 
-    render(<MemoryRouter><RecentActivity /></MemoryRouter>);
+    render(
+      <MemoryRouter>
+        <RecentActivity />
+      </MemoryRouter>
+    );
 
     await waitFor(() => {
       expect(screen.getAllByText('Système')[0]).toBeInTheDocument();

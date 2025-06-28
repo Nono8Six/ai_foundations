@@ -13,16 +13,18 @@ export interface AdminCourseContextValue {
   createCourse: (
     course: Database['public']['Tables']['courses']['Insert']
   ) => Promise<Database['public']['Tables']['courses']['Row']>;
-  updateCourse: (
-    args: { id: string; updates: Database['public']['Tables']['courses']['Update'] }
-  ) => Promise<Database['public']['Tables']['courses']['Row']>;
+  updateCourse: (args: {
+    id: string;
+    updates: Database['public']['Tables']['courses']['Update'];
+  }) => Promise<Database['public']['Tables']['courses']['Row']>;
   deleteCourse: (id: string) => Promise<void>;
   createModule: (
     module: Database['public']['Tables']['modules']['Insert']
   ) => Promise<Database['public']['Tables']['modules']['Row']>;
-  updateModule: (
-    args: { id: string; updates: Database['public']['Tables']['modules']['Update'] }
-  ) => Promise<Database['public']['Tables']['modules']['Row']>;
+  updateModule: (args: {
+    id: string;
+    updates: Database['public']['Tables']['modules']['Update'];
+  }) => Promise<Database['public']['Tables']['modules']['Row']>;
   deleteModule: (id: string) => Promise<void>;
 }
 
@@ -37,9 +39,7 @@ export const AdminCourseProvider = ({ children }: { children: ReactNode }) => {
     Error,
     Database['public']['Tables']['courses']['Insert']
   >({
-    mutationFn: async (
-      course: Database['public']['Tables']['courses']['Insert']
-    ) => {
+    mutationFn: async (course: Database['public']['Tables']['courses']['Insert']) => {
       const { data, error } = await safeQuery(() =>
         supabaseClient.from('courses').insert(course).select().single()
       );
@@ -62,12 +62,7 @@ export const AdminCourseProvider = ({ children }: { children: ReactNode }) => {
       updates: Database['public']['Tables']['courses']['Update'];
     }) => {
       const { data, error } = await safeQuery(() =>
-        supabaseClient
-          .from('courses')
-          .update(updates)
-          .eq('id', id)
-          .select()
-          .single()
+        supabaseClient.from('courses').update(updates).eq('id', id).select().single()
       );
       if (error) throw error;
       return data!;
@@ -77,9 +72,7 @@ export const AdminCourseProvider = ({ children }: { children: ReactNode }) => {
 
   const deleteCourse = useMutation<void, Error, string>({
     mutationFn: async (id: string) => {
-      const { error } = await safeQuery(() =>
-        supabaseClient.from('courses').delete().eq('id', id)
-      );
+      const { error } = await safeQuery(() => supabaseClient.from('courses').delete().eq('id', id));
       if (error) throw error;
     },
     onSuccess: () => queryClient.invalidateQueries(['courses', user?.id]),
@@ -90,9 +83,7 @@ export const AdminCourseProvider = ({ children }: { children: ReactNode }) => {
     Error,
     Database['public']['Tables']['modules']['Insert']
   >({
-    mutationFn: async (
-      module: Database['public']['Tables']['modules']['Insert']
-    ) => {
+    mutationFn: async (module: Database['public']['Tables']['modules']['Insert']) => {
       const { data, error } = await safeQuery(() =>
         supabaseClient.from('modules').insert(module).select().single()
       );
@@ -115,12 +106,7 @@ export const AdminCourseProvider = ({ children }: { children: ReactNode }) => {
       updates: Database['public']['Tables']['modules']['Update'];
     }) => {
       const { data, error } = await safeQuery(() =>
-        supabaseClient
-          .from('modules')
-          .update(updates)
-          .eq('id', id)
-          .select()
-          .single()
+        supabaseClient.from('modules').update(updates).eq('id', id).select().single()
       );
       if (error) throw error;
       return data!;
@@ -130,9 +116,7 @@ export const AdminCourseProvider = ({ children }: { children: ReactNode }) => {
 
   const deleteModule = useMutation<void, Error, string>({
     mutationFn: async (id: string) => {
-      const { error } = await safeQuery(() =>
-        supabaseClient.from('modules').delete().eq('id', id)
-      );
+      const { error } = await safeQuery(() => supabaseClient.from('modules').delete().eq('id', id));
       if (error) throw error;
     },
     onSuccess: () => queryClient.invalidateQueries(['courses', user?.id]),
@@ -157,4 +141,3 @@ export const useAdminCourses = () => {
   }
   return context;
 };
-

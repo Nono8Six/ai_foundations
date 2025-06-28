@@ -34,21 +34,31 @@ describe('useProgressChartData', () => {
     vi.clearAllMocks();
   });
   it('should return empty arrays when userProgress is empty', () => {
-    const { result } = renderHook(() => useProgressChartData([], mockLessons, mockCourses, mockModules));
+    const { result } = renderHook(() =>
+      useProgressChartData([], mockLessons, mockCourses, mockModules)
+    );
     expect(result.current.weekly).toEqual([]);
     expect(result.current.monthly).toEqual([]);
     expect(result.current.subject).toEqual([]);
   });
 
   it('should return empty arrays when lessons, courses, or modules are empty', () => {
-    const mockUserProgress: UserProgressRow[] = [{ lesson_id: 'l1', status: 'completed', completed_at: new Date().toISOString() }];
-    let { result } = renderHook(() => useProgressChartData(mockUserProgress, [], mockCourses, mockModules));
+    const mockUserProgress: UserProgressRow[] = [
+      { lesson_id: 'l1', status: 'completed', completed_at: new Date().toISOString() },
+    ];
+    let { result } = renderHook(() =>
+      useProgressChartData(mockUserProgress, [], mockCourses, mockModules)
+    );
     expect(result.current.weekly).toEqual([]);
 
-    ({ result } = renderHook(() => useProgressChartData(mockUserProgress, mockLessons, [], mockModules)));
+    ({ result } = renderHook(() =>
+      useProgressChartData(mockUserProgress, mockLessons, [], mockModules)
+    ));
     expect(result.current.weekly).toEqual([]);
 
-    ({ result } = renderHook(() => useProgressChartData(mockUserProgress, mockLessons, mockCourses, [])));
+    ({ result } = renderHook(() =>
+      useProgressChartData(mockUserProgress, mockLessons, mockCourses, [])
+    ));
     expect(result.current.weekly).toEqual([]);
   });
 
@@ -62,7 +72,9 @@ describe('useProgressChartData', () => {
       { lesson_id: 'l1', status: 'completed', completed_at: subDays(today, 7).toISOString() }, // Too old for weekly
     ];
 
-    const { result } = renderHook(() => useProgressChartData(mockUserProgress, mockLessons, mockCourses, mockModules));
+    const { result } = renderHook(() =>
+      useProgressChartData(mockUserProgress, mockLessons, mockCourses, mockModules)
+    );
 
     const todayFormatted = format(today, 'EEE');
     const yesterdayFormatted = format(yesterday, 'EEE');
@@ -92,7 +104,9 @@ describe('useProgressChartData', () => {
       { lesson_id: 'l3', status: 'completed', completed_at: twoMonthsAgo.toISOString() }, // Science, 0.75h, two months ago
     ];
 
-    const { result } = renderHook(() => useProgressChartData(mockUserProgress, mockLessons, mockCourses, mockModules));
+    const { result } = renderHook(() =>
+      useProgressChartData(mockUserProgress, mockLessons, mockCourses, mockModules)
+    );
 
     expect(result.current.monthly.length).toBe(6); // Should have 6 months
 
@@ -125,7 +139,9 @@ describe('useProgressChartData', () => {
       { lesson_id: 'l3', status: 'completed', completed_at: today.toISOString() }, // m2 -> c2 (Science)
       { lesson_id: 'l4', status: 'completed', completed_at: today.toISOString() }, // m3 -> c3 (Math) - no duration
     ];
-    const { result } = renderHook(() => useProgressChartData(mockUserProgress, mockLessons, mockCourses, mockModules));
+    const { result } = renderHook(() =>
+      useProgressChartData(mockUserProgress, mockLessons, mockCourses, mockModules)
+    );
 
     const mathData = result.current.subject.find(s => s.name === 'Math');
     const scienceData = result.current.subject.find(s => s.name === 'Science');
@@ -142,7 +158,9 @@ describe('useProgressChartData', () => {
     const mockUserProgress: UserProgressRow[] = [
       { lesson_id: 'l4', status: 'completed', completed_at: today.toISOString() }, // m3 -> c3 (Math), duration is null
     ];
-    const { result } = renderHook(() => useProgressChartData(mockUserProgress, mockLessons, mockCourses, mockModules));
+    const { result } = renderHook(() =>
+      useProgressChartData(mockUserProgress, mockLessons, mockCourses, mockModules)
+    );
 
     const todayFormatted = format(today, 'EEE');
     const todayData = result.current.weekly.find(d => d.day === todayFormatted);
@@ -157,12 +175,13 @@ describe('useProgressChartData', () => {
       { lesson_id: 'l1', status: 'completed', completed_at: today.toISOString() },
       { lesson_id: 'l2', status: 'completed', completed_at: null }, // Should be ignored
     ];
-    const { result } = renderHook(() => useProgressChartData(mockUserProgress, mockLessons, mockCourses, mockModules));
+    const { result } = renderHook(() =>
+      useProgressChartData(mockUserProgress, mockLessons, mockCourses, mockModules)
+    );
 
     const todayFormatted = format(today, 'EEE');
     const todayData = result.current.weekly.find(d => d.day === todayFormatted);
 
     expect(todayData.lessons).toBe(1); // Only l1 should be counted
   });
-
 });

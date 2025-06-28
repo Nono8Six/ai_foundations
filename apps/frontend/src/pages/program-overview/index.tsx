@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useAuth } from '@frontend/context/AuthContext';
 import Icon from '@frontend/components/AppIcon';
 import { fetchCourses } from '@frontend/services/courseService';
-import logger from '@frontend/utils/logger';
+import { log } from '@/logger';
 import CourseCard from './components/CourseCard';
 import FilterSidebar from './components/FilterSidebar';
 import CoursePathway from './components/CoursePathway';
@@ -42,7 +42,7 @@ const ProgramOverview = () => {
         setCourses(data);
         setTotalCourses(count);
       } catch (error) {
-        logger.error('Error loading courses', error);
+        log.error('Error loading courses', error);
         setCourses([]);
         setTotalCourses(0);
       } finally {
@@ -57,13 +57,15 @@ const ProgramOverview = () => {
   const formattedCourses = useMemo(() => {
     if (!courses?.length) return [];
 
-      return courses.map(course => ({
-        id: course.id,
-        title: course.title,
-        description: course.description || "",
-        category: course.category || "Non classé",
-        image: course.cover_image_url || "https://images.pexels.com/photos/373543/pexels-photo-373543.jpeg?w=400&h=250&fit=crop",
-      }));
+    return courses.map(course => ({
+      id: course.id,
+      title: course.title,
+      description: course.description || '',
+      category: course.category || 'Non classé',
+      image:
+        course.cover_image_url ||
+        'https://images.pexels.com/photos/373543/pexels-photo-373543.jpeg?w=400&h=250&fit=crop',
+    }));
   }, [courses]);
 
   const handleFilterChange = newFilters => {
@@ -88,7 +90,8 @@ const ProgramOverview = () => {
         <div className='mb-8'>
           <div className='flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4'>
             <div className='relative flex-1 max-w-md'>
-              <Icon aria-hidden="true" 
+              <Icon
+                aria-hidden='true'
                 name='Search'
                 size={20}
                 className='absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary-400'
@@ -107,7 +110,9 @@ const ProgramOverview = () => {
                 <button
                   onClick={() => setViewMode('grid')}
                   className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    viewMode === 'grid' ? 'bg-surface text-primary shadow-sm' : 'text-text-secondary hover:text-text-primary'
+                    viewMode === 'grid'
+                      ? 'bg-surface text-primary shadow-sm'
+                      : 'text-text-secondary hover:text-text-primary'
                   }`}
                 >
                   <Icon name='Grid3X3' size={16} aria-label='Vue grille' />
@@ -115,7 +120,9 @@ const ProgramOverview = () => {
                 <button
                   onClick={() => setViewMode('pathway')}
                   className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    viewMode === 'pathway' ? 'bg-surface text-primary shadow-sm' : 'text-text-secondary hover:text-text-primary'
+                    viewMode === 'pathway'
+                      ? 'bg-surface text-primary shadow-sm'
+                      : 'text-text-secondary hover:text-text-primary'
                   }`}
                 >
                   <Icon name='GitBranch' size={16} aria-label='Vue parcours' />
@@ -138,7 +145,7 @@ const ProgramOverview = () => {
                 onClick={() => setShowFilters(!showFilters)}
                 className='lg:hidden px-4 py-2 border border-border rounded-lg flex items-center gap-2'
               >
-                <Icon aria-hidden="true"  name='Filter' size={16} />
+                <Icon aria-hidden='true' name='Filter' size={16} />
                 Filtres
               </button>
             </div>
@@ -181,7 +188,12 @@ const ProgramOverview = () => {
                   )
                 ) : (
                   <div className='text-center py-12 bg-surface rounded-xl border border-border p-8'>
-                    <Icon aria-hidden="true"  name='BookOpen' size={64} className='mx-auto text-secondary-300 mb-6' />
+                    <Icon
+                      aria-hidden='true'
+                      name='BookOpen'
+                      size={64}
+                      className='mx-auto text-secondary-300 mb-6'
+                    />
                     <h3 className='text-xl font-medium text-text-primary mb-4'>
                       Aucun cours disponible pour le moment
                     </h3>
@@ -198,7 +210,12 @@ const ProgramOverview = () => {
                         }}
                         className='px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors'
                       >
-                        <Icon aria-hidden="true"  name='RefreshCw' size={18} className='mr-2 inline-block' />
+                        <Icon
+                          aria-hidden='true'
+                          name='RefreshCw'
+                          size={18}
+                          className='mr-2 inline-block'
+                        />
                         Réinitialiser les filtres
                       </button>
                     )}
