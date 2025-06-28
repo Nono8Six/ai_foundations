@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Icon from '@frontend/components/AppIcon';
-import { log } from '@/logger'
+import { log } from '@/logger';
 
 // Unified representation of a content node in the tree
 export interface ContentNode {
@@ -66,10 +66,7 @@ const ContentTree: React.FC<ContentTreeProps> = ({
     }
   };
 
-  const handleDragStart = (
-    e: React.DragEvent<HTMLDivElement>,
-    item: ContentNode
-  ): void => {
+  const handleDragStart = (e: React.DragEvent<HTMLDivElement>, item: ContentNode): void => {
     setDraggedItem(item);
     e.dataTransfer.effectAllowed = 'move';
   };
@@ -79,10 +76,7 @@ const ContentTree: React.FC<ContentTreeProps> = ({
     e.dataTransfer.dropEffect = 'move';
   };
 
-  const handleDrop = (
-    e: React.DragEvent<HTMLDivElement>,
-    targetItem: ContentNode
-  ): void => {
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>, targetItem: ContentNode): void => {
     e.preventDefault();
     if (draggedItem && draggedItem.id !== targetItem.id) {
       log.debug('Reordering:', draggedItem, 'to', targetItem);
@@ -97,32 +91,29 @@ const ContentTree: React.FC<ContentTreeProps> = ({
   const getStatusIcon = (status?: string): JSX.Element => {
     switch (status) {
       case 'published':
-        return <Icon aria-hidden="true" name='CheckCircle' size={16} className='text-accent' />;
+        return <Icon aria-hidden='true' name='CheckCircle' size={16} className='text-accent' />;
       case 'draft':
-        return <Icon aria-hidden="true" name='Clock' size={16} className='text-warning' />;
+        return <Icon aria-hidden='true' name='Clock' size={16} className='text-warning' />;
       default:
-        return <Icon aria-hidden="true" name='Circle' size={16} className='text-secondary-400' />;
+        return <Icon aria-hidden='true' name='Circle' size={16} className='text-secondary-400' />;
     }
   };
 
   const getTypeIcon = (type?: string): JSX.Element => {
     switch (type) {
       case 'course':
-        return <Icon aria-hidden="true" name='BookOpen' size={16} className='text-primary' />;
+        return <Icon aria-hidden='true' name='BookOpen' size={16} className='text-primary' />;
       case 'module':
-        return <Icon aria-hidden="true" name='Folder' size={16} className='text-secondary-600' />;
+        return <Icon aria-hidden='true' name='Folder' size={16} className='text-secondary-600' />;
       case 'lesson':
-        return <Icon aria-hidden="true" name='FileText' size={16} className='text-secondary-500' />;
+        return <Icon aria-hidden='true' name='FileText' size={16} className='text-secondary-500' />;
       default:
-        return <Icon aria-hidden="true" name='File' size={16} className='text-secondary-400' />;
+        return <Icon aria-hidden='true' name='File' size={16} className='text-secondary-400' />;
     }
   };
 
   // Recherche plein texte (intitulé ou description)
-  const filterContent = (
-    items: ContentNode[],
-    query: string
-  ): ContentNode[] => {
+  const filterContent = (items: ContentNode[], query: string): ContentNode[] => {
     if (!query) return items;
     return items.filter(
       item =>
@@ -132,9 +123,7 @@ const ContentTree: React.FC<ContentTreeProps> = ({
   };
 
   // Affiche les leçons d'un module
-  const renderLessons = (
-    lessons?: ContentNode[]
-  ): React.ReactNode => {
+  const renderLessons = (lessons?: ContentNode[]): React.ReactNode => {
     if (!lessons || lessons.length === 0) return null;
     return (
       <div className='ml-6'>
@@ -186,7 +175,12 @@ const ContentTree: React.FC<ContentTreeProps> = ({
 
             <div className='opacity-0 group-hover:opacity-100 transition-opacity duration-200 ml-2'>
               <button className='p-1 hover:bg-secondary-100 rounded'>
-                <Icon name='MoreVertical' size={14} aria-label="Plus d'options" className='text-secondary-500' />
+                <Icon
+                  name='MoreVertical'
+                  size={14}
+                  aria-label="Plus d'options"
+                  className='text-secondary-500'
+                />
               </button>
             </div>
           </div>
@@ -196,9 +190,7 @@ const ContentTree: React.FC<ContentTreeProps> = ({
   };
 
   // Affiche les modules d'un cours
-  const renderModules = (
-    modules?: ContentNode[]
-  ): React.ReactNode => {
+  const renderModules = (modules?: ContentNode[]): React.ReactNode => {
     if (!modules || modules.length === 0) return null;
     return (
       <div className='ml-6'>
@@ -238,7 +230,8 @@ const ContentTree: React.FC<ContentTreeProps> = ({
                 }}
                 className='mr-2 p-1 hover:bg-secondary-100 rounded transition-colors duration-200'
               >
-                <Icon aria-hidden="true"
+                <Icon
+                  aria-hidden='true'
                   name={expandedItems.has(module.id) ? 'ChevronDown' : 'ChevronRight'}
                   size={14}
                   className='text-secondary-500'
@@ -262,7 +255,12 @@ const ContentTree: React.FC<ContentTreeProps> = ({
 
               <div className='opacity-0 group-hover:opacity-100 transition-opacity duration-200 ml-2'>
                 <button className='p-1 hover:bg-secondary-100 rounded'>
-                  <Icon name='MoreVertical' size={14} aria-label="Plus d'options" className='text-secondary-500' />
+                  <Icon
+                    name='MoreVertical'
+                    size={14}
+                    aria-label="Plus d'options"
+                    className='text-secondary-500'
+                  />
                 </button>
               </div>
             </div>
@@ -313,7 +311,8 @@ const ContentTree: React.FC<ContentTreeProps> = ({
               }}
               className='mr-3 p-1 hover:bg-secondary-100 rounded transition-colors duration-200'
             >
-              <Icon aria-hidden="true"
+              <Icon
+                aria-hidden='true'
                 name={expandedItems.has(course.id) ? 'ChevronDown' : 'ChevronRight'}
                 size={16}
                 className='text-secondary-500'
@@ -337,7 +336,12 @@ const ContentTree: React.FC<ContentTreeProps> = ({
 
             <div className='opacity-0 group-hover:opacity-100 transition-opacity duration-200 ml-2'>
               <button className='p-1 hover:bg-secondary-100 rounded'>
-                <Icon name='MoreVertical' size={16} aria-label="Plus d'options" className='text-secondary-500' />
+                <Icon
+                  name='MoreVertical'
+                  size={16}
+                  aria-label="Plus d'options"
+                  className='text-secondary-500'
+                />
               </button>
             </div>
           </div>
@@ -347,7 +351,12 @@ const ContentTree: React.FC<ContentTreeProps> = ({
 
       {filteredContent.length === 0 && (
         <div className='text-center py-8'>
-          <Icon aria-hidden="true" name='Search' size={48} className='text-secondary-300 mx-auto mb-4' />
+          <Icon
+            aria-hidden='true'
+            name='Search'
+            size={48}
+            className='text-secondary-300 mx-auto mb-4'
+          />
           <p className='text-text-secondary'>
             {searchQuery ? 'Aucun contenu trouvé' : 'Aucun contenu disponible'}
           </p>

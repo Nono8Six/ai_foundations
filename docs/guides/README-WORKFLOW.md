@@ -113,17 +113,17 @@ docker compose up --build --force-recreate
 
 ## 🔧 Scripts Disponibles
 
-| Script | Description |
-|-------|-------------|
-| `pnpm dev` | Démarrage frontend (cloud-first) |
-| `pnpm dev:docker` | Lancement via Docker Compose |
-| `pnpm dev:full:docker` | Frontend + Backend local |
-| `pnpm db:pull` | Récupérer schéma depuis cloud |
-| `pnpm db:push` | Envoyer changements vers cloud |
-| `pnpm gen:types` | Générer types TypeScript |
-| `pnpm test:connection` | Tester connexion Supabase |
-| `pnpm recovery` | Récupération de base de l'environnement |
-| `pnpm reset:hard` | Reset total (nettoyage + récupération) |
+| Script                 | Description                             |
+| ---------------------- | --------------------------------------- |
+| `pnpm dev`             | Démarrage frontend (cloud-first)        |
+| `pnpm dev:docker`      | Lancement via Docker Compose            |
+| `pnpm dev:full:docker` | Frontend + Backend local                |
+| `pnpm db:pull`         | Récupérer schéma depuis cloud           |
+| `pnpm db:push`         | Envoyer changements vers cloud          |
+| `pnpm gen:types`       | Générer types TypeScript                |
+| `pnpm test:connection` | Tester connexion Supabase               |
+| `pnpm recovery`        | Récupération de base de l'environnement |
+| `pnpm reset:hard`      | Reset total (nettoyage + récupération)  |
 
 ## 🏗️ Architecture
 

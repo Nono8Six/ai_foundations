@@ -19,7 +19,15 @@ interface EngagementData {
   sessions: number;
 }
 
-const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: any[]; label?: string }) => {
+const CustomTooltip = ({
+  active,
+  payload,
+  label,
+}: {
+  active?: boolean;
+  payload?: any[];
+  label?: string;
+}) => {
   if (active && payload && payload.length) {
     return (
       <div className='bg-surface p-3 border border-border rounded-lg shadow-medium'>
@@ -36,13 +44,12 @@ const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?:
 };
 
 // Helper to get the start of the week (Monday)
-const getStartOfWeek = (date) => {
+const getStartOfWeek = date => {
   const d = new Date(date);
   const day = d.getDay();
   const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Adjust when day is Sunday
   return new Date(d.setDate(diff));
 };
-
 
 export interface UserEngagementChartProps {
   timeRange: string;
@@ -54,7 +61,7 @@ const UserEngagementChart: React.FC<UserEngagementChartProps> = ({ timeRange }) 
   const [_summaryStats, setSummaryStats] = useState({ peakUsers: 0, averageSessions: 0 });
 
   useEffect(() => {
-    const fetchEngagementData = async (currentTimeRange) => {
+    const fetchEngagementData = async currentTimeRange => {
       setLoading(true);
       const now = new Date();
       let startDate;
@@ -66,19 +73,19 @@ const UserEngagementChart: React.FC<UserEngagementChartProps> = ({ timeRange }) 
           break;
         case '7d':
           startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-          startDate.setHours(0,0,0,0); // Start of the 7th day ago
+          startDate.setHours(0, 0, 0, 0); // Start of the 7th day ago
           break;
         case '30d':
           startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-          startDate.setHours(0,0,0,0);
+          startDate.setHours(0, 0, 0, 0);
           break;
         case '90d':
           startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
-          startDate.setHours(0,0,0,0);
+          startDate.setHours(0, 0, 0, 0);
           break;
         default:
           startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000); // Default to 7d
-          startDate.setHours(0,0,0,0);
+          startDate.setHours(0, 0, 0, 0);
       }
 
       try {
@@ -103,11 +110,13 @@ const UserEngagementChart: React.FC<UserEngagementChartProps> = ({ timeRange }) 
         let processedData = [];
         // Initialize buckets
         if (currentTimeRange === '24h') {
-          processedData = Array(24).fill(null).map((_, i) => ({
-            time: `${String(i).padStart(2, '0')}:00`,
-            usersSet: new Set(),
-            sessions: 0,
-          }));
+          processedData = Array(24)
+            .fill(null)
+            .map((_, i) => ({
+              time: `${String(i).padStart(2, '0')}:00`,
+              usersSet: new Set(),
+              sessions: 0,
+            }));
           sessions.forEach(session => {
             const hour = new Date(session.started_at).getHours();
             processedData[hour].sessions++;
@@ -116,61 +125,74 @@ const UserEngagementChart: React.FC<UserEngagementChartProps> = ({ timeRange }) 
         } else if (currentTimeRange === '7d') {
           const dayLabels = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
           // Ensure buckets are for the past 7 days ending today
-          processedData = Array(7).fill(null).map((_, i) => {
-              const day = new Date(now.getTime() - (6-i) * 24 * 60 * 60 * 1000);
+          processedData = Array(7)
+            .fill(null)
+            .map((_, i) => {
+              const day = new Date(now.getTime() - (6 - i) * 24 * 60 * 60 * 1000);
               return {
                 time: dayLabels[day.getDay()],
                 dateObj: day, // For sorting/matching
                 usersSet: new Set(),
                 sessions: 0,
               };
-          });
+            });
           sessions.forEach(session => {
             const sessionDate = new Date(session.started_at);
             const sessionDayStr = sessionDate.toISOString().split('T')[0];
-            const bucket = processedData.find(b => b.dateObj.toISOString().split('T')[0] === sessionDayStr);
+            const bucket = processedData.find(
+              b => b.dateObj.toISOString().split('T')[0] === sessionDayStr
+            );
             if (bucket) {
               bucket.sessions++;
               bucket.usersSet.add(session.user_id);
             }
           });
-        } else if (currentTimeRange === '30d') { // Bucketing by day for 30 days
-          processedData = Array(30).fill(null).map((_, i) => {
-            const day = new Date(now.getTime() - (29 - i) * 24 * 60 * 60 * 1000);
-            return {
-              time: `${day.toLocaleDateString('fr-FR', { month: 'short', day: 'numeric' })}`,
-              dateObj: day,
-              usersSet: new Set(),
-              sessions: 0,
-            };
-          });
+        } else if (currentTimeRange === '30d') {
+          // Bucketing by day for 30 days
+          processedData = Array(30)
+            .fill(null)
+            .map((_, i) => {
+              const day = new Date(now.getTime() - (29 - i) * 24 * 60 * 60 * 1000);
+              return {
+                time: `${day.toLocaleDateString('fr-FR', { month: 'short', day: 'numeric' })}`,
+                dateObj: day,
+                usersSet: new Set(),
+                sessions: 0,
+              };
+            });
           sessions.forEach(session => {
             const sessionDate = new Date(session.started_at);
             const sessionDayStr = sessionDate.toISOString().split('T')[0];
-            const bucket = processedData.find(b => b.dateObj.toISOString().split('T')[0] === sessionDayStr);
+            const bucket = processedData.find(
+              b => b.dateObj.toISOString().split('T')[0] === sessionDayStr
+            );
             if (bucket) {
               bucket.sessions++;
               bucket.usersSet.add(session.user_id);
             }
           });
-        } else if (currentTimeRange === '90d') { // Bucketing by week for ~90 days
+        } else if (currentTimeRange === '90d') {
+          // Bucketing by week for ~90 days
           const numWeeks = Math.ceil(90 / 7);
-          processedData = Array(numWeeks).fill(null).map((_, i) => {
-            // Label weeks from "Semaine X" relative to 'now'
-            const weekStartDate = new Date(now.getTime() - (numWeeks - 1 - i) * 7 * 24 * 60 * 60 * 1000);
-            getStartOfWeek(weekStartDate); // Align to Monday
-            weekStartDate.setHours(0,0,0,0);
-            return {
-              time: `Sem ${i + 1}`, // Simple week number
-              weekStart: weekStartDate,
-              usersSet: new Set(),
-              sessions: 0,
-            };
-          });
-           // Sort processedData by weekStart to ensure correct labeling if generation order isn't guaranteed
-           processedData.sort((a,b) => a.weekStart - b.weekStart);
-           processedData.forEach((bucket, index) => bucket.time = `Sem ${index + 1}`);
-
+          processedData = Array(numWeeks)
+            .fill(null)
+            .map((_, i) => {
+              // Label weeks from "Semaine X" relative to 'now'
+              const weekStartDate = new Date(
+                now.getTime() - (numWeeks - 1 - i) * 7 * 24 * 60 * 60 * 1000
+              );
+              getStartOfWeek(weekStartDate); // Align to Monday
+              weekStartDate.setHours(0, 0, 0, 0);
+              return {
+                time: `Sem ${i + 1}`, // Simple week number
+                weekStart: weekStartDate,
+                usersSet: new Set(),
+                sessions: 0,
+              };
+            });
+          // Sort processedData by weekStart to ensure correct labeling if generation order isn't guaranteed
+          processedData.sort((a, b) => a.weekStart - b.weekStart);
+          processedData.forEach((bucket, index) => (bucket.time = `Sem ${index + 1}`));
 
           sessions.forEach(session => {
             const sessionDate = new Date(session.started_at);
@@ -197,12 +219,12 @@ const UserEngagementChart: React.FC<UserEngagementChartProps> = ({ timeRange }) 
         if (finalData.length > 0) {
           const peakUsers = Math.max(...finalData.map(d => d.users), 0);
           const totalSessions = finalData.reduce((acc, d) => acc + d.sessions, 0);
-          const averageSessions = finalData.length > 0 ? Math.round(totalSessions / finalData.length) : 0;
+          const averageSessions =
+            finalData.length > 0 ? Math.round(totalSessions / finalData.length) : 0;
           setSummaryStats({ peakUsers, averageSessions });
         } else {
           setSummaryStats({ peakUsers: 0, averageSessions: 0 });
         }
-
       } catch (_e) {
         // Error already logged, state will be empty
         setEngagementData([]);
@@ -215,11 +237,10 @@ const UserEngagementChart: React.FC<UserEngagementChartProps> = ({ timeRange }) 
     fetchEngagementData(timeRange);
   }, [timeRange]);
 
-
   if (loading) {
     return (
       <div className='bg-surface rounded-lg p-6 shadow-subtle border border-border h-[400px] flex items-center justify-center'>
-        <p className="text-text-secondary">Chargement des données d'engagement...</p>
+        <p className='text-text-secondary'>Chargement des données d'engagement...</p>
       </div>
     );
   }
@@ -227,11 +248,12 @@ const UserEngagementChart: React.FC<UserEngagementChartProps> = ({ timeRange }) 
   if (engagementData.length === 0) {
     return (
       <div className='bg-surface rounded-lg p-6 shadow-subtle border border-border h-[400px] flex items-center justify-center'>
-        <p className="text-text-secondary">Aucune donnée d'engagement disponible pour la période sélectionnée.</p>
+        <p className='text-text-secondary'>
+          Aucune donnée d'engagement disponible pour la période sélectionnée.
+        </p>
       </div>
     );
   }
-
 
   return (
     <div className='bg-surface rounded-lg p-6 shadow-subtle border border-border'>
@@ -250,7 +272,7 @@ const UserEngagementChart: React.FC<UserEngagementChartProps> = ({ timeRange }) 
             <span className='text-xs text-text-secondary'>Sessions</span>
           </div>
           <button className='p-1 rounded-md hover:bg-secondary-100 transition-colors'>
-            <Icon aria-hidden="true"  name='Download' size={16} className='text-text-secondary' />
+            <Icon aria-hidden='true' name='Download' size={16} className='text-text-secondary' />
           </button>
         </div>
       </div>

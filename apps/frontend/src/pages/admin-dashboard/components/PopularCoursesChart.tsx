@@ -14,7 +14,8 @@ interface CourseData {
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
-    const completionRate = data.enrollments > 0 ? Math.round((data.completions / data.enrollments) * 100) : 0;
+    const completionRate =
+      data.enrollments > 0 ? Math.round((data.completions / data.enrollments) * 100) : 0;
     return (
       <div className='bg-surface p-3 border border-border rounded-lg shadow-medium'>
         <p className='text-sm font-medium text-text-primary mb-2'>{label}</p>
@@ -25,12 +26,8 @@ const CustomTooltip = ({ active, payload, label }) => {
           <p className='text-sm text-accent'>
             Complétions: {data.completions.toLocaleString('fr-FR')}
           </p>
-          {data.rating !== "N/A" && (
-            <p className='text-sm text-warning'>Note: {data.rating}/5</p>
-          )}
-          <p className='text-xs text-text-secondary'>
-            Taux de complétion: {completionRate}%
-          </p>
+          {data.rating !== 'N/A' && <p className='text-sm text-warning'>Note: {data.rating}/5</p>}
+          <p className='text-xs text-text-secondary'>Taux de complétion: {completionRate}%</p>
         </div>
       </div>
     );
@@ -74,7 +71,7 @@ const PopularCoursesChart = () => {
         }
 
         const completedLessonsByUser = new Map(); // Map<userId, Set<lessonId>>
-        const startedLessonsByUser = new Map();   // Map<userId, Set<lessonId>>
+        const startedLessonsByUser = new Map(); // Map<userId, Set<lessonId>>
 
         userProgress.forEach(progress => {
           if (!startedLessonsByUser.has(progress.user_id)) {
@@ -98,12 +95,13 @@ const PopularCoursesChart = () => {
             });
           });
 
-          if (lessonsInCourseSet.size === 0) { // Skip courses with no lessons
+          if (lessonsInCourseSet.size === 0) {
+            // Skip courses with no lessons
             return {
               name: course.title,
               enrollments: 0,
               completions: 0,
-              rating: "N/A",
+              rating: 'N/A',
             };
           }
 
@@ -135,7 +133,7 @@ const PopularCoursesChart = () => {
             name: course.title,
             enrollments: enrollmentsCount,
             completions: completionsCount,
-            rating: "N/A", // Rating not available from current schema
+            rating: 'N/A', // Rating not available from current schema
           };
         });
 
@@ -145,11 +143,16 @@ const PopularCoursesChart = () => {
         setChartData(topCourses);
 
         // Calculate totals for summary
-        const currentTotalEnrollments = topCourses.reduce((acc, course) => acc + course.enrollments, 0);
-        const currentTotalCompletions = topCourses.reduce((acc, course) => acc + course.completions, 0);
+        const currentTotalEnrollments = topCourses.reduce(
+          (acc, course) => acc + course.enrollments,
+          0
+        );
+        const currentTotalCompletions = topCourses.reduce(
+          (acc, course) => acc + course.completions,
+          0
+        );
         setTotalEnrollments(currentTotalEnrollments);
         setTotalCompletions(currentTotalCompletions);
-
       } catch (error) {
         log.error('Failed to process popular courses data:', error);
         setChartData([]); // Set to empty on error
@@ -204,9 +207,14 @@ const PopularCoursesChart = () => {
         </div>
       </div>
 
-      <div className='h-64'> {/* Ensure this height is appropriate */}
+      <div className='h-64'>
+        {' '}
+        {/* Ensure this height is appropriate */}
         <ResponsiveContainer width='100%' height='100%'>
-          <BarChart<CourseData> data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+          <BarChart<CourseData>
+            data={chartData}
+            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+          >
             <CartesianGrid strokeDasharray='3 3' stroke='var(--color-border)' />
             <XAxis
               dataKey='name'
@@ -239,7 +247,9 @@ const PopularCoursesChart = () => {
         </ResponsiveContainer>
       </div>
 
-      <div className='mt-4 grid grid-cols-2 md:grid-cols-3 gap-4'> {/* Changed to 2 cols for smaller screens, 3 for md and up */}
+      <div className='mt-4 grid grid-cols-2 md:grid-cols-3 gap-4'>
+        {' '}
+        {/* Changed to 2 cols for smaller screens, 3 for md and up */}
         <div className='text-center p-3 bg-primary-50 rounded-lg'>
           <p className='text-sm text-text-secondary'>Total inscriptions</p>
           <p className='text-lg font-semibold text-primary'>

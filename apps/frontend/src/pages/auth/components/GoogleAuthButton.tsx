@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '@frontend/context/AuthContext';
-import { log } from '@/logger'
+import { log } from '@/logger';
 
 export interface GoogleAuthButtonProps {
   isLoading: boolean;
@@ -66,7 +66,7 @@ const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({
           </>
         )}
       </button>
-      
+
       {error && (
         <div className='mt-2 p-2 bg-error-50 border border-error-200 rounded-lg'>
           <p className='text-sm text-error-700'>{error}</p>

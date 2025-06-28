@@ -1,6 +1,6 @@
 import React from 'react';
 import Icon from './AppIcon';
-import { log } from '@/logger'
+import { log } from '@/logger';
 import ErrorContext, { type ErrorLogger } from '@frontend/context/ErrorContext';
 
 interface ErrorBoundaryProps {
@@ -11,10 +11,7 @@ interface ErrorBoundaryState {
   hasError: boolean;
 }
 
-class ErrorBoundary extends React.Component<
-  ErrorBoundaryProps,
-  ErrorBoundaryState
-> {
+class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false };
@@ -85,7 +82,7 @@ class ErrorBoundary extends React.Component<
                 }}
                 className='bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded flex items-center gap-2 transition-colors duration-200 shadow-sm'
               >
-                <Icon aria-hidden="true"  name='ArrowLeft' size={18} color='#fff' />
+                <Icon aria-hidden='true' name='ArrowLeft' size={18} color='#fff' />
                 Back
               </button>
             </div>
@@ -99,4 +96,3 @@ class ErrorBoundary extends React.Component<
 }
 
 export default ErrorBoundary;
-

@@ -10,14 +10,14 @@ export default [
       parser: parserTs,
       parserOptions: {
         ecmaVersion: 'latest',
-        sourceType: 'module'
-      }
+        sourceType: 'module',
+      },
     },
     plugins: {
-      '@typescript-eslint': pluginTs
+      '@typescript-eslint': pluginTs,
     },
     rules: {
-      ...pluginTs.configs.recommended.rules
-    }
-  }
+      ...pluginTs.configs.recommended.rules,
+    },
+  },
 ];

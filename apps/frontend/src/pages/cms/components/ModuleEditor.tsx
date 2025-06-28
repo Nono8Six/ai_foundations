@@ -70,11 +70,15 @@ const ModuleEditor: React.FC<ModuleEditorProps> = ({ module, onSave, onDelete })
           </div>
 
           <div className='flex items-center space-x-3'>
-            <Button onClick={handleSave} disabled={isSaving} className='px-6 py-2 bg-primary text-white hover:bg-primary-700'>
+            <Button
+              onClick={handleSave}
+              disabled={isSaving}
+              className='px-6 py-2 bg-primary text-white hover:bg-primary-700'
+            >
               {isSaving ? (
                 <Spinner size={16} className='mr-2' />
               ) : (
-                <Icon aria-hidden="true"  name='Save' size={16} className='mr-2' />
+                <Icon aria-hidden='true' name='Save' size={16} className='mr-2' />
               )}
               {isSaving ? 'Enregistrement...' : 'Enregistrer'}
             </Button>
@@ -191,7 +195,7 @@ const ModuleEditor: React.FC<ModuleEditorProps> = ({ module, onSave, onDelete })
               <div className='flex items-center justify-between mb-4'>
                 <h2 className='text-lg font-semibold text-text-primary'>Leçons du module</h2>
                 <button className='px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors duration-200 font-medium'>
-                  <Icon aria-hidden="true"  name='Plus' size={16} className='mr-2' />
+                  <Icon aria-hidden='true' name='Plus' size={16} className='mr-2' />
                   Ajouter une leçon
                 </button>
               </div>
@@ -241,10 +245,15 @@ const ModuleEditor: React.FC<ModuleEditorProps> = ({ module, onSave, onDelete })
                 </div>
               ) : (
                 <div className='text-center py-8'>
-                  <Icon aria-hidden="true"  name='FileText' size={48} className='text-secondary-300 mx-auto mb-4' />
+                  <Icon
+                    aria-hidden='true'
+                    name='FileText'
+                    size={48}
+                    className='text-secondary-300 mx-auto mb-4'
+                  />
                   <p className='text-text-secondary mb-4'>Aucune leçon dans ce module</p>
                   <button className='px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors duration-200 font-medium'>
-                    <Icon aria-hidden="true"  name='Plus' size={16} className='mr-2' />
+                    <Icon aria-hidden='true' name='Plus' size={16} className='mr-2' />
                     Créer la première leçon
                   </button>
                 </div>
@@ -345,7 +354,7 @@ const ModuleEditor: React.FC<ModuleEditorProps> = ({ module, onSave, onDelete })
                   onClick={() => onDelete(module.id)}
                   className='w-full px-4 py-2 bg-error text-white rounded-lg hover:bg-error-600 transition-colors duration-200 font-medium'
                 >
-                  <Icon aria-hidden="true"  name='Trash2' size={16} className='mr-2' />
+                  <Icon aria-hidden='true' name='Trash2' size={16} className='mr-2' />
                   Supprimer le module
                 </button>
               </div>

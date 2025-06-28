@@ -24,7 +24,7 @@ services:
       - VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
       - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
     ports:
-      - "5173:5173"
+      - '5173:5173'
     volumes:
       - ./apps/frontend:/app/apps/frontend
       - pnpm-store:/root/.local/share/pnpm/store
@@ -51,13 +51,12 @@ services:
     restart: unless-stopped
 
   supabase:
-    profiles: ["supabase-local"]
+    profiles: ['supabase-local']
     image: supabase/postgres
     ports:
-      - "54322:5432"
+      - '54322:5432'
     networks:
       - app-network
     restart: unless-stopped
-
 # Note: Une instance Supabase locale peut être lancée via le service `supabase` (profil
 # `supabase-local`) ou via la commande `pnpm db:start` de la CLI Supabase.

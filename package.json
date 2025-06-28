@@ -1,7 +1,7 @@
 {
   "name": "ai-foundations-monorepo",
   "private": true,
-  "packageManager": "pnpm@10.12.2",
+  "packageManager": "pnpm@10.12.4+sha512.5ea8b0deed94ed68691c9bad4c955492705c5eeb8a87ef86bc62c74a26b037b08ff9570f108b2e4dbd1dd1a9186fea925e527f141c648e85af45631074680184",
   "engines": {
     "node": ">=18.0.0",
     "pnpm": ">=9.0.0"
@@ -12,7 +12,7 @@
     "start": "pnpm dev:frontend",
     "build": "pnpm --filter frontend build",
     "preview": "pnpm --filter frontend preview",
-    "test": "vitest run --passWithNoTests",
+    "test": "LOG_LEVEL=fatal vitest run --passWithNoTests",
     "lint": "eslint . --max-warnings 0",
     "typecheck": "tsc --noEmit",
     "db:pull": "pnpm --filter backend exec supabase db pull",
@@ -36,6 +36,8 @@
     "husky": "^9.1.4",
     "lint-staged": "^15.2.7",
     "pino-pretty": "^13.0.0",
+    "prettier": "^3.6.2",
+    "supabase": "^2.26.9",
     "typescript": "^5.8.3"
   },
   "dependencies": {

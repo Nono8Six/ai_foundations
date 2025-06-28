@@ -8,7 +8,6 @@ import { logError } from './ErrorContext.tsx';
 import { fetchCoursesFromSupabase } from '@frontend/services/courseService';
 import type { CoursesFromSupabase } from '@frontend/services/courseService';
 
-
 type CourseData = CoursesFromSupabase;
 
 export interface CourseContextValue extends CourseData {

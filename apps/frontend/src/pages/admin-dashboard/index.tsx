@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Icon from '@frontend/components/AppIcon';
 import { supabase } from '@frontend/lib/supabase';
-import AdminLayout, { useAdminSidebar } from "../../components/AdminLayout";
-import { log } from '@/logger'
+import AdminLayout, { useAdminSidebar } from '../../components/AdminLayout';
+import { log } from '@/logger';
 import RecentActivity from './components/RecentActivity';
 import UserEngagementChart from './components/UserEngagementChart';
 import PopularCoursesChart from './components/PopularCoursesChart';
@@ -17,11 +17,11 @@ const AdminDashboardContent = () => {
     totalUsers: 0,
     activeUsers: 0,
     completionRate: 0, // Placeholder
-    revenue: "N/A", // Placeholder
+    revenue: 'N/A', // Placeholder
     newUsersToday: 0,
     coursesCompleted: 0, // Placeholder
     averageSessionTime: '0m 0s',
-    systemUptime: "N/A", // Placeholder
+    systemUptime: 'N/A', // Placeholder
   });
   const [loading, setLoading] = useState(true);
 
@@ -45,7 +45,6 @@ const AdminDashboardContent = () => {
         if (activeUsersError) throw activeUsersError;
         const activeUsersCount = activeUsersData ? activeUsersData.length : 0;
 
-
         // Fetch New Users Today
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -64,9 +63,11 @@ const AdminDashboardContent = () => {
           .select('duration_minutes');
         if (sessionError) throw sessionError;
         const validSessions = sessionData.filter(s => s.duration_minutes !== null);
-        const avgSessionTime = validSessions.length > 0
-          ? validSessions.reduce((acc, curr) => acc + curr.duration_minutes, 0) / validSessions.length
-          : 0;
+        const avgSessionTime =
+          validSessions.length > 0
+            ? validSessions.reduce((acc, curr) => acc + curr.duration_minutes, 0) /
+              validSessions.length
+            : 0;
 
         setDashboardData({
           totalUsers: totalUsersCount || 0,
@@ -74,9 +75,9 @@ const AdminDashboardContent = () => {
           newUsersToday: newUsersTodayCount || 0,
           averageSessionTime: `${Math.round(avgSessionTime)}m 0s`, // Simplified display
           completionRate: 0, // Placeholder
-          revenue: "N/A", // Placeholder
+          revenue: 'N/A', // Placeholder
           coursesCompleted: 0, // Placeholder
-          systemUptime: "N/A", // Placeholder
+          systemUptime: 'N/A', // Placeholder
         });
       } catch (error) {
         log.error('Error fetching dashboard data:', error);
@@ -85,11 +86,11 @@ const AdminDashboardContent = () => {
           totalUsers: 0,
           activeUsers: 0,
           completionRate: 0,
-          revenue: "N/A",
+          revenue: 'N/A',
           newUsersToday: 0,
           coursesCompleted: 0,
           averageSessionTime: 'Error',
-          systemUptime: "N/A",
+          systemUptime: 'N/A',
         });
       } finally {
         setLoading(false);
@@ -133,7 +134,10 @@ const AdminDashboardContent = () => {
     {
       id: 4,
       title: 'Revenus',
-      value: dashboardMetrics.revenue === "N/A" ? "N/A" : `€${dashboardMetrics.revenue.toLocaleString('fr-FR')}`, // Placeholder
+      value:
+        dashboardMetrics.revenue === 'N/A'
+          ? 'N/A'
+          : `€${dashboardMetrics.revenue.toLocaleString('fr-FR')}`, // Placeholder
       change: '+15.7%', // Placeholder
       changeType: 'positive',
       icon: 'Euro',
@@ -149,146 +153,162 @@ const AdminDashboardContent = () => {
 
   return (
     <>
-        {/* Top navigation */}
-        <header className='bg-surface shadow-subtle border-b border-border fixed top-16 left-0 right-0 z-30 lg:left-64'>
-          <div className='flex items-center justify-between h-16 px-6'>
-            <div className='flex items-center space-x-4'>
-              <button
-                onClick={() => setSidebarOpen(true)}
-                className='lg:hidden p-2 rounded-md hover:bg-secondary-100 transition-colors'
-              >
-                <Icon name='Menu' size={20} aria-label='Ouvrir le menu' />
-              </button>
-              <h1 className='text-xl font-semibold text-text-primary'>
-                Tableau de bord administrateur
-              </h1>
-            </div>
-
-            <div className='flex items-center space-x-4'>
-              {/* Global search */}
-              <div className='relative hidden md:block'>
-                <Icon aria-hidden="true" 
-                  name='Search'
-                  size={18}
-                  className='absolute left-3 top-1/2 transform -translate-y-1/2 text-text-secondary'
-                />
-                <input
-                  type='text'
-                  placeholder='Rechercher...'
-                  className='pl-10 pr-4 py-2 w-64 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent'
-                />
-              </div>
-
-              {/* Time range selector */}
-              <select
-                value={selectedTimeRange}
-                onChange={e => setSelectedTimeRange(e.target.value)}
-                className='px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm'
-              >
-                {timeRanges.map(range => (
-                  <option key={range.value} value={range.value}>
-                    {range.label}
-                  </option>
-                ))}
-              </select>
-
-              {/* Notifications */}
-              <button className='relative p-2 rounded-lg hover:bg-secondary-100 transition-colors'>
-                <Icon name='Bell' size={20} aria-label='Notifications' />
-                <span className='absolute top-1 right-1 w-2 h-2 bg-error rounded-full'></span>
-              </button>
-            </div>
+      {/* Top navigation */}
+      <header className='bg-surface shadow-subtle border-b border-border fixed top-16 left-0 right-0 z-30 lg:left-64'>
+        <div className='flex items-center justify-between h-16 px-6'>
+          <div className='flex items-center space-x-4'>
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className='lg:hidden p-2 rounded-md hover:bg-secondary-100 transition-colors'
+            >
+              <Icon name='Menu' size={20} aria-label='Ouvrir le menu' />
+            </button>
+            <h1 className='text-xl font-semibold text-text-primary'>
+              Tableau de bord administrateur
+            </h1>
           </div>
-        </header>
 
-        {/* Dashboard content */}
-        <main className='p-6 pt-32'>
-          {loading ? (
-            <div className="flex justify-center items-center h-64">
-              <p className="text-xl text-text-secondary">Chargement des données...</p>
+          <div className='flex items-center space-x-4'>
+            {/* Global search */}
+            <div className='relative hidden md:block'>
+              <Icon
+                aria-hidden='true'
+                name='Search'
+                size={18}
+                className='absolute left-3 top-1/2 transform -translate-y-1/2 text-text-secondary'
+              />
+              <input
+                type='text'
+                placeholder='Rechercher...'
+                className='pl-10 pr-4 py-2 w-64 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent'
+              />
             </div>
-          ) : (
-            <>
-              {/* Quick stats */}
-              <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8'>
-                {quickStats.map(stat => (
-                  <div
-                key={stat.id}
-                className='bg-surface rounded-lg p-6 shadow-subtle border border-border'
-              >
-                <div className='flex items-center justify-between'>
-                  <div>
-                    <p className='text-sm text-text-secondary mb-1'>{stat.title}</p>
-                    <p className='text-2xl font-bold text-text-primary'>{stat.value}</p>
-                    <div className='flex items-center mt-2'>
-                      <span
-                        className={`text-sm font-medium ${stat.changeType === 'positive' ? 'text-success' : 'text-error'}`}
-                      >
-                        {stat.change}
-                      </span>
-                      <span className='text-xs text-text-secondary ml-1'>
-                        vs période précédente
-                      </span>
+
+            {/* Time range selector */}
+            <select
+              value={selectedTimeRange}
+              onChange={e => setSelectedTimeRange(e.target.value)}
+              className='px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm'
+            >
+              {timeRanges.map(range => (
+                <option key={range.value} value={range.value}>
+                  {range.label}
+                </option>
+              ))}
+            </select>
+
+            {/* Notifications */}
+            <button className='relative p-2 rounded-lg hover:bg-secondary-100 transition-colors'>
+              <Icon name='Bell' size={20} aria-label='Notifications' />
+              <span className='absolute top-1 right-1 w-2 h-2 bg-error rounded-full'></span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Dashboard content */}
+      <main className='p-6 pt-32'>
+        {loading ? (
+          <div className='flex justify-center items-center h-64'>
+            <p className='text-xl text-text-secondary'>Chargement des données...</p>
+          </div>
+        ) : (
+          <>
+            {/* Quick stats */}
+            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8'>
+              {quickStats.map(stat => (
+                <div
+                  key={stat.id}
+                  className='bg-surface rounded-lg p-6 shadow-subtle border border-border'
+                >
+                  <div className='flex items-center justify-between'>
+                    <div>
+                      <p className='text-sm text-text-secondary mb-1'>{stat.title}</p>
+                      <p className='text-2xl font-bold text-text-primary'>{stat.value}</p>
+                      <div className='flex items-center mt-2'>
+                        <span
+                          className={`text-sm font-medium ${stat.changeType === 'positive' ? 'text-success' : 'text-error'}`}
+                        >
+                          {stat.change}
+                        </span>
+                        <span className='text-xs text-text-secondary ml-1'>
+                          vs période précédente
+                        </span>
+                      </div>
+                    </div>
+                    <div
+                      className={`w-12 h-12 ${stat.color} rounded-lg flex items-center justify-center`}
+                    >
+                      <Icon aria-hidden='true' name={stat.icon} size={24} color='white' />
                     </div>
                   </div>
-                  <div
-                    className={`w-12 h-12 ${stat.color} rounded-lg flex items-center justify-center`}
-                  >
-                    <Icon aria-hidden="true"  name={stat.icon} size={24} color='white' />
-                  </div>
                 </div>
-                  </div>
-                ))}
+              ))}
+            </div>
+
+            {/* Charts section */}
+            <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8'>
+              <UserEngagementChart timeRange={selectedTimeRange} />
+              <PopularCoursesChart />
+            </div>
+
+            {/* Geographic distribution and performance */}
+            <div className='grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8'>
+              <div className='lg:col-span-2'>
+                <GeographicDistribution />
               </div>
-
-              {/* Charts section */}
-          <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8'>
-            <UserEngagementChart timeRange={selectedTimeRange} />
-            <PopularCoursesChart />
-          </div>
-
-          {/* Geographic distribution and performance */}
-          <div className='grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8'>
-            <div className='lg:col-span-2'>
-              <GeographicDistribution />
+              <PerformanceMetrics metrics={dashboardMetrics} />
             </div>
-            <PerformanceMetrics metrics={dashboardMetrics} />
-          </div>
 
-          {/* Recent activity */}
-          <RecentActivity />
+            {/* Recent activity */}
+            <RecentActivity />
 
-          {/* Quick actions */}
-          <div className='bg-surface rounded-lg p-6 shadow-subtle border border-border'>
-            <h3 className='text-lg font-semibold text-text-primary mb-4'>Actions rapides</h3>
-            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
-              <Link
-                to='/user-management-admin'
-                className='flex items-center p-4 border border-border rounded-lg hover:bg-secondary-50 transition-colors'
-              >
-                <Icon aria-hidden="true"  name='UserPlus' size={20} className='text-primary mr-3' />
-                <span className='text-sm font-medium text-text-primary'>Ajouter utilisateur</span>
-              </Link>
-              <Link
-                to='/cms'
-                className='flex items-center p-4 border border-border rounded-lg hover:bg-secondary-50 transition-colors'
-              >
-                <Icon aria-hidden="true"  name='Plus' size={20} className='text-primary mr-3' />
-                <span className='text-sm font-medium text-text-primary'>Créer cours</span>
-              </Link>
-              <button className='flex items-center p-4 border border-border rounded-lg hover:bg-secondary-50 transition-colors'>
-                <Icon aria-hidden="true"  name='Download' size={20} className='text-primary mr-3' />
-                <span className='text-sm font-medium text-text-primary'>Exporter données</span>
-              </button>
-              <button className='flex items-center p-4 border border-border rounded-lg hover:bg-secondary-50 transition-colors'>
-                <Icon aria-hidden="true"  name='Settings' size={20} className='text-primary mr-3' />
-                <span className='text-sm font-medium text-text-primary'>Paramètres</span>
-              </button>
+            {/* Quick actions */}
+            <div className='bg-surface rounded-lg p-6 shadow-subtle border border-border'>
+              <h3 className='text-lg font-semibold text-text-primary mb-4'>Actions rapides</h3>
+              <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
+                <Link
+                  to='/user-management-admin'
+                  className='flex items-center p-4 border border-border rounded-lg hover:bg-secondary-50 transition-colors'
+                >
+                  <Icon
+                    aria-hidden='true'
+                    name='UserPlus'
+                    size={20}
+                    className='text-primary mr-3'
+                  />
+                  <span className='text-sm font-medium text-text-primary'>Ajouter utilisateur</span>
+                </Link>
+                <Link
+                  to='/cms'
+                  className='flex items-center p-4 border border-border rounded-lg hover:bg-secondary-50 transition-colors'
+                >
+                  <Icon aria-hidden='true' name='Plus' size={20} className='text-primary mr-3' />
+                  <span className='text-sm font-medium text-text-primary'>Créer cours</span>
+                </Link>
+                <button className='flex items-center p-4 border border-border rounded-lg hover:bg-secondary-50 transition-colors'>
+                  <Icon
+                    aria-hidden='true'
+                    name='Download'
+                    size={20}
+                    className='text-primary mr-3'
+                  />
+                  <span className='text-sm font-medium text-text-primary'>Exporter données</span>
+                </button>
+                <button className='flex items-center p-4 border border-border rounded-lg hover:bg-secondary-50 transition-colors'>
+                  <Icon
+                    aria-hidden='true'
+                    name='Settings'
+                    size={20}
+                    className='text-primary mr-3'
+                  />
+                  <span className='text-sm font-medium text-text-primary'>Paramètres</span>
+                </button>
+              </div>
             </div>
-          </div>
-        </>
+          </>
         )}
-        </main>
+      </main>
     </>
   );
 };

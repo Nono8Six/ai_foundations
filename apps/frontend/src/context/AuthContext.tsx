@@ -28,7 +28,7 @@ import type { UserProfile } from '@frontend/types/user';
 import { supabase } from '@frontend/lib/supabase';
 import { safeQuery } from '@frontend/utils/supabaseClient';
 import { useNavigate } from 'react-router-dom';
-import { log } from '@/logger'
+import { log } from '@/logger';
 import type { AuthErrorWithCode } from '@frontend/types/auth';
 
 const supabaseClient = supabase as SupabaseClient<Database>;
@@ -76,8 +76,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const getInitialSession = async () => {
       try {
         log.debug('🔍 Getting initial session...');
-        const { data, error } = await safeQuery<{ session: Session | null }, AuthError>(
-          () => supabaseClient.auth.getSession()
+        const { data, error } = await safeQuery<{ session: Session | null }, AuthError>(() =>
+          supabaseClient.auth.getSession()
         );
         if (error) throw error;
         const { session } = data;
@@ -89,10 +89,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           log.debug('👤 User found, fetching profile...');
           await fetchUserProfile(session.user.id);
         }
-        } catch (error: unknown) {
-          log.error('❌ Error getting initial session:', error.message);
-          setError(error);
-        } finally {
+      } catch (error: unknown) {
+        log.error('❌ Error getting initial session:', error.message);
+        setError(error);
+      } finally {
         setLoading(false);
       }
     };
@@ -104,32 +104,33 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       data: { subscription },
     } = supabaseClient.auth.onAuthStateChange(
       async (event: AuthChangeEvent, session: Session | null) => {
-      log.debug('🔄 Auth state change event:', event);
-      log.debug('📋 Auth state change session:', session);
-      log.debug('⏰ Timestamp:', new Date().toISOString());
+        log.debug('🔄 Auth state change event:', event);
+        log.debug('📋 Auth state change session:', session);
+        log.debug('⏰ Timestamp:', new Date().toISOString());
 
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
+        setSession(session);
+        setUser(session?.user ?? null);
+        setLoading(false);
 
-      if (event === 'SIGNED_IN' && session?.user) {
-        log.debug('✅ User signed in, fetching profile...');
-        await fetchUserProfile(session.user.id);
-        if (window.location.pathname === '/verify-email') {
-          navigate('/espace');
-        }
-      } else if (event === 'SIGNED_OUT') {
-        log.debug('🚪 User signed out, clearing profile...');
-        setUserProfile(null);
-      } else if (event === 'TOKEN_REFRESHED') {
-        log.debug('🔄 Token refreshed');
-      } else if (event === 'USER_UPDATED') {
-        log.debug('👤 User updated');
-        if (window.location.pathname === '/verify-email') {
-          navigate('/espace');
+        if (event === 'SIGNED_IN' && session?.user) {
+          log.debug('✅ User signed in, fetching profile...');
+          await fetchUserProfile(session.user.id);
+          if (window.location.pathname === '/verify-email') {
+            navigate('/espace');
+          }
+        } else if (event === 'SIGNED_OUT') {
+          log.debug('🚪 User signed out, clearing profile...');
+          setUserProfile(null);
+        } else if (event === 'TOKEN_REFRESHED') {
+          log.debug('🔄 Token refreshed');
+        } else if (event === 'USER_UPDATED') {
+          log.debug('👤 User updated');
+          if (window.location.pathname === '/verify-email') {
+            navigate('/espace');
+          }
         }
       }
-    });
+    );
 
     return () => {
       log.debug('🧹 Cleaning up auth subscription...');
@@ -342,14 +343,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         })
       );
 
-    if (error) {
-      setError(error);
-      throw error;
-    }
+      if (error) {
+        setError(error);
+        throw error;
+      }
 
-    log.info('✅ Profile updated successfully:', data);
+      log.info('✅ Profile updated successfully:', data);
 
-    setUserProfile(data);
+      setUserProfile(data);
 
       return data;
     },
@@ -369,12 +370,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         })
       );
 
-    if (error) {
-      setError(error);
-      throw error;
-    }
+      if (error) {
+        setError(error);
+        throw error;
+      }
 
-    log.info('✅ Settings updated successfully:', data);
+      log.info('✅ Settings updated successfully:', data);
       return data;
     },
     []
@@ -384,9 +385,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const getUserSettings = useCallback(async (): Promise<GetUserSettingsResponse> => {
     log.debug('🔍 Getting user settings...');
 
-    const { data, error } = await safeQuery(() =>
-      supabaseClient.rpc('get_user_settings').single()
-    );
+    const { data, error } = await safeQuery(() => supabaseClient.rpc('get_user_settings').single());
 
     if (error) {
       setError(error);

@@ -5,7 +5,11 @@ import { vi } from 'vitest';
 import PerformanceMetrics from './PerformanceMetrics';
 
 // Mock AppIcon
-vi.mock('../../../components/AppIcon', () => ({ default: ({ name, size, className }) => <svg data-testid={`icon-${name}`} className={className} width={size} height={size}></svg> }));
+vi.mock('../../../components/AppIcon', () => ({
+  default: ({ name, size, className }) => (
+    <svg data-testid={`icon-${name}`} className={className} width={size} height={size}></svg>
+  ),
+}));
 
 describe('PerformanceMetrics', () => {
   afterEach(() => {
@@ -30,7 +34,11 @@ describe('PerformanceMetrics', () => {
     expect(screen.getByTestId('icon-Users')).toBeInTheDocument(); // Icon for active sessions
 
     // Check for the "detailed performance data unavailable" message
-    expect(screen.getByText(/Les données de performance détaillées \(CPU, mémoire, etc.\) ne sont pas disponibles./)).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /Les données de performance détaillées \(CPU, mémoire, etc.\) ne sont pas disponibles./
+      )
+    ).toBeInTheDocument();
 
     // Check footer
     expect(screen.getByText('Informations de maintenance non disponibles.')).toBeInTheDocument();
@@ -62,7 +70,7 @@ describe('PerformanceMetrics', () => {
     expect(screen.getByText('Statut inconnu')).toBeInTheDocument();
   });
 
-   test('handles error value for systemUptime', () => {
+  test('handles error value for systemUptime', () => {
     const mockMetrics = {
       systemUptime: 'Error',
       activeUsers: 10,
@@ -93,7 +101,11 @@ describe('PerformanceMetrics', () => {
     expect(screen.getByText('Disponibilité système')).toBeInTheDocument();
     expect(screen.getByText('99.5%')).toBeInTheDocument();
     expect(screen.queryByText('Sessions actives')).not.toBeInTheDocument();
-    expect(screen.getByText(/Les données de performance détaillées \(CPU, mémoire, etc.\) ne sont pas disponibles./)).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /Les données de performance détaillées \(CPU, mémoire, etc.\) ne sont pas disponibles./
+      )
+    ).toBeInTheDocument();
   });
 
   test('renders correctly when only activeUsers is available', () => {
@@ -106,6 +118,10 @@ describe('PerformanceMetrics', () => {
     // It will still show "detailed performance data unavailable" because one of the core metrics (uptime) is missing
     // Or, if we change the logic to show it only if *both* are missing, this test would change.
     // Current logic: if availableMetrics > 0, it shows the list + the detailed info box.
-    expect(screen.getByText(/Les données de performance détaillées \(CPU, mémoire, etc.\) ne sont pas disponibles./)).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /Les données de performance détaillées \(CPU, mémoire, etc.\) ne sont pas disponibles./
+      )
+    ).toBeInTheDocument();
   });
 });

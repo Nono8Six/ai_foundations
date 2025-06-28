@@ -8,19 +8,19 @@ vi.mock('../../lib/supabase', () => {
   fromMock = vi.fn(table => ({
     insert: vi.fn(() => ({
       select: vi.fn(() => ({
-        single: vi.fn(() => Promise.resolve({ data: { id: 'new', table }, error: null }))
-      }))
+        single: vi.fn(() => Promise.resolve({ data: { id: 'new', table }, error: null })),
+      })),
     })),
     update: vi.fn(() => ({
       eq: vi.fn(() => ({
         select: vi.fn(() => ({
-          single: vi.fn(() => Promise.resolve({ data: { id: 'upd', table }, error: null }))
-        }))
-      }))
+          single: vi.fn(() => Promise.resolve({ data: { id: 'upd', table }, error: null })),
+        })),
+      })),
     })),
     delete: vi.fn(() => ({
-      eq: vi.fn(() => Promise.resolve({ error: null }))
-    }))
+      eq: vi.fn(() => Promise.resolve({ error: null })),
+    })),
   }));
   return { supabase: { from: fromMock } };
 });

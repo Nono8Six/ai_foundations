@@ -18,7 +18,12 @@ const CookieNotice: React.FC<CookieNoticeProps> = ({ onAccept }) => {
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4'>
         <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4'>
           <div className='flex items-start space-x-3 flex-1'>
-            <Icon aria-hidden="true"  name='Cookie' size={24} className='text-warning flex-shrink-0 mt-1' />
+            <Icon
+              aria-hidden='true'
+              name='Cookie'
+              size={24}
+              className='text-warning flex-shrink-0 mt-1'
+            />
             <div>
               <h3 className='font-semibold text-text-primary mb-1'>Nous utilisons des cookies</h3>
               <p className='text-sm text-text-secondary leading-relaxed'>
@@ -34,7 +39,7 @@ const CookieNotice: React.FC<CookieNoticeProps> = ({ onAccept }) => {
               onClick={onAccept}
               className='px-6 py-2 bg-primary text-white font-medium rounded-lg hover:bg-primary-700 transition-colors duration-200 flex items-center'
             >
-              <Icon aria-hidden="true"  name='Check' size={16} className='mr-2' />
+              <Icon aria-hidden='true' name='Check' size={16} className='mr-2' />
               Accepter
             </button>
 

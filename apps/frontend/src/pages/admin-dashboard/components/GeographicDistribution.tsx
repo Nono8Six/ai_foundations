@@ -21,22 +21,21 @@ const GeographicDistribution = () => {
       </div>
 
       <div className='flex flex-col items-center justify-center h-64 text-center'>
-        <Icon aria-hidden="true"  name='MapPinOff' size={48} className='text-secondary-400 mb-4' />
+        <Icon aria-hidden='true' name='MapPinOff' size={48} className='text-secondary-400 mb-4' />
         <p className='text-md font-medium text-text-primary mb-1'>
           Les données de distribution géographique ne sont pas actuellement disponibles.
         </p>
         <p className='text-sm text-text-secondary'>
-          Pour activer cette fonctionnalité, des informations de localisation des utilisateurs seraient nécessaires.
+          Pour activer cette fonctionnalité, des informations de localisation des utilisateurs
+          seraient nécessaires.
         </p>
       </div>
 
       {/* Footer showing total users can be removed or also show N/A */}
-       <div className='mt-6 pt-4 border-t border-border'>
+      <div className='mt-6 pt-4 border-t border-border'>
         <div className='flex items-center justify-between'>
           <span className='text-sm text-text-secondary'>Total utilisateurs (géographique)</span>
-          <span className='text-lg font-semibold text-text-primary'>
-            N/A
-          </span>
+          <span className='text-lg font-semibold text-text-primary'>N/A</span>
         </div>
       </div>
     </div>

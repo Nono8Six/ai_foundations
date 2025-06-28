@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@frontend/context/AuthContext';
 import Icon, { type IconName } from './AppIcon';
 import Image from './AppImage';
-import { log } from '@/logger'
+import { log } from '@/logger';
 
 // Typage des éléments de navigation
 interface NavItem {
@@ -97,7 +97,7 @@ const Header = (): JSX.Element => {
           {/* Logo */}
           <Link to='/' className='flex items-center space-x-2'>
             <div className='w-10 h-10 bg-gradient-to-br from-primary to-primary-700 rounded-full flex items-center justify-center'>
-              <Icon aria-hidden="true" name='GraduationCap' size={24} color='white' />
+              <Icon aria-hidden='true' name='GraduationCap' size={24} color='white' />
             </div>
             <span className='text-xl font-bold text-text-primary'>AI Foundations</span>
           </Link>
@@ -114,7 +114,7 @@ const Header = (): JSX.Element => {
                     : 'text-text-secondary hover:text-primary'
                 }`}
               >
-                <Icon aria-hidden="true" name={item.icon} size={18} />
+                <Icon aria-hidden='true' name={item.icon} size={18} />
                 <span>{item.name}</span>
               </Link>
             ))}
@@ -145,7 +145,7 @@ const Header = (): JSX.Element => {
             className='lg:hidden p-2 rounded-lg hover:bg-secondary-50 transition-colors duration-200'
             aria-label='Toggle menu'
           >
-            <Icon aria-hidden="true" name={isMenuOpen ? 'X' : 'Menu'} size={24} />
+            <Icon aria-hidden='true' name={isMenuOpen ? 'X' : 'Menu'} size={24} />
           </button>
 
           {/* User Menu */}
@@ -166,7 +166,7 @@ const Header = (): JSX.Element => {
                 ) : getInitials() ? (
                   <span className='text-white font-medium text-sm'>{getInitials()}</span>
                 ) : (
-                  <Icon aria-hidden="true" name='User' size={20} color='white' />
+                  <Icon aria-hidden='true' name='User' size={20} color='white' />
                 )}
               </button>
 
@@ -184,10 +184,12 @@ const Header = (): JSX.Element => {
                       to={item.path}
                       onClick={() => setIsProfileOpen(false)}
                       className={`flex items-center space-x-3 px-4 py-2 text-text-secondary hover:bg-secondary-50 hover:text-primary transition-colors duration-200 ${
-                        location.pathname === item.path.split('?')[0] ? 'bg-secondary-50 text-primary' : ''
+                        location.pathname === item.path.split('?')[0]
+                          ? 'bg-secondary-50 text-primary'
+                          : ''
                       }`}
                     >
-                      <Icon aria-hidden="true" name={item.icon} size={18} />
+                      <Icon aria-hidden='true' name={item.icon} size={18} />
                       <span>{item.name}</span>
                     </Link>
                   ))}
@@ -205,7 +207,7 @@ const Header = (): JSX.Element => {
                             location.pathname === item.path ? 'bg-secondary-50 text-primary' : ''
                           }`}
                         >
-                          <Icon aria-hidden="true" name={item.icon} size={18} />
+                          <Icon aria-hidden='true' name={item.icon} size={18} />
                           <span>{item.name}</span>
                         </Link>
                       ))}
@@ -216,7 +218,7 @@ const Header = (): JSX.Element => {
                     onClick={handleLogout}
                     className='w-full px-4 py-2 text-left text-text-primary hover:bg-secondary-50 transition-colors duration-200 flex items-center space-x-2 border-t border-border mt-2 pt-2'
                   >
-                    <Icon aria-hidden="true" name='LogOut' size={16} />
+                    <Icon aria-hidden='true' name='LogOut' size={16} />
                     <span>Déconnexion</span>
                   </button>
                 </div>
@@ -239,47 +241,51 @@ const Header = (): JSX.Element => {
                   location.pathname === item.path ? 'bg-secondary-50 text-primary' : ''
                 }`}
               >
-                <Icon aria-hidden="true" name={item.icon} size={18} />
+                <Icon aria-hidden='true' name={item.icon} size={18} />
                 <span>{item.name}</span>
               </Link>
             ))}
 
             {/* Profile items in mobile menu */}
-            {user && profileItems.map(item => (
-              <Link
-                key={item.path}
-                to={item.path}
-                onClick={() => setIsMenuOpen(false)}
-                className={`flex items-center space-x-3 px-4 py-3 text-text-secondary hover:bg-secondary-50 hover:text-primary transition-colors duration-200 rounded-lg ${
-                  location.pathname === item.path.split('?')[0] ? 'bg-secondary-50 text-primary' : ''
-                }`}
-              >
-                <Icon aria-hidden="true" name={item.icon} size={18} />
-                <span>{item.name}</span>
-              </Link>
-            ))}
+            {user &&
+              profileItems.map(item => (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  onClick={() => setIsMenuOpen(false)}
+                  className={`flex items-center space-x-3 px-4 py-3 text-text-secondary hover:bg-secondary-50 hover:text-primary transition-colors duration-200 rounded-lg ${
+                    location.pathname === item.path.split('?')[0]
+                      ? 'bg-secondary-50 text-primary'
+                      : ''
+                  }`}
+                >
+                  <Icon aria-hidden='true' name={item.icon} size={18} />
+                  <span>{item.name}</span>
+                </Link>
+              ))}
 
             {/* Admin items in mobile menu */}
-            {adminItems.length > 0 && adminItems.map(item => (
-              <Link
-                key={item.path}
-                to={item.path}
-                onClick={() => setIsMenuOpen(false)}
-                className={`flex items-center space-x-3 px-4 py-3 text-text-secondary hover:bg-secondary-50 hover:text-primary transition-colors duration-200 rounded-lg ${
-                  location.pathname === item.path ? 'bg-secondary-50 text-primary' : ''
-                }`}
-              >
-                <Icon aria-hidden="true" name={item.icon} size={18} />
-                <span>{item.name}</span>
-              </Link>
-            ))}
+            {adminItems.length > 0 &&
+              adminItems.map(item => (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  onClick={() => setIsMenuOpen(false)}
+                  className={`flex items-center space-x-3 px-4 py-3 text-text-secondary hover:bg-secondary-50 hover:text-primary transition-colors duration-200 rounded-lg ${
+                    location.pathname === item.path ? 'bg-secondary-50 text-primary' : ''
+                  }`}
+                >
+                  <Icon aria-hidden='true' name={item.icon} size={18} />
+                  <span>{item.name}</span>
+                </Link>
+              ))}
 
             {user && (
               <button
                 onClick={handleLogout}
                 className='flex items-center space-x-2 w-full px-4 py-3 text-text-primary hover:bg-secondary-50 transition-colors duration-200 rounded-lg'
               >
-                <Icon aria-hidden="true" name='LogOut' size={16} />
+                <Icon aria-hidden='true' name='LogOut' size={16} />
                 <span>Déconnexion</span>
               </button>
             )}
@@ -290,7 +296,7 @@ const Header = (): JSX.Element => {
                   onClick={() => setIsMenuOpen(false)}
                   className='flex items-center justify-center space-x-2 text-text-secondary hover:text-primary transition-colors duration-200'
                 >
-                  <Icon aria-hidden="true" name='LogIn' size={18} />
+                  <Icon aria-hidden='true' name='LogIn' size={18} />
                   <span>Connexion</span>
                 </Link>
                 <Link
@@ -298,7 +304,7 @@ const Header = (): JSX.Element => {
                   onClick={() => setIsMenuOpen(false)}
                   className='flex items-center justify-center space-x-2 bg-primary text-white px-4 py-3 rounded-lg hover:bg-primary-700 transition-colors duration-200 font-medium'
                 >
-                  <Icon aria-hidden="true" name='UserPlus' size={18} />
+                  <Icon aria-hidden='true' name='UserPlus' size={18} />
                   <span>Rejoindre</span>
                 </Link>
               </div>

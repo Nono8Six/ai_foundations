@@ -50,7 +50,8 @@ const CoursePathway: React.FC<CoursePathwayProps> = ({ courses }) => {
             <div
               className={`w-12 h-12 bg-gradient-to-br ${getDifficultyColor(difficulty)} rounded-full flex items-center justify-center mr-4`}
             >
-              <Icon aria-hidden="true" 
+              <Icon
+                aria-hidden='true'
                 name={
                   difficulty === 'Débutant'
                     ? 'Play'
@@ -100,11 +101,11 @@ const CoursePathway: React.FC<CoursePathwayProps> = ({ courses }) => {
                         }`}
                       >
                         {course.progress === 100 ? (
-                          <Icon aria-hidden="true"  name='Check' size={20} />
+                          <Icon aria-hidden='true' name='Check' size={20} />
                         ) : course.isEnrolled ? (
-                          <Icon aria-hidden="true"  name='Play' size={20} />
+                          <Icon aria-hidden='true' name='Play' size={20} />
                         ) : (
-                          <Icon aria-hidden="true"  name='Lock' size={20} />
+                          <Icon aria-hidden='true' name='Lock' size={20} />
                         )}
                       </div>
                     </div>
@@ -129,19 +130,19 @@ const CoursePathway: React.FC<CoursePathwayProps> = ({ courses }) => {
                             <div className='flex items-center gap-4 text-sm text-text-secondary'>
                               {course.duration && (
                                 <div className='flex items-center gap-1'>
-                                  <Icon aria-hidden="true"  name='Clock' size={14} />
+                                  <Icon aria-hidden='true' name='Clock' size={14} />
                                   <span>{course.duration}</span>
                                 </div>
                               )}
                               {course.modules && (
                                 <div className='flex items-center gap-1'>
-                                  <Icon aria-hidden="true"  name='BookOpen' size={14} />
+                                  <Icon aria-hidden='true' name='BookOpen' size={14} />
                                   <span>{course.modules} modules</span>
                                 </div>
                               )}
                               {course.xpReward && (
                                 <div className='flex items-center gap-1'>
-                                  <Icon aria-hidden="true"  name='Award' size={14} />
+                                  <Icon aria-hidden='true' name='Award' size={14} />
                                   <span>{course.xpReward} XP</span>
                                 </div>
                               )}
@@ -231,7 +232,12 @@ const CoursePathway: React.FC<CoursePathwayProps> = ({ courses }) => {
                         {/* Rating */}
                         {course.rating !== undefined && (
                           <div className='flex items-center gap-1 ml-auto'>
-                            <Icon aria-hidden="true"  name='Star' size={14} className='text-warning fill-current' />
+                            <Icon
+                              aria-hidden='true'
+                              name='Star'
+                              size={14}
+                              className='text-warning fill-current'
+                            />
                             <span className='text-sm font-medium text-text-primary'>
                               {course.rating}
                             </span>
@@ -253,7 +259,7 @@ const CoursePathway: React.FC<CoursePathwayProps> = ({ courses }) => {
       {/* Pathway Completion Message */}
       {courses.length > 0 && (
         <div className='text-center py-12 bg-gradient-to-r from-primary-50 to-accent-50 rounded-xl'>
-          <Icon aria-hidden="true"  name='Trophy' size={48} className='mx-auto text-primary mb-4' />
+          <Icon aria-hidden='true' name='Trophy' size={48} className='mx-auto text-primary mb-4' />
           <h3 className='text-xl font-bold text-text-primary mb-2'>Parcours d'Excellence IA</h3>
           <p className='text-text-secondary max-w-2xl mx-auto'>
             Suivez ce parcours structuré pour maîtriser l'intelligence artificielle de manière

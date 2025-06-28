@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Icon from '@frontend/components/AppIcon';
 import Image from '@frontend/components/AppImage';
-import { log } from '@/logger'
+import { log } from '@/logger';
 import {
   BUCKETS,
   listBucketFiles,
@@ -66,9 +66,7 @@ const MediaLibrary: React.FC<MediaLibraryProps> = ({ onClose, onSelectMedia }) =
     if (files.length) {
       setIsUploading(true);
       try {
-        await Promise.all(
-          files.map(file => uploadToBucket(BUCKETS[activeTab], file))
-        );
+        await Promise.all(files.map(file => uploadToBucket(BUCKETS[activeTab], file)));
         fetchMedia(activeTab);
       } catch (err) {
         log.error('Upload failed', err);
@@ -112,7 +110,7 @@ const MediaLibrary: React.FC<MediaLibraryProps> = ({ onClose, onSelectMedia }) =
               isSelected ? 'bg-primary border-primary' : 'bg-white border-secondary-300'
             }`}
           >
-            {isSelected && <Icon aria-hidden="true"  name='Check' size={14} color='white' />}
+            {isSelected && <Icon aria-hidden='true' name='Check' size={14} color='white' />}
           </div>
         </div>
 
@@ -122,11 +120,11 @@ const MediaLibrary: React.FC<MediaLibraryProps> = ({ onClose, onSelectMedia }) =
             <Image src={item.url} alt={item.name} className='w-full h-full object-cover' />
           ) : item.type === 'video' ? (
             <div className='w-full h-full flex items-center justify-center'>
-              <Icon aria-hidden="true"  name='Play' size={32} className='text-secondary-400' />
+              <Icon aria-hidden='true' name='Play' size={32} className='text-secondary-400' />
             </div>
           ) : (
             <div className='w-full h-full flex items-center justify-center'>
-              <Icon aria-hidden="true"  name='FileText' size={32} className='text-secondary-400' />
+              <Icon aria-hidden='true' name='FileText' size={32} className='text-secondary-400' />
             </div>
           )}
         </div>
@@ -135,9 +133,7 @@ const MediaLibrary: React.FC<MediaLibraryProps> = ({ onClose, onSelectMedia }) =
         <div className='p-3'>
           <h4 className='font-medium text-text-primary text-sm truncate mb-1'>{item.name}</h4>
           <div className='text-xs text-text-secondary space-y-1'>
-            {item.size && (
-              <div>{(item.size / 1024 / 1024).toFixed(2)} MB</div>
-            )}
+            {item.size && <div>{(item.size / 1024 / 1024).toFixed(2)} MB</div>}
             {item.dimensions && <div>{item.dimensions}</div>}
             {item.duration && <div>{item.duration}</div>}
             {item.pages && <div>{item.pages} pages</div>}
@@ -182,7 +178,7 @@ const MediaLibrary: React.FC<MediaLibraryProps> = ({ onClose, onSelectMedia }) =
                     : 'border-transparent text-text-secondary hover:text-text-primary'
                 }`}
               >
-                <Icon aria-hidden="true"  name={tab.icon} size={16} className='mr-2' />
+                <Icon aria-hidden='true' name={tab.icon} size={16} className='mr-2' />
                 {tab.label}
                 <span className='ml-2 px-2 py-0.5 bg-secondary-100 text-secondary-600 rounded-full text-xs'>
                   {tab.count}
@@ -197,7 +193,8 @@ const MediaLibrary: React.FC<MediaLibraryProps> = ({ onClose, onSelectMedia }) =
           {/* Search */}
           <div className='flex-1 max-w-md'>
             <div className='relative'>
-              <Icon aria-hidden="true" 
+              <Icon
+                aria-hidden='true'
                 name='Search'
                 size={20}
                 className='absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary-400'
@@ -229,12 +226,12 @@ const MediaLibrary: React.FC<MediaLibraryProps> = ({ onClose, onSelectMedia }) =
             />
             {isUploading ? (
               <div className='flex items-center'>
-                <Icon aria-hidden="true"  name='Loader2' size={16} className='animate-spin mr-2' />
+                <Icon aria-hidden='true' name='Loader2' size={16} className='animate-spin mr-2' />
                 Téléchargement...
               </div>
             ) : (
               <div className='flex items-center'>
-                <Icon aria-hidden="true"  name='Upload' size={16} className='mr-2' />
+                <Icon aria-hidden='true' name='Upload' size={16} className='mr-2' />
                 Télécharger
               </div>
             )}
@@ -249,7 +246,8 @@ const MediaLibrary: React.FC<MediaLibraryProps> = ({ onClose, onSelectMedia }) =
             </div>
           ) : (
             <div className='text-center py-12'>
-              <Icon aria-hidden="true" 
+              <Icon
+                aria-hidden='true'
                 name={tabs.find(t => t.id === activeTab)?.icon || 'File'}
                 size={64}
                 className='text-secondary-300 mx-auto mb-4'
@@ -277,7 +275,7 @@ const MediaLibrary: React.FC<MediaLibraryProps> = ({ onClose, onSelectMedia }) =
                     onChange={handleFileUpload}
                     className='hidden'
                   />
-                  <Icon aria-hidden="true"  name='Upload' size={16} className='mr-2' />
+                  <Icon aria-hidden='true' name='Upload' size={16} className='mr-2' />
                   Télécharger des fichiers
                 </label>
               )}
@@ -305,7 +303,7 @@ const MediaLibrary: React.FC<MediaLibraryProps> = ({ onClose, onSelectMedia }) =
                 onClick={handleSelectMedia}
                 className='px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors duration-200 font-medium'
               >
-                <Icon aria-hidden="true"  name='Check' size={16} className='mr-2' />
+                <Icon aria-hidden='true' name='Check' size={16} className='mr-2' />
                 Sélectionner
               </button>
             </div>

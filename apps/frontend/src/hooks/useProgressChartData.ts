@@ -32,7 +32,14 @@ interface ChartData {
   subject: SubjectData[];
 }
 
-import { format, parseISO, eachDayOfInterval, subDays, eachMonthOfInterval, subMonths } from 'date-fns';
+import {
+  format,
+  parseISO,
+  eachDayOfInterval,
+  subDays,
+  eachMonthOfInterval,
+  subMonths,
+} from 'date-fns';
 
 const useProgressChartData = (
   userProgress: UserProgressRow[] | undefined,
@@ -47,7 +54,14 @@ const useProgressChartData = (
   });
 
   const enrichedLessons = useMemo(() => {
-    if (!lessons || lessons.length === 0 || !courses || courses.length === 0 || !modules || modules.length === 0) {
+    if (
+      !lessons ||
+      lessons.length === 0 ||
+      !courses ||
+      courses.length === 0 ||
+      !modules ||
+      modules.length === 0
+    ) {
       return {} as Record<string, EnrichedLesson>;
     }
     interface EnrichedLesson extends LessonRow {
@@ -95,7 +109,10 @@ const useProgressChartData = (
 
       completedProgress.forEach(p => {
         // Check if completed_at is a valid date string before parsing
-        if (p.completed_at && format(parseISO(p.completed_at), 'yyyy-MM-dd') === format(dayDate, 'yyyy-MM-dd')) {
+        if (
+          p.completed_at &&
+          format(parseISO(p.completed_at), 'yyyy-MM-dd') === format(dayDate, 'yyyy-MM-dd')
+        ) {
           lessonsCompletedThisDay++;
           const lessonDetails = enrichedLessons[p.lesson_id];
           if (lessonDetails && lessonDetails.duration) {
@@ -120,7 +137,10 @@ const useProgressChartData = (
       let hoursSpentThisMonth = 0;
 
       completedProgress.forEach(p => {
-        if (p.completed_at && format(parseISO(p.completed_at), 'yyyy-MM') === format(monthDate, 'yyyy-MM')) {
+        if (
+          p.completed_at &&
+          format(parseISO(p.completed_at), 'yyyy-MM') === format(monthDate, 'yyyy-MM')
+        ) {
           lessonsCompletedThisMonth++;
           const lessonDetails = enrichedLessons[p.lesson_id];
           if (lessonDetails && lessonDetails.duration) {
@@ -151,7 +171,6 @@ const useProgressChartData = (
     }));
 
     setChartData({ weekly: weeklyData, monthly: monthlyData, subject: subjectData });
-
   }, [userProgress, enrichedLessons]);
 
   return chartData;

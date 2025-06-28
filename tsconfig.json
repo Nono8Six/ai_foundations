@@ -18,24 +18,17 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-      "$lib/*": ["./apps/frontend/src/lib/*"],
+      "@libs/*": ["./libs/*"],
       "@frontend/*": ["./apps/frontend/src/*"],
       "@backend/*": ["./apps/backend/src/*"],
-      "@/*": ["./libs/*"],
+      "$lib/*": ["./apps/frontend/src/lib/*"]
     },
-    "typeRoots": [
-  "./node_modules/@types"
-],
+    "typeRoots": ["./node_modules/@types"],
     "types": ["node"],
     "allowJs": false,
     "checkJs": false
   },
-  "include": [
-    "src/env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    "**/*.d.ts"
-  ],
+  "include": ["src/env.d.ts", "**/*.ts", "**/*.tsx", "**/*.d.ts"],
   "exclude": [
     "node_modules",
     "dist",

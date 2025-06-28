@@ -7,10 +7,13 @@ export default [
     languageOptions: {
       globals: {
         ...globals.node,
-        ...globals.browser
-      }
-    }
+        ...globals.browser,
+      },
+    },
+    rules: {
+      'no-console': 'error',
+    },
   },
   js.configs.recommended,
-  prettier
+  prettier,
 ];

@@ -31,18 +31,15 @@ graph LR;
 ## Commandes PNPM Essentielles (depuis la racine du projet)
 
 - **`pnpm db:pull`**:
-
   - **Action** : Se connecte à votre projet Supabase Cloud lié (via `SUPABASE_ACCESS_TOKEN` et `SUPABASE_PROJECT_REF` dans `.env`) et compare le schéma distant avec vos migrations locales. Il génère ensuite de nouveaux fichiers de migration dans `apps/backend/supabase/migrations/` pour refléter les changements détectés sur le cloud.
   - **Quand l'utiliser** : **Après chaque modification de schéma effectuée sur l'interface web de Supabase Cloud.**
   - **Important** : Assurez-vous d'avoir exécuté `pnpm --filter backend exec supabase link` une fois pour lier votre projet local.
 
 - **`pnpm gen:types`**:
-
   - **Action** : Génère le fichier `apps/frontend/src/types/supabase.ts` basé sur le schéma actuel de votre base de données (celle définie par `SUPABASE_PROJECT_REF` dans `.env`, donc votre instance Cloud).
   - **Quand l'utiliser** : **Toujours après un `pnpm db:pull` réussi** qui a modifié la structure de la base, ou si vous avez modifié des fonctions/types SQL qui impactent l'introspection du schéma.
 
 - **`pnpm db:start`**:
-
   - **Action** : Démarre une instance Supabase locale complète en utilisant Docker. Cette instance est construite à partir des fichiers de migration présents dans `apps/backend/supabase/migrations/`. Elle est donc un reflet de votre schéma (qui lui-même est un reflet du Cloud après un `db:pull`).
   - **Quand l'utiliser** : Optionnel. Utile pour :
     - Tester les migrations localement avant de les considérer comme "finales" (bien que dans ce workflow, elles proviennent du cloud).
@@ -51,7 +48,6 @@ graph LR;
   - Les données de cette instance locale sont persistantes grâce à un volume Docker (géré automatiquement par la CLI Supabase).
 
 - **`pnpm db:stop`**:
-
   - **Action** : Arrête l'instance Supabase locale démarrée avec `pnpm db:start`.
 
 - **`pnpm --filter backend exec supabase db reset`** (Exécuté depuis la racine, ou `pnpm exec supabase db reset` depuis `apps/backend/`)
@@ -61,14 +57,12 @@ graph LR;
 ## Workflow de Développement Quotidien
 
 1.  **Avant de commencer à coder** :
-
     - `git pull` pour récupérer les derniers changements du dépôt (y compris les migrations d'autres développeurs).
     - Si des nouvelles migrations ont été tirées :
       - `pnpm gen:types` pour mettre à jour vos types frontend.
       - Si vous utilisez l'instance Supabase locale : `pnpm db:reset` pour appliquer les nouvelles migrations à votre base locale.
 
 2.  **Pendant le développement (Frontend se connecte au Cloud)** :
-
     - Votre frontend (`pnpm dev:frontend` ou via `docker compose up frontend`) se connecte à l'instance Supabase Cloud définie dans votre `.env`.
     - **Si vous avez besoin de modifier le schéma** :
       1.  Allez sur l'interface web de votre projet Supabase Cloud.

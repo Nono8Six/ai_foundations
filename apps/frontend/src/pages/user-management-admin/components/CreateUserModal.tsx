@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Icon from '@frontend/components/AppIcon';
-import { log } from '@/logger'
+import { log } from '@/logger';
 
 interface CreateUserModalProps {
   onClose: () => void;
@@ -282,12 +282,12 @@ const CreateUserModal = ({ onClose, onUserCreated }: CreateUserModalProps) => {
             >
               {isSubmitting ? (
                 <>
-                  <Icon aria-hidden="true"  name='Loader2' size={16} className='mr-2 animate-spin' />
+                  <Icon aria-hidden='true' name='Loader2' size={16} className='mr-2 animate-spin' />
                   Création...
                 </>
               ) : (
                 <>
-                  <Icon aria-hidden="true"  name='Plus' size={16} className='mr-2' />
+                  <Icon aria-hidden='true' name='Plus' size={16} className='mr-2' />
                   Créer l'utilisateur
                 </>
               )}

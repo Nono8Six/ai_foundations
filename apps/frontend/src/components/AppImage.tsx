@@ -1,19 +1,13 @@
 import React from 'react';
-import { log } from '@/logger'
+import { log } from '@/logger';
 
-export interface AppImageProps
-  extends React.ImgHTMLAttributes<HTMLImageElement> {
+export interface AppImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   src?: string;
   alt?: string;
   className?: string;
 }
 
-const Image: React.FC<AppImageProps> = ({
-  src,
-  alt = 'Image Name',
-  className = '',
-  ...props
-}) => {
+const Image: React.FC<AppImageProps> = ({ src, alt = 'Image Name', className = '', ...props }) => {
   // Ensure src is a valid URL
   const getValidImageUrl = (url: string | undefined) => {
     if (!url) return '/assets/images/no_image.png';

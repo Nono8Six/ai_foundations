@@ -10,27 +10,33 @@ vi.mock('recharts', () => {
   const ActualRecharts = vi.importActual('recharts');
   return {
     ...ActualRecharts,
-    ResponsiveContainer: ({ children }) => <div data-testid="responsive-container">{children}</div>,
-    AreaChart: ({ children, data }) => <div data-testid="area-chart" data-chartdata={JSON.stringify(data)}>{children}</div>,
+    ResponsiveContainer: ({ children }) => <div data-testid='responsive-container'>{children}</div>,
+    AreaChart: ({ children, data }) => (
+      <div data-testid='area-chart' data-chartdata={JSON.stringify(data)}>
+        {children}
+      </div>
+    ),
     Area: ({ dataKey }) => <div data-testid={`area-${dataKey}`}></div>,
-    XAxis: () => <div data-testid="x-axis"></div>,
-    YAxis: () => <div data-testid="y-axis"></div>,
-    CartesianGrid: () => <div data-testid="cartesian-grid"></div>,
-    Tooltip: () => <div data-testid="tooltip"></div>,
-    Defs: ({children}) => <defs>{children}</defs>,
-    linearGradient: ({id, children}) => <linearGradient id={id}>{children}</linearGradient>,
+    XAxis: () => <div data-testid='x-axis'></div>,
+    YAxis: () => <div data-testid='y-axis'></div>,
+    CartesianGrid: () => <div data-testid='cartesian-grid'></div>,
+    Tooltip: () => <div data-testid='tooltip'></div>,
+    Defs: ({ children }) => <defs>{children}</defs>,
+    linearGradient: ({ id, children }) => <linearGradient id={id}>{children}</linearGradient>,
     stop: () => <stop></stop>,
   };
 });
-vi.mock('../../../components/AppIcon', () => ({ default: ({ name }) => <svg data-testid={`icon-${name}`}></svg> }));
+vi.mock('../../../components/AppIcon', () => ({
+  default: ({ name }) => <svg data-testid={`icon-${name}`}></svg>,
+}));
 vi.mock('../../../lib/supabase');
 
 describe('UserEngagementChart', () => {
-  const createBuilder = (result) => ({
+  const createBuilder = result => ({
     select: vi.fn().mockReturnThis(),
     gte: vi.fn().mockReturnThis(),
     lte: vi.fn().mockReturnThis(),
-    then: vi.fn((cb) => Promise.resolve(result).then(cb)),
+    then: vi.fn(cb => Promise.resolve(result).then(cb)),
   });
 
   beforeEach(() => {
@@ -49,14 +55,14 @@ describe('UserEngagementChart', () => {
 
     const sessions = [
       { user_id: 'u1', started_at: new Date(2023, 10, 20, 13, 5, 0).toISOString() }, // 13:00
-      { user_id: 'u2', started_at: new Date(2023, 10, 20, 13, 10, 0).toISOString() },// 13:00
+      { user_id: 'u2', started_at: new Date(2023, 10, 20, 13, 10, 0).toISOString() }, // 13:00
       { user_id: 'u1', started_at: new Date(2023, 10, 20, 10, 0, 0).toISOString() }, // 10:00
       { user_id: 'u3', started_at: new Date(2023, 10, 19, 14, 5, 0).toISOString() }, // Yesterday, should be included by 24h
     ];
 
     supabase.from.mockReturnValueOnce(createBuilder({ data: sessions, error: null }));
 
-    render(<UserEngagementChart timeRange="24h" />);
+    render(<UserEngagementChart timeRange='24h' />);
 
     expect(screen.getByText("Chargement des données d'engagement...")).toBeInTheDocument();
 
@@ -84,11 +90,15 @@ describe('UserEngagementChart', () => {
     expect(chartData[14].sessions).toBe(1);
 
     // Check summary
-    expect(screen.getByText("Pic d'activité").closest('div').querySelector('p.text-lg').textContent).toBe('2'); // Peak was 2 users at 13:00
+    expect(
+      screen.getByText("Pic d'activité").closest('div').querySelector('p.text-lg').textContent
+    ).toBe('2'); // Peak was 2 users at 13:00
     // Total sessions = 4. Avg sessions = 4 / 24 buckets (many are 0) = 0 (rounded)
     // The component calculates avg over buckets with activity or all buckets?
     // It's totalSessions / finalData.length. So 4/24 = 0.
-    expect(screen.getByText("Sessions moyennes").closest('div').querySelector('p.text-lg').textContent).toBe('0');
+    expect(
+      screen.getByText('Sessions moyennes').closest('div').querySelector('p.text-lg').textContent
+    ).toBe('0');
   });
 
   test('displays loading state and then renders chart for 7d range', async () => {
@@ -108,7 +118,7 @@ describe('UserEngagementChart', () => {
     ];
     supabase.from.mockReturnValueOnce(createBuilder({ data: sessions, error: null }));
 
-    render(<UserEngagementChart timeRange="7d" />);
+    render(<UserEngagementChart timeRange='7d' />);
 
     await waitFor(() => screen.getByTestId('area-chart'));
     const chartData = JSON.parse(screen.getByTestId('area-chart').getAttribute('data-chartdata'));
@@ -146,19 +156,23 @@ describe('UserEngagementChart', () => {
   test('displays "No data available" message when no session data is fetched', async () => {
     supabase.from.mockReturnValueOnce(createBuilder({ data: [], error: null }));
 
-    render(<UserEngagementChart timeRange="7d" />);
+    render(<UserEngagementChart timeRange='7d' />);
 
     await screen.findByText("Aucune donnée d'engagement disponible pour la période sélectionnée.");
   });
 
   test('handles error during Supabase fetch', async () => {
-    supabase.from.mockReturnValueOnce(createBuilder({ data: null, error: { message: 'DB error' } }));
+    supabase.from.mockReturnValueOnce(
+      createBuilder({ data: null, error: { message: 'DB error' } })
+    );
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-    render(<UserEngagementChart timeRange="24h" />);
+    render(<UserEngagementChart timeRange='24h' />);
 
     await screen.findByText("Aucune donnée d'engagement disponible pour la période sélectionnée.");
-    expect(consoleErrorSpy).toHaveBeenCalledWith('Error fetching user_sessions for 24h:', { message: 'DB error' });
+    expect(consoleErrorSpy).toHaveBeenCalledWith('Error fetching user_sessions for 24h:', {
+      message: 'DB error',
+    });
     consoleErrorSpy.mockRestore();
   });
 });

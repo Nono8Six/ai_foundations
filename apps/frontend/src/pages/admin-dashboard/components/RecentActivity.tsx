@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { log } from '@/logger'
+import { log } from '@/logger';
 import Icon from '@frontend/components/AppIcon';
 import Image from '@frontend/components/AppImage';
 import { supabase } from '@frontend/lib/supabase';
@@ -71,7 +71,7 @@ const getActivityTypeProps = type => {
         defaultUser: { name: 'Système', avatar: null },
       };
     case 'payment_received':
-       return {
+      return {
         label: 'Paiement',
         icon: 'CreditCard',
         iconColor: 'text-success',
@@ -101,7 +101,6 @@ const getActivityTypeProps = type => {
   }
 };
 
-
 const RecentActivity = () => {
   const [activitiesData, setActivitiesData] = useState<ActivityItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -111,7 +110,8 @@ const RecentActivity = () => {
     try {
       const { data, error } = await supabase
         .from('activity_log')
-        .select(`
+        .select(
+          `
           id,
           type,
           action,
@@ -121,7 +121,8 @@ const RecentActivity = () => {
             full_name,
             avatar_url
           )
-        `)
+        `
+        )
         .order('created_at', { ascending: false })
         .limit(10);
 
@@ -164,7 +165,7 @@ const RecentActivity = () => {
     return (
       <div className='bg-surface rounded-lg p-6 shadow-subtle border border-border mb-8'>
         <h3 className='text-lg font-semibold text-text-primary mb-6'>Activité récente</h3>
-        <p className="text-text-secondary">Chargement des activités...</p>
+        <p className='text-text-secondary'>Chargement des activités...</p>
       </div>
     );
   }
@@ -173,7 +174,7 @@ const RecentActivity = () => {
     return (
       <div className='bg-surface rounded-lg p-6 shadow-subtle border border-border mb-8'>
         <h3 className='text-lg font-semibold text-text-primary mb-6'>Activité récente</h3>
-        <p className="text-text-secondary">Aucune activité récente.</p>
+        <p className='text-text-secondary'>Aucune activité récente.</p>
       </div>
     );
   }
@@ -207,20 +208,33 @@ const RecentActivity = () => {
                 />
               ) : (
                 <div className='w-10 h-10 bg-secondary-200 rounded-full flex items-center justify-center'>
-                  <Icon aria-hidden="true"  name={activity.user && activity.user.name === 'Système' ? 'Settings' : 'User'} size={20} className='text-secondary-500' />
+                  <Icon
+                    aria-hidden='true'
+                    name={activity.user && activity.user.name === 'Système' ? 'Settings' : 'User'}
+                    size={20}
+                    className='text-secondary-500'
+                  />
                 </div>
               )}
             </div>
 
             <div className='flex-1 min-w-0'>
               <div className='flex items-center space-x-2 mb-1'>
-                <Icon aria-hidden="true"  name={activity.icon} size={16} className={activity.iconColor} />
+                <Icon
+                  aria-hidden='true'
+                  name={activity.icon}
+                  size={16}
+                  className={activity.iconColor}
+                />
                 <span className='text-xs font-medium text-text-secondary bg-secondary-100 px-2 py-1 rounded-full'>
                   {activity.label}
                 </span>
               </div>
               <p className='text-sm text-text-primary'>
-                <span className='font-medium'>{activity.user ? activity.user.name : 'Utilisateur inconnu'}</span> {activity.action}
+                <span className='font-medium'>
+                  {activity.user ? activity.user.name : 'Utilisateur inconnu'}
+                </span>{' '}
+                {activity.action}
               </p>
               <p className='text-xs text-text-secondary mt-1'>{activity.timestamp}</p>
             </div>

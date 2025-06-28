@@ -14,4 +14,3 @@ Voici un index rapide de tous les fichiers de documentation disponibles dans ce 
 - [STYLE_GUIDE.md](STYLE_GUIDE.md) - Règles de style et conventions de code.
 - [ui.md](ui.md) - Emplacement des composants d'interface utilisateur de base.
 - [user-dashboard-refactor-plan.md](user-dashboard-refactor-plan.md) - Plan pour remplacer les données fictives du tableau de bord utilisateur.
-

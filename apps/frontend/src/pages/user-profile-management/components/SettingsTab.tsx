@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@frontend/context/AuthContext';
 import Icon from '@frontend/components/AppIcon';
-import { log } from '@/logger'
+import { log } from '@/logger';
 
 const SettingsTab = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -38,7 +38,7 @@ const SettingsTab = () => {
       try {
         setIsLoading(true);
         const settings = await getUserSettings();
-        
+
         if (settings) {
           if (settings.notification_settings) {
             setNotificationSettings(settings.notification_settings);
@@ -63,7 +63,7 @@ const SettingsTab = () => {
   const handleSaveSettings = async () => {
     try {
       setIsSubmitting(true);
-      
+
       const settingsData = {
         notification_settings: notificationSettings,
         privacy_settings: privacySettings,
@@ -71,10 +71,9 @@ const SettingsTab = () => {
       };
 
       await updateUserSettings(settingsData);
-      
+
       // Show success message
       alert('Paramètres sauvegardés avec succès !');
-      
     } catch (error) {
       log.error('Error saving settings:', error);
       alert('Erreur lors de la sauvegarde des paramètres. Veuillez réessayer.');
@@ -135,7 +134,7 @@ const SettingsTab = () => {
   if (isLoading) {
     return (
       <div className='flex items-center justify-center py-8'>
-        <Icon aria-hidden="true"  name='Loader2' size={24} className='animate-spin text-primary' />
+        <Icon aria-hidden='true' name='Loader2' size={24} className='animate-spin text-primary' />
         <span className='ml-2 text-text-secondary'>Chargement des paramètres...</span>
       </div>
     );
@@ -155,7 +154,7 @@ const SettingsTab = () => {
         {/* Notification Settings */}
         <div className='bg-surface rounded-lg border border-border p-6'>
           <h4 className='text-base font-semibold text-text-primary mb-4 flex items-center'>
-            <Icon aria-hidden="true"  name='Bell' size={20} className='mr-2' />
+            <Icon aria-hidden='true' name='Bell' size={20} className='mr-2' />
             Notifications
           </h4>
           <div className='space-y-4'>
@@ -198,7 +197,7 @@ const SettingsTab = () => {
         {/* Learning Preferences */}
         <div className='bg-surface rounded-lg border border-border p-6'>
           <h4 className='text-base font-semibold text-text-primary mb-4 flex items-center'>
-            <Icon aria-hidden="true"  name='BookOpen' size={20} className='mr-2' />
+            <Icon aria-hidden='true' name='BookOpen' size={20} className='mr-2' />
             Préférences d'apprentissage
           </h4>
           <div className='space-y-6'>
@@ -292,7 +291,7 @@ const SettingsTab = () => {
         {/* Privacy Settings */}
         <div className='bg-surface rounded-lg border border-border p-6'>
           <h4 className='text-base font-semibold text-text-primary mb-4 flex items-center'>
-            <Icon aria-hidden="true"  name='Shield' size={20} className='mr-2' />
+            <Icon aria-hidden='true' name='Shield' size={20} className='mr-2' />
             Confidentialité
           </h4>
           <div className='space-y-4'>
@@ -355,7 +354,7 @@ const SettingsTab = () => {
         {/* Data Management */}
         <div className='bg-surface rounded-lg border border-border p-6'>
           <h4 className='text-base font-semibold text-text-primary mb-4 flex items-center'>
-            <Icon aria-hidden="true"  name='Database' size={20} className='mr-2' />
+            <Icon aria-hidden='true' name='Database' size={20} className='mr-2' />
             Gestion des données
           </h4>
           <div className='space-y-4'>
@@ -371,7 +370,7 @@ const SettingsTab = () => {
                 onClick={exportData}
                 className='inline-flex items-center px-4 py-2 border border-border rounded-lg text-sm font-medium text-text-primary bg-surface hover:bg-secondary-50 transition-colors'
               >
-                <Icon aria-hidden="true"  name='Download' size={16} className='mr-2' />
+                <Icon aria-hidden='true' name='Download' size={16} className='mr-2' />
                 Exporter
               </button>
             </div>
@@ -381,7 +380,7 @@ const SettingsTab = () => {
         {/* Danger Zone */}
         <div className='bg-error-50 rounded-lg border border-error-200 p-6'>
           <h4 className='text-base font-semibold text-error-700 mb-4 flex items-center'>
-            <Icon aria-hidden="true"  name='AlertTriangle' size={20} className='mr-2' />
+            <Icon aria-hidden='true' name='AlertTriangle' size={20} className='mr-2' />
             Zone de danger
           </h4>
           <div className='space-y-4'>
@@ -412,7 +411,9 @@ const SettingsTab = () => {
             disabled={isSubmitting}
             className='inline-flex items-center px-6 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-primary hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors disabled:opacity-50'
           >
-            {isSubmitting && <Icon aria-hidden="true"  name='Loader2' size={16} className='mr-2 animate-spin' />}
+            {isSubmitting && (
+              <Icon aria-hidden='true' name='Loader2' size={16} className='mr-2 animate-spin' />
+            )}
             {isSubmitting ? 'Sauvegarde...' : 'Enregistrer les paramètres'}
           </button>
         </div>
@@ -424,7 +425,7 @@ const SettingsTab = () => {
           <div className='bg-surface rounded-lg max-w-md w-full p-6'>
             <div className='flex items-center mb-4'>
               <div className='w-12 h-12 bg-error-100 rounded-full flex items-center justify-center mr-4'>
-                <Icon aria-hidden="true"  name='AlertTriangle' size={24} className='text-error' />
+                <Icon aria-hidden='true' name='AlertTriangle' size={24} className='text-error' />
               </div>
               <div>
                 <h3 className='text-lg font-semibold text-text-primary'>

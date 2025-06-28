@@ -1,8 +1,8 @@
 // src/pages/user-dashboard/index.jsx
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from "../../context/AuthContext";
-import { useCourses } from "../../context/CourseContext";
+import { useAuth } from '../../context/AuthContext';
+import { useCourses } from '../../context/CourseContext';
 import Icon from '@frontend/components/AppIcon';
 import Image from '@frontend/components/AppImage';
 import ErrorBoundary from '@frontend/components/ErrorBoundary';
@@ -43,7 +43,7 @@ const UserDashboard = () => {
       return {
         title: `Continuer ${inProgressCourse.title}`,
         // Lien corrigé pour pointer vers une leçon spécifique (à adapter si besoin)
-        href: `/lesson-viewer/${inProgressCourse.id}`, 
+        href: `/lesson-viewer/${inProgressCourse.id}`,
       };
     }
 
@@ -54,28 +54,35 @@ const UserDashboard = () => {
         href: `/lesson-viewer/${unstartedCourse.id}`,
       };
     }
-    
+
     if (courses.length > 0) {
-        return {
-          title: `Revoir ${courses[0].title}`,
-          href: `/lesson-viewer/${courses[0].id}`,
-        };
+      return {
+        title: `Revoir ${courses[0].title}`,
+        href: `/lesson-viewer/${courses[0].id}`,
+      };
     }
     return null;
   }, [courses]);
 
-  const userData = useMemo(() => ({
-    name: userProfile?.full_name || user?.email || 'Utilisateur',
-    avatar: userProfile?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(userProfile?.full_name || user?.email || 'User')}&background=1e40af&color=fff`,
-    level: userProfile?.level || 1,
-    xp: userProfile?.xp || 0,
-    xpToNextLevel: Math.floor(100 * Math.pow(userProfile?.level || 1, 1.5)),
-    currentStreak: userProfile?.current_streak || 0,
-    totalCourses: courses.length,
-    completedCourses: courses.filter(c => c.progress.completed > 0 && c.progress.completed === c.progress.total).length,
-    totalLessons: courses.reduce((acc, course) => acc + (course.progress?.total || 0), 0),
-    completedLessons: courses.reduce((acc, course) => acc + (course.progress?.completed || 0), 0),
-  }), [userProfile, user, courses]);
+  const userData = useMemo(
+    () => ({
+      name: userProfile?.full_name || user?.email || 'Utilisateur',
+      avatar:
+        userProfile?.avatar_url ||
+        `https://ui-avatars.com/api/?name=${encodeURIComponent(userProfile?.full_name || user?.email || 'User')}&background=1e40af&color=fff`,
+      level: userProfile?.level || 1,
+      xp: userProfile?.xp || 0,
+      xpToNextLevel: Math.floor(100 * Math.pow(userProfile?.level || 1, 1.5)),
+      currentStreak: userProfile?.current_streak || 0,
+      totalCourses: courses.length,
+      completedCourses: courses.filter(
+        c => c.progress.completed > 0 && c.progress.completed === c.progress.total
+      ).length,
+      totalLessons: courses.reduce((acc, course) => acc + (course.progress?.total || 0), 0),
+      completedLessons: courses.reduce((acc, course) => acc + (course.progress?.completed || 0), 0),
+    }),
+    [userProfile, user, courses]
+  );
 
   const getFirstName = () => {
     const fullName = userProfile?.full_name || '';
@@ -88,7 +95,7 @@ const UserDashboard = () => {
     if (hour < 18) return 'Bon après-midi';
     return 'Bonsoir';
   };
-  
+
   const quickActions = [
     {
       id: 'continue',
@@ -98,7 +105,7 @@ const UserDashboard = () => {
       color: 'bg-primary',
       hoverColor: 'hover:bg-primary-700',
       link: nextLessonToContinue ? nextLessonToContinue.href : '/programmes',
-      onClick: () => navigate(nextLessonToContinue ? nextLessonToContinue.href : '/programmes')
+      onClick: () => navigate(nextLessonToContinue ? nextLessonToContinue.href : '/programmes'),
     },
     {
       id: 'explore',
@@ -108,7 +115,7 @@ const UserDashboard = () => {
       color: 'bg-accent',
       hoverColor: 'hover:bg-accent-700',
       link: '/programmes',
-      onClick: () => navigate('/programmes')
+      onClick: () => navigate('/programmes'),
     },
     {
       id: 'profile',
@@ -118,7 +125,7 @@ const UserDashboard = () => {
       color: 'bg-warning',
       hoverColor: 'hover:bg-warning-700',
       link: '/profile',
-      onClick: () => navigate('/profile')
+      onClick: () => navigate('/profile'),
     },
   ];
 
@@ -135,7 +142,11 @@ const UserDashboard = () => {
                 <p className='text-text-secondary'>
                   {userData.currentStreak > 0 ? (
                     <span>
-                      Vous êtes sur une série de <span className='font-medium text-primary'>{userData.currentStreak} jours</span> d'apprentissage. Continuez !
+                      Vous êtes sur une série de{' '}
+                      <span className='font-medium text-primary'>
+                        {userData.currentStreak} jours
+                      </span>{' '}
+                      d'apprentissage. Continuez !
                     </span>
                   ) : (
                     "Commencez votre parcours d'apprentissage dès aujourd'hui"
@@ -165,29 +176,37 @@ const UserDashboard = () => {
             <div className='lg:col-span-3 space-y-8'>
               <ProgressChart />
               <RecentActivity activities={activities} />
-              
+
               <div className='bg-surface rounded-xl border border-border p-6'>
                 <div className='flex items-center justify-between mb-6'>
                   <h2 className='text-xl font-semibold text-text-primary'>Mes cours</h2>
-                  <Link 
+                  <Link
                     to='/programmes'
                     className='text-primary hover:text-primary-700 transition-colors text-sm font-medium'
                   >
                     Voir le catalogue
                   </Link>
                 </div>
-                
+
                 {isLoading ? (
                   <div className='text-center py-10'>
-                    <Icon aria-hidden="true"  name='Loader' size={32} className='mx-auto animate-spin text-primary mb-4' />
+                    <Icon
+                      aria-hidden='true'
+                      name='Loader'
+                      size={32}
+                      className='mx-auto animate-spin text-primary mb-4'
+                    />
                     <p className='text-text-secondary'>Chargement de vos cours...</p>
                   </div>
                 ) : courses.length > 0 ? (
                   <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                     {courses.map(course => {
-                      const progressPercentage = course.progress.total > 0 ? (course.progress.completed / course.progress.total) * 100 : 0;
+                      const progressPercentage =
+                        course.progress.total > 0
+                          ? (course.progress.completed / course.progress.total) * 100
+                          : 0;
                       return (
-                        <div 
+                        <div
                           key={course.id}
                           className='bg-surface rounded-xl border border-border overflow-hidden transform hover:-translate-y-1 transition-transform duration-300'
                         >
@@ -197,8 +216,12 @@ const UserDashboard = () => {
                             className='w-full h-40 object-cover'
                           />
                           <div className='p-4'>
-                            <h4 className='font-semibold text-text-primary truncate'>{course.title}</h4>
-                            <p className='text-sm text-text-secondary mt-1'>{course.category || 'IA'}</p>
+                            <h4 className='font-semibold text-text-primary truncate'>
+                              {course.title}
+                            </h4>
+                            <p className='text-sm text-text-secondary mt-1'>
+                              {course.category || 'IA'}
+                            </p>
                             <div className='mt-4'>
                               <div className='flex justify-between text-xs text-text-secondary mb-1'>
                                 <span>Progression</span>
@@ -224,23 +247,31 @@ const UserDashboard = () => {
                   </div>
                 ) : (
                   <div className='text-center py-8'>
-                    <Icon aria-hidden="true"  name='BookOpen' size={48} className='mx-auto text-secondary-300 mb-4' />
-                    <h3 className='text-lg font-medium text-text-primary mb-2'>Aucun cours inscrit</h3>
+                    <Icon
+                      aria-hidden='true'
+                      name='BookOpen'
+                      size={48}
+                      className='mx-auto text-secondary-300 mb-4'
+                    />
+                    <h3 className='text-lg font-medium text-text-primary mb-2'>
+                      Aucun cours inscrit
+                    </h3>
                     <p className='text-text-secondary mb-4'>
-                      Découvrez notre catalogue de formations et commencez votre parcours d'apprentissage.
+                      Découvrez notre catalogue de formations et commencez votre parcours
+                      d'apprentissage.
                     </p>
                     <Link
                       to='/programmes'
                       className='inline-flex items-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors'
                     >
-                      <Icon aria-hidden="true"  name='Search' size={16} className='mr-2' />
+                      <Icon aria-hidden='true' name='Search' size={16} className='mr-2' />
                       Explorer les cours
                     </Link>
                   </div>
                 )}
               </div>
             </div>
-            
+
             <div className='lg:col-span-1 space-y-6'>
               <AchievementCarousel achievements={achievements} />
               <QuickActions actions={quickActions} />
@@ -265,14 +296,19 @@ const UserDashboard = () => {
                   </div>
                   <div className='flex items-center justify-between p-3 bg-secondary-50 rounded-lg'>
                     <div className='flex items-center space-x-2'>
-                      <Icon aria-hidden="true"  name='Flame' size={16} className='text-warning' />
+                      <Icon aria-hidden='true' name='Flame' size={16} className='text-warning' />
                       <span className='text-sm text-text-secondary'>Série actuelle</span>
                     </div>
                     <span className='font-medium text-warning'>{userData.currentStreak} jours</span>
                   </div>
                   <div className='flex items-center justify-between p-3 bg-secondary-50 rounded-lg'>
                     <div className='flex items-center space-x-2'>
-                      <Icon aria-hidden="true"  name='CheckSquare' size={16} className='text-accent' />
+                      <Icon
+                        aria-hidden='true'
+                        name='CheckSquare'
+                        size={16}
+                        className='text-accent'
+                      />
                       <span className='text-sm text-text-secondary'>Leçons terminées</span>
                     </div>
                     <span className='font-medium text-accent'>{userData.completedLessons}</span>

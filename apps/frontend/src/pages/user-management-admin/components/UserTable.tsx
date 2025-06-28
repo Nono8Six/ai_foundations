@@ -1,7 +1,7 @@
 import React from 'react';
 import Icon from '@frontend/components/AppIcon';
 import Image from '@frontend/components/AppImage';
-import { log } from '@/logger'
+import { log } from '@/logger';
 import type { UserTableRow } from '@frontend/types/userTableRow';
 
 export interface UserTableProps {
@@ -104,7 +104,7 @@ const UserTable: React.FC<UserTableProps> = ({
                   className='flex items-center space-x-1 hover:text-text-primary transition-colors'
                 >
                   <span>Utilisateur</span>
-                  <Icon aria-hidden="true"  name={getSortIcon('name')} size={14} />
+                  <Icon aria-hidden='true' name={getSortIcon('name')} size={14} />
                 </button>
               </th>
               <th className='px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider'>
@@ -113,7 +113,7 @@ const UserTable: React.FC<UserTableProps> = ({
                   className='flex items-center space-x-1 hover:text-text-primary transition-colors'
                 >
                   <span>Rôle</span>
-                  <Icon aria-hidden="true"  name={getSortIcon('role')} size={14} />
+                  <Icon aria-hidden='true' name={getSortIcon('role')} size={14} />
                 </button>
               </th>
               <th className='px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider'>
@@ -122,7 +122,7 @@ const UserTable: React.FC<UserTableProps> = ({
                   className='flex items-center space-x-1 hover:text-text-primary transition-colors'
                 >
                   <span>Statut</span>
-                  <Icon aria-hidden="true"  name={getSortIcon('status')} size={14} />
+                  <Icon aria-hidden='true' name={getSortIcon('status')} size={14} />
                 </button>
               </th>
               <th className='px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider'>
@@ -131,7 +131,7 @@ const UserTable: React.FC<UserTableProps> = ({
                   className='flex items-center space-x-1 hover:text-text-primary transition-colors'
                 >
                   <span>Inscription</span>
-                  <Icon aria-hidden="true"  name={getSortIcon('registrationDate')} size={14} />
+                  <Icon aria-hidden='true' name={getSortIcon('registrationDate')} size={14} />
                 </button>
               </th>
               <th className='px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider'>
@@ -140,7 +140,7 @@ const UserTable: React.FC<UserTableProps> = ({
                   className='flex items-center space-x-1 hover:text-text-primary transition-colors'
                 >
                   <span>Dernière activité</span>
-                  <Icon aria-hidden="true"  name={getSortIcon('lastActivity')} size={14} />
+                  <Icon aria-hidden='true' name={getSortIcon('lastActivity')} size={14} />
                 </button>
               </th>
               <th className='px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider'>
@@ -149,7 +149,7 @@ const UserTable: React.FC<UserTableProps> = ({
                   className='flex items-center space-x-1 hover:text-text-primary transition-colors'
                 >
                   <span>Progression</span>
-                  <Icon aria-hidden="true"  name={getSortIcon('courseProgress')} size={14} />
+                  <Icon aria-hidden='true' name={getSortIcon('courseProgress')} size={14} />
                 </button>
               </th>
               <th className='px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase tracking-wider'>
@@ -312,7 +312,12 @@ const UserTable: React.FC<UserTableProps> = ({
 
       {users.length === 0 && (
         <div className='text-center py-12'>
-          <Icon aria-hidden="true"  name='Users' size={48} className='mx-auto text-text-secondary mb-4' />
+          <Icon
+            aria-hidden='true'
+            name='Users'
+            size={48}
+            className='mx-auto text-text-secondary mb-4'
+          />
           <h3 className='text-lg font-medium text-text-primary mb-2'>Aucun utilisateur trouvé</h3>
           <p className='text-text-secondary'>
             Essayez de modifier vos critères de recherche ou filtres.

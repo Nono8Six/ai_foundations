@@ -6,8 +6,8 @@ export const log = pino({
   browser: isBrowser ? { asObject: true } : undefined,
   transport: {
     target: 'pino-pretty',
-    options: { colorize: true, translateTime: true }
-  }
+    options: { colorize: true, translateTime: true },
+  },
 });
 if (isBrowser) {
   window.addEventListener('error', e => log.error(e.error ?? e.message));
