@@ -24,7 +24,8 @@
     "noFallthroughCasesInSwitch": true,
     "paths": {
       "@/logger": ["./src/utils/logger"],
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@frontend/*": ["./src/*"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/vite-env.d.ts"],
@@ -33,7 +34,7 @@
     "dist",
     "**/*.test.ts",
     "**/*.test.tsx",
-    "**/*.test.js",
-    "**/*.test.jsx"
+    "**/*.spec.ts",
+    "**/*.spec.tsx"
   ]
 }

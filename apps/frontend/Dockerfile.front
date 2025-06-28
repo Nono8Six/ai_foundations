@@ -1,6 +1,28 @@
 FROM node:20-alpine
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
+
+# Enable corepack for pnpm
 RUN corepack enable
+
+# Set working directory
+WORKDIR /app
+
+# Copy only package files first for better caching
+COPY pnpm-lock.yaml .
+COPY pnpm-workspace.yaml .
+COPY package.json .
+
+# Install dependencies
+RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store/v3 \
+    pnpm install --frozen-lockfile --prod=false
+
+# Copy the rest of the application
+COPY . .
+
+# Set working directory to frontend
 WORKDIR /app/apps/frontend
-CMD ["pnpm", "--filter", "apps/frontend", "dev", "--host", "0.0.0.0"]
+
+# Expose port 5173 for Vite
+EXPOSE 5173
+
+# Start the development server
+CMD ["sh", "-c", "pnpm install && pnpm run dev --host 0.0.0.0"]
