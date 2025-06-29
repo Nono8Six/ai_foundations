@@ -1,6 +1,6 @@
 import pino from 'pino';
 const isBrowser = typeof window !== 'undefined';
-const level = (import.meta as any).env?.VITE_LOG_LEVEL ?? process.env.LOG_LEVEL ?? 'info';
+const level = (import.meta as ImportMeta).env?.VITE_LOG_LEVEL ?? process.env.LOG_LEVEL ?? 'info';
 export const log = pino({
   level,
   browser: isBrowser ? { asObject: true } : undefined,
