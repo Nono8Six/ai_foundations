@@ -1,5 +1,13 @@
-// Exporter directement la fonction de log si c'est ce que vous souhaitez
-export const log = console.log;
+import pino from 'pino';
 
-// Ou si vous avez besoin d'importer depuis un autre fichier, utilisez un chemin relatif
-// export { log } from './src/logger'; // Si vous déplacez le fichier dans src plus tard
+// Logger configuration
+const options = {
+  level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
+  base: {
+    env: process.env.NODE_ENV || 'development',
+    app: 'backend',
+  },
+};
+
+// Create and export the logger
+export const log = pino(options);

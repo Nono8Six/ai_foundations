@@ -12,5 +12,5 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
   // Autres propriétés de l'objet import.meta
-  [key: string]: any;
+  [key: string]: unknown;
 }

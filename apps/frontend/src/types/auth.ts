@@ -10,5 +10,7 @@ export interface AuthError {
 
 export interface AuthErrorWithCode extends Error {
   code?: string;
-  originalError?: Error;
+  originalError?: { code?: string };
+  url?: string;
+  requestUrl?: string;
 }

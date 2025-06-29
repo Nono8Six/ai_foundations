@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import type { PostgrestError, SupabaseClient } from '@supabase/supabase-js';
 import { supabase } from '@frontend/lib/supabase';
 import { safeQuery } from '@frontend/utils/supabaseClient';
@@ -28,39 +28,60 @@ const useRecentActivity = (
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<PostgrestError | null>(null);
 
-  useEffect(() => {
+  // Memoize the filters to prevent unnecessary effect re-runs
+  const filtersString = useMemo(() => JSON.stringify(filters), [filters]);
+
+  const fetchActivities = useCallback(async () => {
     if (!userId) {
       setLoading(false);
       return;
     }
 
-    const fetchActivities = async () => {
-      setLoading(true);
-      setError(null);
+    setLoading(true);
+    setError(null);
 
-      // On combine la requête flexible de la branche 'main'
-      // avec la sécurité de 'safeQuery' de la branche 'codex'.
-      const { data, error } = await safeQuery<ActivityRow[]>(() =>
-        Object.entries(filters)
-          .reduce(
-            (q, [column, value]) => q.eq(column as keyof ActivityRow, value as never),
-            supabaseClient.from('activity_log').select('*').eq('user_id', userId)
-          )
-          .order('created_at', { ascending: order === 'asc' })
-          .limit(limit)
+    try {
+      // Build the query
+      let query = supabaseClient
+        .from('activity_log')
+        .select('*')
+        .eq('user_id', userId);
+
+      // Apply filters if any
+      query = Object.entries(filters).reduce(
+        (q, [column, value]) => q.eq(column as keyof ActivityRow, value as never),
+        query
       );
 
-      if (error) {
-        setError(error);
+      // Apply ordering and limit
+      query = query.order('created_at', { ascending: order === 'asc' }).limit(limit);
+
+      // Execute the query using safeQuery
+      const { data, error: queryError } = await safeQuery<ActivityRow[]>(async () => {
+        const response = await query;
+        return {
+          data: response.data,
+          error: response.error,
+        };
+      });
+
+      if (queryError) {
+        setError(queryError);
         setActivities([]);
       } else {
         setActivities(data || []);
       }
+    } catch (err) {
+      setError(err as PostgrestError);
+      setActivities([]);
+    } finally {
       setLoading(false);
-    };
+    }
+  }, [userId, limit, order, filtersString]);
 
+  useEffect(() => {
     fetchActivities();
-  }, [userId, limit, order, JSON.stringify(filters)]); // On stringify l'objet filters pour une détection de changement fiable
+  }, [fetchActivities]);
 
   return { activities, loading, error };
 };

@@ -220,7 +220,7 @@ const UserTable: React.FC<UserTableProps> = ({
                       <button
                         onClick={e => {
                           e.stopPropagation();
-                          log.info('Edit user:', user.id);
+                          log.info('Edit user', { userId: user.id });
                         }}
                         className='text-primary hover:text-primary-700 transition-colors'
                       >
@@ -229,7 +229,7 @@ const UserTable: React.FC<UserTableProps> = ({
                       <button
                         onClick={e => {
                           e.stopPropagation();
-                          log.info('Message user:', user.id);
+                          log.info('Message user', { userId: user.id });
                         }}
                         className='text-text-secondary hover:text-primary transition-colors'
                       >
@@ -238,7 +238,7 @@ const UserTable: React.FC<UserTableProps> = ({
                       <button
                         onClick={e => {
                           e.stopPropagation();
-                          log.info('More actions for user:', user.id);
+                          log.info('More actions for user', { userId: user.id });
                         }}
                         className='text-text-secondary hover:text-primary transition-colors'
                       >

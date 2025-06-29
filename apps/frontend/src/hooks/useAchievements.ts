@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import type { PostgrestError, SupabaseClient } from '@supabase/supabase-js';
 import { supabase } from '@frontend/lib/supabase';
 import { safeQuery } from '@frontend/utils/supabaseClient';
@@ -28,36 +28,60 @@ const useAchievements = (
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<PostgrestError | null>(null);
 
-  useEffect(() => {
-    if (!userId) return;
+  // Memoize the filters to prevent unnecessary effect re-runs
+  const filtersString = useMemo(() => JSON.stringify(filters), [filters]);
 
-    const fetchAchievements = async () => {
-      setLoading(true);
-      setError(null);
+  const fetchAchievements = useCallback(async () => {
+    if (!userId) {
+      setLoading(false);
+      return;
+    }
 
-      // On combine les deux logiques : on construit la requête dynamique
-      // et on l'exécute à l'intérieur de notre fonction sécurisée.
-      const { data, error } = await safeQuery<AchievementRow[]>(() =>
-        Object.entries(filters)
-          .reduce(
-            (q, [column, value]) => q.eq(column as keyof AchievementRow, value as never),
-            supabaseClient.from('achievements').select('*').eq('user_id', userId)
-          )
-          .order('created_at', { ascending: order === 'asc' })
-          .limit(limit)
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Build the query
+      let query = supabaseClient
+        .from('achievements')
+        .select('*')
+        .eq('user_id', userId);
+
+      // Apply filters if any
+      query = Object.entries(filters).reduce(
+        (q, [column, value]) => q.eq(column as keyof AchievementRow, value as never),
+        query
       );
 
-      if (error) {
-        setError(error);
+      // Apply ordering and limit
+      query = query.order('created_at', { ascending: order === 'asc' }).limit(limit);
+
+      // Execute the query using safeQuery
+      const { data, error: queryError } = await safeQuery<AchievementRow[]>(async () => {
+        const response = await query;
+        return {
+          data: response.data,
+          error: response.error,
+        };
+      });
+
+      if (queryError) {
+        setError(queryError);
         setAchievements([]);
       } else {
         setAchievements(data || []);
       }
+    } catch (err) {
+      setError(err as PostgrestError);
+      setAchievements([]);
+    } finally {
       setLoading(false);
-    };
+    }
+  }, [userId, limit, order, filtersString]);
 
+  useEffect(() => {
     fetchAchievements();
-  }, [userId, limit, order, JSON.stringify(filters)]); // On utilise JSON.stringify pour que le hook réagisse aux changements dans l'objet filters
+  }, [fetchAchievements]);
 
   return { achievements, loading, error };
 };

@@ -2,7 +2,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { visualizer } from 'rollup-plugin-visualizer';
-import path from 'path'; // <-- Importez le module 'path'
+import path from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig(() => {
@@ -16,18 +16,44 @@ export default defineConfig(() => {
     plugins: [
       react(),
       shouldAnalyze && visualizer({ filename: 'docs/bundle/stats.html', open: false }),
-      // Removed tsconfigPaths() to avoid conflict with manual alias resolution
     ].filter(Boolean),
 
-    // --- AJOUT DE CETTE SECTION ---
-    // C'est ici qu'on résout le problème.
-    // On dit explicitement à Vite que "@" correspond à la racine du dépôt.
     resolve: {
-      alias: {
-        '@': path.resolve(new URL('.', import.meta.url).pathname, '..', '..'),
-      },
+      alias: [
+        {
+          find: '@',
+          replacement: path.resolve(__dirname, './src')
+        },
+        {
+          find: '@frontend',
+          replacement: path.resolve(__dirname, './src')
+        },
+        {
+          find: '@utils',
+          replacement: path.resolve(__dirname, './src/utils')
+        },
+        {
+          find: '@services',
+          replacement: path.resolve(__dirname, './src/services')
+        },
+        {
+          find: '@components',
+          replacement: path.resolve(__dirname, './src/components')
+        },
+        {
+          find: '@contexts',
+          replacement: path.resolve(__dirname, './src/context')
+        },
+        {
+          find: '@lib',
+          replacement: path.resolve(__dirname, './src/lib')
+        },
+        {
+          find: '@/logger',
+          replacement: path.resolve(__dirname, '../../libs/logger')
+        }
+      ]
     },
-    // ------------------------------
 
     server: {
       port: 3000,

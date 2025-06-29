@@ -1,4 +1,11 @@
+import type * as React from 'react';
+
 /// <reference types="vite/client" />
+
+declare global {
+  // Permet d'éviter les no-undef sur JSX
+  var JSX: typeof React;
+}
 
 interface ImportMetaEnv {
   readonly VITE_SUPABASE_URL: string;

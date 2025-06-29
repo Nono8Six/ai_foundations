@@ -108,9 +108,18 @@ const CreateUserModal = ({ onClose, onUserCreated }: CreateUserModalProps) => {
         enrolledCourses: formData.initialCourses,
       };
 
+      log.info('New user created', { 
+        userId: newUser.id, 
+        email: newUser.email,
+        role: newUser.role
+      });
       onUserCreated(newUser);
     } catch (error) {
-      log.error('Error creating user:', error);
+      log.error('Error creating user', { 
+        error, 
+        email: formData.email,
+        role: formData.role
+      });
     } finally {
       setIsSubmitting(false);
     }

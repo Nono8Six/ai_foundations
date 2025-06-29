@@ -55,18 +55,18 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ userData }) => {
         ...(avatarPreview !== userData.avatar && { avatar_url: avatarPreview }),
       };
 
-      log.debug('Submitting profile updates:', updates);
+      log.debug('Submitting profile updates', { updates });
 
       // Update the profile in Supabase using RPC function
       await updateProfile(updates);
 
-      log.info('Profile updated successfully');
+      log.info('Profile updated successfully', { userId: userData.id });
       setIsEditing(false);
 
       // Show success message
       addToast('Profil mis à jour avec succès !', 'success');
     } catch (error) {
-      log.error('Error updating profile:', error);
+      log.error('Error updating profile', { error, userId: userData.id });
       setError('root', {
         type: 'manual',
         message: 'Erreur lors de la mise à jour du profil. Veuillez réessayer.',

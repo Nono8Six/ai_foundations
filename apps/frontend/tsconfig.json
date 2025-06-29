@@ -3,7 +3,7 @@
   "compilerOptions": {
     "composite": true,
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": "../../",
     "baseUrl": ".",
     "types": ["vite/client"],
     "typeRoots": ["./node_modules/@types", "./src/types"],
@@ -23,12 +23,17 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@/logger": ["./src/utils/logger"],
       "@/*": ["./src/*"],
-      "@frontend/*": ["./src/*"]
+      "@frontend/*": ["./src/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@services/*": ["./src/services/*"],
+      "@components/*": ["./src/components/*"],
+      "@contexts/*": ["./src/context/*"],
+      "@lib/*": ["./src/lib/*"],
+      "@/logger": ["../../libs/logger"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/vite-env.d.ts"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/vite-env.d.ts", "../../libs/logger/**/*.ts"],
   "exclude": [
     "node_modules",
     "dist",

@@ -55,7 +55,7 @@ const UserManagementAdminContent = () => {
     const fetchUsers = async () => {
       const { data, error } = await supabase.from('profiles').select('*');
       if (error) {
-        log.error('Error fetching users:', error);
+        log.error('Error fetching users', error);
         return;
       }
       // Transforme les données de la base pour les adapter au format de l'application
@@ -143,7 +143,7 @@ const UserManagementAdminContent = () => {
   };
 
   const handleBulkAction = action => {
-    log.info(`Bulk action: ${action} for users:`, selectedUsers);
+    log.info(`Bulk action: ${action} for users`, { users: selectedUsers });
     setSelectedUsers([]);
   };
 
@@ -317,7 +317,7 @@ const UserManagementAdminContent = () => {
           <CreateUserModal
             onClose={() => setShowCreateModal(false)}
             onUserCreated={newUser => {
-              log.info('New user created:', newUser);
+              log.info('New user created', { user: newUser });
               setShowCreateModal(false);
             }}
           />

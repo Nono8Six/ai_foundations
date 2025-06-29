@@ -6,6 +6,7 @@ import pluginReact from 'eslint-plugin-react';
 import pluginTs from '@typescript-eslint/eslint-plugin';
 import parserTs from '@typescript-eslint/parser';
 import prettierConfig from 'eslint-config-prettier';
+import pluginReactHooks from 'eslint-plugin-react-hooks';
 
 export default [
   ...base,
@@ -61,20 +62,24 @@ export default [
   {
     plugins: {
       react: pluginReact,
+      'react-hooks': pluginReactHooks,
     },
     rules: {
       // On importe les règles recommandées pour React
       ...pluginReact.configs.recommended.rules,
-
+      ...pluginReactHooks.configs.recommended.rules,
       // On applique vos règles personnalisées pour React
       'react/react-in-jsx-scope': 'off', // Pas nécessaire avec les nouvelles versions de React
       'react/prop-types': 'off', // Utile si vous utilisez TypeScript pour les props
       'react/no-unescaped-entities': 'off',
+      'no-undef': 'off',
     },
     settings: {
       // Détecte automatiquement la version de React
       react: {
         version: 'detect',
+        pragma: 'React',
+    fragment: 'Fragment',
       },
     },
   },

@@ -1,5 +1,7 @@
 // src/context/AuthContext.tsx
-import React, {
+const toJson = (v: unknown): Json => v as Json;
+
+import {
   createContext,
   useState,
   useEffect,
@@ -11,25 +13,31 @@ import type {
   Session,
   User,
   SupabaseClient,
-  AuthResponse,
-  OAuthResponse,
   AuthError,
   AuthChangeEvent,
 } from '@supabase/supabase-js';
-import type { Database } from '@frontend/types/database.types';
+import type { Database, Json } from '@frontend/types/database.types';
 import type {
   UpdateUserProfilePayload,
   UpdateUserProfileResponse,
-  UpdateUserSettingsPayload,
-  UpdateUserSettingsResponse,
-  GetUserSettingsResponse,
 } from '@frontend/types/rpc.types';
 import type { UserProfile } from '@frontend/types/user';
 import { supabase } from '@frontend/lib/supabase';
 import { safeQuery } from '@frontend/utils/supabaseClient';
 import { useNavigate } from 'react-router-dom';
-import { log } from '@/logger';
+import { log } from '@frontend/lib/logger';
 import type { AuthErrorWithCode } from '@frontend/types/auth';
+
+// Déclaration du type UserSettings aligné sur ta table user_settings (DB et TS)
+export interface UserSettings {
+  id: string;
+  user_id: string;
+  notification_settings: Record<string, unknown>;
+  privacy_settings: Record<string, unknown>;
+  learning_preferences: Record<string, unknown>;
+  created_at: string | null;
+  updated_at: string | null;
+}
 
 const supabaseClient = supabase as SupabaseClient<Database>;
 
@@ -39,20 +47,16 @@ export interface AuthContextValue {
     password: string;
     firstName: string;
     lastName: string;
-  }) => Promise<AuthResponse>;
-  signIn: (args: { email: string; password: string }) => Promise<AuthResponse>;
-  signInWithGoogle: () => Promise<OAuthResponse>;
+  }) => Promise<{ data: { user: User | null; session: Session | null } | null; error: Error | null }>;
+  signIn: (args: { email: string; password: string }) => Promise<{ data: { user: User | null; session: Session | null } | null; error: Error | null }>;
+  signInWithGoogle: () => Promise<{ data: { provider: string; url: string } | null; error: Error | null }>;
   signOut: () => Promise<void>;
   logout: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   resendVerificationEmail: (email: string) => Promise<void>;
-  updateProfile: (
-    updates: UpdateUserProfilePayload['profile_data']
-  ) => Promise<UpdateUserProfileResponse>;
-  updateUserSettings: (
-    settings: UpdateUserSettingsPayload['settings_data']
-  ) => Promise<UpdateUserSettingsResponse>;
-  getUserSettings: () => Promise<GetUserSettingsResponse>;
+  updateProfile: (updates: UpdateUserProfilePayload['profile_data']) => Promise<UpdateUserProfileResponse>;
+  updateUserSettings: (updates: Partial<UserSettings>) => Promise<UserSettings | null>;
+  getUserSettings: () => Promise<UserSettings | null>;
   user: User | null;
   userProfile: UserProfile | null;
   session: Session | null;
@@ -80,16 +84,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           supabaseClient.auth.getSession()
         );
         if (error) throw error;
-        const { session } = data;
+        const { session } = data ?? {};
         log.debug('📋 Initial session:', session);
-        setSession(session);
+        setSession(session ?? null);
         setUser(session?.user ?? null);
 
         if (session?.user) {
           log.debug('👤 User found, fetching profile...');
-          await fetchUserProfile(session.user.id);
+          await fetchUserProfile(session.user.id).catch(err => {
+            log.error('Failed to fetch user profile:', err);
+          });
         }
-      } catch (error: unknown) {
+      } catch (err: unknown) {
+        const error = err instanceof Error ? err : new Error(String(err));
         log.error('❌ Error getting initial session:', error.message);
         setError(error);
       } finally {
@@ -136,59 +143,73 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       log.debug('🧹 Cleaning up auth subscription...');
       subscription.unsubscribe();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Fetch user profile data
   const fetchUserProfile = async (userId: string) => {
     try {
       log.debug('🔍 Fetching profile for user:', userId);
-      const { data, error } = await safeQuery<UserProfile[]>(() =>
-        supabaseClient.from('profiles').select('*').eq('id', userId)
-      );
+      const { data: profileData, error } = await supabaseClient
+        .from('profiles')
+        .select('*')
+        .eq('id', userId);
 
       if (error) {
-        log.error('❌ Error fetching profile:', error.message);
-        setError(error);
+        const authError = error instanceof Error ? error : new Error(String(error));
+        setError(authError);
+        log.error('Error fetching profile:', authError.message);
         return;
       }
 
-      if (!data || data.length === 0) {
+      if (!profileData || profileData.length === 0) {
         log.debug('⚠️ No profile found for user, creating default...');
         // Try to create a default profile
-        const { data: newProfile, error: createError } = await safeQuery<UserProfile>(() =>
-          supabaseClient
-            .from('profiles')
-            .insert([
-              {
-                id: userId,
-                email: user?.email || '',
-                full_name: user?.user_metadata?.full_name || 'User',
-                level: 1,
-                xp: 0,
-                current_streak: 0,
-                is_admin: false,
-              },
-            ])
-            .select()
-            .single()
-        );
+        const defaultProfile: UserProfile = {
+          id: userId,
+          email: user?.email || '',
+          full_name: user?.user_metadata?.full_name || 'User',
+          level: 1,
+          xp: 0,
+          current_streak: 0,
+          is_admin: false,
+          avatar_url: null,
+          phone: null,
+          profession: null,
+          company: null,
+          last_completed_at: null,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        };
+
+        const { data: newProfileData, error: createError } = await supabaseClient
+          .from('profiles')
+          .insert([defaultProfile])
+          .select()
+          .single();
 
         if (createError) {
-          log.error('❌ Error creating profile:', createError.message);
-          setError(createError);
+          const authError = createError instanceof Error ? createError : new Error(String(createError));
+          setError(authError);
+          log.error('Error creating profile:', authError.message);
           return;
         }
 
-        log.info('✅ Default profile created:', newProfile);
-        setUserProfile(newProfile);
+        if (newProfileData) {
+          log.info('✅ Default profile created:', newProfileData);
+          setUserProfile(newProfileData as UserProfile);
+        }
         return;
       }
 
-      log.debug('✅ Profile fetched successfully:', data[0]);
-      setUserProfile(data[0]);
+      if (profileData && profileData.length > 0) {
+        const profile = profileData[0] as UserProfile;
+        setUserProfile(profile);
+      }
     } catch (error: unknown) {
-      log.error('❌ Unexpected error in fetchUserProfile:', error);
-      setError(error);
+      const err = error instanceof Error ? error : new Error('Unknown error in fetchUserProfile');
+      log.error('❌ Unexpected error in fetchUserProfile:', err);
+      setError(err);
     }
   };
 
@@ -203,10 +224,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     password: string;
     firstName: string;
     lastName: string;
-  }): Promise<AuthResponse> => {
+  }) => {
     log.debug('📝 Signing up user:', email);
-    const { data, error } = await safeQuery(() =>
-      supabaseClient.auth.signUp({
+    setLoading(true);
+
+    try {
+      const result = await supabaseClient.auth.signUp({
         email,
         password,
         options: {
@@ -215,16 +238,31 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           },
           emailRedirectTo: `${window.location.origin}/verify-email`,
         },
-      })
-    );
+      });
 
-    if (error) {
-      log.error('❌ Sign up error:', error.message);
-      // Don't set global error state for sign up failures - let the form handle it
-      throw error;
+      if (result.error) {
+        const authError = result.error instanceof Error ? result.error : new Error(String(result.error));
+        log.error('Error signing up:', authError.message);
+        setError(authError);
+        return { data: null, error: authError };
+      }
+
+      log.info('✅ Sign up successful');
+      return {
+        data: {
+          user: result.data?.user || null,
+          session: result.data?.session || null,
+        },
+        error: null
+      };
+    } catch (error) {
+      const err = error instanceof Error ? error : new Error('Unknown error during sign up');
+      log.error('Unexpected error during sign up:', err);
+      setError(err);
+      return { data: null, error: err };
+    } finally {
+      setLoading(false);
     }
-    log.info('✅ Sign up successful');
-    return data;
   };
 
   // Sign In with email
@@ -234,82 +272,131 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }: {
     email: string;
     password: string;
-  }): Promise<AuthResponse> => {
+  }) => {
     log.debug('🔐 Signing in user:', email);
+    setLoading(true);
 
-    const { data, error } = await safeQuery(() =>
-      supabaseClient.auth.signInWithPassword({
+    try {
+      const result = await supabaseClient.auth.signInWithPassword({
         email,
         password,
-      })
-    );
+      });
 
-    if (error) {
-      // Provide more specific error messages based on what Supabase actually returns
-      let userFriendlyMessage =
-        'Les identifiants fournis sont incorrects. Vérifiez votre email et mot de passe.';
-      const enhancedError: AuthErrorWithCode = new Error(userFriendlyMessage);
-      enhancedError.originalError = error;
+      if (result.error) {
+        let userFriendlyMessage =
+          'Les identifiants fournis sont incorrects. Vérifiez votre email et mot de passe.';
+        const enhancedError: AuthErrorWithCode = new Error(userFriendlyMessage);
+        enhancedError.originalError = result.error;
 
-      // Note: Supabase intentionally returns generic "Invalid login credentials"
-      // for security reasons, so we can't distinguish between wrong email vs wrong password
-      if (error.message.includes('Invalid login credentials')) {
-        userFriendlyMessage = 'Mot de passe incorrect.';
-        enhancedError.code = 'wrong_password';
-      } else if (error.message.includes('Email not confirmed')) {
-        userFriendlyMessage =
-          'Veuillez confirmer votre email avant de vous connecter. Vérifiez votre boîte de réception.';
-        enhancedError.code = 'email_not_confirmed';
-      } else if (error.message.includes('Too many requests')) {
-        userFriendlyMessage =
-          'Trop de tentatives de connexion. Veuillez patienter quelques minutes avant de réessayer.';
-      } else if (error.message.includes('signup_disabled')) {
-        userFriendlyMessage =
-          "Les inscriptions sont temporairement désactivées. Contactez l'administrateur.";
-      } else if (error.message.includes('email_address_invalid')) {
-        userFriendlyMessage = "L'adresse email fournie n'est pas valide.";
+        if (result.error.message.includes('Invalid login credentials')) {
+          userFriendlyMessage = 'Mot de passe incorrect.';
+          enhancedError.code = 'wrong_password';
+        } else if (result.error.message.includes('Email not confirmed')) {
+          userFriendlyMessage =
+            'Veuillez confirmer votre email avant de vous connecter. Vérifiez votre boîte de réception.';
+          enhancedError.code = 'email_not_confirmed';
+        } else if (result.error.message.includes('Too many requests')) {
+          userFriendlyMessage =
+            'Trop de tentatives de connexion. Veuillez patienter quelques minutes avant de réessayer.';
+        } else if (result.error.message.includes('signup_disabled')) {
+          userFriendlyMessage =
+            "Les inscriptions sont temporairement désactivées. Contactez l'administrateur.";
+        } else if (result.error.message.includes('email_address_invalid')) {
+          userFriendlyMessage = "L'adresse email fournie n'est pas valide.";
+        }
+
+        enhancedError.message = userFriendlyMessage;
+        enhancedError.code = enhancedError.code || 'invalid_credentials';
+
+        log.error('Sign in error:', enhancedError);
+        setError(enhancedError);
+        return { data: null, error: enhancedError };
       }
 
-      enhancedError.message = userFriendlyMessage;
-      enhancedError.code = enhancedError.code || 'invalid_credentials';
-
-      // Don't set global error state for sign in failures - let the form handle it
-      throw enhancedError;
+      log.info('✅ Sign in successful');
+      return {
+        data: {
+          user: result.data?.user || null,
+          session: result.data?.session || null,
+        },
+        error: null
+      };
+    } catch (error) {
+      const err = error instanceof Error ? error : new Error('Unknown error during sign in');
+      log.error('Unexpected error during sign in:', err);
+      setError(err);
+      return { data: null, error: err };
+    } finally {
+      setLoading(false);
     }
-
-    log.info('✅ Sign in successful');
-    return data;
   };
 
   // Sign In with Google
-  const signInWithGoogle = async (): Promise<OAuthResponse> => {
+  const signInWithGoogle = async () => {
     log.debug('🔐 Signing in with Google...');
-    const { data, error } = await safeQuery(() =>
-      supabaseClient.auth.signInWithOAuth({
+    setLoading(true);
+
+    try {
+      const result = await supabaseClient.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: `${window.location.origin}/user-dashboard`,
         },
-      })
-    );
+      });
 
-    if (error) {
-      setError(error);
-      throw error;
+      if (result.error) {
+        const authError = result.error instanceof Error ? result.error : new Error(String(result.error));
+        log.error('Error signing in with Google:', authError.message);
+        setError(authError);
+        return { data: null, error: authError };
+      }
+
+      log.info('✅ Google sign in initiated');
+      return {
+        data: result.data
+          ? {
+              provider: result.data.provider,
+              url: result.data.url || `${window.location.origin}/user-dashboard`
+            }
+          : null,
+        error: null
+      };
+    } catch (error) {
+      const err = error instanceof Error ? error : new Error('Unknown error during Google sign in');
+      log.error('Unexpected error during Google sign in:', err);
+      setError(err);
+      return { data: null, error: err };
+    } finally {
+      setLoading(false);
     }
-    log.info('✅ Google sign in initiated');
-    return data;
   };
 
   // Sign Out
   const signOut = async (): Promise<void> => {
     log.debug('🚪 Signing out user...');
-    const { error } = await safeQuery(() => supabaseClient.auth.signOut());
-    if (error) {
-      setError(error);
-      throw error;
+    setLoading(true);
+
+    try {
+      const { error } = await supabaseClient.auth.signOut();
+
+      if (error) {
+        const authError = error instanceof Error ? error : new Error(String(error));
+        setError(authError);
+        log.error('Error signing out:', authError.message);
+        throw authError;
+      }
+
+      log.info('✅ Sign out successful');
+      setUser(null);
+      setSession(null);
+      setUserProfile(null);
+    } catch (error) {
+      const err = error instanceof Error ? error : new Error('Unknown error during sign out');
+      setError(err);
+      throw err;
+    } finally {
+      setLoading(false);
     }
-    log.info('✅ Sign out successful');
   };
 
   // Logout helper used by UI
@@ -336,95 +423,244 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     ): Promise<UpdateUserProfileResponse> => {
       log.debug('📝 Updating profile:', updates);
 
-      const { data, error } = await safeQuery(() =>
-        supabaseClient.rpc('update_user_profile', {
+      if (!user) {
+        const error = new Error('No user is currently signed in');
+        setError(error);
+        log.error('Error updating profile:', error.message);
+        throw error;
+      }
+
+      if (!updates) {
+        throw new Error('Profile data is required for update');
+      }
+
+      try {
+        const { data, error } = await supabaseClient.rpc('update_user_profile', {
           profile_data: updates,
           user_id: user.id,
-        })
-      );
+        });
 
-      if (error) {
-        setError(error);
-        throw error;
+        if (error) throw error;
+
+        const profileData = (Array.isArray(data) ? data[0] : data) as UpdateUserProfileResponse;
+
+        if (profileData) {
+          log.info('✅ Profile updated successfully:', profileData);
+          setUserProfile({
+            ...userProfile,
+            ...profileData,
+            id: user.id,
+            email: user.email || '',
+          } as UserProfile);
+          return profileData;
+        }
+
+        throw new Error('No data returned from update_user_profile');
+      } catch (error) {
+        const authError = error instanceof Error ? error : new Error(String(error));
+        setError(authError);
+        log.error('Error updating profile:', authError.message);
+        throw authError;
       }
-
-      log.info('✅ Profile updated successfully:', data);
-
-      setUserProfile(data);
-
-      return data;
     },
-    []
+    [user, userProfile]
   );
 
-  // Update user settings using RPC function
-  const updateUserSettings = useCallback(
-    async (
-      settings: UpdateUserSettingsPayload['settings_data']
-    ): Promise<UpdateUserSettingsResponse> => {
-      log.debug('📝 Updating user settings:', settings);
-
-      const { data, error } = await safeQuery(() =>
-        supabaseClient.rpc('update_user_settings', {
-          settings_data: settings,
-        })
-      );
+  // Get user settings (pour user courant)
+  const getUserSettings = async (): Promise<UserSettings | null> => {
+    if (!user) return null;
+    try {
+      log.debug('⚙️ Fetching user settings for user:', user.id);
+      const { data, error } = await supabaseClient
+        .from('user_settings')
+        .select('*')
+        .eq('user_id', user.id);
 
       if (error) {
-        setError(error);
-        throw error;
+        const authError = error instanceof Error ? error : new Error(String(error));
+        setError(authError);
+        log.error('Error fetching user settings:', authError.message);
+        return null;
       }
 
-      log.info('✅ Settings updated successfully:', data);
-      return data;
-    },
-    []
-  );
+      if (data && data.length > 0) {
+        const settings = data[0];
+        log.debug('✅ User settings found:', settings);
 
-  // Get user settings using RPC function
-  const getUserSettings = useCallback(async (): Promise<GetUserSettingsResponse> => {
-    log.debug('🔍 Getting user settings...');
+        const typedSettings: UserSettings = {
+          id: settings.id,
+          user_id: settings.user_id,
+          notification_settings: (settings.notification_settings as Record<string, unknown>) || {},
+          privacy_settings: (settings.privacy_settings as Record<string, unknown>) || {},
+          learning_preferences: (settings.learning_preferences as Record<string, unknown>) || {},
+          created_at: settings.created_at || null,
+          updated_at: settings.updated_at || null,
+        };
 
-    const { data, error } = await safeQuery(() => supabaseClient.rpc('get_user_settings').single());
+        return typedSettings;
+      }
 
-    if (error) {
-      setError(error);
-      throw error;
+      // Si aucun paramétrage existant, créer les settings par défaut
+      log.debug('⚠️ No user settings found, creating default settings...');
+      const defaultSettings = {
+        user_id: user.id,
+        notification_settings: toJson({ email: true, push: true }),
+        privacy_settings: toJson({ show_email: false, show_activity: true }),
+        learning_preferences: toJson({ difficulty: 'beginner', theme: 'light' }),
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+
+      const { data: newSettings, error: createError } = await supabaseClient
+        .from('user_settings')
+        .insert([defaultSettings])
+        .select()
+        .single();
+
+      if (createError) {
+        const authError = createError instanceof Error ? createError : new Error(String(createError));
+        setError(authError);
+        log.error('Error creating default user settings:', authError.message);
+        return null;
+      }
+
+      log.info('✅ Default user settings created:', newSettings);
+
+      return {
+        id: newSettings.id,
+        user_id: newSettings.user_id,
+        notification_settings: (newSettings.notification_settings as Record<string, unknown>) || {},
+        privacy_settings: (newSettings.privacy_settings as Record<string, unknown>) || {},
+        learning_preferences: (newSettings.learning_preferences as Record<string, unknown>) || {},
+        created_at: newSettings.created_at || null,
+        updated_at: newSettings.updated_at || null,
+      };
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error('Unknown error in getUserSettings');
+      log.error('❌ Unexpected error in getUserSettings:', err);
+      setError(err);
+      return null;
     }
+  };
 
-    log.debug('✅ Settings retrieved successfully:', data);
-    return data;
-  }, []);
+  // Update user settings (pour user courant)
+  const updateUserSettings = async (
+    updates: Partial<UserSettings>
+  ): Promise<UserSettings | null> => {
+    if (!user) return null;
+    try {
+      log.debug('⚙️ Updating user settings for user:', user.id, updates);
+
+      // Récupère les settings existants (pour merge)
+      const current = await getUserSettings();
+
+      const merged = {
+        ...current,
+        ...updates,
+        user_id: user.id,
+        updated_at: new Date().toISOString(),
+      };
+
+      const { data, error } = await supabaseClient
+  .from('user_settings')
+  .update({
+    notification_settings: toJson(merged.notification_settings),
+    privacy_settings: toJson(merged.privacy_settings),
+    learning_preferences: toJson(merged.learning_preferences),
+    updated_at: merged.updated_at,
+  })
+  .eq('user_id', user.id)
+  .select();
+
+      if (error) {
+        const authError = error instanceof Error ? error : new Error(String(error));
+        setError(authError);
+        log.error('Error updating user settings:', authError.message);
+        return null;
+      }
+
+      if (data && data.length > 0) {
+        const updated = data[0];
+        log.info('✅ User settings updated:', updated);
+
+        const typedSettings: UserSettings = {
+          id: updated.id,
+          user_id: updated.user_id,
+          notification_settings: (updated.notification_settings as Record<string, unknown>) || {},
+          privacy_settings: (updated.privacy_settings as Record<string, unknown>) || {},
+          learning_preferences: (updated.learning_preferences as Record<string, unknown>) || {},
+          created_at: updated.created_at || null,
+          updated_at: updated.updated_at || null,
+        };
+
+        return typedSettings;
+      }
+
+      return null;
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error('Unknown error in updateUserSettings');
+      log.error('❌ Unexpected error in updateUserSettings:', err);
+      setError(err);
+      return null;
+    }
+  };
 
   // Reset password
-  const resetPassword = async (email: string): Promise<void> => {
-    log.debug('🔄 Resetting password for:', email);
-    const { error } = await safeQuery(() =>
-      supabaseClient.auth.resetPasswordForEmail(email, {
+  const resetPassword = async (email: string) => {
+    log.debug('🔑 Sending reset password email for:', email);
+    setLoading(true);
+    try {
+      const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/reset-password`,
-      })
-    );
-    if (error) {
-      setError(error);
-      throw error;
+      });
+
+      if (error) {
+        const authError = error instanceof Error ? error : new Error(String(error));
+        setError(authError);
+        log.error('Error resetting password:', authError.message);
+        throw authError;
+      }
+
+      log.info('✅ Password reset email sent');
+    } catch (error) {
+      const err = error instanceof Error ? error : new Error('Unknown error during reset password');
+      setError(err);
+      throw err;
+    } finally {
+      setLoading(false);
     }
-    log.info('✅ Password reset email sent');
   };
 
-  const resendVerificationEmail = async (email: string): Promise<void> => {
-    log.debug('🔄 Resending verification email for:', email);
-    const { error } = await safeQuery(() =>
-      supabaseClient.auth.resend({
+  // Resend verification email
+  const resendVerificationEmail = async (email: string) => {
+    log.debug('📧 Resending verification email for:', email);
+    setLoading(true);
+
+    try {
+      const { error } = await supabaseClient.auth.resend({
         type: 'signup',
         email,
-        options: { emailRedirectTo: `${window.location.origin}/verify-email` },
-      })
-    );
-    if (error) {
-      throw error;
+      });
+
+      if (error) {
+        const authError = error instanceof Error ? error : new Error(String(error));
+        setError(authError);
+        log.error('Error resending verification email:', authError.message);
+        throw authError;
+      }
+
+      log.info('✅ Verification email resent');
+    } catch (error) {
+      const err = error instanceof Error ? error : new Error('Unknown error during resend verification');
+      setError(err);
+      throw err;
+    } finally {
+      setLoading(false);
     }
-    log.info('✅ Verification email resent');
   };
+
+  // Vérifier si l'utilisateur est admin
+  const isAdmin = Boolean(userProfile?.is_admin);
 
   const value: AuthContextValue = {
     signUp,
@@ -442,13 +678,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     session,
     loading,
     error,
-    isAdmin: userProfile?.is_admin || false,
+    isAdmin,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-export const useAuth = (): AuthContextValue => {
+export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');

@@ -51,7 +51,7 @@ const SettingsTab = () => {
           }
         }
       } catch (error) {
-        log.error('Error loading user settings:', error);
+        log.error('Error loading user settings', { error });
       } finally {
         setIsLoading(false);
       }
@@ -75,7 +75,7 @@ const SettingsTab = () => {
       // Show success message
       alert('Paramètres sauvegardés avec succès !');
     } catch (error) {
-      log.error('Error saving settings:', error);
+      log.error('Error saving settings', { error });
       alert('Erreur lors de la sauvegarde des paramètres. Veuillez réessayer.');
     } finally {
       setIsSubmitting(false);
@@ -105,7 +105,7 @@ const SettingsTab = () => {
 
   const handleDeleteAccount = () => {
     // Simulate account deletion
-    log.info('Account deletion requested');
+    log.info('Account deletion requested by user');
     setShowDeleteConfirm(false);
   };
 

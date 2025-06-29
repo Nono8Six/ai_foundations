@@ -8,11 +8,5 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './src/setupTests.ts',
     include: ['**/*.test.{ts,tsx}'],
-    threads: false,
-    poolOptions: {
-      vmThreads: {
-        memoryLimit: 256,
-      },
-    },
   },
 });

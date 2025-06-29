@@ -1,5 +1,4 @@
 node_modules
-packages\tsconfig-vite\node_modules\@types
 apps\backend\node_modules
 apps\frontend\node_modules
 
