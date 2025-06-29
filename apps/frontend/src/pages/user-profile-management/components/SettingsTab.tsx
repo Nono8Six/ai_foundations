@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@frontend/context/AuthContext';
 import Icon from '@frontend/components/AppIcon';
-import { log } from '@/logger';
+import { log } from '@libs/logger';
 
 const SettingsTab = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);

@@ -25,7 +25,7 @@ import type { UserProfile } from '@frontend/types/user';
 import { supabase } from '@frontend/lib/supabase';
 import { safeQuery } from '@frontend/utils/supabaseClient';
 import { useNavigate } from 'react-router-dom';
-import { log } from '@frontend/lib/logger';
+import { log } from '@libs/logger';
 import type { AuthErrorWithCode } from '@frontend/types/auth';
 
 // Déclaration du type UserSettings aligné sur ta table user_settings (DB et TS)

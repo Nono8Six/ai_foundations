@@ -1,7 +1,7 @@
 import React from 'react';
 import Icon from '@frontend/components/AppIcon';
 import Image from '@frontend/components/AppImage';
-import { log } from '@/logger';
+import { log } from '@libs/logger';
 import type { UserTableRow } from '@frontend/types/userTableRow';
 
 export interface UserTableProps {

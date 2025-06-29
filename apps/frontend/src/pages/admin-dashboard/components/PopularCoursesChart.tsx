@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import Icon from '@frontend/components/AppIcon';
 import { supabase } from '@frontend/lib/supabase';
-import { log } from '@/logger';
+import { log } from '@libs/logger';
 
 interface CourseData {
   name: string;

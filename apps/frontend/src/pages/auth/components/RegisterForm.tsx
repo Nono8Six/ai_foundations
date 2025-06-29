@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Icon from '@frontend/components/AppIcon';
 import { useAuth } from '@frontend/context/AuthContext';
-import { log } from '@/logger';
+import { log } from '@libs/logger';
 
 export interface RegisterFormProps {
   isLoading: boolean;

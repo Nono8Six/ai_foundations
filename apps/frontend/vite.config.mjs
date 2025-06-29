@@ -49,8 +49,8 @@ export default defineConfig(() => {
           replacement: path.resolve(__dirname, './src/lib')
         },
         {
-          find: '@/logger',
-          replacement: path.resolve(__dirname, '../../libs/logger')
+          find: '@libs',
+          replacement: path.resolve(__dirname, '../../libs')
         }
       ]
     },

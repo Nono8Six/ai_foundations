@@ -1,5 +1,5 @@
 import { createContext, useContext, type ReactNode } from 'react';
-import { log } from '@/logger';
+import { log } from '@libs/logger';
 
 export type ErrorLogger = (error: unknown) => void;
 

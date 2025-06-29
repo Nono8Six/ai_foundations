@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@frontend/context/AuthContext';
 import Icon, { type IconName } from './AppIcon';
 import Image from './AppImage';
-import { log } from '@/logger';
+import { log } from '@libs/logger';
 
 // Typage des éléments de navigation
 interface NavItem {

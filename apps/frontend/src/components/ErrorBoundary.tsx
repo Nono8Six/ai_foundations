@@ -1,6 +1,6 @@
 import React from 'react';
 import Icon from './AppIcon';
-import { log } from '@/logger';
+import { log } from '@libs/logger';
 import ErrorContext, { type ErrorLogger } from '@frontend/context/ErrorContext';
 
 interface ErrorBoundaryProps {
