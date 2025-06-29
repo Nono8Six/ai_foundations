@@ -9,7 +9,7 @@ type AchievementRow = Database['public']['Tables']['achievements']['Row'];
 interface UseAchievementsOptions {
   limit?: number;
   order?: 'asc' | 'desc';
-  filters?: Record<string, unknown>;
+  filters?: Partial<AchievementRow>;
 }
 
 interface UseAchievementsResult {
@@ -48,10 +48,12 @@ const useAchievements = (
         .eq('user_id', userId);
 
       // Apply filters if any
-      query = Object.entries(filters).reduce(
-        (q, [column, value]) => q.eq(column as keyof AchievementRow, value as never),
-        query
-      );
+      const filterEntries =
+        Object.entries(filters) as Array<[
+          keyof AchievementRow,
+          AchievementRow[keyof AchievementRow]
+        ]>;
+      query = filterEntries.reduce((q, [column, value]) => q.eq(column, value), query);
 
       // Apply ordering and limit
       query = query.order('created_at', { ascending: order === 'asc' }).limit(limit);
