@@ -1,10 +1,18 @@
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import React, { useState, ChangeEvent } from 'react';
+import { useForm, SubmitHandler } from 'react-hook-form';
 import { useAuth } from '@frontend/context/AuthContext';
-import { useToast } from '@frontend/context/ToastContext';
+import { toast } from 'sonner';
 import Icon from '@frontend/components/AppIcon';
 import Image from '@frontend/components/AppImage';
 import { log } from '@libs/logger';
+
+interface FormData {
+  name: string;
+  email: string;
+  phone: string;
+  profession: string;
+  company: string;
+}
 
 export interface PersonalInfoTabProps {
   userData: {
@@ -15,15 +23,15 @@ export interface PersonalInfoTabProps {
     phone?: string | null;
     profession?: string | null;
     company?: string | null;
+    joinDate?: string; // Added missing joinDate property
   };
 }
 
 const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ userData }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [avatarPreview, setAvatarPreview] = useState(userData.avatar);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [avatarPreview, setAvatarPreview] = useState<string>(userData.avatar);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const { updateProfile } = useAuth();
-  const { addToast } = useToast();
 
   const {
     register,
@@ -31,7 +39,7 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ userData }) => {
     formState: { errors },
     reset,
     setError,
-  } = useForm({
+  } = useForm<FormData>({
     defaultValues: {
       name: userData.name,
       email: userData.email,
@@ -41,7 +49,7 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ userData }) => {
     },
   });
 
-  const onSubmit = async data => {
+  const onSubmit: SubmitHandler<FormData> = async (data) => {
     try {
       setIsSubmitting(true);
 
@@ -64,7 +72,7 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ userData }) => {
       setIsEditing(false);
 
       // Show success message
-      addToast('Profil mis à jour avec succès !', 'success');
+      toast.success('Profil mis à jour avec succès');
     } catch (error) {
       log.error('Error updating profile', { error, userId: userData.id });
       setError('root', {
@@ -76,24 +84,26 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ userData }) => {
     }
   };
 
-  const handleAvatarChange = event => {
-    const file = event.target.files[0];
+  const handleAvatarChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
     if (file) {
       // Validate file size (max 2MB)
       if (file.size > 2 * 1024 * 1024) {
-        addToast('La taille du fichier ne doit pas dépasser 2MB', 'error');
+        toast.error('La taille du fichier ne doit pas dépasser 2MB');
         return;
       }
 
       // Validate file type
       if (!file.type.startsWith('image/')) {
-        addToast('Veuillez sélectionner un fichier image valide', 'error');
+        toast.error('Veuillez sélectionner un fichier image valide');
         return;
       }
 
       const reader = new FileReader();
-      reader.onload = e => {
-        setAvatarPreview(e.target.result);
+      reader.onload = (e: ProgressEvent<FileReader>) => {
+        if (e.target?.result && typeof e.target.result === 'string') {
+          setAvatarPreview(e.target.result);
+        }
       };
       reader.readAsDataURL(file);
     }
@@ -194,7 +204,11 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ userData }) => {
                   : 'border-transparent bg-secondary-50 text-text-secondary'
               } ${errors.name ? 'border-error' : ''}`}
             />
-            {errors.name && <p className='mt-1 text-xs text-error'>{errors.name.message}</p>}
+            {errors.name && (
+              <p className='mt-1 text-xs text-error'>
+                {errors.name.message as React.ReactNode}
+              </p>
+            )}
           </div>
 
           {/* Email */}
@@ -292,7 +306,7 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ userData }) => {
           <div>
             <span className='text-text-secondary'>Date d'inscription:</span>
             <span className='ml-2 text-text-primary font-medium'>
-              {new Date(userData.joinDate).toLocaleDateString('fr-FR')}
+              {userData.joinDate ? new Date(userData.joinDate).toLocaleDateString('fr-FR') : 'Non disponible'}
             </span>
           </div>
           <div>

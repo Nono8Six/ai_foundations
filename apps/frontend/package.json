@@ -1,5 +1,5 @@
 {
-  "name": "ia-foundations",
+  "name": "frontend",
   "version": "0.1.0",
   "private": true,
   "displayName": "IA Foundations",
@@ -17,11 +17,12 @@
     "react-hook-form": "^7.55.0",
     "react-router-dom": "7.6.2",
     "recharts": "^2.15.2",
+    "sonner": "^2.0.5",
     "zod": "^3.25.67"
   },
   "scripts": {
     "start": "vite",
-    "dev": "vite",
+    "dev": "vite --host 0.0.0.0 --port 5173",
     "build": "vite build --sourcemap",
     "serve": "vite preview",
     "lint": "eslint src --fix",

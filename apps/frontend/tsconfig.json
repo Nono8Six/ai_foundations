@@ -29,7 +29,8 @@
       "@services/*": ["./src/services/*"],
       "@components/*": ["./src/components/*"],
       "@contexts/*": ["./src/context/*"],
-      "@lib/*": ["./src/lib/*"]
+      "@lib/*": ["./src/lib/*"],
+      "@libs/*": ["../../libs/*"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/vite-env.d.ts"],
