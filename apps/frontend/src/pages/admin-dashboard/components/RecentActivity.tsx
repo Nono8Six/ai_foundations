@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { log } from '@/logger';
+import { log } from '@libs/logger';
 import Icon from '@frontend/components/AppIcon';
 import Image from '@frontend/components/AppImage';
 import { supabase } from '@frontend/lib/supabase';

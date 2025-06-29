@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Icon from '@frontend/components/AppIcon';
-import { log } from '@/logger';
+import { log } from '@libs/logger';
 
 // Unified representation of a content node in the tree
 export interface ContentNode {

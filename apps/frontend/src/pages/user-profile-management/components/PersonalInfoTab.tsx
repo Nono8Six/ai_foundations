@@ -4,7 +4,7 @@ import { useAuth } from '@frontend/context/AuthContext';
 import { useToast } from '@frontend/context/ToastContext';
 import Icon from '@frontend/components/AppIcon';
 import Image from '@frontend/components/AppImage';
-import { log } from '@/logger';
+import { log } from '@libs/logger';
 
 export interface PersonalInfoTabProps {
   userData: {

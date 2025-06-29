@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '@frontend/context/AuthContext';
-import { log } from '@/logger';
+import { log } from '@libs/logger';
 
 export interface GoogleAuthButtonProps {
   isLoading: boolean;

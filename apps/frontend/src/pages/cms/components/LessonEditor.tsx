@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Icon from '@frontend/components/AppIcon';
 import { uploadToBucket, BUCKETS } from '@frontend/services/storageService';
-import { log } from '@/logger';
+import { log } from '@libs/logger';
 import type { LessonRow } from '@frontend/types/lessonRow';
 
 export interface LessonEditorProps {

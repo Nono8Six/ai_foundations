@@ -29,11 +29,10 @@
       "@services/*": ["./src/services/*"],
       "@components/*": ["./src/components/*"],
       "@contexts/*": ["./src/context/*"],
-      "@lib/*": ["./src/lib/*"],
-      "@/logger": ["../../libs/logger"]
+      "@lib/*": ["./src/lib/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/vite-env.d.ts", "../../libs/logger/**/*.ts"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/vite-env.d.ts"],
   "exclude": [
     "node_modules",
     "dist",

@@ -9,7 +9,7 @@ import {
   AreaChart,
 } from 'recharts';
 import { supabase } from '@frontend/lib/supabase';
-import { log } from '@/logger';
+import { log } from '@libs/logger';
 
 type TooltipPayload = {
   name: string;

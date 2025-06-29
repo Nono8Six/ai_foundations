@@ -6,7 +6,7 @@ import TextInput from '@frontend/components/ui/TextInput';
 import Card from '@frontend/components/ui/Card';
 import Spinner from '@frontend/components/ui/Spinner';
 import { uploadToBucket, BUCKETS } from '@frontend/services/storageService';
-import { log } from '@/logger';
+import { log } from '@libs/logger';
 import type { CourseRow } from '@frontend/types/courseRow';
 
 export interface CourseEditorProps {

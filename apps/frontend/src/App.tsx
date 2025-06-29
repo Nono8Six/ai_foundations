@@ -8,8 +8,8 @@ import { AdminCourseProvider } from './context/AdminCourseContext';
 import { ToastProvider, useToast } from './context/ToastContext';
 import { ErrorProvider, type ErrorLogger } from './context/ErrorContext';
 import type { AuthErrorWithCode } from './types/auth';
-import { isAuthErrorWithCode } from './types/auth';
-import { log } from '@/logger';
+import { log } from '@libs/logger';
+
 
 // Un composant pour lier les deux contextes
 const AppWithErrorToasts: React.FC = () => {

@@ -5,7 +5,7 @@ import Icon from '@frontend/components/AppIcon';
 import Button from '@frontend/components/ui/Button';
 import TextInput from '@frontend/components/ui/TextInput';
 import { useAuth } from '@frontend/context/AuthContext';
-import { log } from '@/logger';
+import { log } from '@libs/logger';
 
 export interface LoginFormProps {
   onSuccess: (user: unknown) => void;

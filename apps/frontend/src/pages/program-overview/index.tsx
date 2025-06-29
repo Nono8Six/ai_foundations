@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useAuth } from '@frontend/context/AuthContext';
 import Icon from '@frontend/components/AppIcon';
 import { fetchCourses } from '@frontend/services/courseService';
-import { log } from '@/logger';
+import { log } from '@libs/logger';
 import CourseCard from './components/CourseCard';
 import FilterSidebar from './components/FilterSidebar';
 import CoursePathway from './components/CoursePathway';

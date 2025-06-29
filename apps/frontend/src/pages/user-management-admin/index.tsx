@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { supabase } from '@frontend/lib/supabase';
 import Icon from '@frontend/components/AppIcon';
 import AdminLayout, { useAdminSidebar } from '../../components/AdminLayout';
-import { log } from '@/logger';
+import { log } from '@libs/logger';
 import UserTable from './components/UserTable';
 import UserDetailsPanel from './components/UserDetailsPanel';
 import UserFilters from './components/UserFilters';
