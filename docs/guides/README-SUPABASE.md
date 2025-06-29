@@ -370,7 +370,7 @@ Dernière mise à jour : 22/06/2025
 
    ```bash
    # Régénérer le schéma de type
-   supabase gen types typescript --linked > types/supabase.ts
+   supabase gen types typescript --linked > types/database.types.ts
    ```
 
 2. **Conflits de schéma**

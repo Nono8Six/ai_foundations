@@ -16,7 +16,7 @@ graph LR;
     A[Supabase Cloud UI] --1. Modifications du Schéma (via Editeur SQL, etc.)--> B(Base de Données Supabase Cloud);
     B --2. `pnpm db:pull`--> C{Dépôt Local: apps/backend/supabase/migrations};
     C --3. `git commit -m "feat: mise à jour schéma XYZ"`--> D(Répertoire GitHub);
-    C --4. `pnpm gen:types`--> E{Dépôt Local: apps/frontend/src/types/supabase.ts};
+    C --4. `pnpm gen:types`--> E{Dépôt Local: apps/frontend/src/types/database.types.ts};
     E --`git commit`--> D;
     F[Autre Développeur] --`git pull`--> G{Dépôt Local (autre)};
     G --`pnpm db:reset` (pour instance locale) / Déploiement--> H(Instance Supabase Locale / Staging / Prod);
@@ -36,7 +36,7 @@ graph LR;
   - **Important** : Assurez-vous d'avoir exécuté `pnpm --filter backend exec supabase link` une fois pour lier votre projet local.
 
 - **`pnpm gen:types`**:
-  - **Action** : Génère le fichier `apps/frontend/src/types/supabase.ts` basé sur le schéma actuel de votre base de données (celle définie par `SUPABASE_PROJECT_REF` dans `.env`, donc votre instance Cloud).
+  - **Action** : Génère le fichier `apps/frontend/src/types/database.types.ts` basé sur le schéma actuel de votre base de données (celle définie par `SUPABASE_PROJECT_REF` dans `.env`, donc votre instance Cloud).
   - **Quand l'utiliser** : **Toujours après un `pnpm db:pull` réussi** qui a modifié la structure de la base, ou si vous avez modifié des fonctions/types SQL qui impactent l'introspection du schéma.
 
 - **`pnpm db:start`**:
@@ -70,11 +70,11 @@ graph LR;
       3.  Une fois terminé et testé sur le cloud :
           - Retournez à votre terminal local, à la racine du projet.
           - Exécutez `pnpm db:pull`. La CLI Supabase va détecter les changements et créer un ou plusieurs nouveaux fichiers de migration dans `apps/backend/supabase/migrations/`.
-          - Exécutez `pnpm gen:types` pour mettre à jour `apps/frontend/src/types/supabase.ts`.
+          - Exécutez `pnpm gen:types` pour mettre à jour `apps/frontend/src/types/database.types.ts`.
           - Vérifiez les fichiers générés.
-          - Commitez les nouveaux fichiers de migration et le fichier `supabase.ts` mis à jour :
+          - Commitez les nouveaux fichiers de migration et le fichier `database.types.ts` mis à jour :
             ```bash
-            git add apps/backend/supabase/migrations apps/frontend/src/types/supabase.ts
+            git add apps/backend/supabase/migrations apps/frontend/src/types/database.types.ts
             git commit -m "feat(schema): ajout de la table X et mise à jour des types"
             git push
             ```
