@@ -20,7 +20,7 @@
     "gen:types": "pnpm --filter backend exec supabase gen types typescript --schema public > apps/frontend/src/types/supabase.ts",
     "db:start": "pnpm --filter backend exec supabase start",
     "db:stop": "pnpm --filter backend exec supabase stop",
-    "validate:env": "node scripts/validateEnv.js",
+    "validate:env": "node scripts/validate-env.js",
     "prepare": "husky install"
   },
   "devDependencies": {

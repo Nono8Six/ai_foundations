@@ -26,13 +26,13 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "\n स्टेप 3: Validation des variables d'environnement..."
-if [ -f ./scripts/validateEnv.js ]; then
-    node ./scripts/validateEnv.js
+if [ -f ./scripts/validate-env.js ]; then
+    node ./scripts/validate-env.js
     if [ $? -ne 0 ]; then
         echo "   Avertissement: La validation de l'environnement a échoué. Assurez-vous que votre fichier .env est correctement configuré."
     fi
 else
-    echo "   Avertissement: scripts/validateEnv.js non trouvé. Impossible de valider .env."
+    echo "   Avertissement: scripts/validate-env.js non trouvé. Impossible de valider .env."
 fi
 
 echo "\n✅ Récupération basique terminée."
