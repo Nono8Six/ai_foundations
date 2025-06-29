@@ -72,11 +72,11 @@ pnpm install
     ```
 
 4.  **Générez les types TypeScript pour le Frontend** :
-    Cette commande introspecte votre schéma (via le projet lié) et crée/met à jour `apps/frontend/src/types/supabase.ts`.
+    Cette commande introspecte votre schéma (via le projet lié) et crée/met à jour `apps/frontend/src/types/database.types.ts`.
     ```bash
     pnpm gen:types
     ```
-    **Vérifiez que le fichier `apps/frontend/src/types/supabase.ts` a bien été créé ou mis à jour.**
+    **Vérifiez que le fichier `apps/frontend/src/types/database.types.ts` a bien été créé ou mis à jour.**
 
 ## 4. Démarrage de l'Environnement de Développement
 
