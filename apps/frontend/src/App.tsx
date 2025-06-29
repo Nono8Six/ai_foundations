@@ -8,6 +8,7 @@ import { AdminCourseProvider } from './context/AdminCourseContext';
 import { ToastProvider, useToast } from './context/ToastContext';
 import { ErrorProvider, type ErrorLogger } from './context/ErrorContext';
 import type { AuthErrorWithCode } from './types/auth';
+import { isAuthErrorWithCode } from './types/auth';
 import { log } from '@/logger';
 
 // Un composant pour lier les deux contextes
@@ -16,7 +17,12 @@ const AppWithErrorToasts: React.FC = () => {
 
   // Créer un logger personnalisé qui affiche un toast
   const errorLoggerWithToast: ErrorLogger = (error: unknown) => {
-    const err = error as AuthErrorWithCode;
+    if (!isAuthErrorWithCode(error)) {
+      log.error('Unknown error logged:', error);
+      addToast("Une erreur inattendue s'est produite", 'error');
+      return;
+    }
+    const err = error;
     // Liste complète des erreurs d'authentification attendues à ne pas logger
     const isExpectedAuthError =
       err?.code === 'invalid_credentials' ||
