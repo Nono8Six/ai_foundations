@@ -3,7 +3,7 @@ import React, { Suspense, lazy } from 'react';
 import { Routes as RouterRoutes, Route, Navigate } from 'react-router-dom';
 import ScrollToTop from './components/ScrollToTop';
 import ErrorBoundary from './components/ErrorBoundary';
-import { useAuth } from './context/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
 
 // --- Lazy Loading des pages ---
 const PublicHomepage = lazy(() => import('./pages/public-homepage/index'));
@@ -26,19 +26,7 @@ const PageLoader: React.FC = () => (
   </div>
 );
 
-// --- Route Protégée ---
-interface ProtectedRouteProps {
-  children: React.ReactElement;
-  requireAdmin?: boolean;
-}
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireAdmin = false }) => {
-  const { user, userProfile, loading } = useAuth();
-  if (loading) return <PageLoader />;
-  if (!user) return <Navigate to='/login' replace />;
-  if (requireAdmin && !userProfile?.is_admin) return <Navigate to='/espace' replace />;
-  return children;
-};
 
 // --- Définition des Routes (sans BrowserRouter) ---
 const AppRoutes: React.FC = () => {
@@ -55,72 +43,18 @@ const AppRoutes: React.FC = () => {
           <Route path='/login' element={<AuthenticationLoginRegister />} />
           <Route path='/register' element={<AuthenticationLoginRegister />} />
           <Route path='/forgot-password' element={<ForgotPassword />} />
-          <Route
-            path='/espace'
-            element={
-              <ProtectedRoute>
-                <UserDashboard />
-              </ProtectedRoute>
-            }
-          />
+          <Route element={<ProtectedRoute />}>
+            <Route path='/espace' element={<UserDashboard />} />
+            <Route path='/profile' element={<UserProfileManagement />} />
+            <Route path='/lesson-viewer' element={<LessonViewer />} />
+            <Route path='/lesson-viewer/:lessonId' element={<LessonViewer />} />
+            <Route path='/admin-dashboard' element={<AdminDashboard />} />
+            <Route path='/user-management-admin' element={<UserManagementAdmin />} />
+            <Route path='/cms' element={<ContentManagementCoursesModulesLessons />} />
+            <Route path='/content-management' element={<ContentManagementCoursesModulesLessons />} />
+          </Route>
           <Route path='/user-dashboard' element={<Navigate to='/espace' replace />} />
-          <Route
-            path='/profile'
-            element={
-              <ProtectedRoute>
-                <UserProfileManagement />
-              </ProtectedRoute>
-            }
-          />
           <Route path='/user-profile-management' element={<Navigate to='/profile' replace />} />
-          <Route
-            path='/lesson-viewer'
-            element={
-              <ProtectedRoute>
-                <LessonViewer />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path='/lesson-viewer/:lessonId'
-            element={
-              <ProtectedRoute>
-                <LessonViewer />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path='/admin-dashboard'
-            element={
-              <ProtectedRoute requireAdmin={true}>
-                <AdminDashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path='/user-management-admin'
-            element={
-              <ProtectedRoute requireAdmin={true}>
-                <UserManagementAdmin />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path='/cms'
-            element={
-              <ProtectedRoute requireAdmin={true}>
-                <ContentManagementCoursesModulesLessons />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path='/content-management'
-            element={
-              <ProtectedRoute requireAdmin={true}>
-                <ContentManagementCoursesModulesLessons />
-              </ProtectedRoute>
-            }
-          />
           <Route path='/verify-email' element={<VerifyEmail />} />
           <Route path='*' element={<NotFound />} />
         </RouterRoutes>
