@@ -89,11 +89,6 @@ const Header = (): JSX.Element => {
 
   return (
     <header className='bg-surface border-b border-border sticky top-0 z-50'>
-      {user && profileError && !authError && (
-        <div className='bg-warning-50 text-warning-800 text-sm text-center px-4 py-2 border-b border-warning-200'>
-          Impossible de charger les informations du profil. Certaines fonctionnalités peuvent être limitées.
-        </div>
-      )}
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
         <div className='flex justify-between items-center h-16'>
           {/* Logo */}
