@@ -415,15 +415,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       log.debug('🚪 Logout initiated...');
       await signOut();
+      navigate('/login', { replace: true });
     } catch (err) {
       log.error('❌ Erreur lors de la déconnexion:', err);
     } finally {
       log.debug('🧹 Cleaning up user state...');
       setUser(null);
       setUserProfile(null);
-      localStorage.removeItem('authToken');
-      log.debug('🏠 Navigating to home...');
-      navigate('/');
     }
   };
 

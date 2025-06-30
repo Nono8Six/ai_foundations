@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@frontend/context/AuthContext';
 import Icon, { type IconName } from './AppIcon';
 import Image from './AppImage';
@@ -24,7 +24,6 @@ const Header = (): JSX.Element => {
     logout,
     clearProfileError,
   } = useAuth();
-  const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
@@ -54,7 +53,6 @@ const Header = (): JSX.Element => {
       await logout();
       setIsProfileOpen(false);
       setIsMenuOpen(false);
-      navigate('/login');
     } catch (error) {
       log.error('Erreur lors de la déconnexion:', error);
     }
