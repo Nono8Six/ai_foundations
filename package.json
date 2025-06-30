@@ -41,6 +41,7 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "pino": "^9.7.0"
+    "pino": "^9.7.0",
+    "sonner": "^2.0.5"
   }
 }
