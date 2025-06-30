@@ -15,13 +15,15 @@ interface NavItem {
 const Header = (): JSX.Element => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const { user, userProfile, loading, profileError, logout } = useAuth();
+  const { user, userProfile, loading, profileError, authError, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  if (user && profileError) {
-    log.error('Erreur de chargement du profil:', profileError);
-  }
+  useEffect(() => {
+    if (user && profileError && !authError) {
+      log.error('Erreur de chargement du profil:', profileError);
+    }
+  }, [user, profileError, authError]);
 
   const getInitials = () => {
     const name = userProfile?.full_name || user?.user_metadata?.full_name || '';
@@ -92,6 +94,11 @@ const Header = (): JSX.Element => {
 
   return (
     <header className='bg-surface border-b border-border sticky top-0 z-50'>
+      {user && profileError && !authError && (
+        <div className='bg-warning-50 text-warning-800 text-sm text-center px-4 py-2 border-b border-warning-200'>
+          Impossible de charger les informations du profil. Certaines fonctionnalités peuvent être limitées.
+        </div>
+      )}
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
         <div className='flex justify-between items-center h-16'>
           {/* Logo */}
