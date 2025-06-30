@@ -1,5 +1,5 @@
 export interface AuthError {
-  code?: string;
+  code?: string | undefined;
   message?: string;
   originalError?: {
     code?: string;

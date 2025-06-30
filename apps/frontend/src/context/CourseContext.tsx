@@ -1,8 +1,9 @@
 // src/context/CourseContext.tsx
-import React, { createContext, useContext, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import type { QueryObserverResult } from '@tanstack/react-query';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from './AuthContext';
+import { createContextStrict } from './createContextStrict';
 
 import { logError } from './ErrorContext.tsx';
 import { fetchCoursesFromSupabase } from '@frontend/services/courseService';
@@ -15,7 +16,7 @@ export interface CourseContextValue extends CourseData {
   refetchCourses: () => Promise<QueryObserverResult<CourseData | null, unknown>>;
 }
 
-const CourseContext = createContext<CourseContextValue | undefined>(undefined);
+const [CourseContext, useCourses] = createContextStrict<CourseContextValue>();
 
 export const CourseProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
@@ -47,13 +48,9 @@ export const CourseProvider = ({ children }: { children: ReactNode }) => {
     refetchCourses: queryResult.refetch,
   };
 
-  return <CourseContext.Provider value={value}>{children}</CourseContext.Provider>;
+  return (
+    <CourseContext.Provider value={value}>{children}</CourseContext.Provider>
+  );
 };
 
-export const useCourses = () => {
-  const context = useContext(CourseContext);
-  if (context === undefined) {
-    throw new Error('useCourses must be used within a CourseProvider');
-  }
-  return context;
-};
+export { useCourses };

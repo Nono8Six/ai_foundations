@@ -1,11 +1,13 @@
 // src/context/AdminCourseContext.tsx
-import React, { createContext, useContext, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@frontend/lib/supabase';
 import { safeQuery } from '@frontend/utils/supabaseClient';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@frontend/types/database.types';
 import { useAuth } from './AuthContext';
+import { createContextStrict } from './createContextStrict';
+import type { NoInfer } from '@frontend/types/utils';
 
 const supabaseClient = supabase as SupabaseClient<Database>;
 
@@ -28,11 +30,17 @@ export interface AdminCourseContextValue {
   deleteModule: (id: string) => Promise<void>;
 }
 
-const AdminCourseContext = createContext<AdminCourseContextValue | undefined>(undefined);
+const [AdminCourseContext, useAdminCourses] =
+  createContextStrict<AdminCourseContextValue>();
 
 export const AdminCourseProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  type InvalidateKeys = NoInfer<[string, string | undefined]>;
+  const invalidateCourses = () => {
+    const key: InvalidateKeys = ['courses', user?.id];
+    return queryClient.invalidateQueries({ queryKey: key });
+  };
 
   const createCourse = useMutation<
     Database['public']['Tables']['courses']['Row'],
@@ -43,10 +51,10 @@ export const AdminCourseProvider = ({ children }: { children: ReactNode }) => {
       const { data, error } = await safeQuery(() =>
         supabaseClient.from('courses').insert(course).select().single()
       );
-      if (error) throw error;
-      return data!;
+      if (error || !data) throw error ?? new Error('No data');
+      return data;
     },
-    onSuccess: () => queryClient.invalidateQueries(['courses', user?.id]),
+    onSuccess: invalidateCourses,
   });
 
   const updateCourse = useMutation<
@@ -64,18 +72,20 @@ export const AdminCourseProvider = ({ children }: { children: ReactNode }) => {
       const { data, error } = await safeQuery(() =>
         supabaseClient.from('courses').update(updates).eq('id', id).select().single()
       );
-      if (error) throw error;
-      return data!;
+      if (error || !data) throw error ?? new Error('No data');
+      return data;
     },
-    onSuccess: () => queryClient.invalidateQueries(['courses', user?.id]),
+    onSuccess: invalidateCourses,
   });
 
   const deleteCourse = useMutation<void, Error, string>({
     mutationFn: async (id: string) => {
-      const { error } = await safeQuery(() => supabaseClient.from('courses').delete().eq('id', id));
+      const { error } = await safeQuery(() =>
+        supabaseClient.from('courses').delete().eq('id', id)
+      );
       if (error) throw error;
     },
-    onSuccess: () => queryClient.invalidateQueries(['courses', user?.id]),
+    onSuccess: invalidateCourses,
   });
 
   const createModule = useMutation<
@@ -87,10 +97,10 @@ export const AdminCourseProvider = ({ children }: { children: ReactNode }) => {
       const { data, error } = await safeQuery(() =>
         supabaseClient.from('modules').insert(module).select().single()
       );
-      if (error) throw error;
-      return data!;
+      if (error || !data) throw error ?? new Error('No data');
+      return data;
     },
-    onSuccess: () => queryClient.invalidateQueries(['courses', user?.id]),
+    onSuccess: invalidateCourses,
   });
 
   const updateModule = useMutation<
@@ -108,10 +118,10 @@ export const AdminCourseProvider = ({ children }: { children: ReactNode }) => {
       const { data, error } = await safeQuery(() =>
         supabaseClient.from('modules').update(updates).eq('id', id).select().single()
       );
-      if (error) throw error;
-      return data!;
+      if (error || !data) throw error ?? new Error('No data');
+      return data;
     },
-    onSuccess: () => queryClient.invalidateQueries(['courses', user?.id]),
+    onSuccess: invalidateCourses,
   });
 
   const deleteModule = useMutation<void, Error, string>({
@@ -119,7 +129,7 @@ export const AdminCourseProvider = ({ children }: { children: ReactNode }) => {
       const { error } = await safeQuery(() => supabaseClient.from('modules').delete().eq('id', id));
       if (error) throw error;
     },
-    onSuccess: () => queryClient.invalidateQueries(['courses', user?.id]),
+    onSuccess: invalidateCourses,
   });
 
   const value: AdminCourseContextValue = {
@@ -131,13 +141,9 @@ export const AdminCourseProvider = ({ children }: { children: ReactNode }) => {
     deleteModule: deleteModule.mutateAsync,
   };
 
-  return <AdminCourseContext.Provider value={value}>{children}</AdminCourseContext.Provider>;
+  return (
+    <AdminCourseContext.Provider value={value}>{children}</AdminCourseContext.Provider>
+  );
 };
 
-export const useAdminCourses = () => {
-  const context = useContext(AdminCourseContext);
-  if (context === undefined) {
-    throw new Error('useAdminCourses must be used within an AdminCourseProvider');
-  }
-  return context;
-};
+export { useAdminCourses };
