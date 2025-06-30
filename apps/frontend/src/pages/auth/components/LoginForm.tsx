@@ -38,6 +38,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, isLoading, setIsLoadin
     formState: { errors },
     setError: setFormError,
     watch,
+    clearErrors,
     getValues,
   } = useForm<LoginFormFields>();
   
@@ -56,6 +57,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, isLoading, setIsLoadin
 
   // Clear error when user edits fields
   useEffect(() => {
+    if (errors.email) {
+      clearErrors('email');
+    }
+    if (errors.password) {
+      clearErrors('password');
+    }
     if (authError) {
       clearAuthError();
     }
