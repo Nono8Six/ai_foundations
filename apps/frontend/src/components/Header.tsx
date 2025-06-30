@@ -15,15 +15,27 @@ interface NavItem {
 const Header = (): JSX.Element => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const { user, userProfile, loading, profileError, authError, logout } = useAuth();
+  const {
+    user,
+    userProfile,
+    loading,
+    profileError,
+    authError,
+    logout,
+    clearProfileError,
+  } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
     if (user && profileError && !authError) {
       log.error('Erreur de chargement du profil:', profileError);
+      const timer = setTimeout(() => {
+        clearProfileError();
+      }, 3000);
+      return () => clearTimeout(timer);
     }
-  }, [user, profileError, authError]);
+  }, [user, profileError, authError, clearProfileError]);
 
   const getInitials = () => {
     const name = userProfile?.full_name || user?.user_metadata?.full_name || '';
