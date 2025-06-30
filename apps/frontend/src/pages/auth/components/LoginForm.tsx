@@ -1,6 +1,7 @@
 // src/pages/auth/components/LoginForm.tsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { isAuthErrorWithCode } from '@frontend/utils/auth';
 import { toast } from 'sonner';
 import Icon from '@frontend/components/AppIcon';
 import Button from '@frontend/components/ui/Button';
@@ -36,12 +37,29 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, isLoading, setIsLoadin
     handleSubmit,
     formState: { errors },
     setError: setFormError,
+    watch,
+    getValues,
   } = useForm<LoginFormFields>();
   
-  const { signIn, resendVerificationEmail } = useAuth();
-  const [authError, setAuthError] = useState('');
-  const [authErrorCode, setAuthErrorCode] = useState('');
-  const { getValues } = useForm<LoginFormFields>();
+  const { signIn, resendVerificationEmail, authError, clearAuthError } = useAuth();
+
+  // Clear auth error on mount/unmount
+  useEffect(() => {
+    clearAuthError();
+    return () => {
+      clearAuthError();
+    };
+  }, []);
+
+  const emailValue = watch('email');
+  const passwordValue = watch('password');
+
+  // Clear error when user edits fields
+  useEffect(() => {
+    if (authError) {
+      clearAuthError();
+    }
+  }, [emailValue, passwordValue]);
 
   const getErrorMessage = (error: unknown): string | undefined => {
     if (!error) return undefined;
@@ -56,8 +74,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, isLoading, setIsLoadin
 
   const onSubmit = async (data: LoginFormFields) => {
     setIsLoading(true);
-    setAuthError('');
-    setAuthErrorCode('');
+    clearAuthError();
 
     try {
       const result = await signIn({
@@ -85,19 +102,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, isLoading, setIsLoadin
       }
     } catch (error) {
       log.error({ msg: 'Login error', error });
-      const errorMessage = getErrorMessage(error) || 'Une erreur est survenue lors de la connexion';
-      setAuthError(errorMessage);
-      
-      if (error && typeof error === 'object' && 'code' in error) {
-        setAuthErrorCode(String(error.code));
-      }
 
       // Set form field errors
-      setFormError('email', { 
+      setFormError('email', {
         type: 'manual',
         message: 'Vérifiez votre email'
       });
-      setFormError('password', { 
+      setFormError('password', {
         type: 'manual',
         message: 'Vérifiez votre mot de passe'
       });
@@ -150,8 +161,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, isLoading, setIsLoadin
           <div className='flex items-start'>
             <Icon name='AlertTriangle' className='h-5 w-5 text-error-400 mr-3' />
             <div className='flex-1'>
-              <p className='text-sm font-medium text-error-800'>{authError}</p>
-              {authErrorCode === 'email_not_confirmed' && (
+              <p className='text-sm font-medium text-error-800'>{authError.message}</p>
+              {isAuthErrorWithCode(authError) && authError.code === 'email_not_confirmed' && (
                 <div className='mt-2'>
                   <button
   type='button'

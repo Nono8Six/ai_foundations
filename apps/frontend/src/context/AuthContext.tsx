@@ -64,6 +64,7 @@ export interface AuthContextValue {
   authError: Error | null;
   profileError: Error | null;
   isAdmin: boolean;
+  clearAuthError: () => void;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -76,6 +77,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [authError, setAuthError] = useState<Error | null>(null);
   const [profileError, setProfileError] = useState<Error | null>(null);
   const navigate = useNavigate();
+  const clearAuthError = () => setAuthError(null);
 
   useEffect(() => {
     // Get session on initial load
@@ -682,6 +684,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     authError,
     profileError,
     isAdmin,
+    clearAuthError,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
