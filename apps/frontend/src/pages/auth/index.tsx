@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@frontend/context/AuthContext';
+import { toast } from 'sonner';
 
 import Icon from '@frontend/components/AppIcon';
 import LoginForm from './components/LoginForm';
@@ -37,6 +38,7 @@ const AuthenticationLoginRegister = () => {
 
     // For login success, redirect to dashboard
     if (activeTab === 'login') {
+      toast.success('Connexion réussie !');
       // Redirect based on user role
       if (userData.role === 'admin') {
         navigate('/admin-dashboard');
