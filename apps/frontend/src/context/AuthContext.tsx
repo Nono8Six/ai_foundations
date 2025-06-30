@@ -1,14 +1,7 @@
 // src/context/AuthContext.tsx
 const toJson = (v: unknown): Json => v as Json;
 
-import {
-  createContext,
-  useState,
-  useEffect,
-  useContext,
-  useCallback,
-  type ReactNode,
-} from 'react';
+import { useState, useEffect, useCallback, type ReactNode } from 'react';
 import type {
   Session,
   User,
@@ -28,6 +21,7 @@ import { useNavigate } from 'react-router-dom';
 import { log } from '@libs/logger';
 import type { AuthErrorWithCode } from '@frontend/types/auth';
 import { toast } from 'sonner';
+import { createContextStrict } from './createContextStrict';
 
 // Déclaration du type UserSettings aligné sur ta table user_settings (DB et TS)
 export interface UserSettings {
@@ -69,7 +63,7 @@ export interface AuthContextValue {
   clearProfileError: () => void;
 }
 
-const AuthContext = createContext<AuthContextValue | undefined>(undefined);
+const [AuthContext, useAuth] = createContextStrict<AuthContextValue>();
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -704,10 +698,4 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
+export { useAuth };
