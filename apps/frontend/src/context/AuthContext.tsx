@@ -94,13 +94,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         log.debug('📋 Initial session:', session);
         setSession(session ?? null);
         setUser(session?.user ?? null);
-
-        if (session?.user) {
-          log.debug('👤 User found, fetching profile...');
-          await fetchUserProfile(session.user.id).catch(err => {
-            log.error('Failed to fetch user profile:', err);
-          });
-        }
       } catch (err: unknown) {
         const error = err instanceof Error ? err : new Error(String(err));
         log.error('❌ Error getting initial session:', error.message);
@@ -116,7 +109,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const {
       data: { subscription },
     } = supabaseClient.auth.onAuthStateChange(
-      async (event: AuthChangeEvent, session: Session | null) => {
+      (event: AuthChangeEvent, session: Session | null) => {
         log.debug('🔄 Auth state change event:', event);
         log.debug('📋 Auth state change session:', session);
         log.debug('⏰ Timestamp:', new Date().toISOString());
@@ -126,8 +119,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setLoading(false);
 
         if (event === 'SIGNED_IN' && session?.user) {
-          log.debug('✅ User signed in, fetching profile...');
-          await fetchUserProfile(session.user.id);
+          log.debug('✅ User signed in');
           if (window.location.pathname === '/verify-email') {
             navigate('/espace');
           }
@@ -218,6 +210,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setProfileError(err);
     }
   };
+
+  useEffect(() => {
+    if (!user) return;
+    const loadProfile = async () => {
+      log.debug('👤 User detected, fetching profile...');
+      try {
+        await fetchUserProfile(user.id);
+      } catch (err) {
+        log.error('Failed to fetch user profile:', err);
+      }
+    };
+    void loadProfile();
+  }, [user]);
 
   // Sign Up with email
   const signUp = async ({
