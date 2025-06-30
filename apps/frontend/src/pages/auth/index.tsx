@@ -136,7 +136,7 @@ const AuthenticationLoginRegister = () => {
             {activeTab === 'login' ? (
               <>
                 <Link
-                  to='#'
+                  to='/forgot-password'
                   className='block text-sm text-primary hover:text-primary-700 transition-colors duration-200'
                 >
                   Mot de passe oublié ?

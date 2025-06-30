@@ -1,5 +1,6 @@
 // src/pages/auth/components/LoginForm.tsx
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { isAuthErrorWithCode } from '@frontend/utils/auth';
 import { toast } from 'sonner';
@@ -32,6 +33,7 @@ export interface LoginFormProps {
 
 const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, isLoading, setIsLoading }) => {
   const [isResending, setIsResending] = useState(false);
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -219,8 +221,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, isLoading, setIsLoadin
             className='font-medium text-primary hover:text-primary-700 transition-colors duration-200'
             disabled={isLoading}
             onClick={() => {
-              // This would typically open a forgot password modal or navigate to a forgot password page
-              log.info('Forgot password clicked');
+              navigate('/forgot-password');
             }}
           >
             Mot de passe oublié ?
