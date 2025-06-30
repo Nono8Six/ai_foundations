@@ -4,6 +4,13 @@ import { useAuth } from '@frontend/context/AuthContext';
 import Icon, { type IconName } from './AppIcon';
 import Avatar from './Avatar';
 import { log } from '@libs/logger';
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu';
 
 // Typage des éléments de navigation
 interface NavItem {
@@ -14,7 +21,6 @@ interface NavItem {
 
 const Header = (): JSX.Element => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const {
     user,
     userProfile,
@@ -44,7 +50,6 @@ const Header = (): JSX.Element => {
   const handleLogout = async () => {
     try {
       await logout();
-      setIsProfileOpen(false);
       setIsMenuOpen(false);
     } catch (error) {
       log.error('Erreur lors de la déconnexion:', error);
@@ -81,19 +86,6 @@ const Header = (): JSX.Element => {
       ]
     : [];
 
-  // Close profile menu on click outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (isProfileOpen && !(event.target as HTMLElement).closest('.profile-menu')) {
-        setIsProfileOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isProfileOpen]);
 
   return (
     <header className='bg-surface border-b border-border sticky top-0 z-50'>
@@ -150,7 +142,6 @@ const Header = (): JSX.Element => {
           <button
             onClick={() => {
               setIsMenuOpen(!isMenuOpen);
-              setIsProfileOpen(false);
             }}
             className='lg:hidden p-2 rounded-lg hover:bg-secondary-50 transition-colors duration-200'
             aria-label='Toggle menu'
@@ -160,75 +151,66 @@ const Header = (): JSX.Element => {
 
           {/* User Menu */}
           {user && (
-            <div className='profile-menu relative'>
-              <button
-                onClick={() => setIsProfileOpen(!isProfileOpen)}
-                className='w-10 h-10 rounded-full hover:shadow-medium transition-all duration-200 flex items-center justify-center'
-              >
-                {loading ? (
-                  <div className='w-5 h-5 rounded-full bg-gray-200 animate-pulse' />
-                ) : (
-                  <Avatar
-                    src={userProfile?.avatar_url}
-                    name={userProfile?.full_name || user?.user_metadata?.full_name}
-                  />
-                )}
-              </button>
-
-              {isProfileOpen && (
-                <div className='absolute right-0 mt-2 w-56 bg-surface rounded-lg shadow-medium border border-border py-2 z-50'>
-                  <div className='px-4 py-2 border-b border-border mb-2'>
-                    <p className='font-medium text-text-primary'>{getFirstName()}</p>
-                    <p className='text-sm text-text-secondary'>Niveau {userProfile?.level || 1}</p>
-                  </div>
-
-                  {/* Profile menu items */}
-                  {profileItems.map(item => (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className='w-10 h-10 rounded-full hover:shadow-medium transition-all duration-200 flex items-center justify-center'
+                >
+                  {loading ? (
+                    <div className='w-5 h-5 rounded-full bg-gray-200 animate-pulse' />
+                  ) : (
+                    <Avatar
+                      src={userProfile?.avatar_url}
+                      name={userProfile?.full_name || user?.user_metadata?.full_name}
+                    />
+                  )}
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className='w-56'>
+                <div className='px-4 py-2 border-b border-border mb-2'>
+                  <p className='font-medium text-text-primary'>{getFirstName()}</p>
+                  <p className='text-sm text-text-secondary'>Niveau {userProfile?.level || 1}</p>
+                </div>
+                {profileItems.map(item => (
+                  <DropdownMenuItem asChild key={item.path}>
                     <Link
-                      key={item.path}
                       to={item.path}
-                      onClick={() => setIsProfileOpen(false)}
-                      className={`flex items-center space-x-3 px-4 py-2 text-text-secondary hover:bg-secondary-50 hover:text-primary transition-colors duration-200 ${
+                      className={`flex items-center space-x-3 w-full ${
                         location.pathname === item.path.split('?')[0]
-                          ? 'bg-secondary-50 text-primary'
-                          : ''
+                          ? 'text-primary'
+                          : 'text-text-secondary'
                       }`}
                     >
                       <Icon aria-hidden='true' name={item.icon} size={18} />
                       <span>{item.name}</span>
                     </Link>
-                  ))}
-
-                  {/* Admin menu items */}
-                  {adminItems.length > 0 && (
-                    <>
-                      <div className='border-t border-border my-2'></div>
-                      {adminItems.map(item => (
+                  </DropdownMenuItem>
+                ))}
+                {adminItems.length > 0 && (
+                  <>
+                    <DropdownMenuSeparator />
+                    {adminItems.map(item => (
+                      <DropdownMenuItem asChild key={item.path}>
                         <Link
-                          key={item.path}
                           to={item.path}
-                          onClick={() => setIsProfileOpen(false)}
-                          className={`flex items-center space-x-3 px-4 py-2 text-text-secondary hover:bg-secondary-50 hover:text-primary transition-colors duration-200 ${
-                            location.pathname === item.path ? 'bg-secondary-50 text-primary' : ''
+                          className={`flex items-center space-x-3 w-full ${
+                            location.pathname === item.path ? 'text-primary' : 'text-text-secondary'
                           }`}
                         >
                           <Icon aria-hidden='true' name={item.icon} size={18} />
                           <span>{item.name}</span>
                         </Link>
-                      ))}
-                    </>
-                  )}
-
-                  <button
-                    onClick={handleLogout}
-                    className='w-full px-4 py-2 text-left text-text-primary hover:bg-secondary-50 transition-colors duration-200 flex items-center space-x-2 border-t border-border mt-2 pt-2'
-                  >
-                    <Icon aria-hidden='true' name='LogOut' size={16} />
-                    <span>Déconnexion</span>
-                  </button>
-                </div>
-              )}
-            </div>
+                      </DropdownMenuItem>
+                    ))}
+                  </>
+                )}
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onSelect={handleLogout} className='flex items-center space-x-2'>
+                  <Icon aria-hidden='true' name='LogOut' size={16} />
+                  <span>Déconnexion</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
         </div>
       </div>
