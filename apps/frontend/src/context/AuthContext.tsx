@@ -27,6 +27,7 @@ import { safeQuery } from '@frontend/utils/supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import { log } from '@libs/logger';
 import type { AuthErrorWithCode } from '@frontend/types/auth';
+import { toast } from 'sonner';
 
 // Déclaration du type UserSettings aligné sur ta table user_settings (DB et TS)
 export interface UserSettings {
@@ -80,6 +81,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
   const clearAuthError = () => setAuthError(null);
   const clearProfileError = () => setProfileError(null);
+
+  useEffect(() => {
+    const error = authError ?? profileError;
+    if (error) {
+      toast.error(error.message);
+    }
+  }, [authError, profileError]);
 
   useEffect(() => {
     // Get session on initial load

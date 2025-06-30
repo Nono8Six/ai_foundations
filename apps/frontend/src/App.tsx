@@ -35,7 +35,7 @@ const App: React.FC = () => {
             <ErrorProvider logger={errorLoggerWithToast}>
               <Header />
               <AppRoutes />
-              <Toaster richColors position="bottom-right" />
+              <Toaster richColors position="top-center" />
             </ErrorProvider>
           </AdminCourseProvider>
         </CourseProvider>
