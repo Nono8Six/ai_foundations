@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@frontend/context/AuthContext';
 import Icon, { type IconName } from './AppIcon';
-import Image from './AppImage';
+import Avatar from './Avatar';
 import { log } from '@libs/logger';
 
 // Typage des éléments de navigation
@@ -35,13 +35,6 @@ const Header = (): JSX.Element => {
       return () => clearTimeout(timer);
     }
   }, [user, profileError, authError, clearProfileError]);
-
-  const getInitials = () => {
-    const name = userProfile?.full_name || user?.user_metadata?.full_name || '';
-    const [first, last] = name.split(' ');
-    const initials = `${first?.charAt(0) ?? ''}${last?.charAt(0) ?? ''}`.toUpperCase();
-    return initials || null;
-  };
 
   const getFirstName = () => {
     const name = userProfile?.full_name || user?.user_metadata?.full_name || '';
@@ -170,20 +163,15 @@ const Header = (): JSX.Element => {
             <div className='profile-menu relative'>
               <button
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
-                className='w-10 h-10 bg-gradient-to-br from-primary to-primary-700 rounded-full flex items-center justify-center hover:shadow-medium transition-all duration-200'
+                className='w-10 h-10 rounded-full hover:shadow-medium transition-all duration-200 flex items-center justify-center'
               >
                 {loading ? (
                   <div className='w-5 h-5 rounded-full bg-gray-200 animate-pulse' />
-                ) : userProfile?.avatar_url ? (
-                  <Image
-                    src={userProfile.avatar_url}
-                    alt='Profile'
-                    className='w-full h-full rounded-full object-cover'
-                  />
-                ) : getInitials() ? (
-                  <span className='text-white font-medium text-sm'>{getInitials()}</span>
                 ) : (
-                  <Icon aria-hidden='true' name='User' size={20} color='white' />
+                  <Avatar
+                    src={userProfile?.avatar_url}
+                    name={userProfile?.full_name || user?.user_metadata?.full_name}
+                  />
                 )}
               </button>
 
