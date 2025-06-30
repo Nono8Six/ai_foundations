@@ -9,6 +9,7 @@ import { useAuth } from './context/AuthContext';
 const PublicHomepage = lazy(() => import('./pages/public-homepage/index'));
 const ProgramOverview = lazy(() => import('./pages/program-overview/index'));
 const AuthenticationLoginRegister = lazy(() => import('./pages/auth/index'));
+const ForgotPassword = lazy(() => import('./pages/auth/ForgotPassword'));
 const UserDashboard = lazy(() => import('./pages/user-dashboard/index'));
 const UserProfileManagement = lazy(() => import('./pages/user-profile-management/index'));
 const LessonViewer = lazy(() => import('./pages/lesson-viewer/index'));
@@ -53,6 +54,7 @@ const AppRoutes: React.FC = () => {
           <Route path='/program-overview' element={<ProgramOverview />} />
           <Route path='/login' element={<AuthenticationLoginRegister />} />
           <Route path='/register' element={<AuthenticationLoginRegister />} />
+          <Route path='/forgot-password' element={<ForgotPassword />} />
           <Route
             path='/espace'
             element={
