@@ -3,6 +3,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { Toaster, toast } from 'sonner';
 import AppRoutes from './Routes';
 import Header from './components/Header';
+import useRouteProgress from './hooks/useRouteProgress';
 import { AuthProvider } from './context/AuthContext';
 import { CourseProvider } from './context/CourseContext';
 import { AdminCourseProvider } from './context/AdminCourseContext';
@@ -26,6 +27,8 @@ const App: React.FC = () => {
 
     toast.error(msg);
   };
+
+  useRouteProgress();
 
   return (
     <BrowserRouter>
