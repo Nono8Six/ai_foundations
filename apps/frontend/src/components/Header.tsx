@@ -15,12 +15,12 @@ interface NavItem {
 const Header = (): JSX.Element => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const { user, userProfile, loading, error, logout } = useAuth();
+  const { user, userProfile, loading, profileError, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  if (user && error) {
-    log.error('Erreur de chargement du profil:', error);
+  if (user && profileError) {
+    log.error('Erreur de chargement du profil:', profileError);
   }
 
   const getInitials = () => {

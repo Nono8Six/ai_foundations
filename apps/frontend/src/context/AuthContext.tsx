@@ -61,7 +61,8 @@ export interface AuthContextValue {
   userProfile: UserProfile | null;
   session: Session | null;
   loading: boolean;
-  error: unknown;
+  authError: Error | null;
+  profileError: Error | null;
   isAdmin: boolean;
 }
 
@@ -72,7 +73,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-  const [error, setError] = useState<Error | null>(null);
+  const [authError, setAuthError] = useState<Error | null>(null);
+  const [profileError, setProfileError] = useState<Error | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -98,7 +100,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       } catch (err: unknown) {
         const error = err instanceof Error ? err : new Error(String(err));
         log.error('❌ Error getting initial session:', error.message);
-        setError(error);
+        setAuthError(error);
       } finally {
         setLoading(false);
       }
@@ -157,7 +159,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       if (error) {
         const authError = error instanceof Error ? error : new Error(String(error));
-        setError(authError);
+        setProfileError(authError);
         log.error('Error fetching profile:', authError.message);
         return;
       }
@@ -190,7 +192,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         if (createError) {
           const authError = createError instanceof Error ? createError : new Error(String(createError));
-          setError(authError);
+          setProfileError(authError);
           log.error('Error creating profile:', authError.message);
           return;
         }
@@ -209,7 +211,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error('Unknown error in fetchUserProfile');
       log.error('❌ Unexpected error in fetchUserProfile:', err);
-      setError(err);
+      setProfileError(err);
     }
   };
 
@@ -241,10 +243,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
 
       if (result.error) {
-        const authError = result.error instanceof Error ? result.error : new Error(String(result.error));
-        log.error('Error signing up:', authError.message);
-        setError(authError);
-        return { data: null, error: authError };
+        const authErr = result.error instanceof Error ? result.error : new Error(String(result.error));
+        log.error('Error signing up:', authErr.message);
+        setAuthError(authErr);
+        return { data: null, error: authErr };
       }
 
       log.info('✅ Sign up successful');
@@ -258,7 +260,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } catch (error) {
       const err = error instanceof Error ? error : new Error('Unknown error during sign up');
       log.error('Unexpected error during sign up:', err);
-      setError(err);
+      setAuthError(err);
       return { data: null, error: err };
     } finally {
       setLoading(false);
@@ -309,7 +311,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         enhancedError.code = enhancedError.code || 'invalid_credentials';
 
         log.error('Sign in error:', enhancedError);
-        setError(enhancedError);
+        setAuthError(enhancedError);
         return { data: null, error: enhancedError };
       }
 
@@ -324,7 +326,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } catch (error) {
       const err = error instanceof Error ? error : new Error('Unknown error during sign in');
       log.error('Unexpected error during sign in:', err);
-      setError(err);
+      setAuthError(err);
       return { data: null, error: err };
     } finally {
       setLoading(false);
@@ -345,10 +347,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
 
       if (result.error) {
-        const authError = result.error instanceof Error ? result.error : new Error(String(result.error));
-        log.error('Error signing in with Google:', authError.message);
-        setError(authError);
-        return { data: null, error: authError };
+        const authErr = result.error instanceof Error ? result.error : new Error(String(result.error));
+        log.error('Error signing in with Google:', authErr.message);
+        setAuthError(authErr);
+        return { data: null, error: authErr };
       }
 
       log.info('✅ Google sign in initiated');
@@ -364,7 +366,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } catch (error) {
       const err = error instanceof Error ? error : new Error('Unknown error during Google sign in');
       log.error('Unexpected error during Google sign in:', err);
-      setError(err);
+      setAuthError(err);
       return { data: null, error: err };
     } finally {
       setLoading(false);
@@ -380,10 +382,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const { error } = await supabaseClient.auth.signOut();
 
       if (error) {
-        const authError = error instanceof Error ? error : new Error(String(error));
-        setError(authError);
-        log.error('Error signing out:', authError.message);
-        throw authError;
+        const authErr = error instanceof Error ? error : new Error(String(error));
+        setAuthError(authErr);
+        log.error('Error signing out:', authErr.message);
+        throw authErr;
       }
 
       log.info('✅ Sign out successful');
@@ -392,7 +394,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUserProfile(null);
     } catch (error) {
       const err = error instanceof Error ? error : new Error('Unknown error during sign out');
-      setError(err);
+      setAuthError(err);
       throw err;
     } finally {
       setLoading(false);
@@ -425,7 +427,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       if (!user) {
         const error = new Error('No user is currently signed in');
-        setError(error);
+        setProfileError(error);
         log.error('Error updating profile:', error.message);
         throw error;
       }
@@ -457,10 +459,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         throw new Error('No data returned from update_user_profile');
       } catch (error) {
-        const authError = error instanceof Error ? error : new Error(String(error));
-        setError(authError);
-        log.error('Error updating profile:', authError.message);
-        throw authError;
+        const authErr = error instanceof Error ? error : new Error(String(error));
+        setProfileError(authErr);
+        log.error('Error updating profile:', authErr.message);
+        throw authErr;
       }
     },
     [user, userProfile]
@@ -477,9 +479,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         .eq('user_id', user.id);
 
       if (error) {
-        const authError = error instanceof Error ? error : new Error(String(error));
-        setError(authError);
-        log.error('Error fetching user settings:', authError.message);
+        const authErr = error instanceof Error ? error : new Error(String(error));
+        setProfileError(authErr);
+        log.error('Error fetching user settings:', authErr.message);
         return null;
       }
 
@@ -518,9 +520,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         .single();
 
       if (createError) {
-        const authError = createError instanceof Error ? createError : new Error(String(createError));
-        setError(authError);
-        log.error('Error creating default user settings:', authError.message);
+        const authErr = createError instanceof Error ? createError : new Error(String(createError));
+        setProfileError(authErr);
+        log.error('Error creating default user settings:', authErr.message);
         return null;
       }
 
@@ -538,7 +540,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error('Unknown error in getUserSettings');
       log.error('❌ Unexpected error in getUserSettings:', err);
-      setError(err);
+      setProfileError(err);
       return null;
     }
   };
@@ -573,9 +575,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   .select();
 
       if (error) {
-        const authError = error instanceof Error ? error : new Error(String(error));
-        setError(authError);
-        log.error('Error updating user settings:', authError.message);
+        const authErr = error instanceof Error ? error : new Error(String(error));
+        setProfileError(authErr);
+        log.error('Error updating user settings:', authErr.message);
         return null;
       }
 
@@ -600,7 +602,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error('Unknown error in updateUserSettings');
       log.error('❌ Unexpected error in updateUserSettings:', err);
-      setError(err);
+      setProfileError(err);
       return null;
     }
   };
@@ -615,16 +617,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
 
       if (error) {
-        const authError = error instanceof Error ? error : new Error(String(error));
-        setError(authError);
-        log.error('Error resetting password:', authError.message);
-        throw authError;
+        const authErr = error instanceof Error ? error : new Error(String(error));
+        setAuthError(authErr);
+        log.error('Error resetting password:', authErr.message);
+        throw authErr;
       }
 
       log.info('✅ Password reset email sent');
     } catch (error) {
       const err = error instanceof Error ? error : new Error('Unknown error during reset password');
-      setError(err);
+      setAuthError(err);
       throw err;
     } finally {
       setLoading(false);
@@ -643,16 +645,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
 
       if (error) {
-        const authError = error instanceof Error ? error : new Error(String(error));
-        setError(authError);
-        log.error('Error resending verification email:', authError.message);
-        throw authError;
+        const authErr = error instanceof Error ? error : new Error(String(error));
+        setAuthError(authErr);
+        log.error('Error resending verification email:', authErr.message);
+        throw authErr;
       }
 
       log.info('✅ Verification email resent');
     } catch (error) {
       const err = error instanceof Error ? error : new Error('Unknown error during resend verification');
-      setError(err);
+      setAuthError(err);
       throw err;
     } finally {
       setLoading(false);
@@ -677,7 +679,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     userProfile,
     session,
     loading,
-    error,
+    authError,
+    profileError,
     isAdmin,
   };
 
