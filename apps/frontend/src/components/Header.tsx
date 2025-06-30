@@ -11,6 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
+import { Skeleton } from '@/components/ui/skeleton';
 
 // Typage des éléments de navigation
 interface NavItem {
@@ -152,7 +153,7 @@ const Header = (): JSX.Element => {
                   className='w-10 h-10 rounded-full hover:shadow-medium transition-all duration-200 flex items-center justify-center'
                 >
                   {loading ? (
-                    <div className='w-5 h-5 rounded-full bg-gray-200 animate-pulse' />
+                    <Skeleton className='w-5 h-5 rounded-full' />
                   ) : (
                     <Avatar
                       src={userProfile?.avatar_url}
