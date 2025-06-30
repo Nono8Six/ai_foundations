@@ -19,7 +19,7 @@ const Header = (): JSX.Element => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  if (error) {
+  if (user && error) {
     log.error('Erreur de chargement du profil:', error);
   }
 
