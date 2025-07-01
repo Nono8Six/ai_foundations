@@ -6,8 +6,12 @@ import { useAuth } from './AuthContext';
 import { createContextStrict } from './createContextStrict';
 
 import { logError } from './ErrorContext.tsx';
-import { fetchCoursesFromSupabase } from '@frontend/services/courseService';
+import {
+  fetchCoursesFromSupabase,
+  CoursesFromSupabaseSchema,
+} from '@frontend/services/courseService';
 import type { CoursesFromSupabase } from '@frontend/services/courseService';
+import type { NoInfer } from '@tanstack/query-core';
 
 type CourseData = CoursesFromSupabase;
 
@@ -21,13 +25,15 @@ const [CourseContext, useCourses] = createContextStrict<CourseContextValue>();
 export const CourseProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
 
-  const queryResult = useQuery({
-    queryKey: ['courses', user?.id],
-    queryFn: () => {
-      if (!user?.id) return Promise.resolve(null); // Ne rien faire si l'utilisateur n'est pas connecté
-      return fetchCoursesFromSupabase(user.id);
-    },
-    enabled: !!user?.id, // La requête ne s'exécute que si user.id existe
+  const key: NoInfer<[string, string | undefined]> = ['courses', user?.id];
+
+  const queryResult = useQuery<CoursesFromSupabase, Error, CoursesFromSupabase, typeof key>({
+    queryKey: key,
+    queryFn: () =>
+      fetchCoursesFromSupabase(user!.id).then(data =>
+        CoursesFromSupabaseSchema.parse(data)
+      ),
+    enabled: !!user?.id,
     onError: (error: Error) =>
       logError(new Error(`[CourseContext] A critical error occurred: ${error.message}`)),
   });
