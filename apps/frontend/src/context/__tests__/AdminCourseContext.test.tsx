@@ -54,7 +54,10 @@ describe('AdminCourseContext', () => {
   });
 
   it('creates, updates and deletes courses', async () => {
-    const { result } = renderHook(() => useAdminCourses(), { wrapper });
+    const { result } = renderHook<
+      undefined,
+      ReturnType<typeof useAdminCourses>
+    >(() => useAdminCourses(), { wrapper });
 
     await act(async () => {
       const newCourse = await result.current.createCourse({ title: 'c' });
@@ -70,7 +73,10 @@ describe('AdminCourseContext', () => {
   });
 
   it('creates, updates and deletes modules', async () => {
-    const { result } = renderHook(() => useAdminCourses(), { wrapper });
+    const { result } = renderHook<
+      undefined,
+      ReturnType<typeof useAdminCourses>
+    >(() => useAdminCourses(), { wrapper });
 
     await act(async () => {
       const newModule = await result.current.createModule({ title: 'm' });

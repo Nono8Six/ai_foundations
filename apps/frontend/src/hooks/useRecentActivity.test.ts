@@ -42,7 +42,10 @@ describe('useRecentActivity', () => {
       .limit(10)
       .mockResolvedValueOnce({ data: mockActivities, error: null });
 
-    const { result } = renderHook(() => useRecentActivity('u1'));
+    const { result } = renderHook<
+      undefined,
+      ReturnType<typeof useRecentActivity>
+    >(() => useRecentActivity('u1'));
 
     expect(result.current.loading).toBe(true);
 
@@ -63,7 +66,10 @@ describe('useRecentActivity', () => {
       .limit(10)
       .mockResolvedValueOnce({ data: null, error: err });
 
-    const { result } = renderHook(() => useRecentActivity('u1'));
+    const { result } = renderHook<
+      undefined,
+      ReturnType<typeof useRecentActivity>
+    >(() => useRecentActivity('u1'));
 
     await waitFor(() => expect(result.current.loading).toBe(false));
 
