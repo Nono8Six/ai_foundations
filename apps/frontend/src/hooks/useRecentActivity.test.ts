@@ -14,16 +14,16 @@ vi.mock('../utils/supabaseClient', () => {
 });
 
 describe('useRecentActivity', () => {
-  beforeEach(() => {
-    supabaseFromMock.mockClear();
+  beforeEach((): void => {
+    supabase.from.mockClear();
     safeQueryMock.mockClear();
   });
 
-  afterEach(() => {
+  afterEach((): void => {
     vi.clearAllMocks();
   });
 
-  it('fetches recent activity successfully', async () => {
+  it('fetches recent activity successfully', async (): Promise<void> => {
     const mockActivities = [
       {
         id: 'act1',
@@ -53,7 +53,7 @@ describe('useRecentActivity', () => {
     expect(result.current.error).toBeNull();
   });
 
-  it('handles query error', async () => {
+  it('handles query error', async (): Promise<void> => {
     const err: PostgrestError = { message: 'oops' } as PostgrestError;
 
     supabase

@@ -14,16 +14,16 @@ vi.mock('../utils/supabaseClient', () => {
 });
 
 describe('useAchievements', () => {
-  beforeEach(() => {
-    supabaseFromMock.mockClear();
+  beforeEach((): void => {
+    supabase.from.mockClear();
     safeQueryMock.mockClear();
   });
 
-  afterEach(() => {
+  afterEach((): void => {
     vi.clearAllMocks();
   });
 
-  it('fetches achievements successfully', async () => {
+  it('fetches achievements successfully', async (): Promise<void> => {
     const mockAchievements = [
       {
         id: 'a1',
@@ -56,7 +56,7 @@ describe('useAchievements', () => {
     expect(result.current.error).toBeNull();
   });
 
-  it('handles query error', async () => {
+  it('handles query error', async (): Promise<void> => {
     const err: PostgrestError = { message: 'fail' } as PostgrestError;
 
     supabase
