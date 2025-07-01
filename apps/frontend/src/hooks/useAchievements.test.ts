@@ -1,28 +1,29 @@
 import { renderHook, waitFor } from '@testing-library/react';
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi, type MockedFunction } from 'vitest';
 import type { PostgrestError } from '@supabase/supabase-js';
 
 import useAchievements from './useAchievements';
 import { supabase } from '../lib/supabase';
 
 vi.mock('../lib/supabase');
-let safeQueryMock: ReturnType<typeof vi.fn>;
+const supabaseFromMock = supabase.from as MockedFunction<typeof supabase.from>;
+let safeQueryMock: MockedFunction<any>;
 vi.mock('../utils/supabaseClient', () => {
-  safeQueryMock = vi.fn(async fn => fn());
+  safeQueryMock = vi.fn(async fn => fn()) as MockedFunction<any>;
   return { safeQuery: safeQueryMock };
 });
 
 describe('useAchievements', () => {
-  beforeEach(() => {
+  beforeEach((): void => {
     supabase.from.mockClear();
     safeQueryMock.mockClear();
   });
 
-  afterEach(() => {
+  afterEach((): void => {
     vi.clearAllMocks();
   });
 
-  it('fetches achievements successfully', async () => {
+  it('fetches achievements successfully', async (): Promise<void> => {
     const mockAchievements = [
       {
         id: 'a1',
@@ -57,7 +58,7 @@ describe('useAchievements', () => {
     expect(result.current.error).toBeNull();
   });
 
-  it('handles query error', async () => {
+  it('handles query error', async (): Promise<void> => {
     const err: PostgrestError = { message: 'fail' } as PostgrestError;
 
     supabase
