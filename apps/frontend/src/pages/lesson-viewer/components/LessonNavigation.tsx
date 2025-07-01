@@ -19,15 +19,17 @@ export interface LessonNavigationProps {
   isOpen: boolean;
   onClose: () => void;
   moduleStructure: Module[];
-  currentLessonId?: string;
+  currentLessonId?: number;
 }
 
 const LessonNavigation: React.FC<LessonNavigationProps> = ({
   isOpen,
   onClose,
   moduleStructure,
+  currentLessonId,
 }) => {
   const [expandedModules, setExpandedModules] = useState(new Set([1])); // First module expanded by default
+  const currentLessonOrder = Number(currentLessonId);
 
   const toggleModule = (moduleId: string) => {
     const newExpanded = new Set(expandedModules);
@@ -147,21 +149,24 @@ const LessonNavigation: React.FC<LessonNavigationProps> = ({
               {/* Lessons List */}
               {expandedModules.has(module.id) && (
                 <div className='bg-secondary-25'>
-                  {module.lessons.map(lesson => (
-                    <div
-                      key={lesson.id}
-                      className={`
-                        flex items-center p-3 pl-8 hover:bg-secondary-50 transition-colors cursor-pointer
-                        ${lesson.current ? 'bg-primary-50 border-r-2 border-primary' : ''}
-                      `}
-                    >
+                  {module.lessons.map(lesson => {
+                    const lessonOrder = Number(lesson.id);
+                    const isCurrent = lessonOrder === currentLessonOrder;
+                    return (
+                      <div
+                        key={lesson.id}
+                        className={`
+                          flex items-center p-3 pl-8 hover:bg-secondary-50 transition-colors cursor-pointer
+                          ${isCurrent ? 'bg-primary-50 border-r-2 border-primary' : ''}
+                        `}
+                      >
                       {/* Lesson Status Icon */}
                       <div className='mr-3'>
                         {lesson.completed ? (
                           <div className='w-6 h-6 bg-accent rounded-full flex items-center justify-center'>
                             <Icon aria-hidden='true' name='Check' size={14} color='white' />
                           </div>
-                        ) : lesson.current ? (
+                        ) : isCurrent ? (
                           <div className='w-6 h-6 bg-primary rounded-full flex items-center justify-center'>
                             <Icon aria-hidden='true' name='Play' size={12} color='white' />
                           </div>
@@ -175,7 +180,7 @@ const LessonNavigation: React.FC<LessonNavigationProps> = ({
                       {/* Lesson Info */}
                       <div className='flex-1'>
                         <h4
-                          className={`font-medium mb-1 ${lesson.current ? 'text-primary' : 'text-text-primary'}`}
+                          className={`font-medium mb-1 ${isCurrent ? 'text-primary' : 'text-text-primary'}`}
                         >
                           {lesson.title}
                         </h4>
@@ -200,7 +205,7 @@ const LessonNavigation: React.FC<LessonNavigationProps> = ({
 
                       {/* Lesson Actions */}
                       <div className='ml-2'>
-                        {lesson.current && (
+                        {isCurrent && (
                           <Icon
                             aria-hidden='true'
                             name='Volume2'
@@ -210,7 +215,8 @@ const LessonNavigation: React.FC<LessonNavigationProps> = ({
                         )}
                       </div>
                     </div>
-                  ))}
+                  );
+                  })}
                 </div>
               )}
             </div>
