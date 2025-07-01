@@ -1,5 +1,6 @@
 import { PostgrestError } from '@supabase/supabase-js';
 import { logError } from '@frontend/context/ErrorContext';
+import type { AppError } from '@frontend/types/app-error';
 
 export async function safeQuery<T, E extends Error = PostgrestError>(
   fn: () => PromiseLike<{ data: T | null; error: E | null }>
@@ -11,7 +12,8 @@ export async function safeQuery<T, E extends Error = PostgrestError>(
     }
     return { data, error: null };
   } catch (err) {
-    logError(err);
-    return { data: null, error: err as E };
+    logError(err as AppError);
+    const error = typeof err === 'string' ? new Error(err) : err;
+    return { data: null, error: error as E };
   }
 }

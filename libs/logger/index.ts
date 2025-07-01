@@ -1,4 +1,4 @@
-import pino, { Logger } from 'pino';
+import pino, { Logger, type LoggerOptions } from 'pino';
 
 // Type augmentation for import.meta
 interface ImportMetaEnv {
@@ -35,22 +35,27 @@ const getLogLevel = (): string => {
   return process.env.LOG_LEVEL ?? (process.env.NODE_ENV === 'production' ? 'warn' : 'info');
 };
 
-export const log: Logger = pino({
+const options: LoggerOptions = {
   level: getLogLevel(),
   browser: isBrowser ? { asObject: true } : undefined,
-  transport: !isBrowser || process.env.NODE_ENV !== 'production' ? {
-    target: 'pino-pretty',
-    options: { 
-      colorize: true, 
-      translateTime: 'SYS:standard',
-      ignore: 'pid,hostname',
-    },
-  } : undefined,
+  transport:
+    !isBrowser || process.env.NODE_ENV !== 'production'
+      ? {
+          target: 'pino-pretty',
+          options: {
+            colorize: true,
+            translateTime: 'SYS:standard',
+            ignore: 'pid,hostname',
+          },
+        }
+      : undefined,
   base: {
     env: process.env.NODE_ENV,
     ...(isBrowser && { browser: true }),
   },
-});
+};
+
+export const log: Logger = pino(options);
 
 // Add browser error handling
 if (isBrowser) {

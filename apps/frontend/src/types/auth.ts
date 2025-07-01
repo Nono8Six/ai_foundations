@@ -17,7 +17,7 @@ export interface AuthErrorWithCode extends Error {
 
 export function isAuthErrorWithCode(err: unknown): err is AuthErrorWithCode {
   if (!(err instanceof Error)) return false;
-  const obj = err as Record<string, unknown>;
+  const obj = err as unknown as Record<string, unknown>;
   return (
     'code' in obj ||
     'originalError' in obj ||

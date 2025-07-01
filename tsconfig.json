@@ -5,7 +5,7 @@
     "moduleResolution": "bundler",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "strict": true,
-    "skipLibCheck": false,
+    "skipLibCheck": true,
     "noUnusedLocals": true,
     "noImplicitReturns": true,
     "exactOptionalPropertyTypes": true,
@@ -21,7 +21,8 @@
       "@libs/*": ["./libs/*"],
       "@frontend/*": ["./apps/frontend/src/*"],
       "@backend/*": ["./apps/backend/src/*"],
-      "$lib/*": ["./apps/frontend/src/lib/*"]
+      "$lib/*": ["./apps/frontend/src/lib/*"],
+      "@/*": ["./apps/frontend/src/*"]
     },
     "typeRoots": ["./node_modules/@types"],
     "types": ["node"],
