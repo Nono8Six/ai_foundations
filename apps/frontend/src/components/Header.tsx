@@ -156,7 +156,7 @@ const Header = (): JSX.Element => {
                     <Skeleton className='w-5 h-5 rounded-full' />
                   ) : (
                     <Avatar
-                      src={userProfile?.avatar_url}
+                      src={userProfile?.avatar_url ?? undefined}
                       name={userProfile?.full_name || user?.user_metadata?.full_name}
                     />
                   )}
