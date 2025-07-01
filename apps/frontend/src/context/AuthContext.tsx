@@ -1,5 +1,5 @@
 // src/context/AuthContext.tsx
-const toJson = (v: unknown): Json => v as Json;
+const toJson = <T extends Json>(v: T): Json => v;
 
 import { useState, useEffect, useCallback, type ReactNode } from 'react';
 import type {
@@ -20,6 +20,7 @@ import { safeQuery } from '@frontend/utils/supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import { log } from '@libs/logger';
 import type { AuthErrorWithCode } from '@frontend/types/auth';
+import type { AppError } from '@frontend/types/app-error';
 import { toast } from 'sonner';
 import { createContextStrict } from './createContextStrict';
 
@@ -96,8 +97,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         log.debug('📋 Initial session:', session);
         setSession(session ?? null);
         setUser(session?.user ?? null);
-      } catch (err: unknown) {
-        const error = err instanceof Error ? err : new Error(String(err));
+      } catch (err) {
+        const error = typeof err === 'string' ? new Error(err) : (err as Error);
         log.error('❌ Error getting initial session:', error.message);
         setAuthError(error);
       } finally {
@@ -143,8 +144,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       log.debug('🧹 Cleaning up auth subscription...');
       subscription.unsubscribe();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [navigate]);
 
   // Fetch user profile data
   const fetchUserProfile = async (userId: string) => {
@@ -206,8 +206,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const profile = profileData[0] as UserProfile;
         setUserProfile(profile);
       }
-    } catch (error: unknown) {
-      const err = error instanceof Error ? error : new Error('Unknown error in fetchUserProfile');
+    } catch (error) {
+      const err = typeof error === 'string' ? new Error(error) : (error as Error);
       log.error('❌ Unexpected error in fetchUserProfile:', err);
       setProfileError(err);
     }
@@ -269,7 +269,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         error: null
       };
     } catch (error) {
-      const err = error instanceof Error ? error : new Error('Unknown error during sign up');
+      const err = typeof error === 'string' ? new Error(error) : (error as Error);
       log.error('Unexpected error during sign up:', err);
       setAuthError(err);
       return { data: null, error: err };
@@ -335,7 +335,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         error: null
       };
     } catch (error) {
-      const err = error instanceof Error ? error : new Error('Unknown error during sign in');
+      const err = typeof error === 'string' ? new Error(error) : (error as Error);
       log.error('Unexpected error during sign in:', err);
       setAuthError(err);
       return { data: null, error: err };
@@ -375,7 +375,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         error: null
       };
     } catch (error) {
-      const err = error instanceof Error ? error : new Error('Unknown error during Google sign in');
+      const err = typeof error === 'string' ? new Error(error) : (error as Error);
       log.error('Unexpected error during Google sign in:', err);
       setAuthError(err);
       return { data: null, error: err };
@@ -404,7 +404,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setSession(null);
       setUserProfile(null);
     } catch (error) {
-      const err = error instanceof Error ? error : new Error('Unknown error during sign out');
+      const err = typeof error === 'string' ? new Error(error) : (error as Error);
       setAuthError(err);
       throw err;
     } finally {
@@ -468,7 +468,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         throw new Error('No data returned from update_user_profile');
       } catch (error) {
-        const authErr = error instanceof Error ? error : new Error(String(error));
+        const authErr = typeof error === 'string' ? new Error(error) : (error as Error);
         setProfileError(authErr);
         log.error('Error updating profile:', authErr.message);
         throw authErr;
@@ -546,8 +546,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         created_at: newSettings.created_at || null,
         updated_at: newSettings.updated_at || null,
       };
-    } catch (error: unknown) {
-      const err = error instanceof Error ? error : new Error('Unknown error in getUserSettings');
+    } catch (error) {
+      const err = typeof error === 'string' ? new Error(error) : (error as Error);
       log.error('❌ Unexpected error in getUserSettings:', err);
       setProfileError(err);
       return null;
@@ -608,8 +608,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
 
       return null;
-    } catch (error: unknown) {
-      const err = error instanceof Error ? error : new Error('Unknown error in updateUserSettings');
+    } catch (error) {
+      const err = typeof error === 'string' ? new Error(error) : (error as Error);
       log.error('❌ Unexpected error in updateUserSettings:', err);
       setProfileError(err);
       return null;
@@ -634,7 +634,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       log.info('✅ Password reset email sent');
     } catch (error) {
-      const err = error instanceof Error ? error : new Error('Unknown error during reset password');
+      const err = typeof error === 'string' ? new Error(error) : (error as Error);
       setAuthError(err);
       throw err;
     } finally {
@@ -662,7 +662,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       log.info('✅ Verification email resent');
     } catch (error) {
-      const err = error instanceof Error ? error : new Error('Unknown error during resend verification');
+      const err = typeof error === 'string' ? new Error(error) : (error as Error);
       setAuthError(err);
       throw err;
     } finally {

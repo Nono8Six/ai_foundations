@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import type { LessonRow } from './lessonRow';
 import { LessonRowSchema } from './lessonRow';
 
 export const ModuleRowSchema = z.object({

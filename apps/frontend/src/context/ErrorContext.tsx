@@ -1,13 +1,14 @@
 import { createContext, useContext, type ReactNode } from 'react';
 import { log } from '@libs/logger';
+import type { AppError } from '@frontend/types/app-error';
 
-export type ErrorLogger = (error: unknown) => void;
+export type ErrorLogger = (error: AppError) => void;
 
 const ErrorContext = createContext<ErrorLogger>(() => {});
 
 // Wrapper pour adapter la signature de log.error au type ErrorLogger
-const errorLogger: ErrorLogger = (error: unknown) => {
-  const errorMessage = error instanceof Error ? error.message : String(error);
+const errorLogger: ErrorLogger = (error: AppError) => {
+  const errorMessage = typeof error === 'string' ? error : error.message;
   log.error(errorMessage);
 };
 
@@ -25,7 +26,7 @@ export const ErrorProvider = ({ children, logger = errorLogger }: ErrorProviderP
 
 export const useErrorLogger = (): ErrorLogger => useContext(ErrorContext);
 
-export const logError = (error: unknown): void => {
+export const logError = (error: AppError): void => {
   externalLogger(error);
 };
 
