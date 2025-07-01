@@ -1,3 +1,4 @@
+// apps/frontend/src/services/courseService.ts
 import { supabase } from '@frontend/lib/supabase';
 import { safeQuery } from '@frontend/utils/supabaseClient';
 import type { SupabaseClient } from '@supabase/supabase-js';
@@ -25,6 +26,7 @@ export interface CourseFilters {
   category?: string[];
 }
 
+// Zod schemas pour validation runtime + typage TS
 const CourseProgressSchema = z
   .object({
     id: z.string(),
@@ -91,52 +93,29 @@ export async function fetchCourses({
     .select('*', { count: 'exact' })
     .eq('is_published', true);
 
-  if (search) {
-    query = query.ilike('title', `%${search}%`);
-  }
-
-  if (skillLevel.length) {
-    query = query.in('difficulty', skillLevel);
-  }
-
-  if (category.length) {
-    query = query.in('category', category);
-  }
-
+  if (search) query = query.ilike('title', `%${search}%`);
+  if (skillLevel.length) query = query.in('difficulty', skillLevel);
+  if (category.length) query = query.in('category', category);
   if (duration.length) {
-    // Example assumes a "duration_weeks" column
-    const durations = [];
+    const durations: string[] = [];
     if (duration.includes('short')) durations.push('duration_weeks.lte.3');
     if (duration.includes('medium')) durations.push('duration_weeks.gte.4,duration_weeks.lte.6');
     if (duration.includes('long')) durations.push('duration_weeks.gte.7');
-    if (durations.length) {
-      query = query.or(durations.join(','));
-    }
+    if (durations.length) query = query.or(durations.join(','));
   }
 
   switch (sortBy) {
     case 'popularity':
-      // Sort by creation date (newest first) as a proxy for popularity since enrolled_count doesn't exist
+    case 'rating':
       query = query.order('created_at', { ascending: false });
       break;
     case 'difficulty':
-      // Sort by title since difficulty column doesn't exist in the schema
-      query = query.order('title', { ascending: true });
-      break;
     case 'duration':
-      // Sort by title since duration_weeks column doesn't exist in the schema
-      query = query.order('title', { ascending: true });
-      break;
     case 'alphabetical':
       query = query.order('title', { ascending: true });
       break;
-    case 'rating':
-      // Sort by creation date since rating column doesn't exist in the schema
-      query = query.order('created_at', { ascending: false });
-      break;
     default:
       query = query.order('created_at', { ascending: false });
-      break;
   }
 
   const from = (page - 1) * pageSize;
@@ -145,7 +124,11 @@ export async function fetchCourses({
 
   const { data, error, count } = await query;
   if (error) throw error;
-  return { data: data || [], count: count || 0 };
+
+  const validated = CourseProgressSchema.array().safeParse(data ?? []);
+  if (!validated.success) throw new Error(`Invalid course data: ${validated.error.message}`);
+
+  return { data: validated.data, count: count ?? 0 };
 }
 
 export async function fetchCoursesWithContent(): Promise<CourseWithContent[]> {
@@ -180,49 +163,33 @@ export async function fetchCoursesFromSupabase(userId: string): Promise<CoursesF
     ),
   ]);
 
-  if (coursesResult.error) throw coursesResult.error;
-  if (lessonsResult.error) throw lessonsResult.error;
-  if (modulesResult.error) throw modulesResult.error;
-  if (progressResult.error) throw progressResult.error;
+  [coursesResult, lessonsResult, modulesResult, progressResult].forEach((r) => {
+    if (r.error) throw r.error;
+  });
 
-  const coursesData = (coursesResult.data ?? []) as CoursesRow[];
-  const lessonsData = (lessonsResult.data ?? []) as LessonsRow[];
-  const modulesData = (modulesResult.data ?? []) as ModulesRow[];
-  const progressData = (progressResult.data ?? []) as UserProgressRow[];
+  const coursesData = CourseProgressSchema.array().parse(coursesResult.data ?? []);
+  const lessonsData = LessonsRowSchema.array().parse(lessonsResult.data ?? []);
+  const modulesData = ModulesRowSchema.array().parse(modulesResult.data ?? []);
+  const progressData = UserProgressRowSchema.array().parse(progressResult.data ?? []);
 
-  const completedLessonIds = new Set(
-    progressData.filter(p => p.status === 'completed').map(p => p.lesson_id)
-  );
+  const completedIds = new Set(progressData.filter(p => p.status === 'completed').map(p => p.lesson_id));
 
-  const moduleCourseMap = modulesData.reduce<Record<string, string | undefined>>(
-    (acc, module) => {
-      acc[module.id] = module.course_id ?? undefined;
-      return acc;
-    },
-    {}
-  );
+  const moduleToCourse: Record<string, string> = {};
+  modulesData.forEach(m => { if (m.course_id) moduleToCourse[m.id] = m.course_id });
 
-  const lessonsByCourse = lessonsData.reduce<Record<string, string[]>>( (
-    acc, lesson
-  ) => {
-    const courseId = moduleCourseMap[lesson.module_id ?? ''];
-    if (!courseId) {
-      return acc;
+  const lessonsByCourse: Record<string, string[]> = {};
+  lessonsData.forEach(l => {
+    const cid = l.module_id ? moduleToCourse[l.module_id] : undefined;
+    if (cid) {
+      lessonsByCourse[cid] = lessonsByCourse[cid] || [];
+      lessonsByCourse[cid].push(l.id);
     }
-    if (!acc[courseId]) {
-      acc[courseId] = [];
-    }
-    acc[courseId].push(lesson.id);
-    return acc;
-  }, {} );
+  });
 
   const coursesWithStats: CourseProgress[] = coursesData.map(course => {
-    const courseLessonIds = lessonsByCourse[course.id] || [];
-    const progress = {
-      completed: courseLessonIds.filter(id => completedLessonIds.has(id)).length,
-      total: courseLessonIds.length,
-    };
-    return { ...course, progress };
+    const all = lessonsByCourse[course.id] ?? [];
+    const comp = all.filter(id => completedIds.has(id));
+    return { ...course, progress: { completed: comp.length, total: all.length } };
   });
 
   return {
