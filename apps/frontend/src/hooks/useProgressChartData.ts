@@ -41,12 +41,12 @@ import {
   subMonths,
 } from 'date-fns';
 
-const useProgressChartData = (
+export function useProgressChartData(
   userProgress: UserProgressRow[] | undefined,
   lessons: LessonRow[] | undefined,
   courses: CourseRow[] | undefined,
   modules: ModuleRow[] | undefined
-): ChartData => {
+): ChartData {
   const [chartData, setChartData] = useState<ChartData>({
     weekly: [],
     monthly: [],
@@ -71,13 +71,16 @@ const useProgressChartData = (
     }
 
     const lessonMap: Record<string, EnrichedLesson> = {};
-    const moduleCourseMap = modules.reduce((acc, module) => {
-      acc[module.id] = module.course_id;
-      return acc;
-    }, {});
+    const moduleCourseMap = modules.reduce<Record<string, string | undefined>>(
+      (acc, module) => {
+        acc[module.id] = module.course_id ?? undefined;
+        return acc;
+      },
+      {}
+    );
 
     lessons.forEach(lesson => {
-      const courseId = moduleCourseMap[lesson.module_id];
+      const courseId = moduleCourseMap[lesson.module_id ?? ''];
       const course = courses.find(c => c.id === courseId);
       lessonMap[lesson.id] = {
         ...lesson,
@@ -174,6 +177,5 @@ const useProgressChartData = (
   }, [userProgress, enrichedLessons]);
 
   return chartData;
-};
+}
 
-export default useProgressChartData;

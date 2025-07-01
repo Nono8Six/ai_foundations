@@ -6,7 +6,7 @@ import type { Database } from '@frontend/types/database.types';
 
 type ActivityRow = Database['public']['Tables']['activity_log']['Row'];
 
-interface UseRecentActivityOptions {
+interface UseRecentActivityOptions<T extends Partial<ActivityRow> = Partial<ActivityRow>> {
   limit?: number;
   order?: 'asc' | 'desc';
   filters?: Partial<ActivityRow>;
@@ -20,10 +20,10 @@ interface UseRecentActivityResult {
 
 const supabaseClient = supabase as SupabaseClient<Database>;
 
-const useRecentActivity = (
+export function useRecentActivity(
   userId: string | undefined,
   { limit = 10, order = 'desc', filters = {} }: UseRecentActivityOptions = {}
-): UseRecentActivityResult => {
+): UseRecentActivityResult {
   const [activities, setActivities] = useState<ActivityRow[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<PostgrestError | null>(null);
@@ -48,13 +48,12 @@ const useRecentActivity = (
         .eq('user_id', userId);
 
       // Apply filters if any
-const filterEntries = Object.entries(filters) as Array<[keyof ActivityRow, ActivityRow[keyof ActivityRow]]>;
-query = filterEntries.reduce((q, [column, value]) => {
-  if (value !== undefined) {
-    return q.eq(column, value);
-  }
-  return q;
-}, query);
+      const filterEntries =
+        Object.entries(filters) as Array<[
+          keyof ActivityRow,
+          ActivityRow[keyof ActivityRow]
+        ]>;
+      query = filterEntries.reduce((q, [column, value]) => q.eq(column, value), query);
 
       // Apply ordering and limit
       query = query.order('created_at', { ascending: order === 'asc' }).limit(limit);
@@ -87,6 +86,5 @@ query = filterEntries.reduce((q, [column, value]) => {
   }, [fetchActivities]);
 
   return { activities, loading, error };
-};
+}
 
-export default useRecentActivity;

@@ -6,10 +6,10 @@ import type { Database } from '@frontend/types/database.types';
 
 type AchievementRow = Database['public']['Tables']['achievements']['Row'];
 
-interface UseAchievementsOptions {
+interface UseAchievementsOptions<T extends Partial<AchievementRow> = Partial<AchievementRow>> {
   limit?: number;
   order?: 'asc' | 'desc';
-  filters?: Partial<AchievementRow>;
+  filters?: T;
 }
 
 interface UseAchievementsResult {
@@ -20,10 +20,10 @@ interface UseAchievementsResult {
 
 const supabaseClient = supabase as SupabaseClient<Database>;
 
-const useAchievements = (
+export function useAchievements(
   userId: string | undefined,
   { limit = 10, order = 'desc', filters = {} }: UseAchievementsOptions = {}
-): UseAchievementsResult => {
+): UseAchievementsResult {
   const [achievements, setAchievements] = useState<AchievementRow[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<PostgrestError | null>(null);
@@ -86,6 +86,5 @@ const useAchievements = (
   }, [fetchAchievements]);
 
   return { achievements, loading, error };
-};
+}
 
-export default useAchievements;
