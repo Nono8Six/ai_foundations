@@ -228,7 +228,7 @@ const LessonViewer: React.FC<LessonViewerProps> = () => {
           isOpen={isSidebarOpen}
           onClose={() => setIsSidebarOpen(false)}
           moduleStructure={moduleStructure}
-          currentLessonId={currentLesson.id}
+          currentLessonId={Number(currentLesson.id)}
         />
 
         {/* Main Content Area */}
