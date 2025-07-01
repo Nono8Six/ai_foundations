@@ -8,7 +8,7 @@ interface CourseData {
   name: string;
   enrollments: number;
   completions: number;
-  rating: string | number;
+  rating: string;
 }
 
 const CustomTooltip = ({ active, payload, label }) => {
