@@ -2,19 +2,24 @@ import { supabase } from '@frontend/lib/supabase';
 import { safeQuery } from '@frontend/utils/supabaseClient';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@frontend/types/database.types';
+import {
+  CourseRowSchema,
+  LessonRowSchema,
+  ModuleRowSchema,
+  UserProgressRowSchema,
+  type CourseRow,
+  type LessonRow,
+  type ModuleRow,
+  type UserProgressRow,
+} from '@frontend/types/rowSchemas';
 
 const supabaseClient = supabase as SupabaseClient<Database>;
 
-type CoursesRow = Database['public']['Tables']['courses']['Row'];
-type LessonsRow = Database['public']['Tables']['lessons']['Row'];
-type ModulesRow = Database['public']['Tables']['modules']['Row'];
-type UserProgressRow = Database['public']['Tables']['user_progress']['Row'];
-
-type CourseWithContent = CoursesRow & {
-  modules: (ModulesRow & { lessons: LessonsRow[] })[];
+type CourseWithContent = CourseRow & {
+  modules: (ModuleRow & { lessons: LessonRow[] })[];
 };
 
-type CourseProgress = CoursesRow & {
+type CourseProgress = CourseRow & {
   progress: { completed: number; total: number };
 };
 
@@ -26,8 +31,8 @@ export interface CourseFilters {
 
 export interface CoursesFromSupabase {
   courses: CourseProgress[];
-  lessons: LessonsRow[];
-  modules: ModulesRow[];
+  lessons: LessonRow[];
+  modules: ModuleRow[];
   userProgress: UserProgressRow[];
 }
 
@@ -43,7 +48,7 @@ export async function fetchCourses({
   sortBy?: string;
   page?: number;
   pageSize?: number;
-} = {}): Promise<{ data: CoursesRow[]; count: number }> {
+} = {}): Promise<{ data: CourseRow[]; count: number }> {
   const { skillLevel = [], duration = [], category = [] } = filters;
   let query = supabaseClient
     .from('courses')
@@ -104,7 +109,8 @@ export async function fetchCourses({
 
   const { data, error, count } = await query;
   if (error) throw error;
-  return { data: data || [], count: count || 0 };
+  const coursesData = CourseRowSchema.array().parse(data ?? []);
+  return { data: coursesData, count: count || 0 };
 }
 
 export async function fetchCoursesWithContent(): Promise<CourseWithContent[]> {
@@ -144,10 +150,12 @@ export async function fetchCoursesFromSupabase(userId: string): Promise<CoursesF
   if (modulesResult.error) throw modulesResult.error;
   if (progressResult.error) throw progressResult.error;
 
-  const coursesData = (coursesResult.data ?? []) as CoursesRow[];
-  const lessonsData = (lessonsResult.data ?? []) as LessonsRow[];
-  const modulesData = (modulesResult.data ?? []) as ModulesRow[];
-  const progressData = (progressResult.data ?? []) as UserProgressRow[];
+  const coursesData = CourseRowSchema.array().parse(coursesResult.data ?? []);
+  const lessonsData = LessonRowSchema.array().parse(lessonsResult.data ?? []);
+  const modulesData = ModuleRowSchema.array().parse(modulesResult.data ?? []);
+  const progressData = UserProgressRowSchema.array().parse(
+    progressResult.data ?? []
+  );
 
   const completedLessonIds = new Set(
     progressData.filter(p => p.status === 'completed').map(p => p.lesson_id)
