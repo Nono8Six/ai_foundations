@@ -1,20 +1,21 @@
 import { renderHook, waitFor } from '@testing-library/react';
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi, type MockedFunction } from 'vitest';
 import type { PostgrestError } from '@supabase/supabase-js';
 
 import useAchievements from './useAchievements';
 import { supabase } from '../lib/supabase';
 
 vi.mock('../lib/supabase');
-let safeQueryMock: ReturnType<typeof vi.fn>;
+const supabaseFromMock = supabase.from as MockedFunction<typeof supabase.from>;
+let safeQueryMock: MockedFunction<any>;
 vi.mock('../utils/supabaseClient', () => {
-  safeQueryMock = vi.fn(async fn => fn());
+  safeQueryMock = vi.fn(async fn => fn()) as MockedFunction<any>;
   return { safeQuery: safeQueryMock };
 });
 
 describe('useAchievements', () => {
   beforeEach(() => {
-    supabase.from.mockClear();
+    supabaseFromMock.mockClear();
     safeQueryMock.mockClear();
   });
 
