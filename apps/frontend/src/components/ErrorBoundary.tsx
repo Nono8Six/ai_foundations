@@ -2,6 +2,7 @@ import React from 'react';
 import Icon from './AppIcon';
 import { log } from '@libs/logger';
 import ErrorContext, { type ErrorLogger } from '@frontend/context/ErrorContext';
+import type { AppError } from '@frontend/types/app-error';
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
@@ -23,7 +24,7 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
     return { hasError: true };
   }
 
-  componentDidCatch(error: unknown, errorInfo: unknown) {
+  componentDidCatch(error: AppError, errorInfo: React.ErrorInfo) {
     const logger = this.context as ErrorLogger;
     if (logger) {
       logger(error);
