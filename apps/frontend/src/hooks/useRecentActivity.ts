@@ -9,7 +9,7 @@ type ActivityRow = Database['public']['Tables']['activity_log']['Row'];
 interface UseRecentActivityOptions {
   limit?: number;
   order?: 'asc' | 'desc';
-  filters?: Record<string, unknown>;
+  filters?: Partial<ActivityRow>;
 }
 
 interface UseRecentActivityResult {
@@ -48,10 +48,12 @@ const useRecentActivity = (
         .eq('user_id', userId);
 
       // Apply filters if any
-      query = Object.entries(filters).reduce(
-        (q, [column, value]) => q.eq(column as keyof ActivityRow, value as never),
-        query
-      );
+      const filterEntries =
+        Object.entries(filters) as Array<[
+          keyof ActivityRow,
+          ActivityRow[keyof ActivityRow]
+        ]>;
+      query = filterEntries.reduce((q, [column, value]) => q.eq(column, value), query);
 
       // Apply ordering and limit
       query = query.order('created_at', { ascending: order === 'asc' }).limit(limit);
