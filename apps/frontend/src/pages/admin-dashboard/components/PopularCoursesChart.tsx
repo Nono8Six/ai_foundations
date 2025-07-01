@@ -1,5 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import React, { useState, useEffect, useMemo } from 'react';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  type TooltipProps as RechartsTooltipProps,
+  type TooltipPayload,
+} from 'recharts';
 import Icon from '@frontend/components/AppIcon';
 import { supabase } from '@frontend/lib/supabase';
 import { log } from '@libs/logger';
@@ -11,9 +21,15 @@ interface CourseData {
   rating: string;
 }
 
-const CustomTooltip = ({ active, payload, label }) => {
-  if (active && payload && payload.length) {
-    const data = payload[0].payload;
+const CustomTooltip = ({ active, payload, label }: RechartsTooltipProps<number, string>) => {
+  const data = useMemo(() => {
+    if (payload?.length) {
+      return (payload[0] as TooltipPayload<number, string>).payload as CourseData;
+    }
+    return null;
+  }, [payload]);
+
+  if (active && data) {
     const completionRate =
       data.enrollments > 0 ? Math.round((data.completions / data.enrollments) * 100) : 0;
     return (
@@ -213,7 +229,7 @@ const PopularCoursesChart: React.FC<PopularCoursesChartProps> = () => {
         {' '}
         {/* Ensure this height is appropriate */}
         <ResponsiveContainer width='100%' height='100%'>
-          <BarChart<CourseData>
+          <BarChart
             data={chartData}
             margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
           >
