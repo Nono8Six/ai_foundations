@@ -10,24 +10,39 @@ export interface LessonEditorProps {
   onDelete: () => void;
 }
 
+interface FormValues {
+  title: string;
+  content: string;
+  duration: number;
+  videoUrl: string;
+  status: string;
+  order: number;
+  hasQuiz: boolean;
+  allowComments: boolean;
+  isPreview: boolean;
+}
+
 const LessonEditor: React.FC<LessonEditorProps> = ({ lesson, onSave, onDelete }) => {
-  const [formData, setFormData] = useState<Partial<LessonRow>>({
-    title: lesson?.title || '',
-    content: lesson?.content || '',
-    duration: lesson?.duration || 0,
-    videoUrl: lesson?.videoUrl || '',
-    status: lesson?.status || 'draft',
-    order: lesson?.order || 1,
-    hasQuiz: lesson?.hasQuiz || false,
-    allowComments: lesson?.allowComments || true,
-    isPreview: lesson?.isPreview || false,
+  const [formData, setFormData] = useState<FormValues>({
+    title: lesson?.title ?? '',
+    content: lesson?.content ?? '',
+    duration: lesson?.duration ?? 0,
+    videoUrl: lesson?.videoUrl ?? '',
+    status: lesson?.status ?? 'draft',
+    order: lesson?.order ?? 1,
+    hasQuiz: lesson?.hasQuiz ?? false,
+    allowComments: lesson?.allowComments ?? true,
+    isPreview: lesson?.isPreview ?? false,
   });
 
   const [errors, setErrors] = useState<Record<string, string | null>>({});
   const [isUploading, setIsUploading] = useState(false);
   const [activeTab, setActiveTab] = useState('content');
 
-  const handleInputChange = (field: keyof LessonRow, value: unknown) => {
+  const handleInputChange = <K extends keyof FormValues>(
+    field: K,
+    value: FormValues[K]
+  ) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: null }));
@@ -171,15 +186,28 @@ const LessonEditor: React.FC<LessonEditorProps> = ({ lesson, onSave, onDelete })
                         Titre de la leçon *
                       </label>
                       <input
+                        id='lesson-title'
                         type='text'
                         value={formData.title}
-                        onChange={e => handleInputChange('title', e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          handleInputChange('title', e.target.value)
+                        }
+                        aria-invalid={Boolean(errors.title)}
+                        aria-describedby='lesson-title-error'
                         className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 ${
                           errors.title ? 'border-error' : 'border-border'
                         }`}
                         placeholder="Ex: Qu'est-ce que l'Intelligence Artificielle ?"
                       />
-                      {errors.title && <p className='text-error text-sm mt-1'>{errors.title}</p>}
+                      {errors.title && (
+                        <p
+                          id='lesson-title-error'
+                          role='alert'
+                          className='text-error text-sm mt-1'
+                        >
+                          {errors.title}
+                        </p>
+                      )}
                     </div>
 
                     <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
@@ -188,18 +216,23 @@ const LessonEditor: React.FC<LessonEditorProps> = ({ lesson, onSave, onDelete })
                           Durée (minutes) *
                         </label>
                         <input
+                          id='lesson-duration'
                           type='number'
                           value={formData.duration}
-                          onChange={e =>
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                             handleInputChange('duration', parseInt(e.target.value) || 0)
                           }
+                          aria-invalid={Boolean(errors.duration)}
+                          aria-describedby='lesson-duration-error'
                           className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 ${
                             errors.duration ? 'border-error' : 'border-border'
                           }`}
                           min='1'
                         />
                         {errors.duration && (
-                          <p className='text-error text-sm mt-1'>{errors.duration}</p>
+                          <p id='lesson-duration-error' role='alert' className='text-error text-sm mt-1'>
+                            {errors.duration}
+                          </p>
                         )}
                       </div>
 
@@ -208,9 +241,12 @@ const LessonEditor: React.FC<LessonEditorProps> = ({ lesson, onSave, onDelete })
                           Ordre dans le module
                         </label>
                         <input
+                          id='lesson-order'
                           type='number'
                           value={formData.order}
-                          onChange={e => handleInputChange('order', parseInt(e.target.value) || 1)}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            handleInputChange('order', parseInt(e.target.value) || 1)
+                          }
                           className='w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200'
                           min='1'
                         />
@@ -246,15 +282,24 @@ const LessonEditor: React.FC<LessonEditorProps> = ({ lesson, onSave, onDelete })
                     </div>
 
                     <textarea
+                      id='lesson-content'
                       value={formData.content}
-                      onChange={e => handleInputChange('content', e.target.value)}
+                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                        handleInputChange('content', e.target.value)
+                      }
                       rows={12}
+                      aria-invalid={Boolean(errors.content)}
+                      aria-describedby='lesson-content-error'
                       className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 resize-none font-mono text-sm ${
                         errors.content ? 'border-error' : 'border-border'
                       }`}
                       placeholder='Rédigez le contenu de votre leçon ici...'
                     />
-                    {errors.content && <p className='text-error text-sm mt-1'>{errors.content}</p>}
+                    {errors.content && (
+                      <p id='lesson-content-error' role='alert' className='text-error text-sm mt-1'>
+                        {errors.content}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>

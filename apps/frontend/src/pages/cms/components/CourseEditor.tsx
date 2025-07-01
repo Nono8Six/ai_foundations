@@ -15,25 +15,41 @@ export interface CourseEditorProps {
   onDelete: () => void;
 }
 
+interface FormValues {
+  title: string;
+  description: string;
+  price: number;
+  thumbnail: string;
+  status: string;
+  prerequisites: string;
+  learningObjectives: string;
+  difficulty: string;
+  estimatedDuration: number;
+  tags: string[];
+}
+
 const CourseEditor: React.FC<CourseEditorProps> = ({ course, onSave, onDelete }) => {
-  const [formData, setFormData] = useState<Partial<CourseRow>>({
-    title: course?.title || '',
-    description: course?.description || '',
-    price: course?.price || 0,
-    thumbnail: course?.thumbnail || '',
-    status: course?.status || 'draft',
-    prerequisites: course?.prerequisites || '',
-    learningObjectives: course?.learningObjectives || '',
-    difficulty: course?.difficulty || 'beginner',
-    estimatedDuration: course?.estimatedDuration || 0,
-    tags: course?.tags || [],
+  const [formData, setFormData] = useState<FormValues>({
+    title: course?.title ?? '',
+    description: course?.description ?? '',
+    price: course?.price ?? 0,
+    thumbnail: course?.thumbnail ?? '',
+    status: course?.status ?? 'draft',
+    prerequisites: course?.prerequisites ?? '',
+    learningObjectives: course?.learningObjectives ?? '',
+    difficulty: course?.difficulty ?? 'beginner',
+    estimatedDuration: course?.estimatedDuration ?? 0,
+    tags: course?.tags ?? [],
   });
 
   const [errors, setErrors] = useState<Record<string, string | null>>({});
   const [isUploading, setIsUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  const handleInputChange = (field: keyof CourseRow, value: unknown) => {
+  const handleInputChange = <K extends keyof FormValues>(
+    field: K,
+    value: FormValues[K]
+  ) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: null }));
@@ -69,7 +85,9 @@ const CourseEditor: React.FC<CourseEditorProps> = ({ course, onSave, onDelete })
     }
   };
 
-  const handleThumbnailUpload = async event => {
+  const handleThumbnailUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files[0];
     if (file) {
       setIsUploading(true);
@@ -146,42 +164,81 @@ const CourseEditor: React.FC<CourseEditorProps> = ({ course, onSave, onDelete })
 
               <div className='space-y-4'>
                 <TextInput
+                  id='course-title'
                   label='Titre du cours *'
                   value={formData.title}
-                  onChange={e => handleInputChange('title', e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    handleInputChange('title', e.target.value)
+                  }
+                  aria-invalid={Boolean(errors.title)}
+                  aria-describedby='course-title-error'
                   placeholder="Ex: Introduction à l'Intelligence Artificielle"
-                  error={errors.title}
+                  error={errors.title ?? undefined}
                 />
+                {errors.title && (
+                  <p
+                    id='course-title-error'
+                    role='alert'
+                    className='text-error text-sm mt-1'
+                  >
+                    {errors.title}
+                  </p>
+                )}
 
                 <div>
                   <label className='block text-sm font-medium text-text-primary mb-2'>
                     Description *
                   </label>
                   <textarea
+                    id='course-description'
                     value={formData.description}
-                    onChange={e => handleInputChange('description', e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                      handleInputChange('description', e.target.value)
+                    }
                     rows={4}
+                    aria-invalid={Boolean(errors.description)}
+                    aria-describedby='course-description-error'
                     className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 resize-none ${
                       errors.description ? 'border-error' : 'border-border'
                     }`}
                     placeholder='Décrivez le contenu et les objectifs de votre cours...'
                   />
                   {errors.description && (
-                    <p className='text-error text-sm mt-1'>{errors.description}</p>
+                    <p
+                      id='course-description-error'
+                      role='alert'
+                      className='text-error text-sm mt-1'
+                    >
+                      {errors.description}
+                    </p>
                   )}
                 </div>
 
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                   <TextInput
+                    id='course-price'
                     type='number'
                     label='Prix (€)'
                     value={formData.price}
-                    onChange={e => handleInputChange('price', parseFloat(e.target.value) || 0)}
-                    error={errors.price}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      handleInputChange('price', parseFloat(e.target.value) || 0)
+                    }
+                    aria-invalid={Boolean(errors.price)}
+                    aria-describedby='course-price-error'
+                    error={errors.price ?? undefined}
                     inputClassName='[appearance:textfield]'
                     min='0'
                     step='0.01'
                   />
+                  {errors.price && (
+                    <p
+                      id='course-price-error'
+                      role='alert'
+                      className='text-error text-sm mt-1'
+                    >
+                      {errors.price}
+                    </p>
+                  )}
 
                   <div>
                     <label className='block text-sm font-medium text-text-primary mb-2'>
@@ -189,7 +246,9 @@ const CourseEditor: React.FC<CourseEditorProps> = ({ course, onSave, onDelete })
                     </label>
                     <select
                       value={formData.difficulty}
-                      onChange={e => handleInputChange('difficulty', e.target.value)}
+                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                        handleInputChange('difficulty', e.target.value)
+                      }
                       className='w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200'
                     >
                       {difficultyOptions.map(option => (
@@ -206,11 +265,13 @@ const CourseEditor: React.FC<CourseEditorProps> = ({ course, onSave, onDelete })
                     Durée estimée (heures)
                   </label>
                   <input
+                    id='estimated-duration'
                     type='number'
                     value={formData.estimatedDuration}
-                    onChange={e =>
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       handleInputChange('estimatedDuration', parseFloat(e.target.value) || 0)
                     }
+                    aria-invalid={false}
                     className='w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200'
                     min='0'
                     step='0.5'
@@ -226,8 +287,11 @@ const CourseEditor: React.FC<CourseEditorProps> = ({ course, onSave, onDelete })
               </h2>
 
               <textarea
+                id='learning-objectives'
                 value={formData.learningObjectives}
-                onChange={e => handleInputChange('learningObjectives', e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                  handleInputChange('learningObjectives', e.target.value)
+                }
                 rows={4}
                 className='w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 resize-none'
                 placeholder='Listez les compétences et connaissances que les apprenants acquerront...'
@@ -239,8 +303,11 @@ const CourseEditor: React.FC<CourseEditorProps> = ({ course, onSave, onDelete })
               <h2 className='text-lg font-semibold text-text-primary mb-4'>Prérequis</h2>
 
               <textarea
+                id='course-prerequisites'
                 value={formData.prerequisites}
-                onChange={e => handleInputChange('prerequisites', e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                  handleInputChange('prerequisites', e.target.value)
+                }
                 rows={3}
                 className='w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 resize-none'
                 placeholder='Décrivez les connaissances préalables nécessaires...'
