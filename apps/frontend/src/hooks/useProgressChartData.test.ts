@@ -30,10 +30,10 @@ const mockModules: ModuleRow[] = [
 ];
 
 describe('useProgressChartData', () => {
-  afterEach(() => {
+  afterEach((): void => {
     vi.clearAllMocks();
   });
-  it('should return empty arrays when userProgress is empty', () => {
+  it('should return empty arrays when userProgress is empty', (): void => {
     const { result } = renderHook(() =>
       useProgressChartData([], mockLessons, mockCourses, mockModules)
     );
@@ -42,7 +42,7 @@ describe('useProgressChartData', () => {
     expect(result.current.subject).toEqual([]);
   });
 
-  it('should return empty arrays when lessons, courses, or modules are empty', () => {
+  it('should return empty arrays when lessons, courses, or modules are empty', (): void => {
     const mockUserProgress: UserProgressRow[] = [
       { lesson_id: 'l1', status: 'completed', completed_at: new Date().toISOString() },
     ];
@@ -62,7 +62,7 @@ describe('useProgressChartData', () => {
     expect(result.current.weekly).toEqual([]);
   });
 
-  it('should process weekly data correctly for lessons completed today and yesterday', () => {
+  it('should process weekly data correctly for lessons completed today and yesterday', (): void => {
     const today = new Date();
     const yesterday = subDays(today, 1);
     const mockUserProgress: UserProgressRow[] = [
@@ -92,7 +92,7 @@ describe('useProgressChartData', () => {
     expect(yesterdayData.hours).toBe(1);
   });
 
-  it('should process monthly data correctly', () => {
+  it('should process monthly data correctly', (): void => {
     const today = new Date();
     const lastMonth = subDays(today, 35); // Ensure it's in the previous month
     const twoMonthsAgo = subDays(today, 65);
@@ -131,7 +131,7 @@ describe('useProgressChartData', () => {
     expect(twoMonthsAgoData.hours).toBe(0.75);
   });
 
-  it('should aggregate subject data correctly', () => {
+  it('should aggregate subject data correctly', (): void => {
     const today = new Date();
     const mockUserProgress: UserProgressRow[] = [
       { lesson_id: 'l1', status: 'completed', completed_at: today.toISOString() }, // m1 -> c1 (Math)
@@ -153,7 +153,7 @@ describe('useProgressChartData', () => {
     expect(scienceData.value).toBe(1); // l3
   });
 
-  it('should handle lessons with no duration', () => {
+  it('should handle lessons with no duration', (): void => {
     const today = new Date();
     const mockUserProgress: UserProgressRow[] = [
       { lesson_id: 'l4', status: 'completed', completed_at: today.toISOString() }, // m3 -> c3 (Math), duration is null
@@ -169,7 +169,7 @@ describe('useProgressChartData', () => {
     expect(todayData.hours).toBe(0); // Duration is null, so hours should be 0
   });
 
-  it('should filter out progress items without completed_at', () => {
+  it('should filter out progress items without completed_at', (): void => {
     const today = new Date();
     const mockUserProgress: UserProgressRow[] = [
       { lesson_id: 'l1', status: 'completed', completed_at: today.toISOString() },
