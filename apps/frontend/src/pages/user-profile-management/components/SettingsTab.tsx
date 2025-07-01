@@ -1,9 +1,38 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '@frontend/context/AuthContext';
+import { useAuth, type UserSettings } from '@frontend/context/AuthContext';
 import Icon from '@frontend/components/AppIcon';
 import { log } from '@libs/logger';
 
 interface SettingsTabProps {}
+
+interface NotificationSettings {
+  emailNotifications: boolean;
+  pushNotifications: boolean;
+  weeklyReport: boolean;
+  achievementAlerts: boolean;
+  reminderNotifications: boolean;
+}
+
+type NotificationSettingKey = keyof NotificationSettings;
+
+interface PrivacySettings {
+  profileVisibility: 'private' | 'public';
+  showProgress: boolean;
+  showAchievements: boolean;
+  allowMessages: boolean;
+}
+
+type PrivacySettingKey = keyof PrivacySettings;
+
+interface LearningPreferences {
+  dailyGoal: number;
+  preferredDuration: 'short' | 'medium' | 'long';
+  difficultyProgression: string;
+  language: string;
+  autoplay: boolean;
+}
+
+type LearningPreferenceKey = keyof LearningPreferences;
 
 const SettingsTab: React.FC<SettingsTabProps> = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -11,7 +40,7 @@ const SettingsTab: React.FC<SettingsTabProps> = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { updateUserSettings, getUserSettings } = useAuth();
 
-  const [notificationSettings, setNotificationSettings] = useState({
+  const [notificationSettings, setNotificationSettings] = useState<NotificationSettings>({
     emailNotifications: true,
     pushNotifications: false,
     weeklyReport: true,
@@ -19,14 +48,14 @@ const SettingsTab: React.FC<SettingsTabProps> = () => {
     reminderNotifications: true,
   });
 
-  const [privacySettings, setPrivacySettings] = useState({
+  const [privacySettings, setPrivacySettings] = useState<PrivacySettings>({
     profileVisibility: 'private',
     showProgress: false,
     showAchievements: true,
     allowMessages: false,
   });
 
-  const [learningPreferences, setLearningPreferences] = useState({
+  const [learningPreferences, setLearningPreferences] = useState<LearningPreferences>({
     dailyGoal: 30,
     preferredDuration: 'medium',
     difficultyProgression: 'adaptive',
@@ -43,13 +72,13 @@ const SettingsTab: React.FC<SettingsTabProps> = () => {
 
         if (settings) {
           if (settings.notification_settings) {
-            setNotificationSettings(settings.notification_settings);
+            setNotificationSettings(settings.notification_settings as NotificationSettings);
           }
           if (settings.privacy_settings) {
-            setPrivacySettings(settings.privacy_settings);
+            setPrivacySettings(settings.privacy_settings as PrivacySettings);
           }
           if (settings.learning_preferences) {
-            setLearningPreferences(settings.learning_preferences);
+            setLearningPreferences(settings.learning_preferences as LearningPreferences);
           }
         }
       } catch (error) {
@@ -66,10 +95,10 @@ const SettingsTab: React.FC<SettingsTabProps> = () => {
     try {
       setIsSubmitting(true);
 
-      const settingsData = {
-        notification_settings: notificationSettings,
-        privacy_settings: privacySettings,
-        learning_preferences: learningPreferences,
+      const settingsData: Partial<UserSettings> = {
+        notification_settings: notificationSettings as Record<string, unknown>,
+        privacy_settings: privacySettings as Record<string, unknown>,
+        learning_preferences: learningPreferences as Record<string, unknown>,
       };
 
       await updateUserSettings(settingsData);
@@ -84,34 +113,40 @@ const SettingsTab: React.FC<SettingsTabProps> = () => {
     }
   };
 
-  const handleNotificationChange = setting => {
+  const handleNotificationChange = (setting: NotificationSettingKey): void => {
     setNotificationSettings(prev => ({
       ...prev,
       [setting]: !prev[setting],
     }));
   };
 
-  const handlePrivacyChange = (setting, value) => {
+  const handlePrivacyChange = <K extends PrivacySettingKey>(
+    setting: K,
+    value: PrivacySettings[K],
+  ): void => {
     setPrivacySettings(prev => ({
       ...prev,
       [setting]: value,
     }));
   };
 
-  const handleLearningPreferenceChange = (setting, value) => {
+  const handleLearningPreferenceChange = <K extends LearningPreferenceKey>(
+    setting: K,
+    value: LearningPreferences[K],
+  ): void => {
     setLearningPreferences(prev => ({
       ...prev,
       [setting]: value,
     }));
   };
 
-  const handleDeleteAccount = () => {
+  const handleDeleteAccount = (): void => {
     // Simulate account deletion
     log.info('Account deletion requested by user');
     setShowDeleteConfirm(false);
   };
 
-  const exportData = () => {
+  const exportData = (): void => {
     // Simulate data export
     const userData = {
       profile: 'User profile data...',
@@ -180,7 +215,7 @@ const SettingsTab: React.FC<SettingsTabProps> = () => {
                 </div>
                 <button
                   type='button'
-                  onClick={() => handleNotificationChange(key)}
+                  onClick={() => handleNotificationChange(key as NotificationSettingKey)}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
                     value ? 'bg-primary' : 'bg-secondary-300'
                   }`}
@@ -229,11 +264,13 @@ const SettingsTab: React.FC<SettingsTabProps> = () => {
                 Durée préférée des leçons
               </label>
               <div className='grid grid-cols-3 gap-3'>
-                {['short', 'medium', 'long'].map(duration => (
+                {(['short', 'medium', 'long'] as const).map(duration => (
                   <button
                     key={duration}
                     type='button'
-                    onClick={() => handleLearningPreferenceChange('preferredDuration', duration)}
+                    onClick={() =>
+                      handleLearningPreferenceChange('preferredDuration', duration)
+                    }
                     className={`px-4 py-2 text-sm font-medium rounded-lg border transition-colors ${
                       learningPreferences.preferredDuration === duration
                         ? 'border-primary bg-primary-50 text-primary'
@@ -302,7 +339,7 @@ const SettingsTab: React.FC<SettingsTabProps> = () => {
                 Visibilité du profil
               </label>
               <div className='grid grid-cols-2 gap-3'>
-                {['private', 'public'].map(visibility => (
+                {(['private', 'public'] as const).map(visibility => (
                   <button
                     key={visibility}
                     type='button'
@@ -337,7 +374,7 @@ const SettingsTab: React.FC<SettingsTabProps> = () => {
                   </div>
                   <button
                     type='button'
-                    onClick={() => handlePrivacyChange(key, !value)}
+                    onClick={() => handlePrivacyChange(key as PrivacySettingKey, !value)}
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
                       value ? 'bg-primary' : 'bg-secondary-300'
                     }`}
