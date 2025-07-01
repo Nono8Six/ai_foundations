@@ -10,7 +10,9 @@ import type { Database } from '@frontend/types/database.types';
 
 type CoursesRow = Database['public']['Tables']['courses']['Row'];
 
-const ProgramOverview = () => {
+interface ProgramOverviewProps {}
+
+const ProgramOverview: React.FC<ProgramOverviewProps> = () => {
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('popularity');

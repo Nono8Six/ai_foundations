@@ -3,7 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Icon from '@frontend/components/AppIcon';
 import Image from '@frontend/components/AppImage';
 
-const TestimonialsCarousel = () => {
+interface TestimonialsCarouselProps {}
+
+const TestimonialsCarousel: React.FC<TestimonialsCarouselProps> = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const testimonials = [

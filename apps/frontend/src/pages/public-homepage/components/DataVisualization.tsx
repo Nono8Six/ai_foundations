@@ -17,7 +17,9 @@ import {
 } from 'recharts';
 import Icon from '@frontend/components/AppIcon';
 
-const DataVisualization = () => {
+interface DataVisualizationProps {}
+
+const DataVisualization: React.FC<DataVisualizationProps> = () => {
   // Mock data for AI impact across industries
   const industryImpactData = [
     { industry: 'Comptabilité', productivity: 85, automation: 78, satisfaction: 92 },

@@ -10,7 +10,9 @@ import RegisterForm from './components/RegisterForm';
 import GoogleAuthButton from './components/GoogleAuthButton';
 import Card from '@frontend/components/ui/Card';
 
-const AuthenticationLoginRegister = () => {
+interface AuthenticationLoginRegisterProps {}
+
+const AuthenticationLoginRegister: React.FC<AuthenticationLoginRegisterProps> = () => {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState('login');
   const [isLoading, setIsLoading] = useState(false);

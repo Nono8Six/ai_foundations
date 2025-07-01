@@ -457,7 +457,9 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
   );
 };
 
-const ContentManagementCoursesModulesLessons = () => (
+interface ContentManagementCoursesModulesLessonsProps {}
+
+const ContentManagementCoursesModulesLessons: React.FC<ContentManagementCoursesModulesLessonsProps> = () => (
   <AdminLayout>
     <ContentManagementCoursesModulesLessonsContent />
   </AdminLayout>
