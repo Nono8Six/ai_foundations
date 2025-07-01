@@ -30,7 +30,7 @@ export const CourseProvider = ({ children }: { children: ReactNode }) => {
   const queryResult = useQuery<CoursesFromSupabase, Error, CoursesFromSupabase, typeof key>({
     queryKey: key,
     queryFn: () =>
-      fetchCoursesFromSupabase(user!.id).then(data =>
+      fetchCoursesFromSupabase(user?.id ?? (() => { throw new Error('User ID is undefined'); })()).then(data =>
         CoursesFromSupabaseSchema.parse(data)
       ),
     enabled: !!user?.id,
