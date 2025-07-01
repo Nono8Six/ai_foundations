@@ -41,12 +41,12 @@ import {
   subMonths,
 } from 'date-fns';
 
-const useProgressChartData = (
+export function useProgressChartData(
   userProgress: UserProgressRow[] | undefined,
   lessons: LessonRow[] | undefined,
   courses: CourseRow[] | undefined,
   modules: ModuleRow[] | undefined
-): ChartData => {
+): ChartData {
   const [chartData, setChartData] = useState<ChartData>({
     weekly: [],
     monthly: [],
@@ -177,6 +177,5 @@ const useProgressChartData = (
   }, [userProgress, enrichedLessons]);
 
   return chartData;
-};
+}
 
-export default useProgressChartData;
