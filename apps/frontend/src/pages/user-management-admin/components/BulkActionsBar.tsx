@@ -7,7 +7,7 @@ interface BulkActionsBarProps {
   onClearSelection: () => void;
 }
 
-const BulkActionsBar = ({ selectedCount, onBulkAction, onClearSelection }: BulkActionsBarProps) => {
+const BulkActionsBar: React.FC<BulkActionsBarProps> = ({ selectedCount, onBulkAction, onClearSelection }) => {
   const [showActionMenu, setShowActionMenu] = useState(false);
 
   const bulkActions = [

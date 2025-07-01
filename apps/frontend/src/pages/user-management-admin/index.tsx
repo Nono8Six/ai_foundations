@@ -31,7 +31,9 @@ interface AdminUser {
   enrolledCourses: string[];
 }
 
-const UserManagementAdminContent = () => {
+interface UserManagementAdminContentProps {}
+
+const UserManagementAdminContent: React.FC<UserManagementAdminContentProps> = () => {
   const { setSidebarOpen } = useAdminSidebar();
 
   const [selectedUsers, setSelectedUsers] = useState([]);
@@ -327,7 +329,9 @@ const UserManagementAdminContent = () => {
   );
 };
 
-const UserManagementAdmin = () => (
+interface UserManagementAdminProps {}
+
+const UserManagementAdmin: React.FC<UserManagementAdminProps> = () => (
   <AdminLayout>
     <UserManagementAdminContent />
   </AdminLayout>

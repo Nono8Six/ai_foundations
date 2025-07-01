@@ -7,7 +7,7 @@ interface CreateUserModalProps {
   onUserCreated: (user: unknown) => void;
 }
 
-const CreateUserModal = ({ onClose, onUserCreated }: CreateUserModalProps) => {
+const CreateUserModal: React.FC<CreateUserModalProps> = ({ onClose, onUserCreated }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',

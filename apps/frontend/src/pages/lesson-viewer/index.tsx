@@ -56,7 +56,9 @@ interface CurrentLesson {
   resources: LessonResource[];
 }
 
-const LessonViewer = () => {
+interface LessonViewerProps {}
+
+const LessonViewer: React.FC<LessonViewerProps> = () => {
   const navigate = useNavigate();
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);

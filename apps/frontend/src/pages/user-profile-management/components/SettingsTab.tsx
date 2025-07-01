@@ -3,7 +3,9 @@ import { useAuth } from '@frontend/context/AuthContext';
 import Icon from '@frontend/components/AppIcon';
 import { log } from '@libs/logger';
 
-const SettingsTab = () => {
+interface SettingsTabProps {}
+
+const SettingsTab: React.FC<SettingsTabProps> = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);

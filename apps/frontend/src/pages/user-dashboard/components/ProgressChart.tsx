@@ -28,7 +28,9 @@ interface MonthlyData {
   xp: number;
 }
 
-const ProgressChart = () => {
+interface ProgressChartProps {}
+
+const ProgressChart: React.FC<ProgressChartProps> = () => {
   const [activeTab, setActiveTab] = useState('weekly');
 
   // On choisit la version de la branche "main", qui est la plus à jour

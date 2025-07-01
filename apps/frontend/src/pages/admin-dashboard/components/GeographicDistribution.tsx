@@ -1,7 +1,9 @@
 import React from 'react';
 import Icon from '@frontend/components/AppIcon';
 
-const GeographicDistribution = () => {
+interface GeographicDistributionProps {}
+
+const GeographicDistribution: React.FC<GeographicDistributionProps> = () => {
   return (
     <div className='bg-surface rounded-lg p-6 shadow-subtle border border-border'>
       <div className='flex items-center justify-between mb-6'>

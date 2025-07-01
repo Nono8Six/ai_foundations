@@ -7,7 +7,7 @@ interface BulkOperationsProps {
   onExecute: (operationId: string, items: string[]) => void;
 }
 
-const BulkOperations = ({ selectedItems, onClose, onExecute }: BulkOperationsProps) => {
+const BulkOperations: React.FC<BulkOperationsProps> = ({ selectedItems, onClose, onExecute }) => {
   const [selectedOperation, setSelectedOperation] = useState('');
   const [confirmationText, setConfirmationText] = useState('');
 

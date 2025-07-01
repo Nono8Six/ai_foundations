@@ -6,7 +6,7 @@ interface UserFiltersProps {
   setFilters: React.Dispatch<React.SetStateAction<Record<string, string>>>;
 }
 
-const UserFilters = ({ filters, setFilters }: UserFiltersProps) => {
+const UserFilters: React.FC<UserFiltersProps> = ({ filters, setFilters }) => {
   const handleFilterChange = (key, value) => {
     setFilters(prev => ({
       ...prev,

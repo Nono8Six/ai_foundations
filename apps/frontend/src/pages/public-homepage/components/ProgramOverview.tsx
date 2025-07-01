@@ -4,7 +4,9 @@ import { motion } from 'framer-motion';
 import Icon from '@frontend/components/AppIcon';
 import Image from '@frontend/components/AppImage';
 
-const ProgramOverview = () => {
+interface ProgramOverviewProps {}
+
+const ProgramOverview: React.FC<ProgramOverviewProps> = () => {
   const courses = [
     {
       id: 1,
