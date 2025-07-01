@@ -32,7 +32,10 @@ const wrapper = ({ children }: { children: React.ReactNode }) => (
 
 describe('AuthContext logout', () => {
   it('clears user and redirects to login', async () => {
-    const { result } = renderHook(() => useAuth(), { wrapper });
+    const { result } = renderHook<undefined, ReturnType<typeof useAuth>>(
+      () => useAuth(),
+      { wrapper }
+    );
 
     await act(async () => {
       await result.current.logout();

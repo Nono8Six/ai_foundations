@@ -46,7 +46,9 @@ describe('useAchievements', () => {
       .limit(10)
       .mockResolvedValueOnce({ data: mockAchievements, error: null });
 
-    const { result } = renderHook(() => useAchievements('u1'));
+    const { result } = renderHook<undefined, ReturnType<typeof useAchievements>>(
+      () => useAchievements('u1')
+    );
 
     expect(result.current.loading).toBe(true);
 
@@ -67,7 +69,9 @@ describe('useAchievements', () => {
       .limit(10)
       .mockResolvedValueOnce({ data: null, error: err });
 
-    const { result } = renderHook(() => useAchievements('u1'));
+    const { result } = renderHook<undefined, ReturnType<typeof useAchievements>>(
+      () => useAchievements('u1')
+    );
 
     await waitFor(() => expect(result.current.loading).toBe(false));
 

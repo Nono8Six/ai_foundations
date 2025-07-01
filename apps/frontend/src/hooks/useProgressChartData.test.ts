@@ -33,10 +33,11 @@ describe('useProgressChartData', () => {
   afterEach((): void => {
     vi.clearAllMocks();
   });
-  it('should return empty arrays when userProgress is empty', (): void => {
-    const { result } = renderHook(() =>
-      useProgressChartData([], mockLessons, mockCourses, mockModules)
-    );
+  it('should return empty arrays when userProgress is empty', () => {
+    const { result } = renderHook<
+      undefined,
+      ReturnType<typeof useProgressChartData>
+    >(() => useProgressChartData([], mockLessons, mockCourses, mockModules));
     expect(result.current.weekly).toEqual([]);
     expect(result.current.monthly).toEqual([]);
     expect(result.current.subject).toEqual([]);
@@ -46,17 +47,22 @@ describe('useProgressChartData', () => {
     const mockUserProgress: UserProgressRow[] = [
       { lesson_id: 'l1', status: 'completed', completed_at: new Date().toISOString() },
     ];
-    let { result } = renderHook(() =>
-      useProgressChartData(mockUserProgress, [], mockCourses, mockModules)
-    );
+    let { result } = renderHook<
+      undefined,
+      ReturnType<typeof useProgressChartData>
+    >(() => useProgressChartData(mockUserProgress, [], mockCourses, mockModules));
     expect(result.current.weekly).toEqual([]);
 
-    ({ result } = renderHook(() =>
+    ({
+      result,
+    } = renderHook<undefined, ReturnType<typeof useProgressChartData>>(() =>
       useProgressChartData(mockUserProgress, mockLessons, [], mockModules)
     ));
     expect(result.current.weekly).toEqual([]);
 
-    ({ result } = renderHook(() =>
+    ({
+      result,
+    } = renderHook<undefined, ReturnType<typeof useProgressChartData>>(() =>
       useProgressChartData(mockUserProgress, mockLessons, mockCourses, [])
     ));
     expect(result.current.weekly).toEqual([]);
@@ -72,7 +78,10 @@ describe('useProgressChartData', () => {
       { lesson_id: 'l1', status: 'completed', completed_at: subDays(today, 7).toISOString() }, // Too old for weekly
     ];
 
-    const { result } = renderHook(() =>
+    const { result } = renderHook<
+      undefined,
+      ReturnType<typeof useProgressChartData>
+    >(() =>
       useProgressChartData(mockUserProgress, mockLessons, mockCourses, mockModules)
     );
 
@@ -104,7 +113,10 @@ describe('useProgressChartData', () => {
       { lesson_id: 'l3', status: 'completed', completed_at: twoMonthsAgo.toISOString() }, // Science, 0.75h, two months ago
     ];
 
-    const { result } = renderHook(() =>
+    const { result } = renderHook<
+      undefined,
+      ReturnType<typeof useProgressChartData>
+    >(() =>
       useProgressChartData(mockUserProgress, mockLessons, mockCourses, mockModules)
     );
 
@@ -139,7 +151,10 @@ describe('useProgressChartData', () => {
       { lesson_id: 'l3', status: 'completed', completed_at: today.toISOString() }, // m2 -> c2 (Science)
       { lesson_id: 'l4', status: 'completed', completed_at: today.toISOString() }, // m3 -> c3 (Math) - no duration
     ];
-    const { result } = renderHook(() =>
+    const { result } = renderHook<
+      undefined,
+      ReturnType<typeof useProgressChartData>
+    >(() =>
       useProgressChartData(mockUserProgress, mockLessons, mockCourses, mockModules)
     );
 
@@ -158,7 +173,10 @@ describe('useProgressChartData', () => {
     const mockUserProgress: UserProgressRow[] = [
       { lesson_id: 'l4', status: 'completed', completed_at: today.toISOString() }, // m3 -> c3 (Math), duration is null
     ];
-    const { result } = renderHook(() =>
+    const { result } = renderHook<
+      undefined,
+      ReturnType<typeof useProgressChartData>
+    >(() =>
       useProgressChartData(mockUserProgress, mockLessons, mockCourses, mockModules)
     );
 
@@ -175,7 +193,10 @@ describe('useProgressChartData', () => {
       { lesson_id: 'l1', status: 'completed', completed_at: today.toISOString() },
       { lesson_id: 'l2', status: 'completed', completed_at: null }, // Should be ignored
     ];
-    const { result } = renderHook(() =>
+    const { result } = renderHook<
+      undefined,
+      ReturnType<typeof useProgressChartData>
+    >(() =>
       useProgressChartData(mockUserProgress, mockLessons, mockCourses, mockModules)
     );
 
