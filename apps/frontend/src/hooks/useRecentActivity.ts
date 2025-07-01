@@ -9,7 +9,7 @@ type ActivityRow = Database['public']['Tables']['activity_log']['Row'];
 interface UseRecentActivityOptions<T extends Partial<ActivityRow> = Partial<ActivityRow>> {
   limit?: number;
   order?: 'asc' | 'desc';
-  filters?: T;
+  filters?: Partial<ActivityRow>;
 }
 
 interface UseRecentActivityResult {
