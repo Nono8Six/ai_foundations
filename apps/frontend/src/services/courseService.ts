@@ -2,6 +2,7 @@ import { supabase } from '@frontend/lib/supabase';
 import { safeQuery } from '@frontend/utils/supabaseClient';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@frontend/types/database.types';
+import { z } from 'zod';
 
 const supabaseClient = supabase as SupabaseClient<Database>;
 
@@ -24,12 +25,52 @@ export interface CourseFilters {
   category?: string[];
 }
 
-export interface CoursesFromSupabase {
-  courses: CourseProgress[];
-  lessons: LessonsRow[];
-  modules: ModulesRow[];
-  userProgress: UserProgressRow[];
-}
+const CourseProgressSchema = z
+  .object({
+    id: z.string(),
+    title: z.string(),
+    cover_image_url: z.string().nullable(),
+    category: z.string().nullable(),
+    thumbnail_url: z.string().nullable(),
+    progress: z.object({
+      completed: z.number(),
+      total: z.number(),
+    }),
+  })
+  .passthrough();
+
+const LessonsRowSchema = z
+  .object({
+    id: z.string(),
+    module_id: z.string().nullable(),
+    is_published: z.boolean().nullable(),
+    duration: z.number().nullable(),
+  })
+  .passthrough();
+
+const ModulesRowSchema = z
+  .object({
+    id: z.string(),
+    course_id: z.string().nullable(),
+  })
+  .passthrough();
+
+const UserProgressRowSchema = z
+  .object({
+    lesson_id: z.string(),
+    status: z.string().nullable(),
+    completed_at: z.string().nullable(),
+  })
+  .passthrough();
+
+export const CoursesFromSupabaseSchema = z.object({
+  courses: z.array(CourseProgressSchema),
+  lessons: z.array(LessonsRowSchema),
+  modules: z.array(ModulesRowSchema),
+  userProgress: z.array(UserProgressRowSchema),
+});
+
+export type CoursesFromSupabase = z.infer<typeof CoursesFromSupabaseSchema>;
 
 export async function fetchCourses({
   search = '',
@@ -189,5 +230,5 @@ export async function fetchCoursesFromSupabase(userId: string): Promise<CoursesF
     lessons: lessonsData,
     modules: modulesData,
     userProgress: progressData,
-  } as CoursesFromSupabase;
+  };
 }
