@@ -17,8 +17,8 @@ import {
 } from 'recharts';
 import { useAuth } from '@frontend/context/AuthContext';
 import { useCourses } from '@frontend/context/CourseContext';
-import useAchievements from '@frontend/hooks/useAchievements';
-import useRecentActivity from '@frontend/hooks/useRecentActivity';
+import { useAchievements } from '@frontend/hooks/useAchievements';
+import { useRecentActivity } from '@frontend/hooks/useRecentActivity';
 import Icon from '@frontend/components/AppIcon';
 
 interface WeeklyData {

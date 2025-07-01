@@ -10,8 +10,8 @@ import RecentActivity from './components/RecentActivity';
 import ProgressChart from './components/ProgressChart';
 import AchievementCarousel from './components/AchievementCarousel';
 import QuickActions from './components/QuickActions';
-import useRecentActivity from '@frontend/hooks/useRecentActivity';
-import useAchievements from '@frontend/hooks/useAchievements';
+import { useRecentActivity } from '@frontend/hooks/useRecentActivity';
+import { useAchievements } from '@frontend/hooks/useAchievements';
 
 const UserDashboard = () => {
   const [currentTime, setCurrentTime] = useState(new Date());

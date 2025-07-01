@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
 
-const useRouteProgress = (): void => {
+export function useRouteProgress(): void {
   const location = useLocation();
 
   useEffect(() => {
@@ -20,6 +20,5 @@ const useRouteProgress = (): void => {
       NProgress.done();
     };
   }, [location]);
-};
+}
 
-export default useRouteProgress;

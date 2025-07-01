@@ -33,7 +33,7 @@ var mockUseAchievements;
 
 vi.mock('../../../hooks/useRecentActivity', () => {
   mockUseRecentActivity = vi.fn(() => ({ activities: [] }));
-  return { default: mockUseRecentActivity };
+  return { useRecentActivity: mockUseRecentActivity };
 });
 
 vi.mock('../../../hooks/useAchievements', () => {
@@ -52,7 +52,7 @@ vi.mock('../../../hooks/useAchievements', () => {
     loading: false,
     error: null,
   }));
-  return { default: mockUseAchievements };
+  return { useAchievements: mockUseAchievements };
 });
 
 vi.mock('../components/ProgressChart', () => ({

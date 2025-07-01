@@ -11,7 +11,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { useCourses } from '@frontend/context/CourseContext';
-import useProgressChartData from '@frontend/hooks/useProgressChartData';
+import { useProgressChartData } from '@frontend/hooks/useProgressChartData';
 import Icon from '@frontend/components/AppIcon';
 
 interface WeeklyData {
