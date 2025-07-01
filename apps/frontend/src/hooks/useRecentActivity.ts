@@ -48,12 +48,13 @@ const useRecentActivity = (
         .eq('user_id', userId);
 
       // Apply filters if any
-      const filterEntries =
-        Object.entries(filters) as Array<[
-          keyof ActivityRow,
-          ActivityRow[keyof ActivityRow]
-        ]>;
-      query = filterEntries.reduce((q, [column, value]) => q.eq(column, value), query);
+const filterEntries = Object.entries(filters) as Array<[keyof ActivityRow, ActivityRow[keyof ActivityRow]]>;
+query = filterEntries.reduce((q, [column, value]) => {
+  if (value !== undefined) {
+    return q.eq(column, value);
+  }
+  return q;
+}, query);
 
       // Apply ordering and limit
       query = query.order('created_at', { ascending: order === 'asc' }).limit(limit);
