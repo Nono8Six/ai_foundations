@@ -9,17 +9,26 @@ export interface RegisterFormProps {
   setIsLoading: (value: boolean) => void;
 }
 
+interface FormValues {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  terms: boolean;
+}
+
 const RegisterForm: React.FC<RegisterFormProps> = ({ isLoading, setIsLoading }) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
     watch,
-  } = useForm();
+  } = useForm<FormValues>();
   const { signUp } = useAuth();
   const [authError, setAuthError] = useState('');
   const password = watch('password');
-  const onSubmit = async data => {
+  const onSubmit = async (data: FormValues) => {
     setIsLoading(true);
     setAuthError('');
 
@@ -64,6 +73,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ isLoading, setIsLoading }) 
                   message: 'Le prénom doit contenir au moins 2 caractères',
                 },
               })}
+              aria-invalid={Boolean(errors.firstName)}
+              aria-describedby='firstName-error'
               className={`block w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 ${
                 errors.firstName
                   ? 'border-error bg-error-50 text-error-700'
@@ -74,7 +85,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ isLoading, setIsLoading }) 
             />
           </div>
           {errors.firstName && (
-            <p className='mt-1 text-sm text-error flex items-center'>
+            <p id='firstName-error' role='alert' className='mt-1 text-sm text-error flex items-center'>
               <Icon aria-hidden='true' name='AlertCircle' size={16} className='mr-1' />
               {errors.firstName.message}
             </p>
@@ -95,6 +106,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ isLoading, setIsLoading }) 
                 message: 'Le nom doit contenir au moins 2 caractères',
               },
             })}
+            aria-invalid={Boolean(errors.lastName)}
+            aria-describedby='lastName-error'
             className={`block w-full px-3 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 ${
               errors.lastName
                 ? 'border-error bg-error-50 text-error-700'
@@ -104,7 +117,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ isLoading, setIsLoading }) 
             disabled={isLoading}
           />
           {errors.lastName && (
-            <p className='mt-1 text-sm text-error flex items-center'>
+            <p id='lastName-error' role='alert' className='mt-1 text-sm text-error flex items-center'>
               <Icon aria-hidden='true' name='AlertCircle' size={16} className='mr-1' />
               {errors.lastName.message}
             </p>
@@ -131,6 +144,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ isLoading, setIsLoading }) 
                 message: 'Adresse email invalide',
               },
             })}
+            aria-invalid={Boolean(errors.email)}
+            aria-describedby='email-error'
             className={`block w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 ${
               errors.email
                 ? 'border-error bg-error-50 text-error-700'
@@ -141,7 +156,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ isLoading, setIsLoading }) 
           />
         </div>
         {errors.email && (
-          <p className='mt-1 text-sm text-error flex items-center'>
+          <p id='email-error' role='alert' className='mt-1 text-sm text-error flex items-center'>
             <Icon aria-hidden='true' name='AlertCircle' size={16} className='mr-1' />
             {errors.email.message}
           </p>
@@ -172,6 +187,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ isLoading, setIsLoading }) 
                   'Le mot de passe doit contenir au moins une majuscule, une minuscule, un chiffre et un caractère spécial',
               },
             })}
+            aria-invalid={Boolean(errors.password)}
+            aria-describedby='password-error'
             className={`block w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 ${
               errors.password
                 ? 'border-error bg-error-50 text-error-700'
@@ -182,7 +199,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ isLoading, setIsLoading }) 
           />
         </div>
         {errors.password && (
-          <p className='mt-1 text-sm text-error flex items-center'>
+          <p id='password-error' role='alert' className='mt-1 text-sm text-error flex items-center'>
             <Icon aria-hidden='true' name='AlertCircle' size={16} className='mr-1' />
             {errors.password.message}
           </p>
@@ -208,6 +225,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ isLoading, setIsLoading }) 
               required: 'La confirmation du mot de passe est requise',
               validate: value => value === password || 'Les mots de passe ne correspondent pas',
             })}
+            aria-invalid={Boolean(errors.confirmPassword)}
+            aria-describedby='confirmPassword-error'
             className={`block w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 ${
               errors.confirmPassword
                 ? 'border-error bg-error-50 text-error-700'
@@ -218,7 +237,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ isLoading, setIsLoading }) 
           />
         </div>
         {errors.confirmPassword && (
-          <p className='mt-1 text-sm text-error flex items-center'>
+          <p id='confirmPassword-error' role='alert' className='mt-1 text-sm text-error flex items-center'>
             <Icon aria-hidden='true' name='AlertCircle' size={16} className='mr-1' />
             {errors.confirmPassword.message}
           </p>
@@ -249,6 +268,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ isLoading, setIsLoading }) 
             {...register('terms', {
               required: "Vous devez accepter les conditions d'utilisation",
             })}
+            aria-invalid={Boolean(errors.terms)}
+            aria-describedby='terms-error'
             className='h-4 w-4 text-primary focus:ring-primary border-border rounded'
             disabled={isLoading}
           />
@@ -271,7 +292,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ isLoading, setIsLoading }) 
             </a>
           </label>
           {errors.terms && (
-            <p className='mt-1 text-error flex items-center'>
+            <p id='terms-error' role='alert' className='mt-1 text-error flex items-center'>
               <Icon aria-hidden='true' name='AlertCircle' size={16} className='mr-1' />
               {errors.terms.message}
             </p>
