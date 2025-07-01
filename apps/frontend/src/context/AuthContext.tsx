@@ -143,8 +143,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       log.debug('🧹 Cleaning up auth subscription...');
       subscription.unsubscribe();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [navigate]);
 
   // Fetch user profile data
   const fetchUserProfile = async (userId: string) => {
