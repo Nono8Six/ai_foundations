@@ -1,5 +1,5 @@
 // src/pages/user-dashboard/components/ProgressChart.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { colors } from '@frontend/utils/theme';
 import {
   LineChart,
@@ -9,6 +9,8 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  type TooltipProps as RechartsTooltipProps,
+  type TooltipPayload,
 } from 'recharts';
 import { useCourses } from '@frontend/context/CourseContext';
 import { useProgressChartData } from '@frontend/hooks/useProgressChartData';
@@ -27,6 +29,8 @@ interface MonthlyData {
   hours: number;
   xp: number;
 }
+
+type ChartData = WeeklyData | MonthlyData;
 
 interface ProgressChartProps {}
 
@@ -58,16 +62,21 @@ const ProgressChart: React.FC<ProgressChartProps> = () => {
     activeTab === 'weekly' ? chartData.weekly || [] : chartData.monthly || [];
   const getXAxisKey = () => (activeTab === 'weekly' ? 'day' : 'month');
 
-  const CustomTooltip = ({ active, payload, label }) => {
-    if (active && payload && payload.length) {
+  const CustomTooltip = ({ active, payload, label }: RechartsTooltipProps<number, string>) => {
+    const safePayload = useMemo(
+      () => (payload?.length ? (payload as TooltipPayload<number, string>[]) : undefined),
+      [payload]
+    );
+
+    if (active && safePayload) {
       return (
         <div className='bg-surface border border-border rounded-lg p-3 shadow-medium'>
           <p className='font-medium text-text-primary mb-2'>{label}</p>
-          {payload.map((entry, index) => (
+          {safePayload.map((entry: TooltipPayload<number, string> & { payload: ChartData }, index) => (
             <p key={index} className='text-sm' style={{ color: entry.color }}>
-              {entry.dataKey === 'hours' && `Heures: ${entry.value.toFixed(1)}h`}
-              {entry.dataKey === 'lessons' && `Leçons: ${entry.value}`}
-              {entry.dataKey === 'xp' && `XP: ${entry.value}`}
+              {entry.dataKey === 'hours' && `Heures: ${(entry.payload.hours ?? 0).toFixed(1)}h`}
+              {entry.dataKey === 'lessons' && `Leçons: ${entry.payload.lessons ?? 0}`}
+              {entry.dataKey === 'xp' && `XP: ${entry.payload.xp ?? 0}`}
             </p>
           ))}
         </div>
@@ -149,7 +158,7 @@ const ProgressChart: React.FC<ProgressChartProps> = () => {
 
       <div className='w-full h-60 sm:h-72 md:h-80'>
         <ResponsiveContainer width='100%' height='100%'>
-          <LineChart<WeeklyData | MonthlyData>
+          <LineChart
             data={getCurrentData()}
             margin={{ top: 5, right: 5, left: -25, bottom: 5 }}
           >
