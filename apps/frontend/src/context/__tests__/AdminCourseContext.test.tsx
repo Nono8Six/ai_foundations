@@ -3,7 +3,7 @@ import React from 'react';
 import { renderHook, act } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-var fromMock;
+let fromMock: vi.Mock;
 vi.mock('../../lib/supabase', () => {
   fromMock = vi.fn(table => ({
     insert: vi.fn(() => ({
@@ -25,7 +25,7 @@ vi.mock('../../lib/supabase', () => {
   return { supabase: { from: fromMock } };
 });
 
-var safeQueryMock;
+let safeQueryMock: vi.Mock;
 vi.mock('../../utils/supabaseClient', () => {
   safeQueryMock = vi.fn(async fn => fn());
   return { safeQuery: safeQueryMock };
