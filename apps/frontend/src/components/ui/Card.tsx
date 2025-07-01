@@ -5,6 +5,8 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
 }
 
+export type Props = CardProps;
+
 const Card: React.FC<CardProps> = ({ className = '', children, ...props }) => {
   return (
     <div

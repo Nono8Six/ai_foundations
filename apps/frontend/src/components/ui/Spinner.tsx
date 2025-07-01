@@ -5,6 +5,8 @@ export interface SpinnerProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
 }
 
+export type Props = SpinnerProps;
+
 const Spinner: React.FC<SpinnerProps> = ({ size = 16, className = '', ...props }) => {
   const style = { width: size, height: size };
   return (
