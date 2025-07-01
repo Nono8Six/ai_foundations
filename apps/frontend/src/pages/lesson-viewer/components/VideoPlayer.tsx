@@ -8,7 +8,7 @@ export interface VideoPlayerProps {
 }
 
 const VideoPlayer: React.FC<VideoPlayerProps> = ({ videoUrl, transcript, onProgress }) => {
-  const videoRef = useRef(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -44,6 +44,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ videoUrl, transcript, onProgr
 
   const togglePlay = () => {
     const video = videoRef.current;
+    if (!video) return;
     if (isPlaying) {
       video.pause();
     } else {
@@ -52,33 +53,42 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ videoUrl, transcript, onProgr
     setIsPlaying(!isPlaying);
   };
 
-  const handleSeek = e => {
+  const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
     const video = videoRef.current;
+    if (!video) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const pos = (e.clientX - rect.left) / rect.width;
     video.currentTime = pos * duration;
   };
 
-  const handleVolumeChange = e => {
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newVolume = parseFloat(e.target.value);
     setVolume(newVolume);
-    videoRef.current.volume = newVolume;
+    const video = videoRef.current;
+    if (video) {
+      video.volume = newVolume;
+    }
   };
 
-  const handlePlaybackRateChange = rate => {
+  const handlePlaybackRateChange = (rate: number) => {
     setPlaybackRate(rate);
-    videoRef.current.playbackRate = rate;
+    const video = videoRef.current;
+    if (video) {
+      video.playbackRate = rate;
+    }
   };
 
-  const formatTime = time => {
+  const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
 
-  const skipTime = seconds => {
+  const skipTime = (seconds: number) => {
     const video = videoRef.current;
-    video.currentTime = Math.max(0, Math.min(duration, video.currentTime + seconds));
+    if (video) {
+      video.currentTime = Math.max(0, Math.min(duration, video.currentTime + seconds));
+    }
   };
 
   return (
