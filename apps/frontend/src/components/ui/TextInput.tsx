@@ -8,6 +8,8 @@ export interface TextInputProps
   inputClassName?: string;
 }
 
+export type Props = TextInputProps;
+
 const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
   label,
   error,
