@@ -139,7 +139,7 @@ const LessonViewer = () => {
     log.debug('Navigating to previous lesson');
   };
 
-  const handleAddNote = note => {
+  const handleAddNote = (note: string) => {
     const newNote = {
       id: Date.now(),
       content: note,

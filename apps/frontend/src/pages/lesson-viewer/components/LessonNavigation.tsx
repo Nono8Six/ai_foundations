@@ -29,7 +29,7 @@ const LessonNavigation: React.FC<LessonNavigationProps> = ({
 }) => {
   const [expandedModules, setExpandedModules] = useState(new Set([1])); // First module expanded by default
 
-  const toggleModule = moduleId => {
+  const toggleModule = (moduleId: string) => {
     const newExpanded = new Set(expandedModules);
     if (newExpanded.has(moduleId)) {
       newExpanded.delete(moduleId);

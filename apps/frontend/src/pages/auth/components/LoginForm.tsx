@@ -73,10 +73,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, isLoading, setIsLoadin
   const getErrorMessage = (error: unknown): string | undefined => {
     if (!error) return undefined;
     if (typeof error === 'string') return error;
-    if (typeof error === 'object') {
-      if ('message' in error && typeof (error as any).message === 'string') {
-        return (error as FieldError).message;
-      }
+    if (
+      typeof error === 'object' &&
+      error !== null &&
+      'message' in error &&
+      typeof (error as Record<string, unknown>).message === 'string'
+    ) {
+      return (error as FieldError).message;
     }
     return undefined;
   };
