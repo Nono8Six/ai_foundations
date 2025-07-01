@@ -36,11 +36,11 @@ const Header = (): JSX.Element => {
   useEffect(() => {
     if (user && profileError && !authError) {
       log.error('Erreur de chargement du profil:', profileError);
-      const timer = setTimeout(() => {
-        clearProfileError();
-      }, 3000);
+      const timer = setTimeout(() => clearProfileError(), 3000);
       return () => clearTimeout(timer);
     }
+
+    return undefined;
   }, [user, profileError, authError, clearProfileError]);
 
   const getFirstName = () => {
