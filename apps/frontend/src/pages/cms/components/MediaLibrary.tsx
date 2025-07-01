@@ -37,7 +37,7 @@ const MediaLibrary: React.FC<MediaLibraryProps> = ({ onClose, onSelectMedia }) =
     { id: 'documents', label: 'Documents', icon: 'FileText', count: tabCounts.documents },
   ];
 
-  const fetchMedia = async tab => {
+  const fetchMedia = async (tab: keyof typeof BUCKETS) => {
     try {
       const files = await listBucketFiles(BUCKETS[tab]);
       const items = (files || []).map(f => ({
@@ -61,8 +61,10 @@ const MediaLibrary: React.FC<MediaLibraryProps> = ({ onClose, onSelectMedia }) =
     fetchMedia(activeTab);
   }, [activeTab]);
 
-  const handleFileUpload = async event => {
-    const files = Array.from(event.target.files);
+  const handleFileUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const files = Array.from(event.target.files ?? []);
     if (files.length) {
       setIsUploading(true);
       try {
@@ -75,7 +77,7 @@ const MediaLibrary: React.FC<MediaLibraryProps> = ({ onClose, onSelectMedia }) =
     }
   };
 
-  const handleItemSelect = item => {
+  const handleItemSelect = (item: MediaItem) => {
     if (selectedItems.includes(item.id)) {
       setSelectedItems(selectedItems.filter(id => id !== item.id));
     } else {
@@ -92,7 +94,7 @@ const MediaLibrary: React.FC<MediaLibraryProps> = ({ onClose, onSelectMedia }) =
     item.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const renderMediaItem = item => {
+  const renderMediaItem = (item: MediaItem) => {
     const isSelected = selectedItems.includes(item.id);
 
     return (

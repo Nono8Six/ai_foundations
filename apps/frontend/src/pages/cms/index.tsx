@@ -63,8 +63,13 @@ type CourseWithContent = Awaited<ReturnType<typeof fetchCoursesWithContent>>[num
 
 // Helper function to map between CourseWithContent and ContentNode
 // Type guard to check if an item is CmsContentItem
-const isCmsContentItem = (item: any): item is CmsContentItem => {
-  return 'type' in item && ['course', 'module', 'lesson'].includes(item.type);
+const isCmsContentItem = (item: unknown): item is CmsContentItem => {
+  return (
+    typeof item === 'object' &&
+    item !== null &&
+    'type' in item &&
+    ['course', 'module', 'lesson'].includes((item as { type?: string }).type ?? '')
+  );
 };
 
 const mapToContentNode = (item: CourseWithContent | CmsContentItem): ContentNode => {

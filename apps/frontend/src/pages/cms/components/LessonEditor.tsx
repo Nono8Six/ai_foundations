@@ -59,7 +59,9 @@ const LessonEditor: React.FC<LessonEditorProps> = ({ lesson, onSave, onDelete })
     }
   };
 
-  const handleVideoUpload = async event => {
+  const handleVideoUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files[0];
     if (file) {
       setIsUploading(true);
