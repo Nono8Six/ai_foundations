@@ -2,7 +2,7 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { describe, it, expect, beforeEach, afterEach, vi, type MockedFunction } from 'vitest';
 import type { PostgrestError } from '@supabase/supabase-js';
 
-import useRecentActivity from './useRecentActivity';
+import { useRecentActivity } from './useRecentActivity';
 import { supabase } from '../lib/supabase';
 
 vi.mock('../lib/supabase');
@@ -43,10 +43,9 @@ describe('useRecentActivity', () => {
       .limit(10)
       .mockResolvedValueOnce({ data: mockActivities, error: null });
 
-    const { result } = renderHook<
-      undefined,
-      ReturnType<typeof useRecentActivity>
-    >(() => useRecentActivity('u1'));
+    const { result } = renderHook<undefined, ReturnType<typeof useRecentActivity>>(() =>
+      useRecentActivity('u1')
+    );
 
     expect(result.current.loading).toBe(true);
 
@@ -67,10 +66,9 @@ describe('useRecentActivity', () => {
       .limit(10)
       .mockResolvedValueOnce({ data: null, error: err });
 
-    const { result } = renderHook<
-      undefined,
-      ReturnType<typeof useRecentActivity>
-    >(() => useRecentActivity('u1'));
+    const { result } = renderHook<undefined, ReturnType<typeof useRecentActivity>>(() =>
+      useRecentActivity('u1')
+    );
 
     await waitFor(() => expect(result.current.loading).toBe(false));
 
