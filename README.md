@@ -163,7 +163,6 @@ Pour construire et lancer l'image de production du frontend :
 
 ### Scripts Utilitaires (`scripts/`)
 
- - `scripts/validate-env.js`: Vérifie la présence des variables d'environnement nécessaires.
 - `scripts/cleanup.sh`: Nettoie l'environnement de développement (node_modules, conteneurs Docker Compose).
 - `scripts/recovery.sh`: Tente une récupération de base de l'environnement.
 
@@ -188,7 +187,6 @@ _(Adaptez le port et la gestion des variables d'environnement selon votre platef
 
 ### Scripts Utilitaires (`scripts/`)
 
- - `scripts/validate-env.js`: Vérifie la présence des variables d'environnement nécessaires.
 - `scripts/cleanup.sh`: Nettoie l'environnement de développement (node_modules, conteneurs Docker Compose).
 - `scripts/recovery.sh`: Tente une récupération de base de l'environnement.
 
