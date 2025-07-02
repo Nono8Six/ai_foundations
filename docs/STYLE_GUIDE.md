@@ -20,6 +20,7 @@ Ce projet utilise TypeScript avec ESLint et Prettier pour garantir une base de c
 - Capturez toujours les erreurs des appels asynchrones (`try/catch` sur les `async/await`).
 - Utilisez des classes d'erreur personnalisées pour fournir un contexte métier clair.
 - Retournez des `Result<T>` ou objets similaires pour signaler explicitement l'échec ou le succès d'une opération.
+- Consultez le document [supabase-error-handling.md](./supabase-error-handling.md) pour connaître les règles d'usage de `safeQuery` et des exceptions avec Supabase.
 
 ### Options de compilation recommandées
 
