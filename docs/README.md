@@ -12,5 +12,6 @@ Voici un index rapide de tous les fichiers de documentation disponibles dans ce 
 
 - [repository-overview.md](repository-overview.md) - Vue d'ensemble de la structure du dépôt.
 - [STYLE_GUIDE.md](STYLE_GUIDE.md) - Règles de style et conventions de code.
+- [supabase-error-handling.md](supabase-error-handling.md) - Gestion des erreurs Supabase et usage de `safeQuery`.
 - [ui.md](ui.md) - Emplacement des composants d'interface utilisateur de base.
 - [user-dashboard-refactor-plan.md](user-dashboard-refactor-plan.md) - Plan pour remplacer les données fictives du tableau de bord utilisateur.
