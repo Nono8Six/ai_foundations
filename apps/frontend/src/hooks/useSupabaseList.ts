@@ -1,4 +1,10 @@
-import { useEffect, useState, useMemo, useCallback } from 'react';
+import { useMemo } from 'react';
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  type UseQueryResult,
+} from '@tanstack/react-query';
 import type { PostgrestError, SupabaseClient } from '@supabase/supabase-js';
 import { supabase } from '@frontend/lib/supabase';
 import { safeQuery } from '@frontend/utils/supabaseClient';
@@ -12,10 +18,13 @@ export interface UseSupabaseListOptions<T> {
   filters?: Partial<T>;
 }
 
-export interface UseSupabaseListResult<T> {
+export interface UseSupabaseListResult<T, I, U> {
   data: T[];
   loading: boolean;
   error: PostgrestError | null;
+  create: (payload: I) => Promise<T>;
+  update: (args: { id: string; updates: U }) => Promise<T>;
+  remove: (id: string) => Promise<void>;
 }
 
 export function useSupabaseList<T extends keyof Database['public']['Tables']>(
@@ -26,57 +35,84 @@ export function useSupabaseList<T extends keyof Database['public']['Tables']>(
     order = 'desc',
     filters = {},
   }: UseSupabaseListOptions<Database['public']['Tables'][T]['Row']> = {}
-): UseSupabaseListResult<Database['public']['Tables'][T]['Row']> {
+): UseSupabaseListResult<
+  Database['public']['Tables'][T]['Row'],
+  Database['public']['Tables'][T]['Insert'],
+  Database['public']['Tables'][T]['Update']
+> {
   type Row = Database['public']['Tables'][T]['Row'];
-  const [data, setData] = useState<Row[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<PostgrestError | null>(null);
+  type Insert = Database['public']['Tables'][T]['Insert'];
+  type Update = Database['public']['Tables'][T]['Update'];
+
+  const queryClient = useQueryClient();
 
   const filtersString = useMemo(() => JSON.stringify(filters), [filters]);
+  const queryKey = useMemo(
+    () => [table, userId, { limit, order, filters: filtersString }],
+    [table, userId, limit, order, filtersString]
+  );
 
-  const fetchList = useCallback(async () => {
-    if (!userId) {
-      setLoading(false);
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      let query = supabaseClient.from(table).select('*').eq('user_id', userId);
-
+  const query: UseQueryResult<Row[], PostgrestError> = useQuery({
+    queryKey,
+    enabled: Boolean(userId),
+    cacheTime: 0,
+    queryFn: async () => {
+      let q = supabaseClient.from(table).select('*').eq('user_id', userId!);
       const filterEntries = Object.entries(filters) as Array<[keyof Row, Row[keyof Row]]>;
-      query = filterEntries.reduce((q, [column, value]) => q.eq(column as string, value), query);
-
-      query = query
-        .order('created_at', {
-          ascending: order === 'asc',
-        })
-        .limit(limit);
-
-      const { data, error: queryError } = await safeQuery<Row[]>(async () => {
-        const response = await query;
-        return { data: response.data, error: response.error };
+      q = filterEntries.reduce((acc, [column, value]) => acc.eq(column as string, value), q);
+      q = q.order('created_at', { ascending: order === 'asc' }).limit(limit);
+      const { data, error } = await safeQuery<Row[]>(async () => {
+        const resp = await q;
+        return { data: resp.data, error: resp.error };
       });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
 
-      if (queryError) {
-        setError(queryError);
-        setData([]);
-      } else {
-        setData(data || []);
-      }
-    } catch (err) {
-      setError(err as PostgrestError);
-      setData([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [table, userId, limit, order, filtersString]);
+  const invalidate = () => queryClient.invalidateQueries({ queryKey: [table, userId] });
 
-  useEffect(() => {
-    fetchList();
-  }, [fetchList]);
+  const create = useMutation<Row, PostgrestError, Insert>({
+    mutationFn: async (payload: Insert) => {
+      const { data, error } = await safeQuery<Row>(async () => {
+        const resp = await supabaseClient.from(table).insert(payload).select().single();
+        return { data: resp.data, error: resp.error };
+      });
+      if (error || !data) throw error ?? new Error('No data');
+      return data;
+    },
+    onSuccess: invalidate,
+  });
 
-  return { data, loading, error };
+  const update = useMutation<Row, PostgrestError, { id: string; updates: Update }>({
+    mutationFn: async ({ id, updates }) => {
+      const { data, error } = await safeQuery<Row>(async () => {
+        const resp = await supabaseClient.from(table).update(updates).eq('id', id).select().single();
+        return { data: resp.data, error: resp.error };
+      });
+      if (error || !data) throw error ?? new Error('No data');
+      return data;
+    },
+    onSuccess: invalidate,
+  });
+
+  const remove = useMutation<void, PostgrestError, string>({
+    mutationFn: async (id: string) => {
+      const { error } = await safeQuery(async () => {
+        const resp = await supabaseClient.from(table).delete().eq('id', id);
+        return { data: null, error: resp.error };
+      });
+      if (error) throw error;
+    },
+    onSuccess: invalidate,
+  });
+
+  return {
+    data: query.data ?? [],
+    loading: query.isLoading,
+    error: (query.error ?? null) as PostgrestError | null,
+    create: create.mutateAsync,
+    update: update.mutateAsync,
+    remove: remove.mutateAsync,
+  };
 }
