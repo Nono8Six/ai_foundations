@@ -10,23 +10,10 @@ const supabaseClient = supabase as SupabaseClient<Database>;
 type CoursesRow = Database['public']['Tables']['courses']['Row'];
 type LessonsRow = Database['public']['Tables']['lessons']['Row'];
 type ModulesRow = Database['public']['Tables']['modules']['Row'];
-type UserProgressRow = Database['public']['Tables']['user_progress']['Row'];
-
 type CourseWithContent = CoursesRow & {
   modules: (ModulesRow & { lessons: LessonsRow[] })[];
 };
 
-type CourseProgress = CoursesRow & {
-  progress: { completed: number; total: number };
-};
-
-export interface CourseFilters {
-  skillLevel?: string[];
-  duration?: string[];
-  category?: string[];
-}
-
-// Zod schemas pour validation runtime + typage TS
 const CourseProgressSchema = z
   .object({
     id: z.string(),
@@ -41,6 +28,15 @@ const CourseProgressSchema = z
   })
   .passthrough();
 
+export type CourseProgress = z.infer<typeof CourseProgressSchema>;
+
+export interface CourseFilters {
+  skillLevel?: string[];
+  duration?: string[];
+  category?: string[];
+}
+
+// Zod schemas pour validation runtime + typage TS
 const LessonsRowSchema = z
   .object({
     id: z.string(),
@@ -86,7 +82,7 @@ export async function fetchCourses({
   sortBy?: string;
   page?: number;
   pageSize?: number;
-} = {}): Promise<{ data: CoursesRow[]; count: number }> {
+} = {}): Promise<{ data: CourseProgress[]; count: number }> {
   const { skillLevel = [], duration = [], category = [] } = filters;
   let query = supabaseClient
     .from('courses')

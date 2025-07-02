@@ -1,5 +1,10 @@
 import '@testing-library/jest-dom';
 import { vi, afterEach } from 'vitest';
+
+declare global {
+  // Vitest provides a Jest-compatible API
+  var jest: typeof vi;
+}
 /* global afterEach */
 
 // Provide Jest compatibility helpers for code written with Jest APIs

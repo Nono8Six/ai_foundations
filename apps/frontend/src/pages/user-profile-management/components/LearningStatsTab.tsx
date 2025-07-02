@@ -44,9 +44,7 @@ interface Stats {
   subjectData: SubjectData[];
 }
 
-interface LearningStatsTabProps {}
-
-const LearningStatsTab: React.FC<LearningStatsTabProps> = () => {
+const LearningStatsTab: React.FC = () => {
   const { user, userProfile } = useAuth();
   // On utilise la version corrigée et cohérente des variables
   const { coursesWithProgress: courses, isLoading: coursesLoading } = useCourses();

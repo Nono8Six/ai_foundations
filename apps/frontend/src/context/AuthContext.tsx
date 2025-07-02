@@ -15,6 +15,12 @@ import type {
   UpdateUserProfileResponse,
 } from '@frontend/types/rpc.types';
 import type { UserProfile } from '@frontend/types/user';
+import type {
+  UserSettings,
+  NotificationSettings,
+  PrivacySettings,
+  LearningPreferences,
+} from '@frontend/types/userSettings';
 import { supabase } from '@frontend/lib/supabase';
 import { safeQuery } from '@frontend/utils/supabaseClient';
 import { useNavigate } from 'react-router-dom';
@@ -23,17 +29,6 @@ import type { AuthErrorWithCode } from '@frontend/types/auth';
 import type { AppError } from '@frontend/types/app-error';
 import { toast } from 'sonner';
 import { createContextStrict } from './createContextStrict';
-
-// Déclaration du type UserSettings aligné sur ta table user_settings (DB et TS)
-export interface UserSettings {
-  id: string;
-  user_id: string;
-  notification_settings: Record<string, unknown>;
-  privacy_settings: Record<string, unknown>;
-  learning_preferences: Record<string, unknown>;
-  created_at: string | null;
-  updated_at: string | null;
-}
 
 const supabaseClient = supabase as SupabaseClient<Database>;
 
@@ -501,9 +496,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const typedSettings: UserSettings = {
           id: settings.id,
           user_id: settings.user_id,
-          notification_settings: (settings.notification_settings as Record<string, unknown>) || {},
-          privacy_settings: (settings.privacy_settings as Record<string, unknown>) || {},
-          learning_preferences: (settings.learning_preferences as Record<string, unknown>) || {},
+          notification_settings: settings.notification_settings as NotificationSettings,
+          privacy_settings: settings.privacy_settings as PrivacySettings,
+          learning_preferences: settings.learning_preferences as LearningPreferences,
           created_at: settings.created_at || null,
           updated_at: settings.updated_at || null,
         };
@@ -540,9 +535,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return {
         id: newSettings.id,
         user_id: newSettings.user_id,
-        notification_settings: (newSettings.notification_settings as Record<string, unknown>) || {},
-        privacy_settings: (newSettings.privacy_settings as Record<string, unknown>) || {},
-        learning_preferences: (newSettings.learning_preferences as Record<string, unknown>) || {},
+        notification_settings: newSettings.notification_settings as NotificationSettings,
+        privacy_settings: newSettings.privacy_settings as PrivacySettings,
+        learning_preferences: newSettings.learning_preferences as LearningPreferences,
         created_at: newSettings.created_at || null,
         updated_at: newSettings.updated_at || null,
       };
@@ -597,9 +592,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const typedSettings: UserSettings = {
           id: updated.id,
           user_id: updated.user_id,
-          notification_settings: (updated.notification_settings as Record<string, unknown>) || {},
-          privacy_settings: (updated.privacy_settings as Record<string, unknown>) || {},
-          learning_preferences: (updated.learning_preferences as Record<string, unknown>) || {},
+          notification_settings: updated.notification_settings as NotificationSettings,
+          privacy_settings: updated.privacy_settings as PrivacySettings,
+          learning_preferences: updated.learning_preferences as LearningPreferences,
           created_at: updated.created_at || null,
           updated_at: updated.updated_at || null,
         };
