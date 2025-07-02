@@ -1,38 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth, type UserSettings } from '@frontend/context/AuthContext';
+import { useAuth } from '@frontend/context/AuthContext';
+import type { UserSettings } from '@frontend/types/userSettings';
+import type {
+  NotificationSettings,
+  NotificationSettingKey,
+  PrivacySettings,
+  PrivacySettingKey,
+  LearningPreferences,
+  LearningPreferenceKey,
+} from '@frontend/types/userSettings';
 import Icon from '@frontend/components/AppIcon';
 import { log } from '@libs/logger';
 
 interface SettingsTabProps {}
-
-interface NotificationSettings {
-  emailNotifications: boolean;
-  pushNotifications: boolean;
-  weeklyReport: boolean;
-  achievementAlerts: boolean;
-  reminderNotifications: boolean;
-}
-
-type NotificationSettingKey = keyof NotificationSettings;
-
-interface PrivacySettings {
-  profileVisibility: 'private' | 'public';
-  showProgress: boolean;
-  showAchievements: boolean;
-  allowMessages: boolean;
-}
-
-type PrivacySettingKey = keyof PrivacySettings;
-
-interface LearningPreferences {
-  dailyGoal: number;
-  preferredDuration: 'short' | 'medium' | 'long';
-  difficultyProgression: string;
-  language: string;
-  autoplay: boolean;
-}
-
-type LearningPreferenceKey = keyof LearningPreferences;
 
 const SettingsTab: React.FC<SettingsTabProps> = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -96,9 +76,9 @@ const SettingsTab: React.FC<SettingsTabProps> = () => {
       setIsSubmitting(true);
 
       const settingsData: Partial<UserSettings> = {
-        notification_settings: notificationSettings as Record<string, unknown>,
-        privacy_settings: privacySettings as Record<string, unknown>,
-        learning_preferences: learningPreferences as Record<string, unknown>,
+        notification_settings: notificationSettings,
+        privacy_settings: privacySettings,
+        learning_preferences: learningPreferences,
       };
 
       await updateUserSettings(settingsData);

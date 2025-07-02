@@ -57,9 +57,9 @@ const UserProfileManagement: React.FC<UserProfileManagementProps> = () => {
       case 'personal':
         return <PersonalInfoTab userData={userData} />;
       case 'stats':
-        return <LearningStatsTab userData={userData} />;
+        return <LearningStatsTab />;
       case 'settings':
-        return <SettingsTab userData={userData} />;
+        return <SettingsTab />;
       default:
         return <PersonalInfoTab userData={userData} />;
     }
