@@ -1,139 +1,103 @@
-# 1 🎯 Mission Statement
+Working Philosophy
 
-The *AI-Foundations* monorepo must remain **bug-free, type-safe and maintainable**. The OpenAI Codex agent is expected to automate repetitive coding tasks while adhering to *every* guideline below. **Human prompts always take precedence** over this file, but if a prompt conflicts with company policy the agent must ask for clarification.
+Write idiomatic, modern TypeScript. Aim for self‑documenting code, minimal duplication and clear separation of concerns.
 
-# 2 📚 Scope & Precedence
+Prefer quality over quantity: smaller, well‑factored patches are valued over large monolithic ones.
 
-1. This file governs **all directories** under the repository root.  
-2. Deeper `AGENTS.md` files may override rules for their sub-trees.  
-3. Direct developer / system instructions *override* any `AGENTS.md` rule.  
-4. If multiple rules appear to conflict, **favour safer code-quality defaults**.
+When legacy issues block progress, surface them and propose incremental fixes instead of stalling.
 
-# 3 🗺️ Project Overview
+Execution Protocol
 
-| Area      | Tech Stack                                                    | Root Path            |
-|-----------|--------------------------------------------------------------|----------------------|
-| Front-end | React 18 + TypeScript 5 + Vite 6                              | `apps/frontend/`     |
-| Styling   | Tailwind CSS 3 + shadcn/ui                                    | `apps/frontend/src/` |
-| State     | TanStack Query 5 • Zustand                                    | `apps/frontend/src/` |
-| Back-end  | Supabase (PostgreSQL 16, Auth v3, Storage, Edge Functions TS) | `apps/backend/`      |
-| Tooling   | pnpm 10 • Docker • Vitest v1                                  | repo root            |
+Work on the current branch; if necessary, create a temporary codex/<topic> branch.
 
-> *Reference*: Vite 6 release notes ([typescriptlang.org](https://www.typescriptlang.org/tsconfig)) · TanStack Query v5 docs ([tanstack.com](https://tanstack.com/query/v5/docs/react/overview)) · shadcn/ui intro ([ui.shadcn.com](https://ui.shadcn.com/docs)) · Supabase type generation ([supabase.com](https://supabase.com/docs/guides/api/rest/generating-types))
+Run the Quality Gate (see below) before the final commit, not after every micro‑edit.
 
-# 4 🛠️ Directives to Codex
+Keep the work‑tree clean (git status shows no changes) before committing.
 
-## 4.1 Execution Protocol
+Use Conventional Commits v1 for commit messages.
 
-1. **Stay in the current Git branch.** Branches are forbidden.  
-2. Respect the Codex system message – **wait for terminal commands to finish** before replying.  
-3. Run the *quality gate* (Section 6) **after each code change**.  
-4. Leave the work-tree **clean** (`git status` shows no changes).  
-5. Commit using *Conventional Commits* v1 spec.  
-6. If **pre-commit** fails, fix issues and retry. Never skip hooks.
+If pre‑commit hooks fail on untouched code, log a warning, attempt an auto‑fix, and continue.
 
-## 4.2 When Time-Constrained
+Environment
 
-If a human prompt explicitly says you may skip long-running tasks, you **may** add the flag `--skip-tests` to the npm script names. Document this deviation in the commit body.
+All secrets live in docker/.env (mirrored to Codex). Use docker compose up -d to launch Postgres & Supabase when needed.
 
-## 4.3 Citations & PR Messages
+Quality Gate (lightweight)
 
-Follow the OpenAI **Citations instructions** verbatim when referencing repository paths or terminal output in your pull-request message.  
-Always supply **file citations** for changed code and **terminal citations** only for runtime output; never cite git hashes.
+Script
 
-# 5 💎 Coding Conventions
+Purpose
 
-### 5.1 TypeScript Strictness
+Failure Policy
 
-- `"strict": true` is **mandatory** in *every* `tsconfig.json`.  
-- Disallowed: `any`, `unknown`, `@ts-ignore`, `// eslint-disable`.  
-- Prefer *utility types* (`Pick`, `Record`, `NoInfer`) and generics over repetitive interfaces.
+pnpm lint
 
-### 5.2 React Guidelines
+ESLint + Prettier
 
-- Function components only; hooks for state/effects.  
-- Compose small components instead of prop drilling; lift state via custom hooks.  
-- Co-locate tests (`*.test.tsx`) and stories (`*.stories.tsx`).  
-- Provide **ARIA labels** and keyboard interactions to satisfy WCAG 2.2 AA.
+block commit
 
-### 5.3 File and Folder Layout
+pnpm typecheck
 
-apps/frontend/src/
-pages/<feature>/
-Page.tsx # route entrypoint
-components/
-hooks/
-utils/
-components/ui/ # shadcn primitives
-lib/ # cross-cutting helpers
-styles/ # Tailwind entrypoints only
+tsc --noEmit (changed packages only)
 
-pgsql
-Copier
-Modifier
+block commit
 
-Promote reusable logic to `lib/` or `@ai-foundations/utils` to eliminate duplication.
+pnpm test
 
-### 5.4 Back-end (Supabase)
+Vitest unit tests
 
-1. Write migrations via Supabase CLI (`supabase db diff`).  
-2. Regenerate DB types with `pnpm gen:types` and commit along with migration SQL.  
-3. Enforce RLS: **no table is world-readable**; use policies.
+warn only
 
-# 6 ✅ Quality Gate (checks must pass)
+pnpm build --filter frontend
 
-| Script                         | Purpose                                            |
-|--------------------------------|----------------------------------------------------|
-| `pnpm lint`                    | ESLint + Prettier – zero **warnings** allowed      |
-| `pnpm typecheck`               | `tsc --noEmit` across monorepo                     |
-| `pnpm test`                    | Vitest – 100 % pass rate; aim ≥ 80 % line coverage |
-| `pnpm build --filter frontend` | Vite prod build with size analysis                 |
+Vite production build
 
-Codex **must** execute these locally and abort commit on failure.
+warn only
 
-# 7 🔒 Security & Compliance
+If the human prompt explicitly allows, add --skip-tests or similar flags to speed up the gate.
 
-- Sanitize **all user-generated markdown** via `@ai-foundations/remark-sanitize` before rendering.  
-- Prevent XSS/CSRF by relying on Supabase Auth token in `Authorization` header and double-submit CSRF pattern.  
-- Store secrets in `docker/.env.example`; never commit real credentials.
+Coding Conventions
 
-# 8 🚀 Performance Budget
+TypeScript: strict: true; avoid any, unknown, and @ts-ignore.
 
-- Largest Contentful Paint ≤ 2.5 s on a MacBook Air M3 throttled to 3× CPU.  
-- React component tree depth ≤ 20.  
-- Postgres queries must use indexes (check EXPLAIN ANALYZE).  
-- Images served through Supabase Storage CDN with `?width=` responsive params.
+React: function components with hooks; co‑locate *.test.tsx and *.stories.tsx.
 
-# 9 📝 Commit Message Template
+Accessibility: provide ARIA labels and keyboard navigation (WCAG 2.2 AA).
 
-```text
-<type>(<scope>): <imperative summary>
+Group shared logic in lib/ or @ai-foundations/utils.
 
-Why: <business or UX value>
-How: <technical gist>
-TEST PLAN: <commands / URLs>
-Citations: <F:path†Lx-Ly>, <chunk_id†Lx-Ly>
+Security & Compliance
 
-BREAKING CHANGE: <migration guide>
-Example: feat(auth): add magic-link login
+Sanitise all user‑generated Markdown via @ai-foundations/remark-sanitize.
 
-10 🧑‍💻 Local Development Workflow
-bash
-Copier
-Modifier
-docker compose up -d            # start Postgres + Supabase
-pnpm i                          # install deps
-pnpm dev --filter frontend      # Vite hot-reload
-Use multi-stage Dockerfiles (non-root user). New services belong to the optional tools compose profile unless business-critical.
+Apply RLS on every Supabase table; avoid world‑readable data.
 
-11 🔄 Continuous Improvement
-Whenever Codex touches a file, it must:
+Never commit real credentials.
 
-Delete unused imports (ESLint autofix).
+Performance Budget
 
-Detect duplicate code via jscpd and refactor if > 10 loc overlap.
+Largest Contentful Paint ≤ 2.5 s (MacBook Air M3, 3× CPU throttle).
 
-Keep cyclomatic complexity ≤ 10 per function.
+React component tree depth ≤ 20.
 
-12 📜 Licensing
-All original code is MIT-licensed. Preserve license headers; do not introduce GPL dependencies without approval.
+Serve images via Supabase Storage CDN with responsive params (?width=).
+
+Continuous Improvement Checklist
+
+When Codex edits a file it should:
+
+Remove unused imports (ESLint fix).
+
+Detect structural duplication (> 10 LOC) with jscpd and suggest refactors.
+
+Keep cyclomatic complexity ≤ 10 per function.
+
+Sandbox Hints
+
+Supabase services map to default ports (54322, 54323).
+
+Generate migrations with supabase db diff; regenerate types with pnpm gen:types.
+
+Edge Functions are under apps/backend/functions/ and built via npx supabase functions build.
+
+Warning Policy : if lint or type errors already exist in unmodified files, report them but do not block the commit.
