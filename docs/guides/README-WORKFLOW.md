@@ -129,8 +129,7 @@ ai_foundations/
 ├── apps/
 │   ├── frontend/          # React/Vite → Supabase Cloud
 ├── scripts/
-│   ├── recovery.sh        # Script de récupération
-│   └── validate-env.js    # Validation environnement
+│   └── recovery.sh        # Script de récupération
 ├── .env                   # Variables cloud-first
 ├── docker-compose.yml     # Services développement
 └── README-WORKFLOW.md     # Ce fichier
