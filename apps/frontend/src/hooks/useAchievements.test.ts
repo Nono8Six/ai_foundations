@@ -4,12 +4,13 @@ import type { PostgrestError } from '@supabase/supabase-js';
 
 import useAchievements from './useAchievements';
 import { supabase } from '../lib/supabase';
+import type { safeQuery } from '../utils/supabaseClient';
 
 vi.mock('../lib/supabase');
 const supabaseFromMock = supabase.from as MockedFunction<typeof supabase.from>;
-let safeQueryMock: MockedFunction<any>;
+let safeQueryMock: MockedFunction<typeof safeQuery>;
 vi.mock('../utils/supabaseClient', () => {
-  safeQueryMock = vi.fn(async fn => fn()) as MockedFunction<any>;
+  safeQueryMock = vi.fn(async fn => fn()) as MockedFunction<typeof safeQuery>;
   return { safeQuery: safeQueryMock };
 });
 
