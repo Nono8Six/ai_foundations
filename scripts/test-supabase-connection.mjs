@@ -8,17 +8,13 @@ const REQUIRED_VARS = ['SUPABASE_URL', 'SUPABASE_ANON_KEY', 'SUPABASE_SERVICE_RO
 
 async function testSupabaseConnection() {
   log.info('🔍 Test de connexion Supabase Cloud...\n');
-  log.info('🔍 Test de connexion Supabase Cloud...\n');
 
   // Debug: Afficher les variables
-  log.info("📋 Variables d'environnement:");
   log.info("📋 Variables d'environnement:");
   REQUIRED_VARS.forEach(key => {
     const value = process.env[key];
     log.info(`   ${key}=${value ? '✅ Définie' : '❌ Manquante'}`);
-    log.info(`   ${key}=${value ? '✅ Définie' : '❌ Manquante'}`);
   });
-  log.info('');
   log.info('');
 
   // Vérifier les variables d'environnement
@@ -42,7 +38,6 @@ async function testSupabaseConnection() {
   try {
     // Test 1: Ping basique
     log.info('1️⃣ Test ping basique...');
-    log.info('1️⃣ Test ping basique...');
     const startTime = Date.now();
     const { error } = await supabase.from('_health_check').select('*').limit(1);
 
@@ -53,10 +48,8 @@ async function testSupabaseConnection() {
       throw error;
     }
     log.info(`✅ Ping OK (${pingTime}ms)`);
-    log.info(`✅ Ping OK (${pingTime}ms)`);
 
     // Test 2: Connexion admin
-    log.info('2️⃣ Test connexion admin...');
     log.info('2️⃣ Test connexion admin...');
     const { error: adminError } = await supabaseAdmin.from('_health_check').select('*').limit(1);
 
@@ -64,10 +57,8 @@ async function testSupabaseConnection() {
       throw adminError;
     }
     log.info('✅ Connexion admin OK');
-    log.info('✅ Connexion admin OK');
 
     // Test 3: Métadonnées du projet
-    log.info('3️⃣ Test métadonnées...');
     log.info('3️⃣ Test métadonnées...');
     const { data: metadata, error: metaError } = await supabaseAdmin
       .from('information_schema.tables')
@@ -77,19 +68,10 @@ async function testSupabaseConnection() {
 
     if (metaError) {
       log.warn('⚠️  Métadonnées partielles:', metaError.message);
-      log.warn('⚠️  Métadonnées partielles:', metaError.message);
     } else {
       log.info('✅ Métadonnées OK');
       log.info(`   Tables publiques: ${metadata?.length || 0}`);
-      log.info('✅ Métadonnées OK');
-      log.info(`   Tables publiques: ${metadata?.length || 0}`);
       if (metadata && metadata.length > 0) {
-        log.info(
-          `   Exemples: ${metadata
-            .slice(0, 3)
-            .map(t => t.table_name)
-            .join(', ')}`
-        );
         log.info(
           `   Exemples: ${metadata
             .slice(0, 3)
@@ -101,27 +83,20 @@ async function testSupabaseConnection() {
 
     // Test 4: Auth
     log.info('4️⃣ Test Auth...');
-    log.info('4️⃣ Test Auth...');
     await supabase.auth.getSession();
-    log.info('✅ Auth service OK');
     log.info('✅ Auth service OK');
 
     // Test 5: Storage
     log.info('5️⃣ Test Storage...');
-    log.info('5️⃣ Test Storage...');
     const { data: buckets, error: storageError } = await supabaseAdmin.storage.listBuckets();
     if (storageError) {
       log.warn('⚠️  Storage:', storageError.message);
-      log.warn('⚠️  Storage:', storageError.message);
     } else {
-      log.info('✅ Storage OK');
-      log.info(`   Buckets: ${buckets?.length || 0}`);
       log.info('✅ Storage OK');
       log.info(`   Buckets: ${buckets?.length || 0}`);
     }
 
     // Test 6: Latence réseau
-    log.info('6️⃣ Test latence...');
     log.info('6️⃣ Test latence...');
     const times = [];
     for (let i = 0; i < 3; i++) {
@@ -131,21 +106,11 @@ async function testSupabaseConnection() {
     }
     const avgLatency = Math.round(times.reduce((a, b) => a + b) / times.length);
     log.info(`✅ Latence moyenne: ${avgLatency}ms`);
-    log.info(`✅ Latence moyenne: ${avgLatency}ms`);
 
-    log.info('\n🎉 Tous les tests passés!');
-    log.info('💡 Votre configuration Supabase est opérationnelle');
     log.info('\n🎉 Tous les tests passés!');
     log.info('💡 Votre configuration Supabase est opérationnelle');
 
     // Résumé
-    log.info('\n📊 Résumé de la connexion:');
-    log.info(`   🌐 URL: ${process.env.SUPABASE_URL}`);
-    log.info(`   🏷️  Projet: ${process.env.SUPABASE_PROJECT_REF || 'Non défini'}`);
-    log.info(`   🔧 Environnement: ${process.env.NODE_ENV || 'development'}`);
-    log.info(`   ⚡ Latence: ${avgLatency}ms`);
-    log.info(`   📊 Tables: ${metadata?.length || 0}`);
-    log.info(`   🗂️  Buckets: ${buckets?.length || 0}`);
     log.info('\n📊 Résumé de la connexion:');
     log.info(`   🌐 URL: ${process.env.SUPABASE_URL}`);
     log.info(`   🏷️  Projet: ${process.env.SUPABASE_PROJECT_REF || 'Non défini'}`);
