@@ -20,7 +20,6 @@
     "paths": {
       "@libs/*": ["./libs/*"],
       "@frontend/*": ["./apps/frontend/src/*"],
-      "@backend/*": ["./apps/backend/src/*"],
       "$lib/*": ["./apps/frontend/src/lib/*"],
       "@/*": ["./apps/frontend/src/*"]
     },
