@@ -32,8 +32,6 @@ pnpm validate:env
 # Démarrer le frontend uniquement (cloud-first)
 pnpm dev
 
-# OU avec backend local si nécessaire
-pnpm dev:full:docker
 ```
 
 ## 🎯 Principe Fondamental : Cloud-First
@@ -117,7 +115,6 @@ docker compose up --build --force-recreate
 | ---------------------- | --------------------------------------- |
 | `pnpm dev`             | Démarrage frontend (cloud-first)        |
 | `pnpm dev:docker`      | Lancement via Docker Compose            |
-| `pnpm dev:full:docker` | Frontend + Backend local                |
 | `pnpm db:pull`         | Récupérer schéma depuis cloud           |
 | `pnpm db:push`         | Envoyer changements vers cloud          |
 | `pnpm gen:types`       | Générer types TypeScript                |
@@ -131,7 +128,6 @@ docker compose up --build --force-recreate
 ai_foundations/
 ├── apps/
 │   ├── frontend/          # React/Vite → Supabase Cloud
-│   └── backend/           # Node.js API (optionnel)
 ├── scripts/
 │   ├── recovery.sh        # Script de récupération
 │   └── validate-env.js    # Validation environnement
