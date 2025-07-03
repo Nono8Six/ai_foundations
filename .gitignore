@@ -7,13 +7,6 @@ apps\frontend\node_modules
 !.env.example
 .env.corrupted.backup*
 
-# Misc build/debug artifacts
-apps/backend/dist/
-
-# Supabase directories
-apps/backend/supabase/.temp/
-apps/backend/supabase/.branches/
-
 # Removed docs
 
 /docs/bundle/*.html
@@ -30,5 +23,3 @@ apps/frontend/dist-types/
 packages/*/dist
 libs/logger/*.js
 
-ts-errors-full.log
-package-lock.json
