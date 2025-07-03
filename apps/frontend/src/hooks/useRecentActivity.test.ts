@@ -1,20 +1,27 @@
 import { renderHook, waitFor } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { describe, it, expect, beforeEach, afterEach, vi, type MockedFunction } from 'vitest';
 import type { PostgrestError } from '@supabase/supabase-js';
 
-import useRecentActivity from './useRecentActivity';
+import { useRecentActivity } from './useRecentActivity';
 import { supabase } from '../lib/supabase';
+import type { safeQuery } from '../utils/supabaseClient';
 
 vi.mock('../lib/supabase');
 const supabaseFromMock = supabase.from as MockedFunction<typeof supabase.from>;
-let safeQueryMock: MockedFunction<any>;
+let safeQueryMock: MockedFunction<typeof safeQuery>;
 vi.mock('../utils/supabaseClient', () => {
-  safeQueryMock = vi.fn(async fn => fn()) as MockedFunction<any>;
+  safeQueryMock = vi.fn(async fn => fn()) as MockedFunction<typeof safeQuery>;
   return { safeQuery: safeQueryMock };
 });
 
+let queryClient: QueryClient;
+
 describe('useRecentActivity', () => {
   beforeEach((): void => {
+    queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     supabase.from.mockClear();
     safeQueryMock.mockClear();
   });
@@ -43,10 +50,14 @@ describe('useRecentActivity', () => {
       .limit(10)
       .mockResolvedValueOnce({ data: mockActivities, error: null });
 
-    const { result } = renderHook<
-      undefined,
-      ReturnType<typeof useRecentActivity>
-    >(() => useRecentActivity('u1'));
+    const { result } = renderHook<undefined, ReturnType<typeof useRecentActivity>>(
+      () => useRecentActivity('u1'),
+      {
+        wrapper: ({ children }) => (
+          <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+        ),
+      }
+    );
 
     expect(result.current.loading).toBe(true);
 
@@ -67,10 +78,14 @@ describe('useRecentActivity', () => {
       .limit(10)
       .mockResolvedValueOnce({ data: null, error: err });
 
-    const { result } = renderHook<
-      undefined,
-      ReturnType<typeof useRecentActivity>
-    >(() => useRecentActivity('u1'));
+    const { result } = renderHook<undefined, ReturnType<typeof useRecentActivity>>(
+      () => useRecentActivity('u1'),
+      {
+        wrapper: ({ children }) => (
+          <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+        ),
+      }
+    );
 
     await waitFor(() => expect(result.current.loading).toBe(false));
 

@@ -9,7 +9,6 @@ Plateforme complète pour les cours sur les Fondations de l'IA, construite avec 
 - **Frontend** : React 18 avec Vite 6.3.5
 - **Styling** : Tailwind CSS
 - **Backend** : Supabase (PostgreSQL, Auth, Storage)
-- **API Backend** : Node.js/Express avec hot-reload via nodemon (optionnel)
 - **Base de données** : PostgreSQL via Supabase
 - **Conteneurisation** : Docker + Docker Compose
 - **Gestion de paquets** : pnpm
@@ -19,7 +18,6 @@ Plateforme complète pour les cours sur les Fondations de l'IA, construite avec 
 
 1. **Frontend** : Application React avec hot-reload
 2. **Supabase** : Base de données PostgreSQL complète avec authentification
-3. **Backend API** (optionnel) : Serveur Node.js avec hot-reload (nodemon)
 
 ## 🚀 Démarrage Rapide (Quick Start)
 
@@ -28,7 +26,7 @@ Suivez ces étapes pour lancer l'environnement de développement :
 1.  **Prérequis :**
     - [Node.js](https://nodejs.org/) (>= 20.x.x)
     - [pnpm](https://pnpm.io/installation) (>= 9.x.x), géré via [corepack](https://nodejs.org/api/corepack.html). La version exacte est définie dans `package.json` (`packageManager`).
-    - [Docker Desktop](https://www.docker.com/products/docker-desktop/) (dernière version stable) pour lancer le frontend conteneurisé et optionnellement le backend API.
+    - [Docker Desktop](https://www.docker.com/products/docker-desktop/) (dernière version stable) pour lancer le frontend conteneurisé.
     - [Git](https://git-scm.com/)
     - Un compte [Supabase](https://supabase.com/) pour votre projet Cloud.
 
@@ -96,7 +94,7 @@ Suivez ces étapes pour lancer l'environnement de développement :
     - Accès à Supabase Studio local : `http://localhost:54323` (par défaut).
     - Pour arrêter : `pnpm db:stop`.
 
-8.  **Démarrer les services applicatifs (Frontend et éventuelle API Node.js) :**
+8.  **Démarrer le service frontend :**
     - **Option A : Avec Docker Compose (recommandé)**
 
       ```bash
@@ -111,7 +109,6 @@ Suivez ces étapes pour lancer l'environnement de développement :
       ```bash
       pnpm dev:frontend
       ```
-      _(L'API Node.js, si elle est utilisée, se lance via `pnpm dev:backend`, qui utilise nodemon pour le hot‑reload)._
 
 9.  **Accéder à l'application Frontend :**
     - `http://localhost:5173` (hot reload activé).
@@ -121,9 +118,8 @@ Suivez ces étapes pour lancer l'environnement de développement :
 | Commande                            | Description                                                                                                 |
 | ----------------------------------- | ----------------------------------------------------------------------------------------------------------- |
 | `pnpm install`                      | Installe toutes les dépendances du monorepo.                                                                |
-| `pnpm dev`                          | Lance le frontend et le backend API (si configuré) en mode développement.                                   |
+| `pnpm dev`                          | Lance le frontend en mode développement.                                                                    |
 | `pnpm dev:frontend`                 | Lance uniquement le serveur de développement du frontend.                                                   |
-| `pnpm dev:backend`                  | Lance uniquement le serveur de développement du backend API avec hot-reload (nodemon).                      |
 | `pnpm build`                        | Construit l'application frontend pour la production.                                                        |
 | `pnpm lint`                         | Exécute ESLint sur tout le projet pour vérifier la qualité du code.                                         |
 | `pnpm test`                         | Lance les tests (avec Vitest).                                                                              |
@@ -167,7 +163,6 @@ Pour construire et lancer l'image de production du frontend :
 
 ### Scripts Utilitaires (`scripts/`)
 
- - `scripts/validate-env.js`: Vérifie la présence des variables d'environnement nécessaires.
 - `scripts/cleanup.sh`: Nettoie l'environnement de développement (node_modules, conteneurs Docker Compose).
 - `scripts/recovery.sh`: Tente une récupération de base de l'environnement.
 
@@ -192,7 +187,6 @@ _(Adaptez le port et la gestion des variables d'environnement selon votre platef
 
 ### Scripts Utilitaires (`scripts/`)
 
- - `scripts/validate-env.js`: Vérifie la présence des variables d'environnement nécessaires.
 - `scripts/cleanup.sh`: Nettoie l'environnement de développement (node_modules, conteneurs Docker Compose).
 - `scripts/recovery.sh`: Tente une récupération de base de l'environnement.
 
@@ -202,11 +196,10 @@ _(Adaptez le port et la gestion des variables d'environnement selon votre platef
 .
 ├── apps/
 │   ├── frontend/          # Application React (Vite)
-│   └── backend/           # Configuration Supabase, API Node.js optionnelle
+│   └── backend/           # Configuration Supabase
 │       ├── supabase/      # Config Supabase locale (migrations, seeds)
 │       │   ├── migrations/ # Générées par `pnpm db:pull`
 │       │   └── seeds.sql   # Données initiales pour `supabase db reset` (local)
-│       └── src/           # Code source de l'API Node.js (si utilisée)
 ├── docker-compose.yml     # Pour les services applicatifs (frontend et outils divers)
 ├── Dockerfile             # Dockerfile multi-stage pour le frontend
 ├── .env.example           # Modèle pour les variables d'environnement
@@ -216,10 +209,6 @@ _(Adaptez le port et la gestion des variables d'environnement selon votre platef
         └── supabase-workflow.md # Guide détaillé du workflow Supabase
 ```
 
-### État du Développement Backend API (Node.js)
-
-Le dossier `apps/backend/src/` peut contenir une API Node.js personnalisée (par exemple, avec Express). Son utilisation est totalement facultative. En développement, lancez-la via `pnpm dev:backend` ou intégrez-la à vos conteneurs selon vos besoins.
-
 ## 🔒 Sécurité
 
 ### Variables d'Environnement
@@ -228,7 +217,7 @@ Les variables sensibles (clés API, tokens) sont gérées via un fichier `.env` 
 
 ### Bonnes Pratiques de Sécurité Docker
 
-- Les images finales de production utilisent des utilisateurs non-privilégiés (ex: `nginx` pour le frontend, `node` pour le backend API).
+- Les images finales de production utilisent des utilisateurs non-privilégiés (ex: `nginx` pour le frontend).
 - Les Healthchecks sont configurés pour surveiller l'état des services conteneurisés.
 
 ## 🛠 Dépannage
