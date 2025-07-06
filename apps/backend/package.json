@@ -8,6 +8,6 @@
     "gen:types": "supabase gen types typescript --project-id $SUPABASE_PROJECT_REF > ../frontend/src/database.types.ts"
   },
   "devDependencies": {
-    "supabase": "^1.50.0"
+    "supabase": "2.30.4"
   }
 }

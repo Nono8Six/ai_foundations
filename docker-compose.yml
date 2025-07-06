@@ -3,17 +3,18 @@ networks:
     driver: bridge
 
 volumes:
-  portainer_data: {} # Pour la persistance des données Portainer si utilisé
+  portainer_data: {}
   pnpm-store:
 
 services:
   # ===========================================
-  # FRONTEND - React/Vite
+  # FRONTEND - React/Vite (pour le développement)
   # ===========================================
   frontend:
     build:
       context: .
-      dockerfile: apps/frontend/Dockerfile.front
+      dockerfile: Dockerfile
+      target: development
     working_dir: /app
     env_file:
       - .env
@@ -22,7 +23,7 @@ services:
       - VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
       - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
     ports:
-      - '5173:5173'
+      - '3000:3000'
     volumes:
       - .:/app
       - /app/node_modules
@@ -43,21 +44,10 @@ services:
     container_name: ai-foundations-portainer
     ports:
       - '9000:9000'
-      - '8000:8000' # Pour le tunnel Edge si utilisé
+      - '8000:8000'
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
     networks:
       - app-network
     restart: unless-stopped
-
-  supabase:
-    profiles: ['supabase-local']
-    image: supabase/postgres
-    ports:
-      - '54322:5432'
-    networks:
-      - app-network
-    restart: unless-stopped
-# Note: Une instance Supabase locale peut être lancée via le service `supabase` (profil
-# `supabase-local`) ou via la commande `pnpm db:start` de la CLI Supabase.
