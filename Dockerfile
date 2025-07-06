@@ -24,9 +24,8 @@ COPY package.json pnpm-lock.yaml ./
 COPY pnpm-workspace.yaml ./
 # Optimisation: fetcher uniquement les dépendances nécessaires pour le build du frontend
 # Cela suppose que le filtrage est possible à ce stade ou que vous copiez les package.json des workspaces.
-# Pour un monorepo, il est souvent plus simple de fetcher tout le store.
-RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store pnpm fetch --prod # Ou simplement `pnpm fetch` si le filtrage est complexe ici
-
+# Pour un monorepo, il est plus efficace de fetcher toutes les dépendances (y compris dev) pour maximiser le cache.
+RUN pnpm fetch
 # ------------------------------------------------------------------------------
 # Étape 2 : Build des assets du Frontend
 # ------------------------------------------------------------------------------
@@ -43,13 +42,13 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/frontend/package.json ./apps/frontend/package.json
 COPY tsconfig.json ./
 COPY apps/frontend/tsconfig.json ./apps/frontend/tsconfig.json
-COPY vite.config.mjs ./apps/frontend/vite.config.mjs # Si vite.config.mjs est à la racine du frontend
+COPY apps/frontend/vite.config.mjs ./apps/frontend/vite.config.mjs
 
 # Copier le store pnpm depuis l'étape deps
-COPY --from=deps /root/.local/share/pnpm/store /root/.local/share/pnpm/store
+COPY --from=deps /pnpm/store /pnpm/store
 # Installer toutes les dépendances (dev incluses pour le build)
-RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store pnpm install --frozen-lockfile
-
+# L'installation utilisera le store copié à l'étape précédente, ce qui la rendra rapide.
+RUN pnpm install --frozen-lockfile
 # Copier le reste du code source
 COPY . .
 
@@ -91,40 +90,47 @@ FROM node:20-slim AS development
 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
+# Installer pnpm globalement pour s'assurer qu'il est disponible pour tous les utilisateurs,
+# y compris l'utilisateur 'node' non-root. La version est épinglée pour correspondre
+# à celle dans package.json.
+RUN npm install -g pnpm@10.12.4
 
 WORKDIR /app
 
 # Copier le store pnpm et les node_modules de l'installation complète (incluant devDependencies)
 # Cela est un peu redondant si on monte les volumes locaux, mais assure que l'image est auto-contenue si besoin.
-COPY --from=build-assets /root/.local/share/pnpm/store /root/.local/share/pnpm/store
+COPY --from=build-assets /pnpm/store /pnpm/store
 COPY --from=build-assets /app/node_modules /app/node_modules
 COPY --from=build-assets /app/apps/frontend/node_modules /app/apps/frontend/node_modules
 
 # Copier tout le code source (nécessaire pour le hot-reload)
 COPY . .
 
+# Changer le propriétaire des fichiers pour l'utilisateur non-root
+# afin que le processus Vite puisse écrire dans node_modules/.vite-temp
+RUN chown -R node:node /app
+
 # Définir l'utilisateur non-root
-# Créer l'utilisateur et le groupe 'node' s'ils n'existent pas (déjà présents dans node:slim)
-# RUN addgroup -g 1000 node && adduser -u 1000 -G node -s /bin/sh -D node
 USER node
 
 # Se placer dans le dossier frontend pour le dev
 WORKDIR /app/apps/frontend
 
-EXPOSE 3000
+EXPOSE 5173
 
 # Healthcheck pour le développement
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
-  CMD curl -fsS http://localhost:3000 || exit 1
+  CMD curl -fsS http://localhost:5173 || exit 1
 
 # Commande par défaut pour le développement frontend
-CMD ["pnpm", "dev", "--host", "0.0.0.0"] # --host 0.0.0.0 est important pour exposer hors du conteneur
+# Utilisation de la forme "exec" pour une meilleure gestion des signaux (ex: Ctrl+C).
+# Le script "dev" dans package.json contient déjà --host.
+CMD ["pnpm", "dev"]
 
 # ==============================================================================
 # Sélection de l'étape par défaut (sera 'development' dans docker-compose)
 # ==============================================================================
-FROM development # Ou production si c'est le défaut souhaité pour `docker build .`
+FROM development
 
 # Métadonnées
 LABEL org.opencontainers.image.source="https://github.com/Nono8Six/ai_foundations" \

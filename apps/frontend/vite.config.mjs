@@ -9,7 +9,7 @@ export default defineConfig(() => {
   const shouldAnalyze = process.env.ANALYZE;
   return {
     build: {
-      outDir: 'build',
+      outDir: 'dist',
       chunkSizeWarningLimit: 2000,
     },
 
@@ -60,7 +60,7 @@ export default defineConfig(() => {
     },
 
     server: {
-      port: 3000,
+      port: 5173,
       host: '0.0.0.0',
       strictPort: true,
       allowedHosts: ['.amazonaws.com', '.builtwithrocket.new', 'localhost'],
