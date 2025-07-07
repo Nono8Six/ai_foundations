@@ -7,6 +7,7 @@ import { useRouteProgress } from './hooks/useRouteProgress';
 import { AuthProvider } from './context/AuthContext';
 import { CourseProvider } from './context/CourseContext';
 import { AdminCourseProvider } from './context/AdminCourseContext';
+import { SessionProvider } from './context/SessionContext';
 import { ErrorProvider, type ErrorLogger } from './context/ErrorContext';
 import type { AppError } from './types/app-error';
 import { isAuthErrorWithCode } from './utils/auth';
@@ -36,11 +37,13 @@ const App: React.FC = () => {
       <AuthProvider>
         <CourseProvider>
           <AdminCourseProvider>
-            <ErrorProvider logger={errorLoggerWithToast}>
-              <Header />
-              <AppRoutes />
-              <Toaster richColors position="top-center" />
-            </ErrorProvider>
+            <SessionProvider>
+              <ErrorProvider logger={errorLoggerWithToast}>
+                <Header />
+                <AppRoutes />
+                <Toaster richColors position="top-center" />
+              </ErrorProvider>
+            </SessionProvider>
           </AdminCourseProvider>
         </CourseProvider>
       </AuthProvider>

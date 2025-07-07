@@ -4,6 +4,8 @@ import { useAuth } from '@frontend/context/AuthContext';
 import Icon, { type IconName } from './AppIcon';
 import Avatar from './Avatar';
 import { log } from '@libs/logger';
+import { useSession } from '@frontend/context/SessionContext';
+import Button from '@/components/ui/Button';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -31,6 +33,15 @@ const Header = (): JSX.Element => {
     logout,
     clearProfileError,
   } = useAuth();
+  const {
+    isActive,
+    isPaused,
+    elapsedTime,
+    startSession,
+    pauseSession,
+    resumeSession,
+    stopSession,
+  } = useSession();
   const location = useLocation();
 
   useEffect(() => {
@@ -131,8 +142,35 @@ const Header = (): JSX.Element => {
                   Rejoindre
                 </Link>
               </>
-            )}
-          </nav>
+          )}
+        </nav>
+
+        {/* Session Controls */}
+        <div className='hidden lg:flex items-center space-x-2'>
+          <span className='font-mono w-16 text-center' aria-label='elapsed time'>
+            {new Date(elapsedTime * 1000).toISOString().slice(14, 19)}
+          </span>
+          {!isActive && (
+            <Button onClick={startSession} aria-label='Start session' size='sm'>
+              Start
+            </Button>
+          )}
+          {isActive && !isPaused && (
+            <Button onClick={pauseSession} aria-label='Pause session' size='sm'>
+              Pause
+            </Button>
+          )}
+          {isActive && isPaused && (
+            <Button onClick={resumeSession} aria-label='Resume session' size='sm'>
+              Resume
+            </Button>
+          )}
+          {isActive && (
+            <Button onClick={stopSession} aria-label='Stop session' size='sm'>
+              Stop
+            </Button>
+          )}
+        </div>
 
           {/* Mobile Menu Button */}
           <button
@@ -292,6 +330,33 @@ const Header = (): JSX.Element => {
                 </Link>
               </div>
             )}
+
+            {/* Session Controls Mobile */}
+            <div className='flex items-center justify-center space-x-2 mt-4'>
+              <span className='font-mono w-16 text-center'>
+                {new Date(elapsedTime * 1000).toISOString().slice(14, 19)}
+              </span>
+              {!isActive && (
+                <Button onClick={startSession} aria-label='Start session' size='sm'>
+                  Start
+                </Button>
+              )}
+              {isActive && !isPaused && (
+                <Button onClick={pauseSession} aria-label='Pause session' size='sm'>
+                  Pause
+                </Button>
+              )}
+              {isActive && isPaused && (
+                <Button onClick={resumeSession} aria-label='Resume session' size='sm'>
+                  Resume
+                </Button>
+              )}
+              {isActive && (
+                <Button onClick={stopSession} aria-label='Stop session' size='sm'>
+                  Stop
+                </Button>
+              )}
+            </div>
           </nav>
         </div>
       )}

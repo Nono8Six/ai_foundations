@@ -19,6 +19,11 @@ Plateforme complète pour les cours sur les Fondations de l'IA, construite avec 
 1. **Frontend** : Application React avec hot-reload
 2. **Supabase** : Base de données PostgreSQL complète avec authentification
 
+### 🔗 API Endpoints
+
+- `POST /planner` - créé ou termine une session d'apprentissage.
+- `POST /analytics` - enregistre la durée d'une session terminée.
+
 ## 🚀 Démarrage Rapide (Quick Start)
 
 Suivez ces étapes pour lancer l'environnement de développement :
