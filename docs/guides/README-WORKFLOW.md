@@ -118,7 +118,6 @@ docker compose up --build --force-recreate
 | `pnpm db:pull`         | Récupérer schéma depuis cloud           |
 | `pnpm db:push`         | Envoyer changements vers cloud          |
 | `pnpm gen:types`       | Générer types TypeScript                |
-| `pnpm test:connection` | Tester connexion Supabase               |
 | `pnpm recovery`        | Récupération de base de l'environnement |
 | `pnpm reset:hard`      | Reset total (nettoyage + récupération)  |
 
@@ -158,7 +157,6 @@ Quand vous travaillez avec des IA (Codex, Jules, etc.) :
 
 - Toujours synchroniser avant : `pnpm sync:from-cloud`
 - Partager le contexte complet : État du cloud + fichiers locaux
-- Valider après modifications : `pnpm test:connection`
 - Sauvegarder sur le cloud : `pnpm db:push`
 
 ## 🛡️ Préventions
@@ -181,7 +179,6 @@ En cas de problème persistant :
 
 ```bash
 pnpm recovery
-pnpm test:connection
 pnpm dev
 ```
 
