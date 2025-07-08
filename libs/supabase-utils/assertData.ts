@@ -1,14 +1,11 @@
-export interface SupabaseResult<T, E extends Error = Error> {
-  data: T | null;
-  error: E | null;
-}
+import type { Result } from './result';
 
-export function assertData<T, E extends Error = Error>(
-  result: SupabaseResult<T, E>
-): T {
-  const { data, error } = result;
-  if (error || data === null) {
-    throw error ?? new Error('No data');
+export function assertData<T, E extends Error = Error>(result: Result<T, E>): T {
+  if ('error' in result && result.error) {
+    throw result.error;
   }
-  return data;
+  if (result.data === null) {
+    throw new Error('No data');
+  }
+  return result.data;
 }
