@@ -20,7 +20,6 @@ const UserDashboard: React.FC<UserDashboardProps> = () => {
   const navigate = useNavigate();
 
   const { userProfile, user } = useAuth();
-  // On garde la version de la branche 'main' qui est la bonne
   const { coursesWithProgress: courses, isLoading } = useCourses();
   const { activities } = useRecentActivity(user?.id, { limit: 5, order: 'desc' });
   const { achievements } = useAchievements(user?.id, {
