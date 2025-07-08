@@ -5,7 +5,7 @@
     "db:pull": "supabase db pull",
     "db:push": "supabase db push",
     "migration:new": "supabase migration new",
-    "gen:types": "supabase gen types typescript --project-id $SUPABASE_PROJECT_REF > ../frontend/src/database.types.ts"
+    "gen:types": "supabase gen types typescript --project-id $SUPABASE_PROJECT_REF > ../frontend/src/types/database.types.ts"
   },
   "devDependencies": {
     "supabase": "2.30.4"

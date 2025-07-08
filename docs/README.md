@@ -8,6 +8,9 @@ Voici un index rapide de tous les fichiers de documentation disponibles dans ce 
 - [README-SUPABASE.md](guides/README-SUPABASE.md) - Synchronisation de la base de données et bonnes pratiques Supabase.
 - [README-WORKFLOW.md](guides/README-WORKFLOW.md) - Procédure de récupération et workflow de développement.
 
+Avant d'exécuter `pnpm gen:types`, assurez-vous que le projet Supabase est lié avec
+`pnpm --filter backend exec supabase link`.
+
 ## Dossier `docs/`
 
 - [repository-overview.md](repository-overview.md) - Vue d'ensemble de la structure du dépôt.
