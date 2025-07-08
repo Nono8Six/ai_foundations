@@ -23,7 +23,10 @@ const ModuleEditor: React.FC<ModuleEditorProps> = ({ module, onSave, onDelete })
   const [errors, setErrors] = useState<Record<string, string | null>>({});
   const [isSaving, setIsSaving] = useState(false);
 
-  const handleInputChange = (field: keyof ModuleRow, value: unknown) => {
+  const handleInputChange = (
+    field: keyof ModuleRow,
+    value: ModuleRow[keyof ModuleRow]
+  ) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: null }));
