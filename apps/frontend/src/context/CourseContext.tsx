@@ -11,7 +11,7 @@ import {
   CoursesFromSupabaseSchema,
 } from '@frontend/services/courseService';
 import type { CoursesFromSupabase } from '@frontend/services/courseService';
-import type { NoInfer } from '@tanstack/query-core';
+import type { NoInfer } from '@frontend/types/utils';
 
 type CourseData = CoursesFromSupabase;
 
