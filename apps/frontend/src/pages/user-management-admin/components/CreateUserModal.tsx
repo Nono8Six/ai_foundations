@@ -1,14 +1,25 @@
 import React, { useState } from 'react';
 import Icon from '@frontend/components/AppIcon';
 import { log } from '@libs/logger';
+import type { AdminUser } from '@frontend/types/adminUser';
+
+interface UserForm {
+  name: string;
+  email: string;
+  role: 'student' | 'admin';
+  status: 'active' | 'pending' | 'inactive';
+  phone: string;
+  location: string;
+  initialCourses: string[];
+}
 
 interface CreateUserModalProps {
   onClose: () => void;
-  onUserCreated: (user: unknown) => void;
+  onUserCreated: (user: AdminUser) => void;
 }
 
 const CreateUserModal: React.FC<CreateUserModalProps> = ({ onClose, onUserCreated }) => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<UserForm>({
     name: '',
     email: '',
     role: 'student',
@@ -17,8 +28,8 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({ onClose, onUserCreate
     location: '',
     initialCourses: [],
   });
-  const [errors, setErrors] = useState({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<Partial<Record<keyof UserForm, string>>>({});
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const availableCourses = [
     'IA Fondamentaux',
@@ -30,7 +41,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({ onClose, onUserCreate
     "Python pour l'IA",
   ];
 
-  const handleInputChange = e => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -46,7 +57,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({ onClose, onUserCreate
     }
   };
 
-  const handleCourseToggle = course => {
+  const handleCourseToggle = (course: string) => {
     setFormData(prev => ({
       ...prev,
       initialCourses: prev.initialCourses.includes(course)
@@ -56,7 +67,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({ onClose, onUserCreate
   };
 
   const validateForm = () => {
-    const newErrors = {};
+    const newErrors: Partial<Record<keyof UserForm, string>> = {};
 
     if (!formData.name.trim()) {
       newErrors.name = 'Le nom est requis';
@@ -80,7 +91,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({ onClose, onUserCreate
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!validateForm()) return;
@@ -91,7 +102,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({ onClose, onUserCreate
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
 
-      const newUser = {
+      const newUser: AdminUser = {
         id: Date.now(),
         ...formData,
         avatar: `https://images.unsplash.com/photo-${Math.floor(Math.random() * 1000000000)}?w=150`,

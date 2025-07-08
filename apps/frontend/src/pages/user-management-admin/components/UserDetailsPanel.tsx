@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
 import Icon from '@frontend/components/AppIcon';
 import Image from '@frontend/components/AppImage';
+import type { AdminUser } from '@frontend/types/adminUser';
 
 interface UserDetailsPanelProps {
-  user: Record<string, unknown> | null;
+  user: AdminUser | null;
   onClose: () => void;
 }
 
 const UserDetailsPanel = ({ user, onClose }: UserDetailsPanelProps) => {
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'progress' | 'activity' | 'notes'>('overview');
 
   if (!user) return null;
 
-  const getStatusBadge = status => {
+  const getStatusBadge = (status: string) => {
     const statusConfig = {
       active: { color: 'bg-success-100 text-success-700', label: 'Actif', icon: 'CheckCircle' },
       inactive: { color: 'bg-error-100 text-error-700', label: 'Inactif', icon: 'XCircle' },
@@ -30,7 +31,7 @@ const UserDetailsPanel = ({ user, onClose }: UserDetailsPanelProps) => {
     );
   };
 
-  const getRoleBadge = role => {
+  const getRoleBadge = (role: string) => {
     const roleConfig = {
       admin: { color: 'bg-primary-100 text-primary-700', label: 'Administrateur', icon: 'Shield' },
       student: { color: 'bg-secondary-100 text-secondary-700', label: 'Étudiant', icon: 'User' },

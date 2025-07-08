@@ -1,13 +1,14 @@
 import React from 'react';
 import Icon from '@frontend/components/AppIcon';
+import type { AdminFilters } from '../index';
 
 interface UserFiltersProps {
-  filters: Record<string, string>;
-  setFilters: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+  filters: AdminFilters;
+  setFilters: React.Dispatch<React.SetStateAction<AdminFilters>>;
 }
 
 const UserFilters: React.FC<UserFiltersProps> = ({ filters, setFilters }) => {
-  const handleFilterChange = (key, value) => {
+  const handleFilterChange = (key: keyof AdminFilters, value: string) => {
     setFilters(prev => ({
       ...prev,
       [key]: value,

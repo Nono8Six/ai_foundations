@@ -8,27 +8,19 @@ import UserDetailsPanel from './components/UserDetailsPanel';
 import UserFilters from './components/UserFilters';
 import CreateUserModal from './components/CreateUserModal';
 import BulkActionsBar from './components/BulkActionsBar';
+import type { AdminUser } from '@frontend/types/adminUser';
 
-interface AdminUser {
-  id: string;
-  name: string;
-  email: string;
-  avatar: string;
-  role: 'admin' | 'student';
+export interface AdminFilters {
   status: string;
+  role: string;
   registrationDate: string;
-  lastActivity: string;
-  courseProgress: number;
-  totalCourses: number;
-  completedCourses: number;
-  xpPoints: number;
-  level: number;
-  streak: number;
-  achievements: number;
-  location: string;
-  phone: string;
-  notes: string;
-  enrolledCourses: string[];
+  activityLevel: string;
+  courseProgress: string;
+}
+
+export interface SortConfig {
+  key: string;
+  direction: 'asc' | 'desc';
 }
 
 interface UserManagementAdminContentProps {}
@@ -36,21 +28,24 @@ interface UserManagementAdminContentProps {}
 const UserManagementAdminContent: React.FC<UserManagementAdminContentProps> = () => {
   const { setSidebarOpen } = useAdminSidebar();
 
-  const [selectedUsers, setSelectedUsers] = useState([]);
-  const [selectedUser, setSelectedUser] = useState<Record<string, unknown> | null>(null);
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+  const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
 
-  const [showDetailsPanel, setShowDetailsPanel] = useState(false);
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [showDetailsPanel, setShowDetailsPanel] = useState<boolean>(false);
+  const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string>('');
   const [users, setUsers] = useState<AdminUser[]>([]);
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<AdminFilters>({
     status: 'all',
     role: 'all',
     registrationDate: 'all',
     activityLevel: 'all',
     courseProgress: 'all',
   });
-  const [sortConfig, setSortConfig] = useState({ key: 'lastActivity', direction: 'desc' });
+  const [sortConfig, setSortConfig] = useState<SortConfig>({
+    key: 'lastActivity',
+    direction: 'desc',
+  });
 
   // Récupère les utilisateurs depuis Supabase au chargement du composant
   useEffect(() => {
@@ -94,7 +89,7 @@ const UserManagementAdminContent: React.FC<UserManagementAdminContentProps> = ()
 
   // Filtre et trie les utilisateurs
   const filteredUsers = useMemo(() => {
-    let filtered = users.filter(user => {
+    const filtered = users.filter(user => {
       const matchesSearch =
         user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         user.email.toLowerCase().includes(searchQuery.toLowerCase());
@@ -120,14 +115,14 @@ const UserManagementAdminContent: React.FC<UserManagementAdminContentProps> = ()
     return filtered;
   }, [users, searchQuery, filters, sortConfig]);
 
-  const handleSort = key => {
+  const handleSort = (key: string) => {
     setSortConfig(prev => ({
       key,
       direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc',
     }));
   };
 
-  const handleUserSelect = userId => {
+  const handleUserSelect = (userId: string) => {
     setSelectedUsers(prev =>
       prev.includes(userId) ? prev.filter(id => id !== userId) : [...prev, userId]
     );
@@ -139,12 +134,12 @@ const UserManagementAdminContent: React.FC<UserManagementAdminContentProps> = ()
     );
   };
 
-  const handleUserClick = user => {
+  const handleUserClick = (user: AdminUser) => {
     setSelectedUser(user);
     setShowDetailsPanel(true);
   };
 
-  const handleBulkAction = action => {
+  const handleBulkAction = (action: string) => {
     log.info(`Bulk action: ${action} for users`, { users: selectedUsers });
     setSelectedUsers([]);
   };

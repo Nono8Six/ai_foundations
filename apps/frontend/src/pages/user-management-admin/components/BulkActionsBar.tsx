@@ -8,7 +8,7 @@ interface BulkActionsBarProps {
 }
 
 const BulkActionsBar: React.FC<BulkActionsBarProps> = ({ selectedCount, onBulkAction, onClearSelection }) => {
-  const [showActionMenu, setShowActionMenu] = useState(false);
+  const [showActionMenu, setShowActionMenu] = useState<boolean>(false);
 
   const bulkActions = [
     {
