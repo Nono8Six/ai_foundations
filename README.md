@@ -172,22 +172,6 @@ docker build --target production -t ai-foundations:prod .
 Les variables requises sont lues depuis le même fichier `.env`.\*
 _(Adaptez le port et la gestion des variables d'environnement selon votre plateforme de déploiement.)_
 
-## 🐳 Commandes Docker Compose Utiles
-
-| Commande                                        | Description                                                                |
-| ----------------------------------------------- | -------------------------------------------------------------------------- |
-| `docker compose up -d`                          | Démarre le frontend (et l'API si configurée).                              |
-| `docker compose --profile supabase-local up -d` | Lance aussi l'instance Supabase locale.                                    |
-| `docker compose down`                           | Arrête et supprime les conteneurs définis dans `docker-compose.yml`.       |
-| `docker compose down -v`                        | Idem + supprime les volumes anonymes associés.                             |
-| `docker compose logs -f frontend`               | Affiche les logs en temps réel du service frontend.                        |
-| `docker compose ps`                             | Liste les conteneurs actifs gérés par Docker Compose.                      |
-| `docker compose exec frontend sh`               | Ouvre un shell dans le conteneur du service frontend en cours d'exécution. |
-
-### Scripts Utilitaires (`scripts/`)
-
-- `scripts/cleanup.sh`: Nettoie l'environnement de développement (node_modules, conteneurs Docker Compose).
-- `scripts/recovery.sh`: Tente une récupération de base de l'environnement.
 
 ## 🏗 Structure du Projet (Simplifiée)
 
