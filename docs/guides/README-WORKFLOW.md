@@ -23,7 +23,7 @@ chmod +x scripts/recovery.sh
 cp .env.template .env
 
 # Valider la configuration
-pnpm validate:env
+pnpm validate:env # exécute scripts/validate-env.mjs
 ```
 
 ### Étape 4 : Premier Démarrage
