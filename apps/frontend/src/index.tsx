@@ -1,4 +1,5 @@
 import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
 import { createRoot } from 'react-dom/client';
 import App from './App';
 import './styles/tailwind.css';
@@ -10,8 +11,10 @@ const queryClient = new QueryClient();
 
 root.render(
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <App />
-    </QueryClientProvider>
+    <BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+        <App />
+      </QueryClientProvider>
+    </BrowserRouter>
   </React.StrictMode>
 );
