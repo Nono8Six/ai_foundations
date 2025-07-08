@@ -1,6 +1,4 @@
 // src/context/AuthContext.tsx
-const toJson = <T extends Json>(v: T): Json => v;
-
 import { useState, useEffect, useCallback, type ReactNode } from 'react';
 import type {
   Session,
@@ -9,19 +7,11 @@ import type {
   AuthError,
   AuthChangeEvent,
 } from '@supabase/supabase-js';
-import type { Database, Json } from '@frontend/types/database.types';
-import type {
-  UpdateUserProfilePayload,
-  UpdateUserProfileResponse,
-} from '@frontend/types/rpc.types';
+import type { Database } from '@frontend/types/database.types';
 import type { UserProfile } from '@frontend/types/user';
-import type {
-  UserSettings,
-  NotificationSettings,
-  PrivacySettings,
-  LearningPreferences,
-} from '@frontend/types/userSettings';
+
 import { supabase } from '@frontend/lib/supabase';
+import { fetchUserProfile as fetchUserProfileService } from '@frontend/services/userService';
 import { safeQuery } from '@frontend/utils/supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import { log } from '@libs/logger';
@@ -45,9 +35,6 @@ export interface AuthContextValue {
   logout: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   resendVerificationEmail: (email: string) => Promise<void>;
-  updateProfile: (updates: UpdateUserProfilePayload['profile_data']) => Promise<UpdateUserProfileResponse>;
-  updateUserSettings: (updates: Partial<UserSettings>) => Promise<UserSettings | null>;
-  getUserSettings: () => Promise<UserSettings | null>;
   user: User | null;
   userProfile: UserProfile | null;
   session: Session | null;
@@ -142,65 +129,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [navigate]);
 
   // Fetch user profile data
-  const fetchUserProfile = async (userId: string) => {
+  const fetchUserProfile = async (currentUser: User) => {
     try {
-      log.debug('🔍 Fetching profile for user:', userId);
-      const { data: profileData, error } = await supabaseClient
-        .from('profiles')
-        .select('*')
-        .eq('id', userId);
-
-      if (error) {
-        const authError = error instanceof Error ? error : new Error(String(error));
-        setProfileError(authError);
-        log.error('Error fetching profile:', authError.message);
-        return;
-      }
-
-      if (!profileData || profileData.length === 0) {
-        log.debug('⚠️ No profile found for user, creating default...');
-        // Try to create a default profile
-        const defaultProfile: UserProfile = {
-          id: userId,
-          email: user?.email || '',
-          full_name: user?.user_metadata?.full_name || 'User',
-          level: 1,
-          xp: 0,
-          current_streak: 0,
-          is_admin: false,
-          avatar_url: null,
-          phone: null,
-          profession: null,
-          company: null,
-          last_completed_at: null,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        };
-
-        const { data: newProfileData, error: createError } = await supabaseClient
-          .from('profiles')
-          .insert([defaultProfile])
-          .select()
-          .single();
-
-        if (createError) {
-          const authError = createError instanceof Error ? createError : new Error(String(createError));
-          setProfileError(authError);
-          log.error('Error creating profile:', authError.message);
-          return;
-        }
-
-        if (newProfileData) {
-          log.info('✅ Default profile created:', newProfileData);
-          setUserProfile(newProfileData as UserProfile);
-        }
-        return;
-      }
-
-      if (profileData && profileData.length > 0) {
-        const profile = profileData[0] as UserProfile;
-        setUserProfile(profile);
-      }
+      const profile = await fetchUserProfileService(currentUser);
+      setUserProfile(profile);
     } catch (error) {
       const err = typeof error === 'string' ? new Error(error) : (error as Error);
       log.error('❌ Unexpected error in fetchUserProfile:', err);
@@ -213,7 +145,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const loadProfile = async () => {
       log.debug('👤 User detected, fetching profile...');
       try {
-        await fetchUserProfile(user.id);
+        await fetchUserProfile(user);
       } catch (err) {
         log.error('Failed to fetch user profile:', err);
       }
@@ -422,194 +354,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // Update user profile using RPC function
-  const updateProfile = useCallback(
-    async (
-      updates: UpdateUserProfilePayload['profile_data']
-    ): Promise<UpdateUserProfileResponse> => {
-      log.debug('📝 Updating profile:', updates);
 
-      if (!user) {
-        const error = new Error('No user is currently signed in');
-        setProfileError(error);
-        log.error('Error updating profile:', error.message);
-        throw error;
-      }
-
-      if (!updates) {
-        throw new Error('Profile data is required for update');
-      }
-
-      try {
-        const { data, error } = await supabaseClient.rpc('update_user_profile', {
-          profile_data: updates,
-          user_id: user.id,
-        });
-
-        if (error) throw error;
-
-        const profileData = (Array.isArray(data) ? data[0] : data) as UpdateUserProfileResponse;
-
-        if (profileData) {
-          log.info('✅ Profile updated successfully:', profileData);
-          setUserProfile({
-            ...userProfile,
-            ...profileData,
-            id: user.id,
-            email: user.email || '',
-          } as UserProfile);
-          return profileData;
-        }
-
-        throw new Error('No data returned from update_user_profile');
-      } catch (error) {
-        const authErr = typeof error === 'string' ? new Error(error) : (error as Error);
-        setProfileError(authErr);
-        log.error('Error updating profile:', authErr.message);
-        throw authErr;
-      }
-    },
-    [user, userProfile]
-  );
-
-  // Get user settings (pour user courant)
-  const getUserSettings = async (): Promise<UserSettings | null> => {
-    if (!user) return null;
-    try {
-      log.debug('⚙️ Fetching user settings for user:', user.id);
-      const { data, error } = await supabaseClient
-        .from('user_settings')
-        .select('*')
-        .eq('user_id', user.id);
-
-      if (error) {
-        const authErr = error instanceof Error ? error : new Error(String(error));
-        setProfileError(authErr);
-        log.error('Error fetching user settings:', authErr.message);
-        return null;
-      }
-
-      if (data && data.length > 0) {
-        const settings = data[0];
-        log.debug('✅ User settings found:', settings);
-
-        const typedSettings: UserSettings = {
-          id: settings.id,
-          user_id: settings.user_id,
-          notification_settings: settings.notification_settings as NotificationSettings,
-          privacy_settings: settings.privacy_settings as PrivacySettings,
-          learning_preferences: settings.learning_preferences as LearningPreferences,
-          created_at: settings.created_at || null,
-          updated_at: settings.updated_at || null,
-        };
-
-        return typedSettings;
-      }
-
-      // Si aucun paramétrage existant, créer les settings par défaut
-      log.debug('⚠️ No user settings found, creating default settings...');
-      const defaultSettings = {
-        user_id: user.id,
-        notification_settings: toJson({ email: true, push: true }),
-        privacy_settings: toJson({ show_email: false, show_activity: true }),
-        learning_preferences: toJson({ difficulty: 'beginner', theme: 'light' }),
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      };
-
-      const { data: newSettings, error: createError } = await supabaseClient
-        .from('user_settings')
-        .insert([defaultSettings])
-        .select()
-        .single();
-
-      if (createError) {
-        const authErr = createError instanceof Error ? createError : new Error(String(createError));
-        setProfileError(authErr);
-        log.error('Error creating default user settings:', authErr.message);
-        return null;
-      }
-
-      log.info('✅ Default user settings created:', newSettings);
-
-      return {
-        id: newSettings.id,
-        user_id: newSettings.user_id,
-        notification_settings: newSettings.notification_settings as NotificationSettings,
-        privacy_settings: newSettings.privacy_settings as PrivacySettings,
-        learning_preferences: newSettings.learning_preferences as LearningPreferences,
-        created_at: newSettings.created_at || null,
-        updated_at: newSettings.updated_at || null,
-      };
-    } catch (error) {
-      const err = typeof error === 'string' ? new Error(error) : (error as Error);
-      log.error('❌ Unexpected error in getUserSettings:', err);
-      setProfileError(err);
-      return null;
-    }
-  };
-
-  // Update user settings (pour user courant)
-  const updateUserSettings = async (
-    updates: Partial<UserSettings>
-  ): Promise<UserSettings | null> => {
-    if (!user) return null;
-    try {
-      log.debug('⚙️ Updating user settings for user:', user.id, updates);
-
-      // Récupère les settings existants (pour merge)
-      const current = await getUserSettings();
-
-      const merged = {
-        ...current,
-        ...updates,
-        user_id: user.id,
-        updated_at: new Date().toISOString(),
-      };
-
-      const { data, error } = await supabaseClient
-  .from('user_settings')
-  .update({
-    notification_settings: toJson(merged.notification_settings),
-    privacy_settings: toJson(merged.privacy_settings),
-    learning_preferences: toJson(merged.learning_preferences),
-    updated_at: merged.updated_at,
-  })
-  .eq('user_id', user.id)
-  .select();
-
-      if (error) {
-        const authErr = error instanceof Error ? error : new Error(String(error));
-        setProfileError(authErr);
-        log.error('Error updating user settings:', authErr.message);
-        return null;
-      }
-
-      if (data && data.length > 0) {
-        const updated = data[0];
-        log.info('✅ User settings updated:', updated);
-
-        const typedSettings: UserSettings = {
-          id: updated.id,
-          user_id: updated.user_id,
-          notification_settings: updated.notification_settings as NotificationSettings,
-          privacy_settings: updated.privacy_settings as PrivacySettings,
-          learning_preferences: updated.learning_preferences as LearningPreferences,
-          created_at: updated.created_at || null,
-          updated_at: updated.updated_at || null,
-        };
-
-        return typedSettings;
-      }
-
-      return null;
-    } catch (error) {
-      const err = typeof error === 'string' ? new Error(error) : (error as Error);
-      log.error('❌ Unexpected error in updateUserSettings:', err);
-      setProfileError(err);
-      return null;
-    }
-  };
 
   // Reset password
   const resetPassword = async (email: string) => {
@@ -676,9 +421,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     logout,
     resetPassword,
     resendVerificationEmail,
-    updateProfile,
-    updateUserSettings,
-    getUserSettings,
     user,
     userProfile,
     session,

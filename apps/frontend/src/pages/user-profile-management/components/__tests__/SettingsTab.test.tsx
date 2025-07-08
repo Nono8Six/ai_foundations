@@ -28,11 +28,13 @@ const mockGetUserSettings = vi.fn(() =>
 );
 const mockUpdateUserSettings = vi.fn();
 
+vi.mock('../../../../services/userService', () => ({
+  updateUserSettings: mockUpdateUserSettings,
+  getUserSettings: mockGetUserSettings,
+}));
+
 vi.mock('../../../../context/AuthContext', () => ({
-  useAuth: () => ({
-    updateUserSettings: mockUpdateUserSettings,
-    getUserSettings: mockGetUserSettings,
-  }),
+  useAuth: () => ({ user: { id: 'u1' } }),
 }));
 
 import SettingsTab from '../SettingsTab';
@@ -43,7 +45,7 @@ describe('SettingsTab', () => {
   });
   it('loads and displays user settings', async () => {
     render(<SettingsTab userData={{}} />);
-    await waitFor(() => expect(mockGetUserSettings).toHaveBeenCalled());
+    await waitFor(() => expect(mockGetUserSettings).toHaveBeenCalledWith('u1'));
 
     const selects = screen.getAllByRole('combobox');
     expect(selects[0].value).toBe('45');
