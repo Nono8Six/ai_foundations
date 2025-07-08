@@ -1,7 +1,7 @@
 import React, { useState, ChangeEvent } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { useAuth } from '@frontend/context/AuthContext';
 import { toast } from 'sonner';
+import { updateUserProfile } from '@frontend/services/userService';
 import Icon from '@frontend/components/AppIcon';
 import Image from '@frontend/components/AppImage';
 import { log } from '@libs/logger';
@@ -31,7 +31,6 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ userData }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState<string>(userData.avatar);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const { updateProfile } = useAuth();
 
   const {
     register,
@@ -65,8 +64,8 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ userData }) => {
 
       log.debug('Submitting profile updates', { updates });
 
-      // Update the profile in Supabase using RPC function
-      await updateProfile(updates);
+      // Update the profile in Supabase using service
+      await updateUserProfile(userData.id, updates);
 
       log.info('Profile updated successfully', { userId: userData.id });
       setIsEditing(false);

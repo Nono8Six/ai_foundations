@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@frontend/context/AuthContext';
+import { getUserSettings, updateUserSettings } from '@frontend/services/userService';
 import type { UserSettings } from '@frontend/types/userSettings';
 import type {
   NotificationSettings,
@@ -18,7 +19,7 @@ const SettingsTab: React.FC<SettingsTabProps> = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const { updateUserSettings, getUserSettings } = useAuth();
+  const { user } = useAuth();
 
   const [notificationSettings, setNotificationSettings] = useState<NotificationSettings>({
     emailNotifications: true,
@@ -46,9 +47,10 @@ const SettingsTab: React.FC<SettingsTabProps> = () => {
   // Load user settings on component mount
   useEffect(() => {
     const loadUserSettings = async () => {
+      if (!user) return;
       try {
         setIsLoading(true);
-        const settings = await getUserSettings();
+        const settings = await getUserSettings(user.id);
 
         if (settings) {
           if (settings.notification_settings) {
@@ -69,7 +71,7 @@ const SettingsTab: React.FC<SettingsTabProps> = () => {
     };
 
     loadUserSettings();
-  }, [getUserSettings]);
+  }, [user]);
 
   const handleSaveSettings = async () => {
     try {
@@ -81,7 +83,8 @@ const SettingsTab: React.FC<SettingsTabProps> = () => {
         learning_preferences: learningPreferences,
       };
 
-      await updateUserSettings(settingsData);
+      if (!user) return;
+      await updateUserSettings(user.id, settingsData);
 
       // Show success message
       alert('Paramètres sauvegardés avec succès !');
