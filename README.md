@@ -24,7 +24,7 @@ Plateforme complète pour les cours sur les Fondations de l'IA, construite avec 
 Suivez ces étapes pour lancer l'environnement de développement :
 
 1.  **Prérequis :**
-    - [Node.js](https://nodejs.org/) (>= 20.x.x)
+    - [Node.js](https://nodejs.org/) (>= 18.x.x)
     - [pnpm](https://pnpm.io/installation) (>= 9.x.x), géré via [corepack](https://nodejs.org/api/corepack.html). La version exacte est définie dans `package.json` (`packageManager`).
     - [Docker Desktop](https://www.docker.com/products/docker-desktop/) (dernière version stable) pour lancer le frontend conteneurisé.
     - [Git](https://git-scm.com/)
