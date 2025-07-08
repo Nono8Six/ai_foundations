@@ -60,7 +60,7 @@ Coding Conventions
 
 TypeScript: strict: true; avoid any, unknown, and @ts-ignore.
 
-React: function components with hooks; co‑locate *.test.tsx and *.stories.tsx.
+React: function components with hooks; co‑locate _.test.tsx and _.stories.tsx.
 
 Accessibility: provide ARIA labels and keyboard navigation (WCAG 2.2 AA).
 
