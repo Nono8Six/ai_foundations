@@ -30,6 +30,7 @@
     "db:start": "pnpm supabase:start",
     "db:stop": "pnpm supabase:stop",
     "gen:types": "pnpm supabase:gen:types"
+    , "validate:env": "node scripts/validate-env.mjs"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.3.0",

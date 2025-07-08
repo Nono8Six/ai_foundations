@@ -62,7 +62,6 @@ Suivez ces étapes pour lancer l'environnement de développement :
     - Éditez `.env` et remplissez **impérativement** les variables suivantes avec les informations de **votre projet Supabase Cloud** :
       - `VITE_SUPABASE_URL`: L'URL de votre projet Supabase Cloud (ex: `https://<votre-ref>.supabase.co`).
       - `VITE_SUPABASE_ANON_KEY`: La clé anonyme (publique) de votre projet Supabase Cloud.
-      - `SUPABASE_ACCESS_TOKEN`: Votre token d'accès personnel Supabase (généré depuis `app.supabase.com/account/tokens`).
       - `SUPABASE_PROJECT_REF`: La référence de votre projet Supabase Cloud (ex: `<votre-ref>`).
     - Validez votre configuration :
       ```bash
@@ -124,7 +123,7 @@ Suivez ces étapes pour lancer l'environnement de développement :
 | `pnpm lint`                         | Exécute ESLint sur tout le projet pour vérifier la qualité du code.                                         |
 | `pnpm test`                         | Lance les tests (avec Vitest).                                                                              |
 | `pnpm typecheck`                    | Vérifie les types TypeScript pour l'ensemble du projet.                                                     |
-| `pnpm validate:env`                 | Vérifie que les variables d'environnement requises sont présentes dans `.env`.                              |
+| `pnpm validate:env`                 | Vérifie que les variables d'environnement requises sont présentes dans `.env` (script `scripts/validate-env.mjs`). |
 | **Supabase (Cloud-First Workflow)** |                                                                                                             |
 | `pnpm db:pull`                      | Récupère le schéma de la base de données Supabase Cloud et génère les fichiers de migration locaux.         |
 | `pnpm gen:types`                    | Génère les types TypeScript à partir du schéma de la base de données Supabase (à utiliser après `db:pull`). |
@@ -226,7 +225,7 @@ Les variables sensibles (clés API, tokens) sont gérées via un fichier `.env` 
 
 1.  **Erreurs de connexion à Supabase (Cloud) :**
     - Vérifiez que les variables `VITE_SUPABASE_URL` et `VITE_SUPABASE_ANON_KEY` dans `.env` sont correctes et correspondent à votre projet Supabase Cloud.
-    - Exécutez `pnpm validate:env`.
+    - Exécutez `pnpm validate:env` (qui lance `scripts/validate-env.mjs`).
 2.  **Problèmes avec l'instance Supabase locale (`pnpm db:start`) :**
     - Consultez les logs de la CLI Supabase : `pnpm --filter backend exec supabase status` (pour voir les services actifs) et les logs Docker des conteneurs Supabase (ex: `docker logs supabase-db-<project_ref>`).
     - Essayez `pnpm db:stop && pnpm db:start`.

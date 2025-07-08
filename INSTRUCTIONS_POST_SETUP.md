@@ -35,7 +35,7 @@ pnpm install
 
 3.  **Validez votre configuration d'environnement** :
     ```bash
-    pnpm validate:env
+    pnpm validate:env # lance scripts/validate-env.mjs
     ```
     Ce script vérifiera que toutes les variables requises sont présentes et non vides dans votre fichier `.env`.
 
