@@ -9,6 +9,8 @@ import type { LessonRow } from '@frontend/types/lessonRow';
 import {
   type CmsContentItem,
   type CmsCourse,
+  type CmsModule,
+  type CmsLesson,
   type CourseWithContent,
   courseApiToCmsCourse,
   courseRowToCmsCourse,
@@ -16,9 +18,6 @@ import {
   cmsModuleToRow,
   cmsLessonToRow,
 } from '@libs/cms-utils';
-
-// CmsContentItem types are provided by @libs/cms-utils
-
 
 import Icon from '@frontend/components/AppIcon';
 import AdminLayout, { useAdminSidebar } from '@frontend/components/AdminLayout';
@@ -30,28 +29,20 @@ import BulkOperations from './components/BulkOperations';
 import ContentSearch from './components/ContentSearch';
 import MediaLibrary from './components/MediaLibrary';
 
-// Helper function to map between CourseWithContent and ContentNode
-// Type guard to check if an item is CmsContentItem
-const isCmsContentItem = (item: unknown): item is CmsContentItem => {
-  return (
-    typeof item === 'object' &&
-    item !== null &&
-    'type' in item &&
-    ['course', 'module', 'lesson'].includes((item as { type?: string }).type ?? '')
-  );
-};
+// Helper to check if an item is CmsContentItem
+const isCmsContentItem = (item: unknown): item is CmsContentItem =>
+  typeof item === 'object' &&
+  item !== null &&
+  'type' in item &&
+  ['course', 'module', 'lesson'].includes((item as { type?: string }).type ?? '');
 
 const mapToContentNode = (item: CourseWithContent | CmsContentItem): ContentNode => {
-  // Handle CmsContentItem (local state)
   if (isCmsContentItem(item)) {
-    // Base properties that are always present
     const baseNode: Omit<ContentNode, 'type'> = {
       id: item.id,
       title: item.title,
       ...(item.description ? { description: item.description } : {})
     };
-
-    // Add type-specific properties with proper typing
     if (item.type === 'course') {
       return {
         ...baseNode,
@@ -75,8 +66,7 @@ const mapToContentNode = (item: CourseWithContent | CmsContentItem): ContentNode
       };
     }
   }
-
-  // Handle CourseWithContent (from API)
+  // API fallback
   const result: ContentNode = {
     id: item.id,
     title: item.title,
@@ -84,8 +74,6 @@ const mapToContentNode = (item: CourseWithContent | CmsContentItem): ContentNode
     status: 'draft',
     ...(item.description ? { description: item.description } : {})
   };
-
-  // Add modules if they exist
   if (item.modules?.length) {
     result.modules = item.modules.map(module => ({
       id: module.id,
@@ -93,15 +81,17 @@ const mapToContentNode = (item: CourseWithContent | CmsContentItem): ContentNode
       type: 'module' as const,
       status: 'draft',
       ...(module.description ? { description: module.description } : {}),
-      ...(module.lessons?.length ? {
-        lessons: module.lessons.map(lesson => ({
-          id: lesson.id,
-          title: lesson.title,
-          type: 'lesson' as const,
-          status: 'draft',
-          ...(lesson.duration ? { duration: lesson.duration } : {})
-        }))
-      } : {})
+      ...(module.lessons?.length
+        ? {
+            lessons: module.lessons.map(lesson => ({
+              id: lesson.id,
+              title: lesson.title,
+              type: 'lesson' as const,
+              status: 'draft',
+              ...(lesson.duration ? { duration: lesson.duration } : {})
+            }))
+          }
+        : {})
     }));
   }
   return result;
@@ -114,7 +104,7 @@ const toCmsLesson = (data: LessonRow): CmsLesson => ({ ...data, type: 'lesson' }
 const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
   const { setSidebarOpen } = useAdminSidebar();
   const [selectedContent, setSelectedContent] = useState<CmsContentItem | null>(null);
-  const [contentType, setContentType] = useState('course');
+  const [contentType, setContentType] = useState<'course' | 'module' | 'lesson'>('course');
   const [showMediaLibrary, setShowMediaLibrary] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
@@ -153,13 +143,13 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
       if (contentType === 'course') {
         const courseData = updatedContent as CmsCourse;
         let savedCourse: CmsCourse;
-        
-        // Create slug from title if not provided
-        const slug = courseData.title 
+
+        // Génère slug à partir du titre
+        const slug = courseData.title
           ? courseData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
           : `course-${Date.now()}`;
-        
-        // Convert to CourseRow format for API
+
+        // Conversion en CourseRow pour API
         const updates = {
           title: courseData.title,
           description: courseData.description || '',
@@ -168,16 +158,14 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
           slug,
           updated_at: new Date().toISOString()
         } as const;
-        
-        // Create course data for API with proper type handling
+
         const courseDataForApi: Omit<CourseRow, 'id'> & { id?: string } = {
           title: updates.title,
           description: updates.description,
           price: updates.price,
-          status: updates.status as 'draft' | 'published' | 'archived', // Explicit status type
+          status: updates.status as 'draft' | 'published' | 'archived',
           slug: updates.slug,
           updated_at: updates.updated_at,
-          // Default values for required fields
           category: null,
           cover_image_url: null,
           difficulty: null,
@@ -185,37 +173,27 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
           thumbnail_url: null,
           created_at: courseData.createdAt || new Date().toISOString()
         };
-        
-        // Add id only if it exists and is not a temp id
         if (courseData.id && !courseData.id.startsWith('temp-')) {
           courseDataForApi.id = courseData.id;
         }
-        
-        try {
-          if (courseDataForApi.id) {
-            // For updates, use the updateCourse function with the correct parameter structure
-            const { id, ...updates } = courseDataForApi;
-            const result = await updateCourse({ id, updates });
-            savedCourse = courseRowToCmsCourse(result);
-            setContentData(prev =>
-              prev.map(c => (c.id === savedCourse.id ? savedCourse : c))
-            );
-            toast.success('Cours mis à jour avec succès !');
-          } else {
-            // For new courses, use createCourse with the full course data
-            const { id: _discard, ...newCourseData } = courseDataForApi;
-            const result = await createCourse(newCourseData);
-            savedCourse = courseRowToCmsCourse(result);
-            setContentData(prev => [...prev, savedCourse]);
-            toast.success('Cours créé avec succès !');
-          }
-        } catch (error) {
-          log.error('Erreur lors de la sauvegarde du cours:', error);
-          throw error; // Re-throw pour le catch parent
+        if (courseDataForApi.id) {
+          // Update
+          const { id, ...updates } = courseDataForApi;
+          const result = await updateCourse({ id, updates });
+          savedCourse = courseRowToCmsCourse(result);
+          setContentData(prev => prev.map(c => (c.id === savedCourse.id ? savedCourse : c)));
+          toast.success('Cours mis à jour avec succès !');
+        } else {
+          // Create
+          const { id: _discard, ...newCourseData } = courseDataForApi;
+          const result = await createCourse(newCourseData);
+          savedCourse = courseRowToCmsCourse(result);
+          setContentData(prev => [...prev, savedCourse]);
+          toast.success('Cours créé avec succès !');
         }
         setSelectedContent(savedCourse);
       } else {
-        // Handle module or lesson save locally for now
+        // Modules/Leçons (local state uniquement)
         log.info('Saving non-course content (local state only):', updatedContent);
         setSelectedContent(updatedContent);
       }
@@ -233,7 +211,6 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
         setSelectedContent(null);
         toast.success('Cours supprimé avec succès !');
       } else {
-        // Handle module or lesson deletion locally for now
         log.info('Deleting non-course content (local state only):', contentId);
         setSelectedContent(null);
       }
@@ -342,7 +319,6 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
     }
   };
 
-  // Handle loading state
   if (loading) {
     return (
       <div className='min-h-screen flex items-center justify-center'>
@@ -372,10 +348,10 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
                 searchQuery={searchQuery}
                 onSearchChange={setSearchQuery}
                 onCreateNew={() =>
-                  setSelectedContent({ 
+                  setSelectedContent({
                     id: `temp-${Date.now()}`,
-                    type: 'course', 
-                    title: '', 
+                    type: 'course',
+                    title: '',
                     description: '',
                     price: 0,
                     status: 'draft'
@@ -398,7 +374,7 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
                 searchQuery={searchQuery}
                 selectedContent={selectedContent ? mapToContentNode(selectedContent) : null}
                 selectedItems={selectedItems}
-                onContentSelect={(item) => handleContentSelect(item as CmsContentItem)}
+                onContentSelect={item => handleContentSelect(item as CmsContentItem)}
                 onItemsSelect={setSelectedItems}
                 onReorder={newOrder => {
                   const updatedData = newOrder.map(node => {
