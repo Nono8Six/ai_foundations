@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import Icon from '@frontend/components/AppIcon';
 import { log } from '@libs/logger';
+import type { AdminUser } from '@frontend/types/adminUser';
 
 interface CreateUserModalProps {
   onClose: () => void;
-  onUserCreated: (user: unknown) => void;
+  onUserCreated: (user: AdminUser) => void;
 }
 
 const CreateUserModal: React.FC<CreateUserModalProps> = ({ onClose, onUserCreated }) => {

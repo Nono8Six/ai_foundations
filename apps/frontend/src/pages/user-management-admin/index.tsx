@@ -8,36 +8,15 @@ import UserDetailsPanel from './components/UserDetailsPanel';
 import UserFilters from './components/UserFilters';
 import CreateUserModal from './components/CreateUserModal';
 import BulkActionsBar from './components/BulkActionsBar';
-
-interface AdminUser {
-  id: string;
-  name: string;
-  email: string;
-  avatar: string;
-  role: 'admin' | 'student';
-  status: string;
-  registrationDate: string;
-  lastActivity: string;
-  courseProgress: number;
-  totalCourses: number;
-  completedCourses: number;
-  xpPoints: number;
-  level: number;
-  streak: number;
-  achievements: number;
-  location: string;
-  phone: string;
-  notes: string;
-  enrolledCourses: string[];
-}
+import type { AdminUser } from '@frontend/types/adminUser';
 
 interface UserManagementAdminContentProps {}
 
 const UserManagementAdminContent: React.FC<UserManagementAdminContentProps> = () => {
   const { setSidebarOpen } = useAdminSidebar();
 
-  const [selectedUsers, setSelectedUsers] = useState([]);
-  const [selectedUser, setSelectedUser] = useState<Record<string, unknown> | null>(null);
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+  const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
 
   const [showDetailsPanel, setShowDetailsPanel] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -94,7 +73,7 @@ const UserManagementAdminContent: React.FC<UserManagementAdminContentProps> = ()
 
   // Filtre et trie les utilisateurs
   const filteredUsers = useMemo(() => {
-    let filtered = users.filter(user => {
+    const filtered = users.filter(user => {
       const matchesSearch =
         user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         user.email.toLowerCase().includes(searchQuery.toLowerCase());
@@ -127,7 +106,7 @@ const UserManagementAdminContent: React.FC<UserManagementAdminContentProps> = ()
     }));
   };
 
-  const handleUserSelect = userId => {
+  const handleUserSelect = (userId: string) => {
     setSelectedUsers(prev =>
       prev.includes(userId) ? prev.filter(id => id !== userId) : [...prev, userId]
     );
@@ -139,7 +118,7 @@ const UserManagementAdminContent: React.FC<UserManagementAdminContentProps> = ()
     );
   };
 
-  const handleUserClick = user => {
+  const handleUserClick = (user: AdminUser) => {
     setSelectedUser(user);
     setShowDetailsPanel(true);
   };

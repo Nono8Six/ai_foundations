@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import Icon from '@frontend/components/AppIcon';
 import Image from '@frontend/components/AppImage';
+import type { AdminUser } from '@frontend/types/adminUser';
 
 interface UserDetailsPanelProps {
-  user: Record<string, unknown> | null;
+  user: AdminUser | null;
   onClose: () => void;
 }
 
