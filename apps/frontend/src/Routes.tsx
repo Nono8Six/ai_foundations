@@ -1,9 +1,9 @@
 import React, { Suspense, lazy } from 'react';
-// On retire BrowserRouter de cette ligne !
 import { Routes as RouterRoutes, Route, Navigate } from 'react-router-dom';
 import ScrollToTop from './components/ScrollToTop';
 import ErrorBoundary from './components/ErrorBoundary';
 import ProtectedRoute from './components/ProtectedRoute';
+import RootLayout from './components/RootLayout';
 
 // --- Lazy Loading des pages ---
 const PublicHomepage = lazy(() => import('./pages/public-homepage/index'));
@@ -26,8 +26,6 @@ const PageLoader: React.FC = () => (
   </div>
 );
 
-
-
 // --- Définition des Routes (sans BrowserRouter) ---
 const AppRoutes: React.FC = () => {
   return (
@@ -35,28 +33,38 @@ const AppRoutes: React.FC = () => {
       <ScrollToTop />
       <Suspense fallback={<PageLoader />}>
         <RouterRoutes>
-          {/* ... vos routes ici, elles ne changent pas ... */}
-          <Route path='/' element={<PublicHomepage />} />
-          <Route path='/public-homepage' element={<PublicHomepage />} />
-          <Route path='/programmes' element={<ProgramOverview />} />
-          <Route path='/program-overview' element={<ProgramOverview />} />
+          {/* Routes avec le layout principal (Header, etc.) */}
+          <Route element={<RootLayout />}>
+            <Route path='/' element={<PublicHomepage />} />
+            <Route path='/programmes' element={<ProgramOverview />} />
+
+            {/* Routes protégées qui utilisent aussi le layout principal */}
+            <Route element={<ProtectedRoute />}>
+              <Route path='/espace' element={<UserDashboard />} />
+              <Route path='/profile' element={<UserProfileManagement />} />
+              <Route path='/lesson-viewer' element={<LessonViewer />} />
+              <Route path='/lesson-viewer/:lessonId' element={<LessonViewer />} />
+              <Route path='/admin-dashboard' element={<AdminDashboard />} />
+              <Route path='/user-management-admin' element={<UserManagementAdmin />} />
+              <Route path='/cms' element={<ContentManagementCoursesModulesLessons />} />
+            </Route>
+
+            {/* La page 404 est aussi dans le layout pour garder la navigation */}
+            <Route path='*' element={<NotFound />} />
+          </Route>
+
+          {/* Routes sans le layout principal (ex: pages de connexion plein écran) */}
           <Route path='/login' element={<AuthenticationLoginRegister />} />
           <Route path='/register' element={<AuthenticationLoginRegister />} />
           <Route path='/forgot-password' element={<ForgotPassword />} />
-          <Route element={<ProtectedRoute />}>
-            <Route path='/espace' element={<UserDashboard />} />
-            <Route path='/profile' element={<UserProfileManagement />} />
-            <Route path='/lesson-viewer' element={<LessonViewer />} />
-            <Route path='/lesson-viewer/:lessonId' element={<LessonViewer />} />
-            <Route path='/admin-dashboard' element={<AdminDashboard />} />
-            <Route path='/user-management-admin' element={<UserManagementAdmin />} />
-            <Route path='/cms' element={<ContentManagementCoursesModulesLessons />} />
-            <Route path='/content-management' element={<ContentManagementCoursesModulesLessons />} />
-          </Route>
+          <Route path='/verify-email' element={<VerifyEmail />} />
+
+          {/* Redirections pour les anciennes URLs ou les URLs alternatives */}
+          <Route path='/public-homepage' element={<Navigate to='/' replace />} />
+          <Route path='/program-overview' element={<Navigate to='/programmes' replace />} />
           <Route path='/user-dashboard' element={<Navigate to='/espace' replace />} />
           <Route path='/user-profile-management' element={<Navigate to='/profile' replace />} />
-          <Route path='/verify-email' element={<VerifyEmail />} />
-          <Route path='*' element={<NotFound />} />
+          <Route path='/content-management' element={<Navigate to='/cms' replace />} />
         </RouterRoutes>
       </Suspense>
     </ErrorBoundary>

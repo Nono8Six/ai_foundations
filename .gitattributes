@@ -1,0 +1,5 @@
+# .gitattributes
+# Force LF line endings for all text files to ensure consistency across
+# different operating systems (Windows, macOS, Linux), which is crucial for
+# shell scripts and Docker environments.
+* text=auto eol=lf
