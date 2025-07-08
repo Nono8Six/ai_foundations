@@ -191,9 +191,9 @@ Le backend semble utiliser Supabase principalement comme une base de données, a
 
 ```bash
 # Commandes principales
-pnpm supabase:status    # Vérifie l'état de Supabase
-pnpm supabase:start     # Démarre Supabase en local
-pnpm supabase:stop      # Arrête Supabase
+pnpm db:status         # Vérifie l'état de Supabase
+pnpm db:start          # Démarre Supabase en local
+pnpm db:stop           # Arrête Supabase
 
 # Gestion de la base de données
 pnpm db:pull           # Récupère le schéma de la base de données
@@ -202,8 +202,8 @@ pnpm db:stop           # Arrête la base de données
 pnpm gen:types         # Génère les types TypeScript
 
 # Commandes avancées
-pnpm supabase db:push  # Pousse les changements vers la base de données
-pnpm supabase db:reset # Réinitialise la base de données
+pnpm db:push          # Pousse les changements vers la base de données
+pnpm db:reset         # Réinitialise la base de données
 ```
 
 ### Gestion des Mises à Jour
