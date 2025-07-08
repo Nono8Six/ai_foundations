@@ -226,7 +226,7 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
               id,
               updates
             });
-            savedCourse = result as unknown as CourseWithContent;
+            savedCourse = result as CourseWithContent;
             setContentData(prev => 
               prev.map(c => (c.id === savedCourse.id ? savedCourse : c))
             );
@@ -235,7 +235,7 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
             // For new courses, use createCourse with the full course data
             const { id, ...newCourseData } = courseDataForApi;
             const result = await createCourse(newCourseData);
-            savedCourse = result as unknown as CourseWithContent;
+            savedCourse = result as CourseWithContent;
             setContentData(prev => [...prev, savedCourse]);
             toast.success('Cours créé avec succès !');
           }
@@ -243,7 +243,7 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
           log.error('Erreur lors de la sauvegarde du cours:', error);
           throw error; // Re-throw pour le catch parent
         }
-        setSelectedContent(savedCourse as unknown as T);
+        setSelectedContent(savedCourse as T);
       } else {
         // Handle module or lesson save locally for now
         log.info('Saving non-course content (local state only):', updatedContent);
@@ -305,7 +305,7 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
       data: ContentItemToRow<T>
     ): Promise<void> => {
       try {
-        await handleSaveContent(data as unknown as T);
+        await handleSaveContent(data as T);
       } catch (error) {
         log.error('Error saving content:', error);
         toast.error('Erreur lors de la sauvegarde du contenu');
@@ -322,7 +322,7 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
       case 'course':
         return (
           <CourseEditor
-            course={selectedContent as unknown as CourseRow}
+            course={selectedContent as CourseRow}
             onSave={handleSave}
             onDelete={handleDelete}
           />
@@ -330,7 +330,7 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
       case 'module':
         return (
           <ModuleEditor
-            module={selectedContent as unknown as ModuleRow}
+            module={selectedContent as ModuleRow}
             onSave={handleSave}
             onDelete={handleDelete}
           />
@@ -338,7 +338,7 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
       case 'lesson':
         return (
           <LessonEditor
-            lesson={selectedContent as unknown as LessonRow}
+            lesson={selectedContent as LessonRow}
             onSave={handleSave}
             onDelete={handleDelete}
           />
@@ -418,7 +418,7 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
                   // Convert back from ContentNode to CourseWithContent
                   const updatedData = newOrder.map(node => {
                     const original = contentData.find(c => c.id === node.id);
-                    return original || node as unknown as CourseWithContent;
+                    return original || (node as CourseWithContent);
                   });
                   setContentData(updatedData);
                 }}

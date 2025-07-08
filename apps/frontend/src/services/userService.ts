@@ -12,10 +12,39 @@ import type {
   PrivacySettings,
   LearningPreferences,
 } from '@frontend/types/userSettings';
+import {
+  NotificationSettingsSchema,
+  PrivacySettingsSchema,
+  LearningPreferencesSchema,
+} from '@frontend/types/userSettingsSchemas';
 
 const supabaseClient = supabase as SupabaseClient<Database>;
 
 const toJson = <T extends Json>(v: T): Json => v;
+
+const parseNotificationSettings = (v: Json | null): NotificationSettings => {
+  const parsed = NotificationSettingsSchema.safeParse(v);
+  if (!parsed.success) {
+    throw new Error(`Invalid notification settings: ${parsed.error.message}`);
+  }
+  return parsed.data;
+};
+
+const parsePrivacySettings = (v: Json | null): PrivacySettings => {
+  const parsed = PrivacySettingsSchema.safeParse(v);
+  if (!parsed.success) {
+    throw new Error(`Invalid privacy settings: ${parsed.error.message}`);
+  }
+  return parsed.data;
+};
+
+const parseLearningPreferences = (v: Json | null): LearningPreferences => {
+  const parsed = LearningPreferencesSchema.safeParse(v);
+  if (!parsed.success) {
+    throw new Error(`Invalid learning preferences: ${parsed.error.message}`);
+  }
+  return parsed.data;
+};
 
 export async function fetchUserProfile(user: User): Promise<UserProfile> {
   const { data: profileData, error } = await supabaseClient
@@ -85,9 +114,9 @@ export async function getUserSettings(userId: string): Promise<UserSettings | nu
     return {
       id: settings.id,
       user_id: settings.user_id,
-      notification_settings: settings.notification_settings as unknown as NotificationSettings,
-      privacy_settings: settings.privacy_settings as unknown as PrivacySettings,
-      learning_preferences: settings.learning_preferences as unknown as LearningPreferences,
+      notification_settings: parseNotificationSettings(settings.notification_settings),
+      privacy_settings: parsePrivacySettings(settings.privacy_settings),
+      learning_preferences: parseLearningPreferences(settings.learning_preferences),
       created_at: settings.created_at || null,
       updated_at: settings.updated_at || null,
     };
@@ -95,9 +124,26 @@ export async function getUserSettings(userId: string): Promise<UserSettings | nu
 
   const defaultSettings = {
     user_id: userId,
-    notification_settings: toJson({ email: true, push: true }),
-    privacy_settings: toJson({ show_email: false, show_activity: true }),
-    learning_preferences: toJson({ difficulty: 'beginner', theme: 'light' }),
+    notification_settings: toJson({
+      emailNotifications: true,
+      pushNotifications: false,
+      weeklyReport: true,
+      achievementAlerts: true,
+      reminderNotifications: true,
+    }),
+    privacy_settings: toJson({
+      profileVisibility: 'private',
+      showProgress: false,
+      showAchievements: true,
+      allowMessages: false,
+    }),
+    learning_preferences: toJson({
+      dailyGoal: 30,
+      preferredDuration: 'medium',
+      difficultyProgression: 'adaptive',
+      language: 'fr',
+      autoplay: true,
+    }),
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   };
@@ -113,9 +159,9 @@ export async function getUserSettings(userId: string): Promise<UserSettings | nu
   return {
     id: newSettings.id,
     user_id: newSettings.user_id,
-      notification_settings: newSettings.notification_settings as unknown as NotificationSettings,
-      privacy_settings: newSettings.privacy_settings as unknown as PrivacySettings,
-      learning_preferences: newSettings.learning_preferences as unknown as LearningPreferences,
+    notification_settings: parseNotificationSettings(newSettings.notification_settings),
+    privacy_settings: parsePrivacySettings(newSettings.privacy_settings),
+    learning_preferences: parseLearningPreferences(newSettings.learning_preferences),
     created_at: newSettings.created_at || null,
     updated_at: newSettings.updated_at || null,
   };
@@ -137,9 +183,9 @@ export async function updateUserSettings(
   const { data, error } = await supabaseClient
     .from('user_settings')
     .update({
-      notification_settings: toJson(merged.notification_settings as unknown as Json),
-      privacy_settings: toJson(merged.privacy_settings as unknown as Json),
-      learning_preferences: toJson(merged.learning_preferences as unknown as Json),
+      notification_settings: toJson(merged.notification_settings as Json),
+      privacy_settings: toJson(merged.privacy_settings as Json),
+      learning_preferences: toJson(merged.learning_preferences as Json),
       updated_at: merged.updated_at,
     })
     .eq('user_id', userId)
@@ -152,9 +198,9 @@ export async function updateUserSettings(
     return {
       id: updated.id,
       user_id: updated.user_id,
-      notification_settings: updated.notification_settings as unknown as NotificationSettings,
-      privacy_settings: updated.privacy_settings as unknown as PrivacySettings,
-      learning_preferences: updated.learning_preferences as unknown as LearningPreferences,
+      notification_settings: parseNotificationSettings(updated.notification_settings),
+      privacy_settings: parsePrivacySettings(updated.privacy_settings),
+      learning_preferences: parseLearningPreferences(updated.learning_preferences),
       created_at: updated.created_at || null,
       updated_at: updated.updated_at || null,
     };

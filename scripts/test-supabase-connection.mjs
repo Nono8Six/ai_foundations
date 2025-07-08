@@ -1,5 +1,4 @@
 // scripts/test-supabase-connection.mjs (À LA RACINE)
-/* eslint-disable no-console */
 import { createClient } from '@supabase/supabase-js';
 import { log } from '../libs/logger/index.js';
 
