@@ -71,9 +71,9 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
               </svg>
             </div>
             <div className='flex flex-col gap-1 text-center'>
-              <h1 className='text-2xl font-medium text-neutral-800'>Something went wrong</h1>
+              <h1 className='text-2xl font-medium text-neutral-800'>Une erreur est survenue</h1>
               <p className='text-neutral-600 text-base w w-8/12 mx-auto'>
-                We encountered an unexpected error while processing your request.
+                Nous avons rencontré une erreur inattendue lors du traitement de votre requête.
               </p>
             </div>
             <div className='flex justify-center items-center mt-6'>
@@ -84,7 +84,7 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
                 className='bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded flex items-center gap-2 transition-colors duration-200 shadow-sm'
               >
                 <Icon aria-hidden='true' name='ArrowLeft' size={18} color='#fff' />
-                Back
+                Retour
               </button>
             </div>
           </div>
