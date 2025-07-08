@@ -10,24 +10,31 @@ import type { Database } from '@frontend/types/database.types';
 
 type CoursesRow = Database['public']['Tables']['courses']['Row'];
 
+export interface ProgramFilters {
+  skillLevel: string[];
+  duration: string[];
+  category: string[];
+  status: string[];
+}
+
 interface ProgramOverviewProps {}
 
 const ProgramOverview: React.FC<ProgramOverviewProps> = () => {
   const { user } = useAuth();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [sortBy, setSortBy] = useState('popularity');
-  const [filters, setFilters] = useState({
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [sortBy, setSortBy] = useState<string>('popularity');
+  const [filters, setFilters] = useState<ProgramFilters>({
     skillLevel: [],
     duration: [],
     category: [],
     status: [],
   });
-  const [showFilters, setShowFilters] = useState(false);
-  const [viewMode, setViewMode] = useState('grid');
-  const [loading, setLoading] = useState(true);
+  const [showFilters, setShowFilters] = useState<boolean>(false);
+  const [viewMode, setViewMode] = useState<'grid' | 'pathway'>('grid');
+  const [loading, setLoading] = useState<boolean>(true);
   const [courses, setCourses] = useState<CoursesRow[]>([]);
-  const [page, setPage] = useState(1);
-  const [totalCourses, setTotalCourses] = useState(0);
+  const [page, setPage] = useState<number>(1);
+  const [totalCourses, setTotalCourses] = useState<number>(0);
   const pageSize = 12;
 
   useEffect(() => {
@@ -70,7 +77,7 @@ const ProgramOverview: React.FC<ProgramOverviewProps> = () => {
     }));
   }, [courses]);
 
-  const handleFilterChange = newFilters => {
+  const handleFilterChange = (newFilters: ProgramFilters) => {
     setFilters(newFilters);
     setPage(1); // Reset to first page when filters change
   };

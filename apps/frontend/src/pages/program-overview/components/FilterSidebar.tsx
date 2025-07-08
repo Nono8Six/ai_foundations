@@ -1,15 +1,11 @@
 import React from 'react';
 import Icon from '@frontend/components/AppIcon';
 import type { Course } from '@frontend/types/course';
+import type { ProgramFilters } from '../index';
 
 export interface FilterSidebarProps {
-  filters: {
-    skillLevel: string[];
-    duration: string[];
-    category: string[];
-    status: string[];
-  };
-  onFilterChange: (filters: FilterSidebarProps['filters']) => void;
+  filters: ProgramFilters;
+  onFilterChange: (filters: ProgramFilters) => void;
   courses: Course[];
 }
 
@@ -28,7 +24,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, onFilterChange, 
     { value: 'not-started', label: 'Non commencé' },
   ];
 
-  const handleFilterToggle = (filterType, value) => {
+  const handleFilterToggle = (filterType: keyof ProgramFilters, value: string) => {
     const currentFilters = filters[filterType];
     const newFilters = currentFilters.includes(value)
       ? currentFilters.filter(item => item !== value)

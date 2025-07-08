@@ -10,6 +10,19 @@ import CreateUserModal from './components/CreateUserModal';
 import BulkActionsBar from './components/BulkActionsBar';
 import type { AdminUser } from '@frontend/types/adminUser';
 
+export interface AdminFilters {
+  status: string;
+  role: string;
+  registrationDate: string;
+  activityLevel: string;
+  courseProgress: string;
+}
+
+export interface SortConfig {
+  key: string;
+  direction: 'asc' | 'desc';
+}
+
 interface UserManagementAdminContentProps {}
 
 const UserManagementAdminContent: React.FC<UserManagementAdminContentProps> = () => {
@@ -18,18 +31,21 @@ const UserManagementAdminContent: React.FC<UserManagementAdminContentProps> = ()
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
 
-  const [showDetailsPanel, setShowDetailsPanel] = useState(false);
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [showDetailsPanel, setShowDetailsPanel] = useState<boolean>(false);
+  const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string>('');
   const [users, setUsers] = useState<AdminUser[]>([]);
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<AdminFilters>({
     status: 'all',
     role: 'all',
     registrationDate: 'all',
     activityLevel: 'all',
     courseProgress: 'all',
   });
-  const [sortConfig, setSortConfig] = useState({ key: 'lastActivity', direction: 'desc' });
+  const [sortConfig, setSortConfig] = useState<SortConfig>({
+    key: 'lastActivity',
+    direction: 'desc',
+  });
 
   // Récupère les utilisateurs depuis Supabase au chargement du composant
   useEffect(() => {
@@ -99,7 +115,7 @@ const UserManagementAdminContent: React.FC<UserManagementAdminContentProps> = ()
     return filtered;
   }, [users, searchQuery, filters, sortConfig]);
 
-  const handleSort = key => {
+  const handleSort = (key: string) => {
     setSortConfig(prev => ({
       key,
       direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc',
@@ -123,7 +139,7 @@ const UserManagementAdminContent: React.FC<UserManagementAdminContentProps> = ()
     setShowDetailsPanel(true);
   };
 
-  const handleBulkAction = action => {
+  const handleBulkAction = (action: string) => {
     log.info(`Bulk action: ${action} for users`, { users: selectedUsers });
     setSelectedUsers([]);
   };
