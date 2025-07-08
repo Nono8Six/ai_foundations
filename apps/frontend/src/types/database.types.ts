@@ -318,6 +318,13 @@ export type Database = {
             referencedRelation: "courses"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "modules_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "user_course_progress"
+            referencedColumns: ["id"]
+          },
         ]
       }
       profiles: {
@@ -551,7 +558,27 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      user_course_progress: {
+        Row: {
+          category: string | null
+          completed_lessons: number | null
+          completion_percentage: number | null
+          cover_image_url: string | null
+          created_at: string | null
+          description: string | null
+          difficulty: string | null
+          id: string | null
+          is_published: boolean | null
+          last_activity_at: string | null
+          progress: Json | null
+          slug: string | null
+          thumbnail_url: string | null
+          title: string | null
+          total_lessons: number | null
+          updated_at: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       current_user_is_admin: {
