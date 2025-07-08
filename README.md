@@ -239,6 +239,9 @@ Les variables sensibles (clés API, tokens) sont gérées via un fichier `.env` 
     # Pour un nettoyage plus global (attention, cela affecte tout Docker) :
     # docker system prune -af
     ```
+5.  **Vite redémarre en boucle avec `ENOMEM` :**
+    - Ajoutez `NODE_OPTIONS=--max-old-space-size=4096` dans votre `.env`.
+    - Activez la surveillance par polling si nécessaire :`CHOKIDAR_USEPOLLING=1`.
 
 ## 📚 Documentation Supplémentaire
 
