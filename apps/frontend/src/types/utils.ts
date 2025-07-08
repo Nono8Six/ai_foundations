@@ -1,1 +1,1 @@
-export type NoInfer<T> = [T][T extends unknown ? 0 : never];
+export type NoInfer<T> = [T] extends [infer U] ? U : never;
