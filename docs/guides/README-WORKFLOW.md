@@ -49,7 +49,7 @@ Supabase Cloud = Source de Vérité Unique
 
 ```bash
 # 1. Cloner et installer
-git clone https://github.com/votre-utilisateur/ai-foundations.git
+git clone https://github.com/<your-user>/ai-foundations.git
 pnpm install
 
 # 2. Configurer l'environnement

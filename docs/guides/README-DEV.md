@@ -16,7 +16,7 @@ Ce guide vous aidera à configurer et utiliser l'environnement de développement
 1. **Cloner le dépôt**
 
    ```bash
-   git clone https://github.com/your-username/ai-foundations.git
+   git clone https://github.com/<your-user>/ai-foundations.git
    cd ai-foundations
    ```
 
