@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { courseApiToCmsCourse } from '../index';
+import { courseApiToCmsCourse, type CourseWithContent } from '../index';
 
 describe('courseApiToCmsCourse', () => {
   it('converts nested API data', () => {
-    const apiCourse = {
+    const apiCourse: CourseWithContent = {
       id: 'c1',
       title: 'Course',
       description: 'Desc',
@@ -29,7 +29,7 @@ describe('courseApiToCmsCourse', () => {
           ],
         },
       ],
-    } as any;
+    };
 
     const result = courseApiToCmsCourse(apiCourse);
 
