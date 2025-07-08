@@ -8,6 +8,7 @@ import {
 import type { PostgrestError, SupabaseClient } from '@supabase/supabase-js';
 import { supabase } from '@frontend/lib/supabase';
 import { safeQuery } from '@frontend/utils/supabaseClient';
+import { assertData } from '@libs/supabase-utils/assertData';
 import type { Database } from '@frontend/types/database.types';
 
 const supabaseClient = supabase as SupabaseClient<Database>;
@@ -78,8 +79,7 @@ export function useSupabaseList<T extends keyof Database['public']['Tables']>(
         const resp = await supabaseClient.from(table).insert(payload).select().single();
         return { data: resp.data, error: resp.error };
       });
-      if (error || !data) throw error ?? new Error('No data');
-      return data;
+      return assertData({ data, error });
     },
     onSuccess: invalidate,
   });
@@ -90,8 +90,7 @@ export function useSupabaseList<T extends keyof Database['public']['Tables']>(
         const resp = await supabaseClient.from(table).update(updates).eq('id', id).select().single();
         return { data: resp.data, error: resp.error };
       });
-      if (error || !data) throw error ?? new Error('No data');
-      return data;
+      return assertData({ data, error });
     },
     onSuccess: invalidate,
   });
