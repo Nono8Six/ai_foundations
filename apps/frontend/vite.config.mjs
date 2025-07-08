@@ -3,6 +3,10 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { visualizer } from 'rollup-plugin-visualizer';
 import path from 'path';
+import process from 'node:process';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // https://vitejs.dev/config/
 export default defineConfig(() => {
@@ -64,6 +68,12 @@ export default defineConfig(() => {
       host: '0.0.0.0',
       strictPort: true,
       allowedHosts: ['.amazonaws.com', '.builtwithrocket.new', 'localhost'],
+      hmr: { host: 'localhost', port: 5173 },
+      watch: {
+        usePolling: process.env.CHOKIDAR_USEPOLLING === '1',
+        interval: Number(process.env.CHOKIDAR_INTERVAL ?? 300),
+        ignored: ['**/node_modules/**', '**/pnpm-store/**'],
+      },
     },
   };
 });
