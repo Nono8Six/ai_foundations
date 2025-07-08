@@ -22,4 +22,5 @@ apps/frontend/dist-types/
 .env.corrupted.backup.*
 packages/*/dist
 libs/logger/*.js
+apps/frontend/package-lock.json
 

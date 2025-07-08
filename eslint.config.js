@@ -49,6 +49,17 @@ export default tseslint.config(
     },
   },
 
+  // Node.js scripts
+  {
+    files: ['scripts/**/*.{js,mjs,ts}'],
+    languageOptions: {
+      parserOptions: { ecmaVersion: 'latest', sourceType: 'module' },
+      globals: {
+        ...globals.node,
+      },
+    },
+  },
+
   // General rules for the entire project
   {
     rules: {

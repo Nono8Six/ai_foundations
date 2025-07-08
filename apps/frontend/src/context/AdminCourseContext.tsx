@@ -3,6 +3,7 @@ import { type ReactNode } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@frontend/lib/supabase';
 import { safeQuery } from '@frontend/utils/supabaseClient';
+import { assertData } from '@libs/supabase-utils/assertData';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@frontend/types/database.types';
 import { useAuth } from './AuthContext';
@@ -51,8 +52,7 @@ export const AdminCourseProvider = ({ children }: { children: ReactNode }) => {
       const { data, error } = await safeQuery(() =>
         supabaseClient.from('courses').insert(course).select().single()
       );
-      if (error || !data) throw error ?? new Error('No data');
-      return data;
+      return assertData({ data, error });
     },
     onSuccess: invalidateCourses,
   });
@@ -72,8 +72,7 @@ export const AdminCourseProvider = ({ children }: { children: ReactNode }) => {
       const { data, error } = await safeQuery(() =>
         supabaseClient.from('courses').update(updates).eq('id', id).select().single()
       );
-      if (error || !data) throw error ?? new Error('No data');
-      return data;
+      return assertData({ data, error });
     },
     onSuccess: invalidateCourses,
   });
@@ -97,8 +96,7 @@ export const AdminCourseProvider = ({ children }: { children: ReactNode }) => {
       const { data, error } = await safeQuery(() =>
         supabaseClient.from('modules').insert(module).select().single()
       );
-      if (error || !data) throw error ?? new Error('No data');
-      return data;
+      return assertData({ data, error });
     },
     onSuccess: invalidateCourses,
   });
@@ -118,8 +116,7 @@ export const AdminCourseProvider = ({ children }: { children: ReactNode }) => {
       const { data, error } = await safeQuery(() =>
         supabaseClient.from('modules').update(updates).eq('id', id).select().single()
       );
-      if (error || !data) throw error ?? new Error('No data');
-      return data;
+      return assertData({ data, error });
     },
     onSuccess: invalidateCourses,
   });
