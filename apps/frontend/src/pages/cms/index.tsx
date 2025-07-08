@@ -6,48 +6,19 @@ import { log } from '@libs/logger';
 import type { CourseRow } from '@frontend/types/courseRow';
 import type { ModuleRow } from '@frontend/types/moduleRow';
 import type { LessonRow } from '@frontend/types/lessonRow';
+import {
+  type CmsContentItem,
+  type CmsCourse,
+  type CourseWithContent,
+  courseApiToCmsCourse,
+  courseRowToCmsCourse,
+  cmsCourseToRow,
+  cmsModuleToRow,
+  cmsLessonToRow,
+} from '@libs/cms-utils';
 
-// Base content item type with common fields
-interface BaseContentItem {
-  id: string;
-  title: string;
-  description?: string;
-  createdAt?: string;
-  updatedAt?: string;
-}
+// CmsContentItem types are provided by @libs/cms-utils
 
-// Specific content types
-interface CmsLesson extends BaseContentItem {
-  type: 'lesson';
-  duration?: number;
-  status?: string;
-  completions?: number;
-  moduleId?: string;
-}
-
-interface CmsModule extends BaseContentItem {
-  type: 'module';
-  courseId?: string;
-  lessons?: CmsLesson[];
-}
-
-interface CmsCourse extends BaseContentItem {
-  type: 'course';
-  price?: number;
-  status?: string;
-  enrollments?: number;
-  modules?: CmsModule[];
-}
-
-type CmsContentItem = CmsCourse | CmsModule | CmsLesson;
-
-type ContentItemToRow<T extends CmsContentItem> = T extends CmsCourse
-  ? CourseRow
-  : T extends CmsModule
-  ? ModuleRow
-  : T extends CmsLesson
-  ? LessonRow
-  : never;
 
 import Icon from '@frontend/components/AppIcon';
 import AdminLayout, { useAdminSidebar } from '@frontend/components/AdminLayout';
@@ -58,8 +29,6 @@ import LessonEditor from './components/LessonEditor';
 import BulkOperations from './components/BulkOperations';
 import ContentSearch from './components/ContentSearch';
 import MediaLibrary from './components/MediaLibrary';
-
-type CourseWithContent = Awaited<ReturnType<typeof fetchCoursesWithContent>>[number];
 
 // Helper function to map between CourseWithContent and ContentNode
 // Type guard to check if an item is CmsContentItem
@@ -138,6 +107,10 @@ const mapToContentNode = (item: CourseWithContent | CmsContentItem): ContentNode
   return result;
 };
 
+const toCmsCourse = (data: CourseRow): CmsCourse => ({ ...data, type: 'course' });
+const toCmsModule = (data: ModuleRow): CmsModule => ({ ...data, type: 'module' });
+const toCmsLesson = (data: LessonRow): CmsLesson => ({ ...data, type: 'lesson' });
+
 const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
   const { setSidebarOpen } = useAdminSidebar();
   const [selectedContent, setSelectedContent] = useState<CmsContentItem | null>(null);
@@ -147,7 +120,7 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [showBulkOperations, setShowBulkOperations] = useState(false);
 
-  const [contentData, setContentData] = useState<CourseWithContent[]>([]);
+  const [contentData, setContentData] = useState<CmsCourse[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   const { createCourse, updateCourse, deleteCourse } = useAdminCourses();
@@ -157,7 +130,7 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
       setLoading(true);
       try {
         const courses = await fetchCoursesWithContent();
-        setContentData(courses);
+        setContentData(courses.map(courseApiToCmsCourse));
       } catch (err) {
         log.error('Failed to fetch courses', err);
         toast.error('Erreur lors du chargement du contenu');
@@ -179,7 +152,7 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
     try {
       if (contentType === 'course') {
         const courseData = updatedContent as CmsCourse;
-        let savedCourse: CourseWithContent;
+        let savedCourse: CmsCourse;
         
         // Create slug from title if not provided
         const slug = courseData.title 
@@ -222,20 +195,17 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
           if (courseDataForApi.id) {
             // For updates, use the updateCourse function with the correct parameter structure
             const { id, ...updates } = courseDataForApi;
-            const result = await updateCourse({
-              id,
-              updates
-            });
-            savedCourse = result as unknown as CourseWithContent;
-            setContentData(prev => 
+            const result = await updateCourse({ id, updates });
+            savedCourse = courseRowToCmsCourse(result);
+            setContentData(prev =>
               prev.map(c => (c.id === savedCourse.id ? savedCourse : c))
             );
             toast.success('Cours mis à jour avec succès !');
           } else {
             // For new courses, use createCourse with the full course data
-            const { id, ...newCourseData } = courseDataForApi;
+            const { id: _discard, ...newCourseData } = courseDataForApi;
             const result = await createCourse(newCourseData);
-            savedCourse = result as unknown as CourseWithContent;
+            savedCourse = courseRowToCmsCourse(result);
             setContentData(prev => [...prev, savedCourse]);
             toast.success('Cours créé avec succès !');
           }
@@ -243,7 +213,7 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
           log.error('Erreur lors de la sauvegarde du cours:', error);
           throw error; // Re-throw pour le catch parent
         }
-        setSelectedContent(savedCourse as unknown as T);
+        setSelectedContent(savedCourse);
       } else {
         // Handle module or lesson save locally for now
         log.info('Saving non-course content (local state only):', updatedContent);
@@ -294,18 +264,34 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
               Sélectionnez un contenu à modifier
             </h3>
             <p className='text-text-secondary'>
-              Choisissez un cours, module ou leçon dans l'arbre de contenu pour commencer l'édition.
+              Choisissez un cours, module ou leçon dans l&apos;arbre de contenu pour commencer l&apos;édition.
             </p>
           </div>
         </div>
       );
     }
 
-    const handleSave = async <T extends CmsContentItem>(
-      data: ContentItemToRow<T>
-    ): Promise<void> => {
+    const handleCourseSave = async (data: CourseRow) => {
       try {
-        await handleSaveContent(data as unknown as T);
+        await handleSaveContent(toCmsCourse(data));
+      } catch (error) {
+        log.error('Error saving content:', error);
+        toast.error('Erreur lors de la sauvegarde du contenu');
+      }
+    };
+
+    const handleModuleSave = async (data: ModuleRow) => {
+      try {
+        await handleSaveContent(toCmsModule(data));
+      } catch (error) {
+        log.error('Error saving content:', error);
+        toast.error('Erreur lors de la sauvegarde du contenu');
+      }
+    };
+
+    const handleLessonSave = async (data: LessonRow) => {
+      try {
+        await handleSaveContent(toCmsLesson(data));
       } catch (error) {
         log.error('Error saving content:', error);
         toast.error('Erreur lors de la sauvegarde du contenu');
@@ -322,24 +308,24 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
       case 'course':
         return (
           <CourseEditor
-            course={selectedContent as unknown as CourseRow}
-            onSave={handleSave}
+            course={selectedContent ? cmsCourseToRow(selectedContent as CmsCourse) : null}
+            onSave={handleCourseSave}
             onDelete={handleDelete}
           />
         );
       case 'module':
         return (
           <ModuleEditor
-            module={selectedContent as unknown as ModuleRow}
-            onSave={handleSave}
+            module={selectedContent ? cmsModuleToRow(selectedContent as CmsModule) : null}
+            onSave={handleModuleSave}
             onDelete={handleDelete}
           />
         );
       case 'lesson':
         return (
           <LessonEditor
-            lesson={selectedContent as unknown as LessonRow}
-            onSave={handleSave}
+            lesson={selectedContent ? cmsLessonToRow(selectedContent as CmsLesson) : null}
+            onSave={handleLessonSave}
             onDelete={handleDelete}
           />
         );
@@ -414,11 +400,10 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
                 selectedItems={selectedItems}
                 onContentSelect={(item) => handleContentSelect(item as CmsContentItem)}
                 onItemsSelect={setSelectedItems}
-                onReorder={(newOrder) => {
-                  // Convert back from ContentNode to CourseWithContent
+                onReorder={newOrder => {
                   const updatedData = newOrder.map(node => {
-                    const original = contentData.find(c => c.id === node.id);
-                    return original || node as unknown as CourseWithContent;
+                    const existing = contentData.find(c => c.id === node.id);
+                    return existing ?? ({ ...node, type: 'course' } as CmsCourse);
                   });
                   setContentData(updatedData);
                 }}
@@ -462,7 +447,7 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
   );
 };
 
-interface ContentManagementCoursesModulesLessonsProps {}
+type ContentManagementCoursesModulesLessonsProps = Record<string, never>;
 
 const ContentManagementCoursesModulesLessons: React.FC<ContentManagementCoursesModulesLessonsProps> = () => (
   <AdminLayout>
