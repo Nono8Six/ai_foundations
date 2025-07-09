@@ -81,12 +81,8 @@ const CoursePathway: React.FC<CoursePathwayProps> = ({ courses }) => {
 
             <div className='space-y-6'>
               {groupedCourses[difficulty].map((course, courseIndex) => {
-                const progressPercentage = course.progress?.percentage ?? 0;
-                const isEnrolled = progressPercentage > 0;
-                const imageSrc =
-                  course.cover_image_url ??
-                  course.thumbnail_url ??
-                  '/assets/images/no_image.png';
+                const progress = course.progress?.percentage ?? 0;
+                const isEnrolled = progress > 0;
                 return (
                 <div key={course.id} className='relative'>
                   {/* Course Connection Line */}
@@ -100,14 +96,14 @@ const CoursePathway: React.FC<CoursePathwayProps> = ({ courses }) => {
                     <div className='flex-shrink-0'>
                       <div
                         className={`w-12 h-12 rounded-full flex items-center justify-center ${
-                          progressPercentage === 100
+                          progress === 100
                             ? 'bg-success text-white'
                             : isEnrolled
                               ? 'bg-primary text-white'
                               : 'bg-secondary-200 text-text-secondary'
                         }`}
                       >
-                        {progressPercentage === 100 ? (
+                        {progress === 100 ? (
                           <Icon aria-hidden='true' name='Check' size={20} />
                         ) : isEnrolled ? (
                           <Icon aria-hidden='true' name='Play' size={20} />
@@ -141,24 +137,12 @@ const CoursePathway: React.FC<CoursePathwayProps> = ({ courses }) => {
                                   <span>{course.duration}</span>
                                 </div>
                               )}
-                              {course.total_lessons && (
-                                <div className='flex items-center gap-1'>
-                                  <Icon aria-hidden='true' name='FileText' size={14} />
-                                  <span>{course.total_lessons} leçons</span>
-                                </div>
-                              )}
                             </div>
                           )}
                         </div>
 
                         {/* Course Badges */}
-                        <div className='flex gap-2'>
-                          {isEnrolled && (
-                            <span className='px-2 py-1 bg-primary-100 text-primary-700 text-xs rounded-full font-medium'>
-                              Inscrit
-                            </span>
-                          )}
-                        </div>
+                        <div className='flex gap-2' />
                       </div>
 
                       {/* Description */}
@@ -172,13 +156,13 @@ const CoursePathway: React.FC<CoursePathwayProps> = ({ courses }) => {
                           <div className='flex items-center justify-between text-sm mb-2'>
                             <span className='text-text-secondary'>Progression</span>
                             <span className='font-medium text-text-primary'>
-                              {progressPercentage}%
+                              {progress}%
                             </span>
                           </div>
                           <div className='w-full bg-secondary-200 rounded-full h-2'>
                             <div
-                              className={`h-2 rounded-full transition-all duration-300 ${getProgressColor(progressPercentage)}`}
-                              style={{ width: `${progressPercentage}%` }}
+                              className={`h-2 rounded-full transition-all duration-300 ${getProgressColor(progress)}`}
+                              style={{ width: `${progress}%` }}
                             />
                           </div>
                         </div>
@@ -208,7 +192,7 @@ const CoursePathway: React.FC<CoursePathwayProps> = ({ courses }) => {
                             to='/lesson-viewer'
                             className='px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors font-medium text-sm'
                           >
-                            {progressPercentage === 100 ? 'Revoir' : 'Continuer'}
+                            {progress === 100 ? 'Revoir' : 'Continuer'}
                           </Link>
                         ) : (
                           <Link
@@ -220,7 +204,7 @@ const CoursePathway: React.FC<CoursePathwayProps> = ({ courses }) => {
                         )}
 
                         {/* Rating */}
-                        {course.rating !== undefined && (
+                        {course.average_rating !== undefined && (
                           <div className='flex items-center gap-1 ml-auto'>
                             <Icon
                               aria-hidden='true'
@@ -229,10 +213,10 @@ const CoursePathway: React.FC<CoursePathwayProps> = ({ courses }) => {
                               className='text-warning fill-current'
                             />
                             <span className='text-sm font-medium text-text-primary'>
-                              {course.rating}
+                              {course.average_rating.toFixed(1)}
                             </span>
                             <span className='text-sm text-text-secondary'>
-                              ({course.enrolledStudents || 0})
+                              ({course.enrolled_students || 0})
                             </span>
                           </div>
                         )}
@@ -251,7 +235,7 @@ const CoursePathway: React.FC<CoursePathwayProps> = ({ courses }) => {
       {courses.length > 0 && (
         <div className='text-center py-12 bg-gradient-to-r from-primary-50 to-accent-50 rounded-xl'>
           <Icon aria-hidden='true' name='Trophy' size={48} className='mx-auto text-primary mb-4' />
-          <h3 className='text-xl font-bold text-text-primary mb-2'>Parcours d&#39;Excellence IA</h3>
+          <h3 className='text-xl font-bold text-text-primary mb-2'>Parcours d&apos;Excellence IA</h3>
           <p className='text-text-secondary max-w-2xl mx-auto'>
             Suivez ce parcours structuré pour maîtriser l&apos;intelligence artificielle de manière
             progressive et efficace. Chaque cours vous prépare au suivant.
