@@ -3,9 +3,6 @@ import { useAdminCourses } from '@frontend/context/AdminCourseContext';
 import { toast } from 'sonner';
 import { fetchCoursesWithContent } from '@frontend/services/courseService';
 import { log } from '@libs/logger';
-import type { CourseRow } from '@frontend/types/rowSchemas';
-import type { ModuleRow } from '@frontend/types/moduleRow';
-import type { LessonRow } from '@frontend/types/lessonRow';
 import type { Database } from '@frontend/types/database.types';
 import {
   type CmsContentItem,
@@ -182,6 +179,7 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
           toast.success('Cours mis à jour avec succès !');
         } else {
           // Create
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { id: _discard, ...newCourseData } = courseDataForApi;
           const result = await createCourse(newCourseData);
           savedCourse = courseRowToCmsCourse(result);
