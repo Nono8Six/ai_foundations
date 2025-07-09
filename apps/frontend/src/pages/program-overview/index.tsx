@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@frontend/context/AuthContext';
 import Icon from '@frontend/components/AppIcon';
 import { fetchCourses } from '@frontend/services/courseService';
@@ -7,6 +7,7 @@ import CourseCard from './components/CourseCard';
 import FilterSidebar from './components/FilterSidebar';
 import CoursePathway from './components/CoursePathway';
 import type { Database } from '@frontend/types/database.types';
+import type { CourseSortOption } from '@frontend/types/course.types';
 
 type CoursesRow = Database['public']['Tables']['courses']['Row'];
 
@@ -17,12 +18,10 @@ export interface ProgramFilters {
   status: string[];
 }
 
-interface ProgramOverviewProps {}
-
-const ProgramOverview: React.FC<ProgramOverviewProps> = () => {
+const ProgramOverview: React.FC = () => {
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [sortBy, setSortBy] = useState<string>('popularity');
+  const [sortBy, setSortBy] = useState<CourseSortOption>('progress_desc');
   const [filters, setFilters] = useState<ProgramFilters>({
     skillLevel: [],
     duration: [],
@@ -32,7 +31,7 @@ const ProgramOverview: React.FC<ProgramOverviewProps> = () => {
   const [showFilters, setShowFilters] = useState<boolean>(false);
   const [viewMode, setViewMode] = useState<'grid' | 'pathway'>('grid');
   const [loading, setLoading] = useState<boolean>(true);
-  const [courses, setCourses] = useState<CoursesRow[]>([]);
+  const [courses, setCourses] = useState<CourseWithProgress[]>([]);
   const [page, setPage] = useState<number>(1);
   const [totalCourses, setTotalCourses] = useState<number>(0);
   const pageSize = 12;
@@ -41,15 +40,16 @@ const ProgramOverview: React.FC<ProgramOverviewProps> = () => {
     const load = async () => {
       setLoading(true);
       try {
-        const { data, count } = await fetchCourses({
-          search: searchQuery,
-          filters,
+        const { data, pagination } = await fetchCourses({
+          filters: {
+            ...filters,
+            search: searchQuery,
+          },
           sortBy,
-          page,
-          pageSize,
+          pagination: { page, pageSize },
         });
         setCourses(data);
-        setTotalCourses(count);
+        setTotalCourses(pagination.total);
       } catch (error) {
         log.error('Error loading courses', error);
         setCourses([]);
@@ -62,20 +62,7 @@ const ProgramOverview: React.FC<ProgramOverviewProps> = () => {
     load();
   }, [searchQuery, sortBy, filters, page]);
 
-  // Transform Supabase courses to match expected format
-  const formattedCourses = useMemo(() => {
-    if (!courses?.length) return [];
-
-    return courses.map(course => ({
-      id: course.id,
-      title: course.title,
-      description: course.description || '',
-      category: course.category || 'Non classé',
-      image:
-        course.cover_image_url ||
-        'https://images.pexels.com/photos/373543/pexels-photo-373543.jpeg?w=400&h=250&fit=crop',
-    }));
-  }, [courses]);
+  const formattedCourses = courses;
 
   const handleFilterChange = (newFilters: ProgramFilters) => {
     setFilters(newFilters);
@@ -143,11 +130,11 @@ const ProgramOverview: React.FC<ProgramOverviewProps> = () => {
                 onChange={e => setSortBy(e.target.value)}
                 className='px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent'
               >
-                <option value='popularity'>Popularité</option>
-                <option value='difficulty'>Difficulté</option>
-                <option value='duration'>Durée</option>
-                <option value='alphabetical'>Alphabétique</option>
-                <option value='rating'>Note</option>
+                <option value='progress_desc'>Popularité</option>
+                <option value='difficulty_desc'>Difficulté</option>
+                <option value='progress_asc'>Durée</option>
+                <option value='title_asc'>Alphabétique</option>
+                <option value='last_activity_desc'>Note</option>
               </select>
 
               <button

@@ -35,7 +35,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
       {/* Course Image */}
       <div className='relative h-48 overflow-hidden'>
         <Image
-          src={course.image}
+          src={imageSrc}
           alt={course.title}
           className='w-full h-full object-cover group-hover:scale-105 transition-transform duration-300'
         />
@@ -47,11 +47,6 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
               className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(course.difficulty)}`}
             >
               {course.difficulty}
-            </span>
-          )}
-          {course.isFree && (
-            <span className='px-2 py-1 rounded-full text-xs font-medium bg-accent-100 text-accent-700'>
-              Gratuit
             </span>
           )}
         </div>
@@ -124,6 +119,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
                   <Icon aria-hidden='true' name='FileText' size={14} />
                   <span>{course.total_lessons} leçons</span>
                 </div>
+
               </div>
             )}
           </div>

@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import Icon from '@frontend/components/AppIcon';
 import { uploadToBucket, BUCKETS } from '@frontend/services/storageService';
 import { log } from '@libs/logger';
-import type { LessonRow } from '@frontend/types/lessonRow';
+import type { CmsLesson } from '@libs/cms-utils';
 
 export interface LessonEditorProps {
-  lesson: LessonRow | null;
-  onSave: (data: LessonRow) => void;
+  lesson: CmsLesson | null;
+  onSave: (data: CmsLesson) => void;
   onDelete: () => void;
 }
 

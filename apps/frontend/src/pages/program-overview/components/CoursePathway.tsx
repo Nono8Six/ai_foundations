@@ -2,10 +2,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Icon from '@frontend/components/AppIcon';
 import Image from '@frontend/components/AppImage';
-import type { Course } from '@frontend/types/course';
+import type { CourseWithProgress } from '@frontend/types/course.types';
 
 export interface CoursePathwayProps {
-  courses: Course[];
+  courses: CourseWithProgress[];
 }
 
 const CoursePathway: React.FC<CoursePathwayProps> = ({ courses }) => {
@@ -116,7 +116,7 @@ const CoursePathway: React.FC<CoursePathwayProps> = ({ courses }) => {
                     {/* Course Image */}
                     <div className='flex-shrink-0 w-24 h-24 rounded-lg overflow-hidden'>
                       <Image
-                        src={course.image}
+                        src={imageSrc}
                         alt={course.title}
                         className='w-full h-full object-cover'
                       />
@@ -201,12 +201,6 @@ const CoursePathway: React.FC<CoursePathwayProps> = ({ courses }) => {
                           >
                             S&apos;inscrire
                           </Link>
-                        )}
-
-                        {course.previewLessons > 0 && (
-                          <button className='px-4 py-2 border border-border text-text-secondary rounded-lg hover:bg-secondary-50 transition-colors text-sm'>
-                            Aperçu ({course.previewLessons})
-                          </button>
                         )}
 
                         {/* Rating */}
