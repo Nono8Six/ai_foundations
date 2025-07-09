@@ -10,6 +10,15 @@ import pluginReactHooks from 'eslint-plugin-react-hooks';
 
 export default [
   ...base,
+  // Configuration pour React
+  {
+    files: ['**/*.{jsx,tsx}'],
+    settings: {
+      react: {
+        version: 'detect', // Détecte automatiquement la version de React
+      },
+    },
+  },
   // Configuration globale pour tous les fichiers
   {
     files: ['**/*.{js,jsx,mjs,cjs}'],
@@ -79,7 +88,7 @@ export default [
       react: {
         version: 'detect',
         pragma: 'React',
-    fragment: 'Fragment',
+        fragment: 'Fragment',
       },
     },
   },
