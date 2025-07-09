@@ -28,16 +28,19 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
   };
 
   // Calculer le pourcentage de progression
-  const progressPercentage = course.progress
-    ? Math.round((course.progress.completed_lessons / course.progress.total_lessons) * 100)
-    : 0;
+  const progressPercentage = course.progress?.percentage ?? 0;
+  const isEnrolled = progressPercentage > 0;
+  const imageSrc =
+    course.cover_image_url ??
+    course.thumbnail_url ??
+    '/assets/images/no_image.png';
 
   return (
     <div className='bg-surface rounded-xl shadow-subtle hover:shadow-medium transition-all duration-300 overflow-hidden group hover:-translate-y-1 flex flex-col h-full'>
       {/* Course Image */}
       <div className='relative h-48 overflow-hidden'>
         <Image
-          src={course.image}
+          src={imageSrc}
           alt={course.title}
           className='w-full h-full object-cover group-hover:scale-105 transition-transform duration-300'
         />
@@ -49,11 +52,6 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
               className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(course.difficulty)}`}
             >
               {course.difficulty}
-            </span>
-          )}
-          {course.isFree && (
-            <span className='px-2 py-1 rounded-full text-xs font-medium bg-accent-100 text-accent-700'>
-              Gratuit
             </span>
           )}
         </div>
@@ -120,20 +118,10 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
               <span>{course.duration || 'Durée variable'}</span>
             </div>
             
-            {(course.xpReward || course.lessons) && (
-              <div className='flex items-center gap-4'>
-                {course.xpReward && (
-                  <div className='flex items-center gap-1'>
-                    <Icon aria-hidden='true' name='Award' size={14} />
-                    <span>{course.xpReward} XP</span>
-                  </div>
-                )}
-                {course.lessons && (
-                  <div className='flex items-center gap-1'>
-                    <Icon aria-hidden='true' name='FileText' size={14} />
-                    <span>{course.lessons} leçons</span>
-                  </div>
-                )}
+            {course.total_lessons && (
+              <div className='flex items-center gap-1'>
+                <Icon aria-hidden='true' name='FileText' size={14} />
+                <span>{course.total_lessons} leçons</span>
               </div>
             )}
           </div>
@@ -179,27 +167,22 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
 
         {/* Action Buttons */}
         <div className='mt-4 space-y-2'>
-          {course.isEnrolled ? (
+          {isEnrolled ? (
             <Link
               to='/lesson-viewer'
               className='w-full px-4 py-3 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors font-medium text-center block'
             >
-              {course.progress === 100 ? 'Revoir le cours' : 'Continuer'}
+              {progressPercentage === 100 ? 'Revoir le cours' : 'Continuer'}
             </Link>
           ) : (
             <Link
               to='/lesson-viewer'
               className='w-full px-4 py-3 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors font-medium text-center block'
             >
-              S'inscrire
+              S&apos;inscrire
             </Link>
           )}
 
-          {course.previewLessons > 0 && (
-            <button className='w-full px-4 py-2 border border-border text-text-secondary rounded-lg hover:bg-secondary-50 transition-colors text-sm'>
-              Aperçu gratuit ({course.previewLessons} leçons)
-            </button>
-          )}
         </div>
 
         {/* Instructor */}
