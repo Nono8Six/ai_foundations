@@ -25,15 +25,19 @@ export interface CmsCourse extends BaseContentItem {
   price?: number;
   status?: string;
   enrollments?: number;
+  thumbnail?: string;
+  prerequisites?: string;
+  learningObjectives?: string;
+  difficulty?: string;
+  estimatedDuration?: number;
+  tags?: string[];
+  rating?: number;
   modules?: CmsModule[];
 }
 
 export type CmsContentItem = CmsCourse | CmsModule | CmsLesson;
 
 import type { Database } from '@frontend/types/database.types';
-import type { CourseRow } from '@frontend/types/courseRow';
-import type { ModuleRow } from '@frontend/types/moduleRow';
-import type { LessonRow } from '@frontend/types/lessonRow';
 
 export type CourseWithContent = Database['public']['Tables']['courses']['Row'] & {
   modules: (Database['public']['Tables']['modules']['Row'] & {
@@ -84,14 +88,3 @@ export function courseRowToCmsCourse(
   };
 }
 
-export const cmsCourseToRow = (course: CmsCourse): CourseRow => ({
-  ...course,
-});
-
-export const cmsModuleToRow = (module: CmsModule): ModuleRow => ({
-  ...module,
-});
-
-export const cmsLessonToRow = (lesson: CmsLesson): LessonRow => ({
-  ...lesson,
-});

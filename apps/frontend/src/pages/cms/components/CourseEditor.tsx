@@ -7,11 +7,11 @@ import Card from '@frontend/components/ui/Card';
 import Spinner from '@frontend/components/ui/Spinner';
 import { uploadToBucket, BUCKETS } from '@frontend/services/storageService';
 import { log } from '@libs/logger';
-import type { CourseRow } from '@frontend/types/courseRow';
+import type { CmsCourse } from '@libs/cms-utils';
 
 export interface CourseEditorProps {
-  course: CourseRow | null;
-  onSave: (data: CourseRow) => void;
+  course: CmsCourse | null;
+  onSave: (data: CmsCourse) => void;
   onDelete: () => void;
 }
 
@@ -79,7 +79,7 @@ const CourseEditor: React.FC<CourseEditorProps> = ({ course, onSave, onDelete })
     if (!validateForm()) return;
     setIsSaving(true);
     try {
-      await onSave({ ...course, ...formData });
+      await onSave({ ...course, ...formData } as CmsCourse);
     } finally {
       setIsSaving(false);
     }
@@ -88,7 +88,7 @@ const CourseEditor: React.FC<CourseEditorProps> = ({ course, onSave, onDelete })
   const handleThumbnailUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const file = event.target.files[0];
+    const file = event.target.files?.[0];
     if (file) {
       setIsUploading(true);
       try {
@@ -428,7 +428,7 @@ const CourseEditor: React.FC<CourseEditorProps> = ({ course, onSave, onDelete })
                 </p>
 
                 <Button
-                  onClick={() => onDelete(course.id)}
+                  onClick={() => onDelete()}
                   className='w-full px-4 py-2 bg-error text-white hover:bg-error-600'
                   variant='danger'
                 >

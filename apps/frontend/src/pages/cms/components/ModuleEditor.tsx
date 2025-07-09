@@ -2,16 +2,16 @@ import React, { useState } from 'react';
 import Icon from '@frontend/components/AppIcon';
 import Button from '@frontend/components/ui/Button';
 import Spinner from '@frontend/components/ui/Spinner';
-import type { ModuleRow } from '@frontend/types/moduleRow';
+import type { CmsModule } from '@libs/cms-utils';
 
 export interface ModuleEditorProps {
-  module: ModuleRow | null;
-  onSave: (data: ModuleRow) => void;
+  module: CmsModule | null;
+  onSave: (data: CmsModule) => void;
   onDelete: () => void;
 }
 
 const ModuleEditor: React.FC<ModuleEditorProps> = ({ module, onSave, onDelete }) => {
-  const [formData, setFormData] = useState<Partial<ModuleRow>>({
+  const [formData, setFormData] = useState<Partial<CmsModule>>({
     title: module?.title || '',
     description: module?.description || '',
     order: module?.order || 1,
@@ -24,8 +24,8 @@ const ModuleEditor: React.FC<ModuleEditorProps> = ({ module, onSave, onDelete })
   const [isSaving, setIsSaving] = useState(false);
 
   const handleInputChange = (
-    field: keyof ModuleRow,
-    value: ModuleRow[keyof ModuleRow]
+    field: keyof CmsModule,
+    value: CmsModule[keyof CmsModule]
   ) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
