@@ -3,7 +3,7 @@ import { useAdminCourses } from '@frontend/context/AdminCourseContext';
 import { toast } from 'sonner';
 import { fetchCoursesWithContent } from '@frontend/services/courseService';
 import { log } from '@libs/logger';
-import type { CourseRow } from '@frontend/types/courseRow';
+import type { CourseRow } from '@frontend/types/rowSchemas';
 import type { ModuleRow } from '@frontend/types/moduleRow';
 import type { LessonRow } from '@frontend/types/lessonRow';
 import {

@@ -7,7 +7,7 @@ import type {
   PaginationOptions, 
   PaginatedCoursesResult
 } from '@/types/course.types';
-import { CourseProgressSchema } from '@/types/course.types';
+import { CourseWithProgressSchema } from '@/types/course.types';
 import { log } from '@libs/logger';
 import { z } from 'zod';
 
@@ -149,7 +149,7 @@ export async function fetchCourses({
     }
 
     // Valider et transformer les données
-    const validatedData = z.array(CourseProgressSchema).safeParse(data || []);
+    const validatedData = z.array(CourseWithProgressSchema).safeParse(data || []);
     
     if (!validatedData.success) {
       log.error('Course data validation failed', validatedData.error);
@@ -214,7 +214,7 @@ export async function fetchCourseWithContent(courseId: string): Promise<CourseWi
     }
 
     // Valider et transformer les données
-    const validatedCourse = CourseProgressSchema.parse(courseData) as CourseWithProgress;
+    const validatedCourse = CourseWithProgressSchema.parse(courseData) as CourseWithProgress;
     
     // Ajouter les modules et leçons au cours
     const courseWithContent: CourseWithProgress = {
@@ -228,4 +228,39 @@ export async function fetchCourseWithContent(courseId: string): Promise<CourseWi
     log.error(`Error fetching course ${courseId} with content`, error);
     throw error;
   }
+}
+
+export async function fetchCoursesWithContent(): Promise<CourseWithProgress[]> {
+  const { data, error } = await supabaseClient
+    .from('user_course_progress')
+    .select(
+      `*, modules(*, lessons(*, user_progress!inner(completed_at, status)))`
+    );
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return (data || []).map(d =>
+    CourseWithProgressSchema.parse(d) as CourseWithProgress
+  );
+}
+
+export const CoursesFromSupabaseSchema = z.object({
+  courses: z.array(CourseWithProgressSchema),
+  lessons: z.array(z.unknown()),
+  modules: z.array(z.unknown()),
+  userProgress: z.array(z.unknown()),
+});
+
+export type CoursesFromSupabase = z.infer<typeof CoursesFromSupabaseSchema>;
+
+export async function fetchCoursesFromSupabase(_userId: string): Promise<CoursesFromSupabase> {
+  const { data } = await fetchCourses();
+  return {
+    courses: data,
+    lessons: [],
+    modules: [],
+    userProgress: [],
+  };
 }

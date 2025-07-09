@@ -68,13 +68,23 @@ export interface CourseWithProgress extends Omit<Database['public']['Tables']['c
   completion_percentage: number;
   /** Date de dernière activité */
   last_activity_at: string | null;
+  /** Note moyenne */
+  average_rating: number;
+  /** Nombre d'inscriptions */
+  enrolled_students: number;
+  /** Durée totale en minutes */
+  duration_minutes: number;
+  /** Indique si le cours est récent */
+  is_new: boolean;
+  /** Durée formatée */
+  duration: string;
 }
 
 /**
  * Schéma de validation pour la progression d'un cours
  * Correspond à la vue SQL `user_course_progress`
  */
-export const CourseProgressSchema = z.object({
+export const CourseWithProgressSchema = z.object({
   // Champs de base du cours
   id: z.string().uuid('ID du cours invalide'),
   title: z.string().min(1, 'Le titre est requis'),
@@ -151,7 +161,7 @@ export const CourseProgressSchema = z.object({
 /**
  * Type déduit du schéma de validation
  */
-export type CourseWithProgressSchema = z.infer<typeof CourseProgressSchema> & {
+export type CourseWithProgressParsed = z.infer<typeof CourseWithProgressSchema> & {
   /** Durée formatée pour l'affichage */
   duration: string;
   /** Objet de progression calculé */

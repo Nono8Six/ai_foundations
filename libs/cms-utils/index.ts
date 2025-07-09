@@ -31,7 +31,7 @@ export interface CmsCourse extends BaseContentItem {
 export type CmsContentItem = CmsCourse | CmsModule | CmsLesson;
 
 import type { Database } from '@frontend/types/database.types';
-import type { CourseRow } from '@frontend/types/courseRow';
+import type { CourseRow } from '@frontend/types/rowSchemas';
 import type { ModuleRow } from '@frontend/types/moduleRow';
 import type { LessonRow } from '@frontend/types/lessonRow';
 

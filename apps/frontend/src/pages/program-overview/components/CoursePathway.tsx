@@ -80,7 +80,10 @@ const CoursePathway: React.FC<CoursePathwayProps> = ({ courses }) => {
             )}
 
             <div className='space-y-6'>
-              {groupedCourses[difficulty].map((course, courseIndex) => (
+              {groupedCourses[difficulty].map((course, courseIndex) => {
+                const progress = course.progress?.percentage ?? 0;
+                const isEnrolled = progress > 0;
+                return (
                 <div key={course.id} className='relative'>
                   {/* Course Connection Line */}
                   {courseIndex < groupedCourses[difficulty].length - 1 && (
@@ -93,16 +96,16 @@ const CoursePathway: React.FC<CoursePathwayProps> = ({ courses }) => {
                     <div className='flex-shrink-0'>
                       <div
                         className={`w-12 h-12 rounded-full flex items-center justify-center ${
-                          course.progress === 100
+                          progress === 100
                             ? 'bg-success text-white'
-                            : course.isEnrolled
+                            : isEnrolled
                               ? 'bg-primary text-white'
                               : 'bg-secondary-200 text-text-secondary'
                         }`}
                       >
-                        {course.progress === 100 ? (
+                        {progress === 100 ? (
                           <Icon aria-hidden='true' name='Check' size={20} />
-                        ) : course.isEnrolled ? (
+                        ) : isEnrolled ? (
                           <Icon aria-hidden='true' name='Play' size={20} />
                         ) : (
                           <Icon aria-hidden='true' name='Lock' size={20} />
@@ -126,7 +129,7 @@ const CoursePathway: React.FC<CoursePathwayProps> = ({ courses }) => {
                           <h3 className='text-lg font-semibold text-text-primary mb-1'>
                             {course.title}
                           </h3>
-                          {(course.duration || course.modules || course.xpReward) && (
+                          {course.duration && (
                             <div className='flex items-center gap-4 text-sm text-text-secondary'>
                               {course.duration && (
                                 <div className='flex items-center gap-1'>
@@ -134,35 +137,12 @@ const CoursePathway: React.FC<CoursePathwayProps> = ({ courses }) => {
                                   <span>{course.duration}</span>
                                 </div>
                               )}
-                              {course.modules && (
-                                <div className='flex items-center gap-1'>
-                                  <Icon aria-hidden='true' name='BookOpen' size={14} />
-                                  <span>{course.modules} modules</span>
-                                </div>
-                              )}
-                              {course.xpReward && (
-                                <div className='flex items-center gap-1'>
-                                  <Icon aria-hidden='true' name='Award' size={14} />
-                                  <span>{course.xpReward} XP</span>
-                                </div>
-                              )}
                             </div>
                           )}
                         </div>
 
                         {/* Course Badges */}
-                        <div className='flex gap-2'>
-                          {course.isFree && (
-                            <span className='px-2 py-1 bg-accent-100 text-accent-700 text-xs rounded-full font-medium'>
-                              Gratuit
-                            </span>
-                          )}
-                          {course.isEnrolled && (
-                            <span className='px-2 py-1 bg-primary-100 text-primary-700 text-xs rounded-full font-medium'>
-                              Inscrit
-                            </span>
-                          )}
-                        </div>
+                        <div className='flex gap-2' />
                       </div>
 
                       {/* Description */}
@@ -171,18 +151,18 @@ const CoursePathway: React.FC<CoursePathwayProps> = ({ courses }) => {
                       </p>
 
                       {/* Progress Bar (for enrolled courses) */}
-                      {course.isEnrolled && (
+                      {isEnrolled && (
                         <div className='mb-4'>
                           <div className='flex items-center justify-between text-sm mb-2'>
                             <span className='text-text-secondary'>Progression</span>
                             <span className='font-medium text-text-primary'>
-                              {course.progress}%
+                              {progress}%
                             </span>
                           </div>
                           <div className='w-full bg-secondary-200 rounded-full h-2'>
                             <div
-                              className={`h-2 rounded-full transition-all duration-300 ${getProgressColor(course.progress)}`}
-                              style={{ width: `${course.progress}%` }}
+                              className={`h-2 rounded-full transition-all duration-300 ${getProgressColor(progress)}`}
+                              style={{ width: `${progress}%` }}
                             />
                           </div>
                         </div>
@@ -207,19 +187,19 @@ const CoursePathway: React.FC<CoursePathwayProps> = ({ courses }) => {
 
                       {/* Action Buttons */}
                       <div className='flex items-center gap-3'>
-                        {course.isEnrolled ? (
+                        {isEnrolled ? (
                           <Link
                             to='/lesson-viewer'
                             className='px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors font-medium text-sm'
                           >
-                            {course.progress === 100 ? 'Revoir' : 'Continuer'}
+                            {progress === 100 ? 'Revoir' : 'Continuer'}
                           </Link>
                         ) : (
                           <Link
                             to='/lesson-viewer'
                             className='px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors font-medium text-sm'
                           >
-                            S'inscrire
+                            S&apos;inscrire
                           </Link>
                         )}
 
@@ -230,7 +210,7 @@ const CoursePathway: React.FC<CoursePathwayProps> = ({ courses }) => {
                         )}
 
                         {/* Rating */}
-                        {course.rating !== undefined && (
+                        {course.average_rating !== undefined && (
                           <div className='flex items-center gap-1 ml-auto'>
                             <Icon
                               aria-hidden='true'
@@ -239,10 +219,10 @@ const CoursePathway: React.FC<CoursePathwayProps> = ({ courses }) => {
                               className='text-warning fill-current'
                             />
                             <span className='text-sm font-medium text-text-primary'>
-                              {course.rating}
+                              {course.average_rating.toFixed(1)}
                             </span>
                             <span className='text-sm text-text-secondary'>
-                              ({course.enrolledStudents || 0})
+                              ({course.enrolled_students || 0})
                             </span>
                           </div>
                         )}
@@ -250,7 +230,8 @@ const CoursePathway: React.FC<CoursePathwayProps> = ({ courses }) => {
                     </div>
                   </div>
                 </div>
-              ))}
+              );
+              })}
             </div>
           </div>
         </div>
@@ -260,9 +241,9 @@ const CoursePathway: React.FC<CoursePathwayProps> = ({ courses }) => {
       {courses.length > 0 && (
         <div className='text-center py-12 bg-gradient-to-r from-primary-50 to-accent-50 rounded-xl'>
           <Icon aria-hidden='true' name='Trophy' size={48} className='mx-auto text-primary mb-4' />
-          <h3 className='text-xl font-bold text-text-primary mb-2'>Parcours d'Excellence IA</h3>
+          <h3 className='text-xl font-bold text-text-primary mb-2'>Parcours d&apos;Excellence IA</h3>
           <p className='text-text-secondary max-w-2xl mx-auto'>
-            Suivez ce parcours structuré pour maîtriser l'intelligence artificielle de manière
+            Suivez ce parcours structuré pour maîtriser l&apos;intelligence artificielle de manière
             progressive et efficace. Chaque cours vous prépare au suivant.
           </p>
         </div>

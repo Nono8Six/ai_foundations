@@ -28,9 +28,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
   };
 
   // Calculer le pourcentage de progression
-  const progressPercentage = course.progress
-    ? Math.round((course.progress.completed_lessons / course.progress.total_lessons) * 100)
-    : 0;
+  const progressPercentage = course.progress?.percentage ?? 0;
 
   return (
     <div className='bg-surface rounded-xl shadow-subtle hover:shadow-medium transition-all duration-300 overflow-hidden group hover:-translate-y-1 flex flex-col h-full'>
@@ -120,20 +118,12 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
               <span>{course.duration || 'Durée variable'}</span>
             </div>
             
-            {(course.xpReward || course.lessons) && (
+            {course.total_lessons > 0 && (
               <div className='flex items-center gap-4'>
-                {course.xpReward && (
-                  <div className='flex items-center gap-1'>
-                    <Icon aria-hidden='true' name='Award' size={14} />
-                    <span>{course.xpReward} XP</span>
-                  </div>
-                )}
-                {course.lessons && (
-                  <div className='flex items-center gap-1'>
-                    <Icon aria-hidden='true' name='FileText' size={14} />
-                    <span>{course.lessons} leçons</span>
-                  </div>
-                )}
+                <div className='flex items-center gap-1'>
+                  <Icon aria-hidden='true' name='FileText' size={14} />
+                  <span>{course.total_lessons} leçons</span>
+                </div>
               </div>
             )}
           </div>
@@ -179,23 +169,23 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
 
         {/* Action Buttons */}
         <div className='mt-4 space-y-2'>
-          {course.isEnrolled ? (
+          {course.progress && course.progress.percentage > 0 ? (
             <Link
               to='/lesson-viewer'
               className='w-full px-4 py-3 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors font-medium text-center block'
             >
-              {course.progress === 100 ? 'Revoir le cours' : 'Continuer'}
+              {course.progress.percentage === 100 ? 'Revoir le cours' : 'Continuer'}
             </Link>
           ) : (
             <Link
               to='/lesson-viewer'
               className='w-full px-4 py-3 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors font-medium text-center block'
             >
-              S'inscrire
+              S&apos;inscrire
             </Link>
           )}
 
-          {course.previewLessons > 0 && (
+          {course.previewLessons && course.previewLessons > 0 && (
             <button className='w-full px-4 py-2 border border-border text-text-secondary rounded-lg hover:bg-secondary-50 transition-colors text-sm'>
               Aperçu gratuit ({course.previewLessons} leçons)
             </button>
