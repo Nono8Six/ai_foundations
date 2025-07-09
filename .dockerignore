@@ -25,9 +25,7 @@ pnpm-debug.log*
 **/*.spec.*
 coverage/
 
-# Documentation and plans
-docs/
-README.md
+# Documentation (obsolete paths)
 
 # Sample and local env files
 .env*
