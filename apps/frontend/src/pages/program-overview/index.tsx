@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@frontend/context/AuthContext';
 import Icon from '@frontend/components/AppIcon';
 import { fetchCourses } from '@frontend/services/courseService';
@@ -18,9 +18,7 @@ export interface ProgramFilters {
   status: string[];
 }
 
-interface ProgramOverviewProps {}
-
-const ProgramOverview: React.FC<ProgramOverviewProps> = () => {
+const ProgramOverview: React.FC = () => {
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [sortBy, setSortBy] = useState<CourseSortOption>('progress_desc');
@@ -33,7 +31,7 @@ const ProgramOverview: React.FC<ProgramOverviewProps> = () => {
   const [showFilters, setShowFilters] = useState<boolean>(false);
   const [viewMode, setViewMode] = useState<'grid' | 'pathway'>('grid');
   const [loading, setLoading] = useState<boolean>(true);
-  const [courses, setCourses] = useState<CoursesRow[]>([]);
+  const [courses, setCourses] = useState<CourseWithProgress[]>([]);
   const [page, setPage] = useState<number>(1);
   const [totalCourses, setTotalCourses] = useState<number>(0);
   const pageSize = 12;
@@ -64,20 +62,7 @@ const ProgramOverview: React.FC<ProgramOverviewProps> = () => {
     load();
   }, [searchQuery, sortBy, filters, page]);
 
-  // Transform Supabase courses to match expected format
-  const formattedCourses = useMemo(() => {
-    if (!courses?.length) return [];
-
-    return courses.map(course => ({
-      id: course.id,
-      title: course.title,
-      description: course.description || '',
-      category: course.category || 'Non classé',
-      image:
-        course.cover_image_url ||
-        'https://images.pexels.com/photos/373543/pexels-photo-373543.jpeg?w=400&h=250&fit=crop',
-    }));
-  }, [courses]);
+  const formattedCourses = courses;
 
   const handleFilterChange = (newFilters: ProgramFilters) => {
     setFilters(newFilters);

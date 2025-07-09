@@ -11,6 +11,7 @@ Execution Protocol
 Work on the current branch; if necessary, create a temporary codex/<topic> branch.
 
 Run the Quality Gate (see below) before the final commit, not after every micro‑edit.
+Install dependencies first with `pnpm install --frozen-lockfile` (CI calls `scripts/setup.sh`).
 
 Keep the work‑tree clean (git status shows no changes) before committing.
 
@@ -60,7 +61,7 @@ Coding Conventions
 
 TypeScript: strict: true; avoid any, unknown, and @ts-ignore.
 
-React: function components with hooks; co‑locate *.test.tsx and *.stories.tsx.
+React: function components with hooks; co‑locate _.test.tsx and _.stories.tsx.
 
 Accessibility: provide ARIA labels and keyboard navigation (WCAG 2.2 AA).
 

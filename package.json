@@ -15,7 +15,6 @@
     "test:e2e": "playwright test",
     "start": "pnpm run dev",
     "lint": "eslint . --max-warnings 0",
-    "test": "pnpm exec vitest run --passWithNoTests",
     "generate": "pnpm types:gen",
     "typecheck": "tsc --noEmit",
     "prepare": "husky install",

@@ -1,12 +1,12 @@
 import React from 'react';
 import Icon from '@frontend/components/AppIcon';
-import type { Course } from '@frontend/types/course';
+import type { CourseWithProgress } from '@frontend/types/course.types';
 import type { ProgramFilters } from '../index';
 
 export interface FilterSidebarProps {
   filters: ProgramFilters;
   onFilterChange: (filters: ProgramFilters) => void;
-  courses: Course[];
+  courses: CourseWithProgress[];
 }
 
 const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, onFilterChange, courses }) => {
