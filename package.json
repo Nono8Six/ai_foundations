@@ -11,6 +11,8 @@
     "dev": "pnpm --filter frontend dev",
     "build": "pnpm --filter frontend build",
     "preview": "pnpm --filter frontend preview",
+    "test": "cross-env-shell LOG_LEVEL=fatal pnpm exec vitest run --passWithNoTests",
+    "test:e2e": "playwright test",
     "start": "pnpm run dev",
     "lint": "eslint . --max-warnings 0",
     "test": "pnpm exec vitest run --passWithNoTests",
