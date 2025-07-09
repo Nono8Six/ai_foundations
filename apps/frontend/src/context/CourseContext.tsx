@@ -6,16 +6,17 @@ import { useAuth } from './AuthContext';
 import { createContextStrict } from './createContextStrict';
 
 import { logError } from './ErrorContext.tsx';
-import {
-  fetchCoursesFromSupabase,
-  CoursesFromSupabaseSchema,
-} from '@frontend/services/courseService';
-import type { CoursesFromSupabase } from '@frontend/services/courseService';
+import { fetchCourses } from '@frontend/services/courseService';
+import type { PaginatedCoursesResult, CourseWithProgress } from '@frontend/types/course.types';
 import type { NoInfer } from '@frontend/types/utils';
 
-type CourseData = CoursesFromSupabase;
+type CourseData = PaginatedCoursesResult;
 
-export interface CourseContextValue extends CourseData {
+export interface CourseContextValue {
+  coursesWithProgress: CourseWithProgress[];
+  userProgress: unknown[];
+  lessons: unknown[];
+  modules: unknown[];
   isLoading: boolean;
   refetchCourses: () => Promise<QueryObserverResult<CourseData | null, unknown>>;
 }
@@ -27,29 +28,23 @@ export const CourseProvider = ({ children }: { children: ReactNode }) => {
 
   const key: NoInfer<[string, string | undefined]> = ['courses', user?.id];
 
-  const queryResult = useQuery<CoursesFromSupabase, Error, CoursesFromSupabase, typeof key>({
+  const queryResult = useQuery<PaginatedCoursesResult, Error, PaginatedCoursesResult, typeof key>({
     queryKey: key,
-    queryFn: () =>
-      fetchCoursesFromSupabase(user?.id ?? (() => { throw new Error('User ID is undefined'); })()).then(data =>
-        CoursesFromSupabaseSchema.parse(data)
-      ),
+    queryFn: () => fetchCourses(),
     enabled: !!user?.id,
     onError: (error: Error) =>
       logError(new Error(`[CourseContext] A critical error occurred: ${error.message}`)),
   });
 
   // Extraction des données avec des valeurs par défaut
-  const courses = queryResult.data?.courses || [];
-  const lessons = queryResult.data?.lessons || [];
-  const modules = queryResult.data?.modules || [];
-  const userProgress = queryResult.data?.userProgress || [];
+  const coursesWithProgress = queryResult.data?.data || [];
 
   // La valeur du contexte utilise directement les résultats de useQuery
   const value: CourseContextValue = {
-    courses,
-    userProgress,
-    lessons,
-    modules,
+    coursesWithProgress,
+    userProgress: [],
+    lessons: [],
+    modules: [],
     isLoading: queryResult.isLoading,
     refetchCourses: queryResult.refetch,
   };

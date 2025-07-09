@@ -6,7 +6,10 @@ import { log } from '@libs/logger';
 import CourseCard from './components/CourseCard';
 import FilterSidebar from './components/FilterSidebar';
 import CoursePathway from './components/CoursePathway';
-import type { CourseWithProgress } from '@frontend/types/course.types';
+import type { Database } from '@frontend/types/database.types';
+import type { CourseSortOption } from '@frontend/types/course.types';
+
+type CoursesRow = Database['public']['Tables']['courses']['Row'];
 
 export interface ProgramFilters {
   skillLevel: string[];
@@ -18,7 +21,7 @@ export interface ProgramFilters {
 const ProgramOverview: React.FC = () => {
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [sortBy, setSortBy] = useState<string>('popularity');
+  const [sortBy, setSortBy] = useState<CourseSortOption>('progress_desc');
   const [filters, setFilters] = useState<ProgramFilters>({
     skillLevel: [],
     duration: [],
@@ -37,15 +40,16 @@ const ProgramOverview: React.FC = () => {
     const load = async () => {
       setLoading(true);
       try {
-        const result = await fetchCourses({
-          search: searchQuery,
-          filters,
+        const { data, pagination } = await fetchCourses({
+          filters: {
+            ...filters,
+            search: searchQuery,
+          },
           sortBy,
-          page,
-          pageSize,
+          pagination: { page, pageSize },
         });
-        setCourses(result.data);
-        setTotalCourses(result.pagination.total ?? 0);
+        setCourses(data);
+        setTotalCourses(pagination.total);
       } catch (error) {
         log.error('Error loading courses', error);
         setCourses([]);
@@ -126,11 +130,11 @@ const ProgramOverview: React.FC = () => {
                 onChange={e => setSortBy(e.target.value)}
                 className='px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent'
               >
-                <option value='popularity'>Popularité</option>
-                <option value='difficulty'>Difficulté</option>
-                <option value='duration'>Durée</option>
-                <option value='alphabetical'>Alphabétique</option>
-                <option value='rating'>Note</option>
+                <option value='progress_desc'>Popularité</option>
+                <option value='difficulty_desc'>Difficulté</option>
+                <option value='progress_asc'>Durée</option>
+                <option value='title_asc'>Alphabétique</option>
+                <option value='last_activity_desc'>Note</option>
               </select>
 
               <button
