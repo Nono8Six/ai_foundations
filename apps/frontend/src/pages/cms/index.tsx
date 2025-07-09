@@ -3,9 +3,7 @@ import { useAdminCourses } from '@frontend/context/AdminCourseContext';
 import { toast } from 'sonner';
 import { fetchCoursesWithContent } from '@frontend/services/courseService';
 import { log } from '@libs/logger';
-import type { CourseRow } from '@frontend/types/courseRow';
-import type { ModuleRow } from '@frontend/types/moduleRow';
-import type { LessonRow } from '@frontend/types/lessonRow';
+import type { Database } from '@frontend/types/database.types';
 import {
   type CmsContentItem,
   type CmsCourse,
@@ -14,9 +12,6 @@ import {
   type CourseWithContent,
   courseApiToCmsCourse,
   courseRowToCmsCourse,
-  cmsCourseToRow,
-  cmsModuleToRow,
-  cmsLessonToRow,
 } from '@libs/cms-utils';
 
 import Icon from '@frontend/components/AppIcon';
@@ -97,9 +92,6 @@ const mapToContentNode = (item: CourseWithContent | CmsContentItem): ContentNode
   return result;
 };
 
-const toCmsCourse = (data: CourseRow): CmsCourse => ({ ...data, type: 'course' });
-const toCmsModule = (data: ModuleRow): CmsModule => ({ ...data, type: 'module' });
-const toCmsLesson = (data: LessonRow): CmsLesson => ({ ...data, type: 'lesson' });
 
 const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
   const { setSidebarOpen } = useAdminSidebar();
@@ -149,7 +141,7 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
           ? courseData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
           : `course-${Date.now()}`;
 
-        // Conversion en CourseRow pour API
+        // Préparation des données pour l'API
         const updates = {
           title: courseData.title,
           description: courseData.description || '',
@@ -159,7 +151,9 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
           updated_at: new Date().toISOString()
         } as const;
 
-        const courseDataForApi: Omit<CourseRow, 'id'> & { id?: string } = {
+        const courseDataForApi: Omit<Database['public']['Tables']['courses']['Row'], 'id'> & {
+          id?: string;
+        } = {
           title: updates.title,
           description: updates.description,
           price: updates.price,
@@ -248,27 +242,27 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
       );
     }
 
-    const handleCourseSave = async (data: CourseRow) => {
+    const handleCourseSave = async (data: CmsCourse) => {
       try {
-        await handleSaveContent(toCmsCourse(data));
+        await handleSaveContent(data);
       } catch (error) {
         log.error('Error saving content:', error);
         toast.error('Erreur lors de la sauvegarde du contenu');
       }
     };
 
-    const handleModuleSave = async (data: ModuleRow) => {
+    const handleModuleSave = async (data: CmsModule) => {
       try {
-        await handleSaveContent(toCmsModule(data));
+        await handleSaveContent(data);
       } catch (error) {
         log.error('Error saving content:', error);
         toast.error('Erreur lors de la sauvegarde du contenu');
       }
     };
 
-    const handleLessonSave = async (data: LessonRow) => {
+    const handleLessonSave = async (data: CmsLesson) => {
       try {
-        await handleSaveContent(toCmsLesson(data));
+        await handleSaveContent(data);
       } catch (error) {
         log.error('Error saving content:', error);
         toast.error('Erreur lors de la sauvegarde du contenu');
@@ -285,7 +279,7 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
       case 'course':
         return (
           <CourseEditor
-            course={selectedContent ? cmsCourseToRow(selectedContent as CmsCourse) : null}
+            course={selectedContent as CmsCourse | null}
             onSave={handleCourseSave}
             onDelete={handleDelete}
           />
@@ -293,7 +287,7 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
       case 'module':
         return (
           <ModuleEditor
-            module={selectedContent ? cmsModuleToRow(selectedContent as CmsModule) : null}
+            module={selectedContent as CmsModule | null}
             onSave={handleModuleSave}
             onDelete={handleDelete}
           />
@@ -301,7 +295,7 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
       case 'lesson':
         return (
           <LessonEditor
-            lesson={selectedContent ? cmsLessonToRow(selectedContent as CmsLesson) : null}
+            lesson={selectedContent as CmsLesson | null}
             onSave={handleLessonSave}
             onDelete={handleDelete}
           />
