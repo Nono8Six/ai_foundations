@@ -31,7 +31,15 @@
     "db:start": "pnpm supabase:start",
     "db:stop": "pnpm supabase:stop",
     "gen:types": "pnpm supabase:gen:types",
-    "validate:env": "node scripts/validate-env.js"
+    "validate:env": "node scripts/validate-env.js",
+    "supabase:db:diff": "pnpm --filter backend exec supabase db diff",
+    "db:push": "pnpm supabase:db:push",
+    "db:diff": "pnpm supabase:db:diff",
+    "db:reset": "pnpm supabase:db:reset",
+    "clean:docker": "sh scripts/cleanup.sh",
+    "recovery": "sh scripts/recovery.sh",
+    "reset:hard": "pnpm clean:docker && pnpm recovery",
+    "sync:from-cloud": "sh scripts/sync-supabase.sh --pull"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.3.0",

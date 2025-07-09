@@ -5,9 +5,8 @@
 ### Étape 1 : Nettoyage Total
 
 ```bash
-# Exécuter le script de récupération
-chmod +x scripts/recovery.sh
-./scripts/recovery.sh
+# Exécuter le script de récupération complet
+pnpm recovery
 ```
 
 ### Étape 2 : Vérification Supabase Cloud
