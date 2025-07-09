@@ -193,7 +193,7 @@ git diff
 supabase migration new nom_de_la_migration
 
 # 4. Vérifier que tout fonctionne en local
-supabase db reset
+pnpm db:reset
 ````
 
 ### 2. Du local vers l'interface web
@@ -202,7 +202,7 @@ supabase db reset
 # Se placer dans le dossier backend
 cd apps/backend
 # 1. Appliquer les migrations locales (opération exceptionnelle)
-supabase db push
+pnpm db:push
 
 # 2. Vérifier dans l'interface web que tout est à jour
 ```
@@ -221,7 +221,7 @@ En cas de conflit de schéma :
 
 3. Appliquer la fusion :
    ```bash
-   supabase db reset
+   pnpm db:reset
    ```
 
 ## Récupérer la base locale depuis Supabase Cloud
@@ -229,8 +229,8 @@ En cas de conflit de schéma :
 Quand votre environnement local devient instable ou si vous souhaitez repartir sur une base propre, exécutez les commandes suivantes depuis `apps/backend` :
 
 ```bash
-supabase db reset
-supabase db pull
+pnpm db:reset
+pnpm db:pull
 ```
 
 La première commande vide la base locale, la seconde télécharge le schéma stocké sur Supabase Cloud. Après chaque synchronisation, pensez à régénérer les types TypeScript :
@@ -352,7 +352,7 @@ Dernière mise à jour : 22/06/2025
    supabase db pull
 
     # Après des modifications (opération exceptionnelle)
-    supabase db push
+    pnpm db:push
    git add .
    git commit -m "feat: mise à jour du schéma pour la fonctionnalité X"
    git push
@@ -380,7 +380,7 @@ Dernière mise à jour : 22/06/2025
    supabase db diff
 
    # Forcer une synchronisation (attention aux pertes de données)
-   supabase db reset --force
+   pnpm db:reset --force
    ```
 
 3. **Problèmes de connexion**
@@ -413,7 +413,7 @@ fi
 # Pousser les modifications locales (usage exceptionnel)
 if [ "$1" = "--push" ]; then
     echo "🚀 Envoi des modifications (opération exceptionnelle)..."
-    supabase db push
+    pnpm db:push
     exit 0
 fi
 
@@ -443,7 +443,7 @@ Ajoutez un hook pre-commit pour vérifier l'état de la base de données :
 
 # Vérifier si des migrations sont en attente
 if ! supabase migration list | grep -q "No migrations found"; then
-    echo "⚠️  Des migrations sont en attente. Exécutez 'supabase db push' d'abord (cas exceptionnel)."
+    echo "⚠️  Des migrations sont en attente. Exécutez 'pnpm db:push' d'abord (cas exceptionnel)."
     exit 1
 fi
 
