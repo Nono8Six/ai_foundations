@@ -28,6 +28,8 @@
     "supabase:db:repair": "pnpm --filter backend exec supabase migration repair",
     "supabase:gen:types": "cross-env-shell npx supabase@latest gen types typescript --project-id $SUPABASE_PROJECT_REF --schema public > apps/frontend/src/types/database.types.ts",
     "db:pull": "pnpm supabase:db:pull",
+    "db:push": "pnpm supabase:db:push",
+    "db:reset": "pnpm supabase:db:reset",
     "db:start": "pnpm supabase:start",
     "db:stop": "pnpm supabase:stop",
     "gen:types": "pnpm supabase:gen:types",
