@@ -7,7 +7,7 @@ apps\frontend\node_modules
 !.env.example
 .env.corrupted.backup*
 
-# Removed docs
+# Ignore docs build artifacts
 
 /docs/bundle/*.html
 *.map
