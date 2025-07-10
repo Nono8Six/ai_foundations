@@ -37,6 +37,7 @@
     "**/*.test.js",
     "**/*.test.jsx",
     "scripts/**",
-    "apps/frontend/eslint.config.js"
+    "apps/frontend/eslint.config.js",
+    "tests/e2e/**"
   ]
 }
