@@ -257,8 +257,30 @@ export type CoursesFromSupabase = z.infer<typeof CoursesFromSupabaseSchema>;
 
 export async function fetchCoursesFromSupabase(_userId: string): Promise<CoursesFromSupabase> {
   const { data } = await fetchCourses();
+  
+  // Normaliser les données pour s'assurer qu'elles correspondent au schéma attendu
+  const normalizedCourses = (data || []).map(course => ({
+    ...course,
+    // S'assurer que created_at est toujours une chaîne non nulle
+    created_at: course.created_at || new Date().toISOString(),
+    // S'assurer que is_published est toujours un booléen (par défaut à false)
+    is_published: course.is_published ?? false,
+    // S'assurer que les champs obligatoires ont des valeurs par défaut
+    duration: course.duration || '0h 00',
+    progress: {
+      completed: course.completed_lessons || 0,
+      total: course.total_lessons || 0,
+      percentage: course.completion_percentage || 0,
+      lastActivityAt: course.last_activity_at || null,
+      status: course.status || 'not_started',
+    },
+  }));
+
+  // Valider les données transformées avec le schéma
+  const validatedData = CourseWithProgressSchema.array().parse(normalizedCourses);
+
   return {
-    courses: data,
+    courses: validatedData,
     lessons: [],
     modules: [],
     userProgress: [],

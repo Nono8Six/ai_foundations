@@ -115,7 +115,8 @@ export const CourseWithProgressSchema = z.object({
     .nullable()
     .transform(val => val || 'beginner'),
   is_published: z.boolean().default(false),
-  created_at: z.string().datetime('Date de création invalide'),
+  created_at: z.string().datetime('Date de création invalide').nullable()
+    .transform(val => val || new Date().toISOString()),
   updated_at: z.string().datetime('Date de mise à jour invalide').nullable(),
   
   // Champs de progression
