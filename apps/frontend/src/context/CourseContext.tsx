@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useAuth } from './AuthContext';
 import { createContextStrict } from './createContextStrict';
 
-import { logError } from './ErrorContext.tsx';
+import { logError } from './ErrorContext';
 import { fetchCourses } from '@frontend/services/courseService';
 import type { PaginatedCoursesResult, CourseWithProgress } from '@frontend/types/course.types';
 import type { NoInfer } from '@frontend/types/utils';
