@@ -20,6 +20,13 @@ describe('safeQuery', () => {
     expect(result).toEqual({ data: null, error: err });
   });
 
+  it('returns "No data" error when query resolves with null data', async () => {
+    vi.spyOn(ErrorContext, 'logError').mockImplementation(() => {});
+    const result = await safeQuery(() => Promise.resolve({ data: null, error: null }));
+    expect(result.error).toEqual(new Error('No data'));
+    expect(result.data).toBeNull();
+  });
+
   it('catches thrown errors and logs them', async () => {
     const err = new Error('boom');
     const spy = vi.spyOn(ErrorContext, 'logError').mockImplementation(() => {});

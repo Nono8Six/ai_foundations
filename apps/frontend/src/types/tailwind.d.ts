@@ -1,1 +1,1 @@
-declare module '../../tailwind.config.js';
+declare module 'tailwind-config';

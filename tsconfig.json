@@ -21,7 +21,8 @@
       "@libs/*": ["./libs/*"],
       "@frontend/*": ["./apps/frontend/src/*"],
       "$lib/*": ["./apps/frontend/src/lib/*"],
-      "@/*": ["./apps/frontend/src/*"]
+      "@/*": ["./apps/frontend/src/*"],
+      "tailwind-config": ["./apps/frontend/tailwind.config.js"]
     },
     "typeRoots": ["./node_modules/@types"],
     "types": ["node"],
@@ -37,6 +38,7 @@
     "**/*.test.js",
     "**/*.test.jsx",
     "scripts/**",
-    "apps/frontend/eslint.config.js"
+    "apps/frontend/eslint.config.js",
+    "tests/e2e/**"
   ]
 }

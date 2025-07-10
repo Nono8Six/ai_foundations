@@ -75,22 +75,22 @@ export function useSupabaseList<T extends keyof Database['public']['Tables']>(
 
   const create = useMutation<Row, PostgrestError, Insert>({
     mutationFn: async (payload: Insert) => {
-      const { data, error } = await safeQuery<Row>(async () => {
+      const result = await safeQuery<Row>(async () => {
         const resp = await supabaseClient.from(table).insert(payload).select().single();
         return { data: resp.data, error: resp.error };
       });
-      return assertData({ data, error });
+      return assertData<Row>(result);
     },
     onSuccess: invalidate,
   });
 
   const update = useMutation<Row, PostgrestError, { id: string; updates: Update }>({
     mutationFn: async ({ id, updates }) => {
-      const { data, error } = await safeQuery<Row>(async () => {
+      const result = await safeQuery<Row>(async () => {
         const resp = await supabaseClient.from(table).update(updates).eq('id', id).select().single();
         return { data: resp.data, error: resp.error };
       });
-      return assertData({ data, error });
+      return assertData<Row>(result);
     },
     onSuccess: invalidate,
   });
