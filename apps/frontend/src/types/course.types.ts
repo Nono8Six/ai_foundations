@@ -78,6 +78,24 @@ export interface CourseWithProgress extends Omit<Database['public']['Tables']['c
   is_new: boolean;
   /** Durée formatée */
   duration: string;
+  /** Identifiant de l'utilisateur pour cette progression */
+  user_id: string;
+  /** Statut brut de progression */
+  status: CourseProgressStatus;
+  /** Prérequis du cours */
+  prerequisites?: string[];
+  /** Tags liés au cours */
+  tags?: string[];
+  /** Nombre de leçons disponibles en aperçu */
+  previewLessons?: number;
+  /** Nom de l'instructeur */
+  instructor?: string;
+  /** Modules avec leurs leçons pour ce cours */
+  modules?: Array<
+    Database['public']['Tables']['modules']['Row'] & {
+      lessons: Database['public']['Tables']['lessons']['Row'][];
+    }
+  >;
 }
 
 /**

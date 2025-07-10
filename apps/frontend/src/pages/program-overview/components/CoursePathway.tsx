@@ -83,6 +83,10 @@ const CoursePathway: React.FC<CoursePathwayProps> = ({ courses }) => {
               {groupedCourses[difficulty].map((course, courseIndex) => {
                 const progress = course.progress?.percentage ?? 0;
                 const isEnrolled = progress > 0;
+                const imageSrc =
+                  course.thumbnail_url ||
+                  course.cover_image_url ||
+                  '/assets/images/no_image.png';
                 return (
                 <div key={course.id} className='relative'>
                   {/* Course Connection Line */}
@@ -173,7 +177,7 @@ const CoursePathway: React.FC<CoursePathwayProps> = ({ courses }) => {
                         <div className='mb-4'>
                           <p className='text-xs text-text-secondary mb-2'>Prérequis:</p>
                           <div className='flex flex-wrap gap-1'>
-                            {course.prerequisites.map((prereq, index) => (
+                            {course.prerequisites.map((prereq: string, index: number) => (
                               <span
                                 key={index}
                                 className='px-2 py-1 bg-secondary-100 text-secondary-700 text-xs rounded'
