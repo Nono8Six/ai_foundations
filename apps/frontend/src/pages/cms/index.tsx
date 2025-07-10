@@ -112,7 +112,9 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
       setLoading(true);
       try {
         const courses = await fetchCoursesWithContent();
-        setContentData(courses.map(courseApiToCmsCourse));
+        setContentData(
+          courses.map(course => courseApiToCmsCourse(course as unknown as CourseWithContent))
+        );
       } catch (err) {
         log.error('Failed to fetch courses', err);
         toast.error('Erreur lors du chargement du contenu');
@@ -153,6 +155,8 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
 
         const courseDataForApi: Omit<Database['public']['Tables']['courses']['Row'], 'id'> & {
           id?: string;
+          price?: number;
+          status?: string;
         } = {
           title: updates.title,
           description: updates.description,

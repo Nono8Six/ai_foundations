@@ -8,6 +8,7 @@ import {
   uploadToBucket,
   getPublicUrl,
 } from '@frontend/services/storageService';
+import type { FileObject } from '@supabase/storage-js';
 
 interface MediaItem {
   id: string;
@@ -16,15 +17,22 @@ interface MediaItem {
   size: number;
   uploadDate: string;
   type: string;
+  dimensions?: string;
+  duration?: string;
+  pages?: number;
 }
 
 export interface MediaLibraryProps {
   onClose: () => void;
-  onSelectMedia: (item: MediaItem) => void;
+  onSelectMedia: (item: MediaItem[]) => void;
+}
+
+interface FileObjectWithSize extends FileObject {
+  size?: number;
 }
 
 const MediaLibrary: React.FC<MediaLibraryProps> = ({ onClose, onSelectMedia }) => {
-  const [activeTab, setActiveTab] = useState('images');
+  const [activeTab, setActiveTab] = useState<keyof typeof BUCKETS>('images');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
@@ -35,7 +43,7 @@ const MediaLibrary: React.FC<MediaLibraryProps> = ({ onClose, onSelectMedia }) =
     { id: 'images', label: 'Images', icon: 'Image', count: tabCounts.images },
     { id: 'videos', label: 'Vidéos', icon: 'Video', count: tabCounts.videos },
     { id: 'documents', label: 'Documents', icon: 'FileText', count: tabCounts.documents },
-  ];
+  ] as const;
 
   const fetchMedia = async (tab: keyof typeof BUCKETS) => {
     try {
@@ -44,7 +52,7 @@ const MediaLibrary: React.FC<MediaLibraryProps> = ({ onClose, onSelectMedia }) =
         id: f.id || f.name,
         name: f.name,
         url: getPublicUrl(BUCKETS[tab], f.name),
-        size: f.metadata?.size || f.size || 0,
+        size: f.metadata?.size || (f as FileObjectWithSize).size || 0,
         uploadDate: f.updated_at,
         type: tab.slice(0, -1),
       }));

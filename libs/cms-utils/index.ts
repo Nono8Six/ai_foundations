@@ -12,12 +12,22 @@ export interface CmsLesson extends BaseContentItem {
   status?: string;
   completions?: number;
   moduleId?: string;
+  content?: string;
+  videoUrl?: string;
+  order?: number;
+  hasQuiz?: boolean;
+  allowComments?: boolean;
+  isPreview?: boolean;
 }
 
 export interface CmsModule extends BaseContentItem {
   type: 'module';
   courseId?: string;
   lessons?: CmsLesson[];
+  order?: number;
+  learningObjectives?: string;
+  estimatedDuration?: number;
+  isOptional?: boolean;
 }
 
 export interface CmsCourse extends BaseContentItem {

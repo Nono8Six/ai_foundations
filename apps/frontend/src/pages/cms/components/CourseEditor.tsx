@@ -7,6 +7,7 @@ import Card from '@frontend/components/ui/Card';
 import Spinner from '@frontend/components/ui/Spinner';
 import { uploadToBucket, BUCKETS } from '@frontend/services/storageService';
 import { log } from '@libs/logger';
+import type { CmsCourse } from '@libs/cms-utils';
 
 
 export interface CourseEditorProps {
