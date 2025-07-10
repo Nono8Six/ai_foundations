@@ -27,7 +27,7 @@ const NoteTaking: React.FC<NoteTakingProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [noteFilter, setNoteFilter] = useState('all'); // all, highlights, personal
 
-  const handleSubmitNote = e => {
+  const handleSubmitNote = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (newNote.trim()) {
       onAddNote(newNote.trim());
@@ -49,7 +49,7 @@ const NoteTaking: React.FC<NoteTakingProps> = ({
     return matchesSearch;
   });
 
-  const formatTimestamp = timestamp => {
+  const formatTimestamp = (timestamp: string): string => {
     const date = new Date(timestamp);
     return date.toLocaleString('fr-FR', {
       day: '2-digit',

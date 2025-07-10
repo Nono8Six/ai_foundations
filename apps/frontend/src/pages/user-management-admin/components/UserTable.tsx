@@ -23,12 +23,12 @@ const UserTable: React.FC<UserTableProps> = ({
   onSelectAll,
   onUserClick,
 }) => {
-  const getSortIcon = key => {
+  const getSortIcon = (key: string): string => {
     if (sortConfig.key !== key) return 'ArrowUpDown';
     return sortConfig.direction === 'asc' ? 'ArrowUp' : 'ArrowDown';
   };
 
-  const getStatusBadge = status => {
+  const getStatusBadge = (status: string) => {
     const statusConfig = {
       active: { color: 'bg-success-100 text-success-700', label: 'Actif' },
       inactive: { color: 'bg-error-100 text-error-700', label: 'Inactif' },
@@ -45,7 +45,7 @@ const UserTable: React.FC<UserTableProps> = ({
     );
   };
 
-  const getRoleBadge = role => {
+  const getRoleBadge = (role: string) => {
     const roleConfig = {
       admin: { color: 'bg-primary-100 text-primary-700', label: 'Admin' },
       student: { color: 'bg-secondary-100 text-secondary-700', label: 'Étudiant' },
@@ -61,7 +61,7 @@ const UserTable: React.FC<UserTableProps> = ({
     );
   };
 
-  const formatDate = dateString => {
+  const formatDate = (dateString: string): string => {
     return new Date(dateString).toLocaleDateString('fr-FR', {
       day: '2-digit',
       month: '2-digit',
@@ -69,7 +69,7 @@ const UserTable: React.FC<UserTableProps> = ({
     });
   };
 
-  const getActivityStatus = lastActivity => {
+  const getActivityStatus = (lastActivity: string) => {
     const daysSinceActivity = Math.floor(
       (new Date() - new Date(lastActivity)) / (1000 * 60 * 60 * 24)
     );

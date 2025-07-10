@@ -48,7 +48,7 @@ const UserDetailsPanel = ({ user, onClose }: UserDetailsPanelProps) => {
     );
   };
 
-  const formatDate = dateString => {
+  const formatDate = (dateString: string): string => {
     return new Date(dateString).toLocaleDateString('fr-FR', {
       day: '2-digit',
       month: '2-digit',

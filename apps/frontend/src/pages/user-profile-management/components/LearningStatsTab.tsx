@@ -65,8 +65,10 @@ const LearningStatsTab: React.FC = () => {
       };
     }
 
-    const userProgress = courses.flatMap(
-      course => course.lessons?.map(lesson => lesson.progress).filter(p => p) || []
+    const userProgress = courses.flatMap(course =>
+      course.lessons
+        ?.map((lesson: { progress?: { status?: string } }) => lesson.progress)
+        .filter((p: { status?: string } | undefined): p is { status?: string } => Boolean(p)) || []
     );
 
     const completedLessons = userProgress.filter(p => p?.status === 'completed');

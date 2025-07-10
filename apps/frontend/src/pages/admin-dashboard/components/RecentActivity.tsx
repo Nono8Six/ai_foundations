@@ -4,6 +4,17 @@ import Icon from '@frontend/components/AppIcon';
 import Image from '@frontend/components/AppImage';
 import { supabase } from '@frontend/lib/supabase';
 
+type ActivityType =
+  | 'user_registration'
+  | 'course_completion'
+  | 'content_creation'
+  | 'achievement_unlock'
+  | 'system_update'
+  | 'payment_received'
+  | 'course_enrollment'
+  | 'user_login'
+  | string;
+
 interface ActivityItem {
   id: string;
   type: string;
@@ -16,7 +27,7 @@ interface ActivityItem {
 }
 
 // Helper function to format time since date
-const timeSince = date => {
+const timeSince = (date: string): string => {
   const seconds = Math.floor((new Date() - new Date(date)) / 1000);
   let interval = seconds / 31536000;
   if (interval > 1) return `Il y a ${Math.floor(interval)} an(s)`;
@@ -32,7 +43,7 @@ const timeSince = date => {
 };
 
 // Helper function to get activity type properties (icon, color, label)
-const getActivityTypeProps = type => {
+const getActivityTypeProps = (type: ActivityType) => {
   const defaultAvatar = 'https://ui-avatars.com/api/?name=User&background=random&color=ffffff';
   switch (type) {
     case 'user_registration':

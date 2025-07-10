@@ -80,7 +80,7 @@ const CoursePathway: React.FC<CoursePathwayProps> = ({ courses }) => {
             )}
 
             <div className='space-y-6'>
-              {groupedCourses[difficulty].map((course, courseIndex) => {
+              {groupedCourses[difficulty].map((course: CourseWithProgress, courseIndex: number) => {
                 const progress = course.progress?.percentage ?? 0;
                 const isEnrolled = progress > 0;
                 const imageSrc =

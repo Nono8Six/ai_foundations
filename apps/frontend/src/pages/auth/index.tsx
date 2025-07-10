@@ -35,7 +35,14 @@ const AuthenticationLoginRegister: React.FC<AuthenticationLoginRegisterProps> = 
     }
   }, [user, navigate]);
 
-  const handleAuthSuccess = userData => {
+  interface UserData {
+    id: string;
+    email: string;
+    role: string;
+    name: string;
+  }
+
+  const handleAuthSuccess = (userData: UserData) => {
     setIsLoading(true);
 
     // For login success, redirect to dashboard
