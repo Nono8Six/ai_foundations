@@ -3,9 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Icon from '@frontend/components/AppIcon';
 import Image from '@frontend/components/AppImage';
 
-interface TestimonialsCarouselProps {}
-
-const TestimonialsCarousel: React.FC<TestimonialsCarouselProps> = () => {
+const TestimonialsCarousel: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const testimonials = [
@@ -135,7 +133,7 @@ const TestimonialsCarousel: React.FC<TestimonialsCarouselProps> = () => {
           </h2>
           <p className='text-xl text-text-secondary max-w-3xl mx-auto'>
             Découvrez comment nos étudiants de tous âges ont révolutionné leur approche
-            professionnelle grâce à l'IA
+            professionnelle grâce à l&rsquo;IA
           </p>
         </motion.div>
 

@@ -2,9 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Icon from '@frontend/components/AppIcon';
 
-interface FooterProps {}
-
-const Footer: React.FC<FooterProps> = () => {
+const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
 
   const footerLinks = {
@@ -60,7 +58,7 @@ const Footer: React.FC<FooterProps> = () => {
 
               <p className='text-secondary-300 mb-6 leading-relaxed'>
                 La plateforme de formation IA de référence pour les professionnels. Transformez
-                votre carrière avec l'intelligence artificielle.
+                votre carrière avec l&rsquo;intelligence artificielle.
               </p>
 
               {/* Contact Info */}
@@ -194,7 +192,7 @@ const Footer: React.FC<FooterProps> = () => {
             <div>
               <h3 className='text-xl font-semibold mb-2'>Restez informé</h3>
               <p className='text-secondary-300'>
-                Recevez les dernières actualités sur l'IA et nos nouveaux programmes
+                Recevez les dernières actualités sur l&rsquo;IA et nos nouveaux programmes
               </p>
             </div>
             <div className='flex flex-col sm:flex-row gap-3'>
@@ -205,7 +203,7 @@ const Footer: React.FC<FooterProps> = () => {
               />
               <button className='px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary-700 transition-colors duration-200 flex items-center justify-center'>
                 <Icon aria-hidden='true' name='Send' size={18} className='mr-2' />
-                S'abonner
+                S&rsquo;abonner
               </button>
             </div>
           </div>

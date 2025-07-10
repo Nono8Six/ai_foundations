@@ -79,7 +79,7 @@ const ModuleEditor: React.FC<ModuleEditorProps> = ({ module, onSave, onDelete })
               {module?.id ? 'Modifier le module' : 'Nouveau module'}
             </h1>
             <p className='text-text-secondary mt-1'>
-              Organisez le contenu de votre module d'apprentissage
+              Organisez le contenu de votre module d&rsquo;apprentissage
             </p>
           </div>
 
@@ -192,7 +192,7 @@ const ModuleEditor: React.FC<ModuleEditorProps> = ({ module, onSave, onDelete })
             {/* Learning Objectives */}
             <div className='bg-white rounded-lg border border-border p-6'>
               <h2 className='text-lg font-semibold text-text-primary mb-4'>
-                Objectifs d'apprentissage
+                Objectifs d&rsquo;apprentissage
               </h2>
 
               <textarea
@@ -361,7 +361,7 @@ const ModuleEditor: React.FC<ModuleEditorProps> = ({ module, onSave, onDelete })
                 <h3 className='text-lg font-semibold text-error mb-4'>Zone de danger</h3>
 
                 <p className='text-sm text-text-secondary mb-4'>
-                  La suppression du module supprimera également toutes les leçons qu'il contient.
+                  La suppression du module supprimera également toutes les leçons qu&rsquo;il contient.
                 </p>
 
                 <button

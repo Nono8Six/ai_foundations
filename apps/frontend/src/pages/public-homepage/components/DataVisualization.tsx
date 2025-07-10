@@ -17,9 +17,7 @@ import {
 } from 'recharts';
 import Icon from '@frontend/components/AppIcon';
 
-interface DataVisualizationProps {}
-
-const DataVisualization: React.FC<DataVisualizationProps> = () => {
+const DataVisualization: React.FC = () => {
   // Mock data for AI impact across industries
   const industryImpactData = [
     { industry: 'Comptabilité', productivity: 85, automation: 78, satisfaction: 92 },
@@ -75,13 +73,13 @@ const DataVisualization: React.FC<DataVisualizationProps> = () => {
         >
           <div className='inline-flex items-center px-4 py-2 bg-accent-100 text-accent-700 rounded-full text-sm font-medium mb-6'>
             <Icon aria-hidden='true' name='TrendingUp' size={16} className='mr-2' />
-            Impact mesurable de l'IA
+            Impact mesurable de l&rsquo;IA
           </div>
           <h2 className='text-3xl lg:text-4xl font-bold text-text-primary mb-6'>
-            L'IA transforme les entreprises
+            L&rsquo;IA transforme les entreprises
           </h2>
           <p className='text-xl text-text-secondary max-w-3xl mx-auto'>
-            Découvrez comment l'intelligence artificielle révolutionne la productivité dans
+            Découvrez comment l&rsquo;intelligence artificielle révolutionne la productivité dans
             différents secteurs professionnels
           </p>
         </motion.div>
@@ -245,7 +243,7 @@ const DataVisualization: React.FC<DataVisualizationProps> = () => {
             </div>
             <div className='space-y-4'>
               <div className='flex justify-between items-center'>
-                <span className='text-text-secondary'>Temps d'apprentissage moyen</span>
+                <span className='text-text-secondary'>Temps d&rsquo;apprentissage moyen</span>
                 <span className='font-bold text-primary'>2.5h/semaine</span>
               </div>
               <div className='flex justify-between items-center'>
@@ -273,7 +271,7 @@ const DataVisualization: React.FC<DataVisualizationProps> = () => {
               <h3 className='text-lg font-semibold text-text-primary'>Témoignage</h3>
             </div>
             <blockquote className='text-text-secondary mb-4 italic'>
-              "Grâce à AI Foundations, j'ai automatisé 60% de mes tâches comptables. Un gain de
+              "Grâce à AI Foundations, j&rsquo;ai automatisé 60% de mes tâches comptables. Un gain de
               temps incroyable !"
             </blockquote>
             <div className='flex items-center'>

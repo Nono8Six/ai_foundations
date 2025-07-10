@@ -23,9 +23,7 @@ export interface SortConfig {
   direction: 'asc' | 'desc';
 }
 
-interface UserManagementAdminContentProps {}
-
-const UserManagementAdminContent: React.FC<UserManagementAdminContentProps> = () => {
+const UserManagementAdminContent: React.FC = () => {
   const { setSidebarOpen } = useAdminSidebar();
 
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
@@ -164,7 +162,7 @@ const UserManagementAdminContent: React.FC<UserManagementAdminContentProps> = ()
               <div>
                 <h1 className='text-3xl font-bold text-text-primary'>Gestion des Utilisateurs</h1>
                 <p className='mt-2 text-text-secondary'>
-                  Gérez les comptes utilisateurs, permissions et progression d'apprentissage
+                  Gérez les comptes utilisateurs, permissions et progression d&rsquo;apprentissage
                 </p>
               </div>
               <div className='mt-4 sm:mt-0 flex space-x-3'>
@@ -324,9 +322,7 @@ const UserManagementAdminContent: React.FC<UserManagementAdminContentProps> = ()
   );
 };
 
-interface UserManagementAdminProps {}
-
-const UserManagementAdmin: React.FC<UserManagementAdminProps> = () => (
+const UserManagementAdmin: React.FC = () => (
   <AdminLayout>
     <UserManagementAdminContent />
   </AdminLayout>

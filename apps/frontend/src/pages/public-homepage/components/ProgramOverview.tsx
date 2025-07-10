@@ -4,9 +4,7 @@ import { motion } from 'framer-motion';
 import Icon from '@frontend/components/AppIcon';
 import Image from '@frontend/components/AppImage';
 
-interface ProgramOverviewProps {}
-
-const ProgramOverview: React.FC<ProgramOverviewProps> = () => {
+const ProgramOverview: React.FC = () => {
   const courses = [
     {
       id: 1,
@@ -148,7 +146,7 @@ const ProgramOverview: React.FC<ProgramOverviewProps> = () => {
           </h2>
           <p className='text-xl text-text-secondary max-w-3xl mx-auto'>
             Choisissez parmi nos programmes conçus pour différents secteurs professionnels et
-            niveaux d'expertise
+            niveaux d&rsquo;expertise
           </p>
         </motion.div>
 
@@ -264,7 +262,7 @@ const ProgramOverview: React.FC<ProgramOverviewProps> = () => {
             </h3>
             <p className='text-lg opacity-90 mb-8 max-w-2xl mx-auto'>
               Rejoignez plus de 15 000 professionnels qui ont déjà révolutionné leur approche du
-              travail grâce à l'IA
+              travail grâce à l&rsquo;IA
             </p>
             <div className='flex flex-col sm:flex-row gap-4 justify-center'>
               <Link
@@ -279,7 +277,7 @@ const ProgramOverview: React.FC<ProgramOverviewProps> = () => {
                 className='inline-flex items-center justify-center px-8 py-4 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-primary transition-colors duration-200'
               >
                 <Icon aria-hidden='true' name='Info' size={20} className='mr-2' />
-                Plus d'informations
+                Plus d&rsquo;informations
               </Link>
             </div>
           </div>

@@ -4,9 +4,7 @@ import { useAuth } from '@frontend/context/AuthContext';
 import { motion } from 'framer-motion';
 import Icon from '@frontend/components/AppIcon';
 
-interface HeroSectionProps {}
-
-const HeroSection: React.FC<HeroSectionProps> = () => {
+const HeroSection: React.FC = () => {
   const { user } = useAuth();
   return (
     <section className='relative pt-20 pb-16 lg:pt-24 lg:pb-20 bg-gradient-to-br from-primary-50 via-surface to-accent-50 overflow-hidden'>
@@ -42,12 +40,12 @@ const HeroSection: React.FC<HeroSectionProps> = () => {
               transition={{ duration: 0.6, delay: 0.3 }}
               className='text-4xl sm:text-5xl lg:text-6xl font-bold text-text-primary mb-6 leading-tight'
             >
-              Maîtrisez l'
+              Maîtrisez l&rsquo;
               <span className='bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent'>
                 Intelligence Artificielle
               </span>
               <br />
-              dès aujourd'hui
+              dès aujourd&rsquo;hui
             </motion.h1>
 
             <motion.p
@@ -56,8 +54,8 @@ const HeroSection: React.FC<HeroSectionProps> = () => {
               transition={{ duration: 0.6, delay: 0.4 }}
               className='text-xl text-text-secondary mb-8 max-w-2xl mx-auto lg:mx-0'
             >
-              Transformez votre carrière avec notre plateforme d'apprentissage IA complète. De
-              débutant à expert, découvrez comment l'IA peut révolutionner votre productivité
+              Transformez votre carrière avec notre plateforme d&rsquo;apprentissage IA complète. De
+              débutant à expert, découvrez comment l&rsquo;IA peut révolutionner votre productivité
               professionnelle.
             </motion.p>
 

@@ -201,7 +201,7 @@ const RecentActivity: React.FC<RecentActivityProps> = ({ activities = [] }) => {
             to='/profile?tab=stats'
             className='w-full text-center text-primary hover:text-primary-700 transition-colors text-sm font-medium py-2 block'
           >
-            Afficher toute l'activité
+            Afficher toute l&rsquo;activité
           </Link>
         </div>
       )}

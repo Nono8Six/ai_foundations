@@ -13,9 +13,7 @@ import type {
 import Icon from '@frontend/components/AppIcon';
 import { log } from '@libs/logger';
 
-interface SettingsTabProps {}
-
-const SettingsTab: React.FC<SettingsTabProps> = () => {
+const SettingsTab: React.FC = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -218,7 +216,7 @@ const SettingsTab: React.FC<SettingsTabProps> = () => {
         <div className='bg-surface rounded-lg border border-border p-6'>
           <h4 className='text-base font-semibold text-text-primary mb-4 flex items-center'>
             <Icon aria-hidden='true' name='BookOpen' size={20} className='mr-2' />
-            Préférences d'apprentissage
+            Préférences d&rsquo;apprentissage
           </h4>
           <div className='space-y-6'>
             {/* Daily Goal */}
@@ -271,7 +269,7 @@ const SettingsTab: React.FC<SettingsTabProps> = () => {
             {/* Language */}
             <div>
               <label className='block text-sm font-medium text-text-primary mb-2'>
-                Langue de l'interface
+                Langue de l&rsquo;interface
               </label>
               <select
                 value={learningPreferences.language}
@@ -352,7 +350,7 @@ const SettingsTab: React.FC<SettingsTabProps> = () => {
                     <p className='text-xs text-text-secondary'>
                       {key === 'showProgress' && 'Permettre aux autres de voir vos statistiques'}
                       {key === 'showAchievements' && 'Afficher vos badges sur votre profil'}
-                      {key === 'allowMessages' && "Recevoir des messages d'autres utilisateurs"}
+                      {key === 'allowMessages' && "Recevoir des messages d&rsquo;autres utilisateurs"}
                     </p>
                   </div>
                   <button
