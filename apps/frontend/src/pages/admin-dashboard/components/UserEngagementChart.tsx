@@ -69,7 +69,7 @@ const UserEngagementChart: React.FC<UserEngagementChartProps> = ({ timeRange }) 
       setLoading(true);
       const now = new Date();
       let startDate;
-      let endDate = new Date(now); // For some ranges, we might want to cap at 'now'
+      const endDate = new Date(now); // For some ranges, we might want to cap at 'now'
 
       switch (currentTimeRange) {
         case '24h':
