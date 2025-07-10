@@ -105,7 +105,7 @@ const PopularCoursesChart: React.FC<PopularCoursesChartProps> = () => {
           }
         });
 
-        let processedCourses = courses.map(course => {
+        const processedCourses = courses.map(course => {
           const lessonsInCourseSet = new Set();
           course.modules.forEach(module => {
             module.lessons.forEach(lesson => {
