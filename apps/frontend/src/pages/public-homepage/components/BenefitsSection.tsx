@@ -121,10 +121,10 @@ const BenefitsSection: React.FC = () => {
             Gains de productivité
           </div>
           <h2 className='text-3xl lg:text-4xl font-bold text-text-primary mb-6'>
-            Révolutionnez votre secteur d'activité
+            Révolutionnez votre secteur d&rsquo;activité
           </h2>
           <p className='text-xl text-text-secondary max-w-3xl mx-auto'>
-            Découvrez comment l'IA peut transformer votre productivité dans votre domaine
+            Découvrez comment l&rsquo;IA peut transformer votre productivité dans votre domaine
             professionnel spécifique
           </p>
         </motion.div>
@@ -256,7 +256,7 @@ const BenefitsSection: React.FC = () => {
           className='mt-16 text-center'
         >
           <h3 className='text-2xl font-bold text-text-primary mb-8'>
-            Secteurs d'activité couverts
+            Secteurs d&rsquo;activité couverts
           </h3>
           <div className='flex flex-wrap justify-center gap-4'>
             {[

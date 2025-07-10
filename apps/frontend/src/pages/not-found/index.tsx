@@ -18,7 +18,7 @@ const NotFound: React.FC = () => {
           <h1 className='text-6xl font-bold text-primary mb-4'>404</h1>
           <h2 className='text-2xl font-semibold text-text-primary mb-4'>Page non trouvée</h2>
           <p className='text-text-secondary mb-8'>
-            Désolé, la page que vous recherchez n'existe pas ou a été déplacée.
+            Désolé, la page que vous recherchez n&rsquo;existe pas ou a été déplacée.
           </p>
         </div>
 
@@ -29,7 +29,7 @@ const NotFound: React.FC = () => {
             className='inline-flex items-center justify-center w-full px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-primary hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-200 shadow-subtle hover:shadow-medium'
           >
             <Icon aria-hidden='true' name='Home' size={20} className='mr-2' />
-            Retour à l'accueil
+            Retour à l&rsquo;accueil
           </Link>
 
           <button
@@ -44,7 +44,7 @@ const NotFound: React.FC = () => {
         {/* Help Links */}
         <div className='mt-8 pt-8 border-t border-border'>
           <p className='text-sm text-text-secondary mb-4'>
-            Besoin d'aide ? Consultez nos ressources :
+            Besoin d&rsquo;aide ? Consultez nos ressources :
           </p>
           <div className='flex justify-center space-x-6'>
             <Link

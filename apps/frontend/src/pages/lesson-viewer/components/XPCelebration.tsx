@@ -124,7 +124,7 @@ const XPCelebration: React.FC<XPCelebrationProps> = ({ xpEarned, onClose }) => {
           onClick={onClose}
           className='w-full bg-primary text-white py-3 rounded-lg hover:bg-primary-700 transition-colors font-medium'
         >
-          Continuer l'apprentissage
+          Continuer l&rsquo;apprentissage
         </button>
       </div>
     </div>

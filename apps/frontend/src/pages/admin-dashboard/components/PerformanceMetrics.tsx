@@ -163,7 +163,7 @@ const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({ metrics }) => {
               Les données de performance détaillées (CPU, mémoire, etc.) ne sont pas disponibles.
             </p>
             <p className='text-xs text-text-tertiary mt-1'>
-              Celles-ci proviennent généralement d'outils de surveillance système spécifiques.
+              Celles-ci proviennent généralement d&rsquo;outils de surveillance système spécifiques.
             </p>
           </div>
         </div>

@@ -23,7 +23,7 @@ const VerifyEmail: React.FC = () => {
         </p>
         {pendingEmail && (
           <button onClick={handleResend} className='text-primary underline text-sm'>
-              Renvoyer l&apos;email de vérification
+            Renvoyer l&rsquo;email de vérification
           </button>
         )}
       </div>

@@ -277,19 +277,19 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ isLoading, setIsLoading }) 
         </div>
         <div className='ml-3 text-sm'>
           <label htmlFor='terms' className='text-text-secondary'>
-            J'accepte les{' '}
+            J&rsquo;accepte les{' '}
             <a
               href='#'
               className='text-primary hover:text-primary-700 transition-colors duration-200'
             >
-              conditions d'utilisation
+              conditions d&rsquo;utilisation
             </a>{' '}
             et la{' '}
             <a
               href='#'
               className='text-primary hover:text-primary-700 transition-colors duration-200'
             >
-              politique de confidentialité
+                politique de confidentialité
             </a>
           </label>
           {errors.terms && (

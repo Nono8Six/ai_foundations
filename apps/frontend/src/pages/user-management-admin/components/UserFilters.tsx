@@ -69,7 +69,7 @@ const UserFilters: React.FC<UserFiltersProps> = ({ filters, setFilters }) => {
             className='w-full px-3 py-2 border border-border rounded-lg text-sm focus:ring-2 focus:ring-primary focus:border-transparent'
           >
             <option value='all'>Toutes les dates</option>
-            <option value='today'>Aujourd'hui</option>
+            <option value='today'>Aujourd&rsquo;hui</option>
             <option value='week'>Cette semaine</option>
             <option value='month'>Ce mois</option>
             <option value='quarter'>Ce trimestre</option>
@@ -125,7 +125,7 @@ const UserFilters: React.FC<UserFiltersProps> = ({ filters, setFilters }) => {
                   status: { active: 'Actif', inactive: 'Inactif', pending: 'En attente' },
                   role: { student: 'Étudiant', admin: 'Admin' },
                   registrationDate: {
-                    today: "Aujourd'hui",
+                    today: "Aujourd&rsquo;hui",
                     week: 'Cette semaine',
                     month: 'Ce mois',
                     quarter: 'Ce trimestre',

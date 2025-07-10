@@ -74,7 +74,7 @@ const AuthenticationLoginRegister: React.FC = () => {
             <p className='text-text-secondary'>
               {activeTab === 'login'
                 ? 'Connectez-vous pour continuer votre apprentissage IA'
-                : "Commencez votre parcours d'apprentissage IA dès aujourd'hui"}
+                : "Commencez votre parcours d&rsquo;apprentissage IA dès aujourd&rsquo;hui"}
             </p>
           </div>
 
@@ -185,7 +185,7 @@ const AuthenticationLoginRegister: React.FC = () => {
               <div>
                 <h4 className='text-sm font-medium text-accent-700 mb-1'>Information de test</h4>
                 <p className='text-xs text-accent-600 mb-2'>
-                  Pour tester l'application, créez un compte ou utilisez Google OAuth.
+                  Pour tester l&rsquo;application, créez un compte ou utilisez Google OAuth.
                 </p>
               </div>
             </div>
