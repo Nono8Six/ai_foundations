@@ -13,9 +13,7 @@ import type {
 import Icon from '@frontend/components/AppIcon';
 import { log } from '@libs/logger';
 
-interface SettingsTabProps {}
-
-const SettingsTab: React.FC<SettingsTabProps> = () => {
+const SettingsTab: React.FC = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);

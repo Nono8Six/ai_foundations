@@ -8,9 +8,7 @@ import BenefitsSection from './components/BenefitsSection';
 import Footer from './components/Footer';
 import CookieNotice from './components/CookieNotice';
 
-interface PublicHomepageProps {}
-
-const PublicHomepage: React.FC<PublicHomepageProps> = () => {
+const PublicHomepage: React.FC = () => {
   const [showCookieNotice, setShowCookieNotice] = useState(true);
 
   useEffect(() => {

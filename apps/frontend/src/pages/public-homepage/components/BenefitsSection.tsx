@@ -2,9 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import Icon from '@frontend/components/AppIcon';
 
-interface BenefitsSectionProps {}
-
-const BenefitsSection: React.FC<BenefitsSectionProps> = () => {
+const BenefitsSection: React.FC = () => {
   const benefits = [
     {
       icon: 'Calculator',

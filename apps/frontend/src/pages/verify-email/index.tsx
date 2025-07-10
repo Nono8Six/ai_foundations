@@ -2,9 +2,7 @@ import React from 'react';
 import { useAuth } from '@frontend/context/AuthContext';
 import Icon from '@frontend/components/AppIcon';
 
-interface VerifyEmailProps {}
-
-const VerifyEmail: React.FC<VerifyEmailProps> = () => {
+const VerifyEmail: React.FC = () => {
   const { resendVerificationEmail } = useAuth();
   const pendingEmail = localStorage.getItem('pendingEmail');
 

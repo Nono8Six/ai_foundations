@@ -13,9 +13,7 @@ import QuickActions from './components/QuickActions';
 import { useRecentActivity } from '@frontend/hooks/useRecentActivity';
 import { useAchievements } from '@frontend/hooks/useAchievements';
 
-interface UserDashboardProps {}
-
-const UserDashboard: React.FC<UserDashboardProps> = () => {
+const UserDashboard: React.FC = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const navigate = useNavigate();
 
