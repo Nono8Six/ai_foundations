@@ -147,10 +147,10 @@ const UserDashboard: React.FC<UserDashboardProps> = () => {
                       <span className='font-medium text-primary'>
                         {userData.currentStreak} jours
                       </span>{' '}
-                      d'apprentissage. Continuez !
+                      d&rsquo;apprentissage. Continuez !
                     </span>
                   ) : (
-                    "Commencez votre parcours d'apprentissage dès aujourd'hui"
+                    "Commencez votre parcours d&rsquo;apprentissage dès aujourd&rsquo;hui"
                   )}
                 </p>
               </div>
@@ -259,7 +259,7 @@ const UserDashboard: React.FC<UserDashboardProps> = () => {
                     </h3>
                     <p className='text-text-secondary mb-4'>
                       Découvrez notre catalogue de formations et commencez votre parcours
-                      d'apprentissage.
+                      d&rsquo;apprentissage.
                     </p>
                     <Link
                       to='/programmes'

@@ -109,7 +109,7 @@ const ProgressChart: React.FC<ProgressChartProps> = () => {
       <div className='bg-surface rounded-xl border border-border p-6'>
         <div className='flex flex-col sm:flex-row sm:items-center justify-between mb-6'>
           <h2 className='text-xl font-semibold text-text-primary mb-4 sm:mb-0'>
-            Progression d'apprentissage
+            Progression d&rsquo;apprentissage
           </h2>
         </div>
 
@@ -140,7 +140,7 @@ const ProgressChart: React.FC<ProgressChartProps> = () => {
     <div className='bg-surface rounded-xl border border-border p-6'>
       <div className='flex flex-col sm:flex-row sm:items-center justify-between mb-6'>
         <h2 className='text-xl font-semibold text-text-primary mb-4 sm:mb-0'>
-          Progression d'apprentissage
+          Progression d&rsquo;apprentissage
         </h2>
         <div className='flex bg-secondary-100 rounded-lg p-1'>
           {tabs.map(tab => (
@@ -195,7 +195,7 @@ const ProgressChart: React.FC<ProgressChartProps> = () => {
       <div className='mt-8 grid grid-cols-1 md:grid-cols-3 gap-4'>
         <div className='text-center p-4 bg-primary-50 rounded-lg border border-primary-100'>
           <p className='text-sm text-text-secondary mb-1'>
-            Temps d'étude ({activeTab === 'weekly' ? 'semaine' : '6 mois'})
+            Temps d&rsquo;étude ({activeTab === 'weekly' ? 'semaine' : '6 mois'})
           </p>
           <p className='text-2xl font-semibold text-primary'>{totalHours}h</p>
         </div>

@@ -221,7 +221,7 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ userData }) => {
               disabled={true} // Email is always disabled as it's managed by auth
               className='w-full px-3 py-2 border border-transparent bg-secondary-50 text-text-secondary rounded-lg text-sm'
             />
-            <p className='mt-1 text-xs text-text-secondary'>L'email ne peut pas être modifié ici</p>
+            <p className='mt-1 text-xs text-text-secondary'>L&rsquo;email ne peut pas être modifié ici</p>
           </div>
 
           {/* Phone */}
@@ -303,7 +303,7 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ userData }) => {
         <h4 className='text-base font-medium text-text-primary mb-4'>Informations du compte</h4>
         <div className='grid grid-cols-1 md:grid-cols-2 gap-4 text-sm'>
           <div>
-            <span className='text-text-secondary'>Date d'inscription:</span>
+            <span className='text-text-secondary'>Date d&rsquo;inscription:</span>
             <span className='ml-2 text-text-primary font-medium'>
               {userData.joinDate ? new Date(userData.joinDate).toLocaleDateString('fr-FR') : 'Non disponible'}
             </span>

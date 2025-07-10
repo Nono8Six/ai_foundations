@@ -25,7 +25,7 @@ const VerifyEmail: React.FC<VerifyEmailProps> = () => {
         </p>
         {pendingEmail && (
           <button onClick={handleResend} className='text-primary underline text-sm'>
-            Renvoyer l'email de vérification
+            Renvoyer l&rsquo;email de vérification
           </button>
         )}
       </div>
