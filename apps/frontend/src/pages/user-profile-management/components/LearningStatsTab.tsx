@@ -152,10 +152,10 @@ const LearningStatsTab: React.FC = () => {
           className='mx-auto mb-6 text-secondary-300'
         />
         <h3 className='text-xl font-semibold text-text-primary mb-2'>
-          Commencez votre parcours d'apprentissage
+          Commencez votre parcours d&rsquo;apprentissage
         </h3>
         <p className='text-text-secondary mb-6'>
-          Vos statistiques d'apprentissage apparaîtront ici une fois que vous aurez commencé des
+          Vos statistiques d&rsquo;apprentissage apparaîtront ici une fois que vous aurez commencé des
           cours.
         </p>
         <Link
@@ -173,9 +173,9 @@ const LearningStatsTab: React.FC = () => {
     <div className='space-y-8'>
       {/* Header */}
       <div>
-        <h3 className='text-lg font-semibold text-text-primary'>Statistiques d'apprentissage</h3>
+        <h3 className='text-lg font-semibold text-text-primary'>Statistiques d&rsquo;apprentissage</h3>
         <p className='text-text-secondary text-sm mt-1'>
-          Suivez vos progrès et analysez vos performances d'apprentissage
+          Suivez vos progrès et analysez vos performances d&rsquo;apprentissage
         </p>
       </div>
 
@@ -263,7 +263,7 @@ const LearningStatsTab: React.FC = () => {
                   size={48}
                   className='mx-auto mb-4 opacity-50'
                 />
-                <p>Aucune donnée d'apprentissage cette semaine</p>
+                <p>Aucune donnée d&rsquo;apprentissage cette semaine</p>
                 <p className='text-sm'>Commencez une leçon pour voir vos statistiques</p>
               </div>
             </div>
@@ -308,7 +308,7 @@ const LearningStatsTab: React.FC = () => {
                   className='mx-auto mb-4 opacity-50'
                 />
                 <p>Aucun XP gagné cette semaine</p>
-                <p className='text-sm'>Terminez des leçons pour gagner de l'XP</p>
+                  <p className='text-sm'>Terminez des leçons pour gagner de l&rsquo;XP</p>
               </div>
             </div>
           )}
@@ -376,7 +376,7 @@ const LearningStatsTab: React.FC = () => {
 
         {/* Activity Summary */}
         <div className='bg-surface rounded-lg border border-border p-6'>
-          <h4 className='text-base font-semibold text-text-primary mb-4'>Résumé d'activité</h4>
+          <h4 className='text-base font-semibold text-text-primary mb-4'>Résumé d&rsquo;activité</h4>
           <div className='space-y-4'>
             <div className='flex items-center justify-between p-3 bg-secondary-50 rounded-lg'>
               <div className='flex items-center space-x-3'>
@@ -445,7 +445,7 @@ const LearningStatsTab: React.FC = () => {
       {/* Learning Goals */}
       <div className='bg-surface rounded-lg border border-border p-6'>
         <h4 className='text-base font-semibold text-text-primary mb-4'>
-          Objectifs d'apprentissage
+          Objectifs d&rsquo;apprentissage
         </h4>
         <div className='space-y-4'>
           <div className='flex items-center justify-between p-4 bg-secondary-50 rounded-lg'>
@@ -453,7 +453,7 @@ const LearningStatsTab: React.FC = () => {
               <Icon aria-hidden='true' name='Target' size={20} className='text-primary' />
               <div>
                 <p className='text-sm font-medium text-text-primary'>Objectif quotidien</p>
-                <p className='text-xs text-text-secondary'>Maintenir votre série d'apprentissage</p>
+                <p className='text-xs text-text-secondary'>Maintenir votre série d&rsquo;apprentissage</p>
               </div>
             </div>
             <div className='text-right'>

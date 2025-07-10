@@ -230,7 +230,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ videoUrl, transcript, onProgr
         {showCaptions && (
           <div className='absolute bottom-20 left-1/2 transform -translate-x-1/2 bg-black/80 backdrop-blur-sm text-white px-4 py-2 rounded-lg text-center max-w-md'>
             <p className='text-sm'>
-              Les réseaux de neurones sont l'épine dorsale de l'intelligence artificielle moderne.
+              Les réseaux de neurones sont l&rsquo;épine dorsale de l&rsquo;intelligence artificielle moderne.
             </p>
           </div>
         )}

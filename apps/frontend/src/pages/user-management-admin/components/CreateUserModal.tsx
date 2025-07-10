@@ -76,7 +76,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({ onClose, onUserCreate
     if (!formData.email.trim()) {
       newErrors.email = "L'email est requis";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Format d'email invalide";
+      newErrors.email = "Format d&rsquo;email invalide";
     }
 
     if (!formData.phone.trim()) {
@@ -265,7 +265,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({ onClose, onUserCreate
           <div className='space-y-4'>
             <h3 className='text-lg font-medium text-text-primary'>Inscription aux cours</h3>
             <p className='text-sm text-text-secondary'>
-              Sélectionnez les cours auxquels inscrire l'utilisateur initialement
+              Sélectionnez les cours auxquels inscrire l&rsquo;utilisateur initialement
             </p>
 
             <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
@@ -308,7 +308,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({ onClose, onUserCreate
               ) : (
                 <>
                   <Icon aria-hidden='true' name='Plus' size={16} className='mr-2' />
-                  Créer l'utilisateur
+                  Créer l&rsquo;utilisateur
                 </>
               )}
             </button>

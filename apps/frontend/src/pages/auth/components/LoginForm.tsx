@@ -202,7 +202,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, isLoading, setIsLoadin
   {isResending && (
     <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></span>
   )}
-  Renvoyer l'email de vérification
+  Renvoyer l&rsquo;email de vérification
 </button>
                 </div>
               )}

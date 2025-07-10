@@ -300,7 +300,7 @@ const UserEngagementChart: React.FC<UserEngagementChartProps> = ({ timeRange }) 
   if (loading) {
     return (
       <div className='bg-surface rounded-lg p-6 shadow-subtle border border-border h-[400px] flex items-center justify-center'>
-        <p className='text-text-secondary'>Chargement des données d'engagement...</p>
+        <p className='text-text-secondary'>Chargement des données d&rsquo;engagement...</p>
       </div>
     );
   }
@@ -309,7 +309,7 @@ const UserEngagementChart: React.FC<UserEngagementChartProps> = ({ timeRange }) 
     return (
       <div className='bg-surface rounded-lg p-6 shadow-subtle border border-border h-[400px] flex items-center justify-center'>
         <p className='text-text-secondary'>
-          Aucune donnée d'engagement disponible pour la période sélectionnée.
+          Aucune donnée d&rsquo;engagement disponible pour la période sélectionnée.
         </p>
       </div>
     );
@@ -385,7 +385,7 @@ const UserEngagementChart: React.FC<UserEngagementChartProps> = ({ timeRange }) 
 
       <div className='mt-4 grid grid-cols-2 gap-4'>
         <div className='text-center p-3 bg-primary-50 rounded-lg'>
-          <p className='text-sm text-text-secondary'>Pic d'activité</p>
+          <p className='text-sm text-text-secondary'>Pic d&rsquo;activité</p>
           <p className='text-lg font-semibold text-primary'>
             {Math.max(...engagementData.map(d => d.users)).toLocaleString('fr-FR')}
           </p>
