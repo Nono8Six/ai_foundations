@@ -51,9 +51,7 @@ const CustomTooltip = ({ active, payload, label }: RechartsTooltipProps<number, 
   return null;
 };
 
-interface PopularCoursesChartProps {}
-
-const PopularCoursesChart: React.FC<PopularCoursesChartProps> = () => {
+const PopularCoursesChart: React.FC = () => {
   const [chartData, setChartData] = useState<CourseData[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalEnrollments, setTotalEnrollments] = useState(0);

@@ -4,9 +4,7 @@ import { useAuth } from '@frontend/context/AuthContext';
 import { motion } from 'framer-motion';
 import Icon from '@frontend/components/AppIcon';
 
-interface HeroSectionProps {}
-
-const HeroSection: React.FC<HeroSectionProps> = () => {
+const HeroSection: React.FC = () => {
   const { user } = useAuth();
   return (
     <section className='relative pt-20 pb-16 lg:pt-24 lg:pb-20 bg-gradient-to-br from-primary-50 via-surface to-accent-50 overflow-hidden'>

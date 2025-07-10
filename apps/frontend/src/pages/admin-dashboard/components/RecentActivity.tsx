@@ -112,9 +112,7 @@ const getActivityTypeProps = (type: ActivityType) => {
   }
 };
 
-interface RecentActivityProps {}
-
-const RecentActivity: React.FC<RecentActivityProps> = () => {
+const RecentActivity: React.FC = () => {
   const [activitiesData, setActivitiesData] = useState<ActivityItem[]>([]);
   const [loading, setLoading] = useState(true);
 

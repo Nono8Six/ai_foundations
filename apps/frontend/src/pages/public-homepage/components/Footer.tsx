@@ -2,9 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Icon from '@frontend/components/AppIcon';
 
-interface FooterProps {}
-
-const Footer: React.FC<FooterProps> = () => {
+const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
 
   const footerLinks = {

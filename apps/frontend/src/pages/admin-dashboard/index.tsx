@@ -10,9 +10,7 @@ import PopularCoursesChart from './components/PopularCoursesChart';
 import GeographicDistribution from './components/GeographicDistribution';
 import PerformanceMetrics from './components/PerformanceMetrics';
 
-interface AdminDashboardContentProps {}
-
-const AdminDashboardContent: React.FC<AdminDashboardContentProps> = () => {
+const AdminDashboardContent: React.FC = () => {
   const { setSidebarOpen } = useAdminSidebar();
   const [selectedTimeRange, setSelectedTimeRange] = useState('7d');
   const [dashboardData, setDashboardData] = useState({
@@ -315,9 +313,7 @@ const AdminDashboardContent: React.FC<AdminDashboardContentProps> = () => {
   );
 };
 
-interface AdminDashboardProps {}
-
-const AdminDashboard: React.FC<AdminDashboardProps> = () => (
+const AdminDashboard: React.FC = () => (
   <AdminLayout>
     <AdminDashboardContent />
   </AdminLayout>

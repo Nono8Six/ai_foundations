@@ -2,9 +2,7 @@ import React from 'react';
 import { useAuth } from '@frontend/context/AuthContext';
 import Icon from '@frontend/components/AppIcon';
 
-interface VerifyEmailProps {}
-
-const VerifyEmail: React.FC<VerifyEmailProps> = () => {
+const VerifyEmail: React.FC = () => {
   const { resendVerificationEmail } = useAuth();
   const pendingEmail = localStorage.getItem('pendingEmail');
 
@@ -25,7 +23,7 @@ const VerifyEmail: React.FC<VerifyEmailProps> = () => {
         </p>
         {pendingEmail && (
           <button onClick={handleResend} className='text-primary underline text-sm'>
-            Renvoyer l'email de vérification
+              Renvoyer l&apos;email de vérification
           </button>
         )}
       </div>

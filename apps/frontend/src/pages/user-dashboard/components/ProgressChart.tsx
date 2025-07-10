@@ -32,9 +32,7 @@ interface MonthlyData {
 
 type ChartData = WeeklyData | MonthlyData;
 
-interface ProgressChartProps {}
-
-const ProgressChart: React.FC<ProgressChartProps> = () => {
+const ProgressChart: React.FC = () => {
   const [activeTab, setActiveTab] = useState('weekly');
 
   // On choisit la version de la branche "main", qui est la plus à jour
