@@ -21,7 +21,8 @@ const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({
       setIsLoading(true);
       setError(null);
       await signInWithGoogle();
-    } catch (error) {
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error(String(err));
       log.error('Google sign-in error:', error.message);
       setError('Erreur de connexion avec Google. Veuillez réessayer.');
       setIsLoading(false);

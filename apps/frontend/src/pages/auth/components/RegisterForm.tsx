@@ -44,7 +44,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ isLoading, setIsLoading }) 
         localStorage.setItem('pendingEmail', data.email);
         window.location.href = '/verify-email';
       }
-    } catch (error) {
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error(String(err));
       log.error('Registration error:', error.message);
       setIsLoading(false);
       setAuthError(error.message || "Erreur lors de l'inscription");
