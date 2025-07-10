@@ -1,16 +1,9 @@
 import React, { useState } from 'react';
 import Icon from '@frontend/components/AppIcon';
 import Image from '@frontend/components/AppImage';
-
-export interface Achievement {
-  id: string;
-  title: string;
-  description: string;
-  icon: string;
-  rarity: string;
-  xpReward: number;
-  earned?: boolean;
-}
+import type {
+  AchievementRowCamel as Achievement,
+} from '@frontend/types/database.types';
 
 export interface AchievementCarouselProps {
   achievements?: Achievement[];

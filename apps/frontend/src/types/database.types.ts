@@ -759,3 +759,18 @@ export const Constants = {
     },
   },
 } as const
+
+export type AchievementRowCamel =
+  Omit<Database['public']['Tables']['achievements']['Row'], 'xp_reward'> & {
+    xpReward: Database['public']['Tables']['achievements']['Row']['xp_reward'];
+  };
+
+export type AchievementInsertCamel =
+  Omit<Database['public']['Tables']['achievements']['Insert'], 'xp_reward'> & {
+    xpReward?: Database['public']['Tables']['achievements']['Insert']['xp_reward'];
+  };
+
+export type AchievementUpdateCamel =
+  Omit<Database['public']['Tables']['achievements']['Update'], 'xp_reward'> & {
+    xpReward?: Database['public']['Tables']['achievements']['Update']['xp_reward'];
+  };
