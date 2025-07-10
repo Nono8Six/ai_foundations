@@ -35,6 +35,9 @@ export default tseslint.config(
       react: pluginReact,
       'react-hooks': pluginReactHooks,
     },
+    settings: {
+      react: { version: 'detect' },
+    },
     languageOptions: {
       ...pluginReact.configs.recommended.languageOptions,
       globals: {
