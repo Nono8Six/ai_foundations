@@ -7,9 +7,7 @@ import PersonalInfoTab from './components/PersonalInfoTab';
 import LearningStatsTab from './components/LearningStatsTab';
 import SettingsTab from './components/SettingsTab';
 
-interface UserProfileManagementProps {}
-
-const UserProfileManagement: React.FC<UserProfileManagementProps> = () => {
+const UserProfileManagement: React.FC = () => {
   const [activeTab, setActiveTab] = useState('personal');
   const { user, userProfile } = useAuth();
   const navigate = useNavigate();
