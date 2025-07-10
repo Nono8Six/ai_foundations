@@ -215,46 +215,54 @@ ai-foundations/
 - [Documentation Supabase](https://supabase.com/docs)
 - [Documentation React](https://reactjs.org/docs/getting-started.html)
 - [Guide Supabase](README-SUPABASE.md)
-- [Guide de Style](../STYLE_GUIDE.md)
+- [Guide de Style](STYLE_GUIDE.md)
 
-2. Les dépendances sont installées dans le conteneur, pas besoin de les installer sur votre machine.
-3. La base de données est persistante grâce au volume Docker.
-=======
-# Local Development
+- Les dépendances sont installées dans le conteneur, pas besoin de les installer sur votre machine.
+- La base de données est persistante grâce au volume Docker.
 
-This guide explains how to run the project with Docker and manage the local Supabase instance.
+## Développement local
 
-## Docker workflow
-1. Build and start the frontend:
+Ce guide explique comment lancer le projet avec Docker et gérer l'instance Supabase locale.
+
+### Workflow Docker
+
+1. Construire et démarrer le frontend :
    ```bash
    docker compose up --build
    ```
-   The app will be available on `http://localhost:5173`.
+   L'application sera disponible sur `http://localhost:5173`.
 
-## Supabase
-The repository relies on the Supabase CLI. The commands below use pnpm shortcuts:
+### Supabase
 
-- Start the local stack:
+Le dépôt s'appuie sur la CLI Supabase. Les commandes ci-dessous utilisent des alias pnpm :
+
+- Démarrer la stack locale :
+
   ```bash
   pnpm db:start
   ```
-  Supabase Studio is then available at `http://localhost:54323`.
 
-- Stop the stack:
+  Supabase Studio sera alors accessible sur `http://localhost:54323`.
+
+- Arrêter la stack :
+
   ```bash
   pnpm db:stop
   ```
 
-- Reset the local database (drops data):
+- Réinitialiser la base locale (supprime les données) :
   ```bash
   pnpm db:reset
   ```
 
-## Database connection
-Set `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` and `SUPABASE_PROJECT_REF` in `.env`. Use your cloud credentials or the defaults printed by `pnpm db:start` for the local instance.
+### Connexion à la base
 
-## Regenerating types
-Whenever the database schema changes, update the generated TypeScript types with:
+Définissez `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` et `SUPABASE_PROJECT_REF` dans `.env`. Utilisez vos identifiants cloud ou les valeurs affichées par `pnpm db:start` pour l'instance locale.
+
+### Régénérer les types
+
+À chaque modification du schéma, mettez à jour les types TypeScript générés avec :
+
 ```bash
 pnpm types:gen
 ```
