@@ -127,13 +127,35 @@ export const CourseWithProgressSchema = z.object({
     .min(0, 'Le pourcentage doit être entre 0 et 100')
     .max(100, 'Le pourcentage doit être entre 0 et 100'),
   last_activity_at: z.string().datetime('Date de dernière activité invalide').nullable(),
-  status: z.enum(['not_started', 'in_progress', 'completed']).default('not_started'),
+  status: z
+    .enum(['not_started', 'in_progress', 'completed'])
+    .nullable()
+    .default('not_started')
+    .transform(val => val ?? 'not_started'),
   
   // Métadonnées supplémentaires
-  average_rating: z.number().min(0).max(5).default(0),
-  enrolled_students: z.number().int().min(0).default(0),
-  duration_minutes: z.number().int().min(0).default(0),
-  is_new: z.boolean().default(false),
+  average_rating: z
+    .number()
+    .min(0)
+    .max(5)
+    .nullable()
+    .default(0)
+    .transform(val => val ?? 0),
+  enrolled_students: z
+    .number()
+    .int()
+    .min(0)
+    .nullable()
+    .default(0)
+    .transform(val => val ?? 0),
+  duration_minutes: z
+    .number()
+    .int()
+    .min(0)
+    .nullable()
+    .default(0)
+    .transform(val => val ?? 0),
+  is_new: z.boolean().nullable().default(false).transform(val => val ?? false),
   
   // Champs calculés
   progress: z.object({
