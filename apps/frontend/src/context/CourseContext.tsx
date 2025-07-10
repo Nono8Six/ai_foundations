@@ -28,10 +28,16 @@ export const CourseProvider = ({ children }: { children: ReactNode }) => {
 
   const key: NoInfer<[string, string | undefined]> = ['courses', user?.id];
 
-  const queryResult = useQuery<PaginatedCoursesResult, Error, PaginatedCoursesResult, typeof key>({
+  const queryResult = useQuery<
+    PaginatedCoursesResult,
+    Error,
+    PaginatedCoursesResult,
+    typeof key
+  >({
     queryKey: key,
     queryFn: () => fetchCourses(),
     enabled: !!user?.id,
+    retry: false,
     onError: (error: Error) =>
       logError(new Error(`[CourseContext] A critical error occurred: ${error.message}`)),
   });
