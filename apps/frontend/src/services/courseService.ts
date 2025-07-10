@@ -150,9 +150,11 @@ export async function fetchCourses({
 
     // Valider et transformer les données
     const validatedData = z.array(CourseWithProgressSchema).safeParse(data || []);
-    
+
     if (!validatedData.success) {
-      log.error('Course data validation failed', validatedData.error);
+      log.error('Course data validation failed', {
+        issues: validatedData.error.format(),
+      });
       throw new Error('Invalid course data received from server');
     }
 
