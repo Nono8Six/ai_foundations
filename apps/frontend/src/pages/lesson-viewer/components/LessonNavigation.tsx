@@ -41,15 +41,15 @@ const LessonNavigation: React.FC<LessonNavigationProps> = ({
     setExpandedModules(newExpanded);
   };
 
-  const getTotalDuration = lessons => {
-    return lessons.reduce((total, lesson) => {
+  const getTotalDuration = (lessons: Lesson[]): number => {
+    return lessons.reduce((total: number, lesson: Lesson) => {
       const minutes = parseInt(lesson.duration.split(' ')[0]);
       return total + minutes;
     }, 0);
   };
 
-  const getCompletedCount = lessons => {
-    return lessons.filter(lesson => lesson.completed).length;
+  const getCompletedCount = (lessons: Lesson[]): number => {
+    return lessons.filter((lesson: Lesson) => lesson.completed).length;
   };
 
   return (

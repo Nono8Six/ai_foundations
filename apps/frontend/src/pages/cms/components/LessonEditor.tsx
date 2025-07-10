@@ -90,8 +90,8 @@ const LessonEditor: React.FC<LessonEditorProps> = ({ lesson, onSave, onDelete })
     }
   };
 
-  const formatContent = text => {
-    return text.split('\n').map((line, index) => (
+  const formatContent = (text: string) => {
+    return text.split('\n').map((line: string, index: number) => (
       <p key={index} className='mb-4'>
         {line}
       </p>

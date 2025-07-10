@@ -55,14 +55,14 @@ const TextContent: React.FC<TextContentProps> = ({ content, onProgress }) => {
     setBookmarks([...bookmarks, newBookmark]);
   };
 
-  const goToBookmark = bookmark => {
+  const goToBookmark = (bookmark: Bookmark): void => {
     const element = contentRef.current;
     if (element) {
       element.scrollTo({ top: bookmark.position, behavior: 'smooth' });
     }
   };
 
-  const removeBookmark = bookmarkId => {
+  const removeBookmark = (bookmarkId: number): void => {
     setBookmarks(bookmarks.filter(b => b.id !== bookmarkId));
   };
 
@@ -80,8 +80,8 @@ const TextContent: React.FC<TextContentProps> = ({ content, onProgress }) => {
   };
 
   // Parse markdown-like content
-  const parseContent = text => {
-    return text.split('\n').map((line, index) => {
+  const parseContent = (text: string) => {
+    return text.split('\n').map((line: string, index: number) => {
       if (line.startsWith('# ')) {
         return (
           <h1 key={index} className='text-3xl font-bold mb-6 text-text-primary'>

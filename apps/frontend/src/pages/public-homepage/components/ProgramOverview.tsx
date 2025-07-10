@@ -100,7 +100,7 @@ const ProgramOverview: React.FC<ProgramOverviewProps> = () => {
     },
   ];
 
-  const getDifficultyColor = difficulty => {
+  const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
       case 'Débutant':
         return 'bg-accent-100 text-accent-700';

@@ -2,6 +2,8 @@ import React from 'react';
 import Icon from '@frontend/components/AppIcon';
 import type { PerformanceMetricsData } from '@frontend/types/metrics';
 
+type MetricStatus = 'excellent' | 'info' | 'unknown';
+
 export interface PerformanceMetricsProps {
   metrics: PerformanceMetricsData | null;
 }
@@ -37,7 +39,7 @@ const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({ metrics }) => {
     }
   }
 
-  const getStatusColor = status => {
+  const getStatusColor = (status: MetricStatus): string => {
     switch (status) {
       case 'excellent':
         return 'text-success';
@@ -50,7 +52,7 @@ const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({ metrics }) => {
     }
   };
 
-  const getStatusBg = status => {
+  const getStatusBg = (status: MetricStatus): string => {
     switch (status) {
       case 'excellent':
         return 'bg-success-50';
@@ -63,7 +65,7 @@ const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({ metrics }) => {
     }
   };
 
-  const getStatusIndicator = status => {
+  const getStatusIndicator = (status: MetricStatus): string => {
     switch (status) {
       case 'excellent':
         return 'bg-success';
@@ -76,7 +78,7 @@ const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({ metrics }) => {
     }
   };
 
-  const getStatusLabel = status => {
+  const getStatusLabel = (status: MetricStatus): string => {
     switch (status) {
       case 'excellent':
         return 'Excellent';

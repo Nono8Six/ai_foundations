@@ -55,7 +55,7 @@ const BulkActionsBar: React.FC<BulkActionsBarProps> = ({ selectedCount, onBulkAc
     },
   ];
 
-  const handleActionClick = actionId => {
+  const handleActionClick = (actionId: string) => {
     onBulkAction(actionId);
     setShowActionMenu(false);
   };

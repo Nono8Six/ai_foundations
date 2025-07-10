@@ -62,7 +62,7 @@ const BenefitsSection: React.FC<BenefitsSectionProps> = () => {
     },
   ];
 
-  const getColorClasses = color => {
+  const getColorClasses = (color: string) => {
     const colors = {
       primary: {
         bg: 'bg-primary-50',
