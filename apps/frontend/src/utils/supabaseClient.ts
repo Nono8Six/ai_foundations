@@ -11,6 +11,9 @@ export async function safeQuery<T, E extends Error = PostgrestError>(
     if (error) {
       return { data: null, error };
     }
+    if (data === null) {
+      return { data: null, error: new Error('No data') as E };
+    }
     return { data, error: null };
   } catch (err) {
     logError(err as AppError);
