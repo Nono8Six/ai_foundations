@@ -69,15 +69,15 @@ const LessonEditor: React.FC<LessonEditorProps> = ({ lesson, onSave, onDelete })
   };
 
   const handleSave = () => {
-    if (validateForm()) {
-      onSave({ ...lesson, ...formData });
+    if (validateForm() && lesson) {
+      onSave({ ...lesson, ...formData, type: 'lesson' });
     }
   };
 
   const handleVideoUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const file = event.target.files[0];
+    const file = event.target.files?.[0];
     if (file) {
       setIsUploading(true);
       try {
@@ -90,8 +90,8 @@ const LessonEditor: React.FC<LessonEditorProps> = ({ lesson, onSave, onDelete })
     }
   };
 
-  const formatContent = text => {
-    return text.split('\n').map((line, index) => (
+  const formatContent = (text: string) => {
+    return text.split('\n').map((line: string, index: number) => (
       <p key={index} className='mb-4'>
         {line}
       </p>
@@ -659,7 +659,7 @@ const LessonEditor: React.FC<LessonEditorProps> = ({ lesson, onSave, onDelete })
                 </p>
 
                 <button
-                  onClick={() => onDelete(lesson.id)}
+                  onClick={() => onDelete()}
                   className='w-full px-4 py-2 bg-error text-white rounded-lg hover:bg-error-600 transition-colors duration-200 font-medium'
                 >
                   <Icon aria-hidden='true' name='Trash2' size={16} className='mr-2' />

@@ -10,8 +10,17 @@ export interface ModuleEditorProps {
   onDelete: () => void;
 }
 
+interface FormValues {
+  title: string;
+  description: string;
+  order: number;
+  learningObjectives: string;
+  estimatedDuration: number;
+  isOptional: boolean;
+}
+
 const ModuleEditor: React.FC<ModuleEditorProps> = ({ module, onSave, onDelete }) => {
-  const [formData, setFormData] = useState<Partial<CmsModule>>({
+  const [formData, setFormData] = useState<FormValues>({
     title: module?.title || '',
     description: module?.description || '',
     order: module?.order || 1,
@@ -23,9 +32,9 @@ const ModuleEditor: React.FC<ModuleEditorProps> = ({ module, onSave, onDelete })
   const [errors, setErrors] = useState<Record<string, string | null>>({});
   const [isSaving, setIsSaving] = useState(false);
 
-  const handleInputChange = (
-    field: keyof CmsModule,
-    value: CmsModule[keyof CmsModule]
+  const handleInputChange = <K extends keyof FormValues>(
+    field: K,
+    value: FormValues[K]
   ) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
@@ -52,7 +61,9 @@ const ModuleEditor: React.FC<ModuleEditorProps> = ({ module, onSave, onDelete })
     if (!validateForm()) return;
     setIsSaving(true);
     try {
-      await onSave({ ...module, ...formData });
+      if (module) {
+        await onSave({ ...module, ...formData });
+      }
     } finally {
       setIsSaving(false);
     }
@@ -354,7 +365,7 @@ const ModuleEditor: React.FC<ModuleEditorProps> = ({ module, onSave, onDelete })
                 </p>
 
                 <button
-                  onClick={() => onDelete(module.id)}
+                  onClick={() => onDelete()}
                   className='w-full px-4 py-2 bg-error text-white rounded-lg hover:bg-error-600 transition-colors duration-200 font-medium'
                 >
                   <Icon aria-hidden='true' name='Trash2' size={16} className='mr-2' />
