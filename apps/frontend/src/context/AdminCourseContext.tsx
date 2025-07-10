@@ -49,10 +49,12 @@ export const AdminCourseProvider = ({ children }: { children: ReactNode }) => {
     Database['public']['Tables']['courses']['Insert']
   >({
     mutationFn: async (course: Database['public']['Tables']['courses']['Insert']) => {
-      const { data, error } = await safeQuery(() =>
+      const result = await safeQuery<
+        Database['public']['Tables']['courses']['Row']
+      >(() =>
         supabaseClient.from('courses').insert(course).select().single()
       );
-      return assertData({ data, error });
+      return assertData<Database['public']['Tables']['courses']['Row']>(result);
     },
     onSuccess: invalidateCourses,
   });
@@ -69,10 +71,17 @@ export const AdminCourseProvider = ({ children }: { children: ReactNode }) => {
       id: string;
       updates: Database['public']['Tables']['courses']['Update'];
     }) => {
-      const { data, error } = await safeQuery(() =>
-        supabaseClient.from('courses').update(updates).eq('id', id).select().single()
+      const result = await safeQuery<
+        Database['public']['Tables']['courses']['Row']
+      >(() =>
+        supabaseClient
+          .from('courses')
+          .update(updates)
+          .eq('id', id)
+          .select()
+          .single()
       );
-      return assertData({ data, error });
+      return assertData<Database['public']['Tables']['courses']['Row']>(result);
     },
     onSuccess: invalidateCourses,
   });
@@ -93,10 +102,12 @@ export const AdminCourseProvider = ({ children }: { children: ReactNode }) => {
     Database['public']['Tables']['modules']['Insert']
   >({
     mutationFn: async (module: Database['public']['Tables']['modules']['Insert']) => {
-      const { data, error } = await safeQuery(() =>
+      const result = await safeQuery<
+        Database['public']['Tables']['modules']['Row']
+      >(() =>
         supabaseClient.from('modules').insert(module).select().single()
       );
-      return assertData({ data, error });
+      return assertData<Database['public']['Tables']['modules']['Row']>(result);
     },
     onSuccess: invalidateCourses,
   });
@@ -113,10 +124,17 @@ export const AdminCourseProvider = ({ children }: { children: ReactNode }) => {
       id: string;
       updates: Database['public']['Tables']['modules']['Update'];
     }) => {
-      const { data, error } = await safeQuery(() =>
-        supabaseClient.from('modules').update(updates).eq('id', id).select().single()
+      const result = await safeQuery<
+        Database['public']['Tables']['modules']['Row']
+      >(() =>
+        supabaseClient
+          .from('modules')
+          .update(updates)
+          .eq('id', id)
+          .select()
+          .single()
       );
-      return assertData({ data, error });
+      return assertData<Database['public']['Tables']['modules']['Row']>(result);
     },
     onSuccess: invalidateCourses,
   });
