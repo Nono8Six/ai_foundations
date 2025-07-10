@@ -57,7 +57,7 @@ export type CourseDifficulty = 'beginner' | 'intermediate' | 'advanced' | 'exper
  */
 export interface CourseWithProgress extends Omit<Database['public']['Tables']['courses']['Row'], 'difficulty'> {
   /** Niveau de difficulté typé */
-  difficulty: CourseDifficulty | null;
+  difficulty: CourseDifficulty;
   /** Détails de la progression */
   progress: CourseProgressDetails;
   /** Nombre total de leçons */
