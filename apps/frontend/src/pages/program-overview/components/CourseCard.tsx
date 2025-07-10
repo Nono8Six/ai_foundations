@@ -29,6 +29,8 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
 
   // Calculer le pourcentage de progression
   const progressPercentage = course.progress?.percentage ?? 0;
+  const imageSrc =
+    course.thumbnail_url || course.cover_image_url || '/assets/images/no_image.png';
 
   return (
     <div className='bg-surface rounded-xl shadow-subtle hover:shadow-medium transition-all duration-300 overflow-hidden group hover:-translate-y-1 flex flex-col h-full'>
@@ -129,7 +131,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
             <div className='pt-2'>
               <p className='text-xs text-text-secondary mb-1'>Prérequis:</p>
               <div className='flex flex-wrap gap-1'>
-                {course.prerequisites.map((prereq, index) => (
+                {course.prerequisites.map((prereq: string, index: number) => (
                   <span
                     key={index}
                     className='px-2 py-1 bg-secondary-100 text-secondary-700 text-xs rounded'
@@ -145,7 +147,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
           {course.tags?.length > 0 && (
             <div className='pt-2'>
               <div className='flex flex-wrap gap-1'>
-                {course.tags.slice(0, 3).map((tag, index) => (
+                {course.tags.slice(0, 3).map((tag: string, index: number) => (
                   <span
                     key={index}
                     className='px-2 py-1 bg-primary-50 text-primary-700 text-xs rounded'
