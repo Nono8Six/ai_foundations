@@ -1,0 +1,520 @@
+
+> ai-foundations-monorepo@ typecheck C:\GitHub\ai_foundations_lms
+> tsc --noEmit
+
+apps/frontend/src/context/AdminCourseContext.tsx(51,5): error TS2322: Type '(course: Database["public"]["Tables"]["courses"]["Insert"]) => Promise<null>' is not assignable to type 'MutationFunction<{ category: string | null; cover_image_url: string | null; created_at: string | null; description: string | null; difficulty: string | null; id: string; is_published: boolean | null; slug: string; thumbnail_url: string | null; title: string; updated_at: string | null; }, { ...; }>'.
+  Type 'Promise<null>' is not assignable to type 'Promise<{ category: string | null; cover_image_url: string | null; created_at: string | null; description: string | null; difficulty: string | null; id: string; is_published: boolean | null; slug: string; thumbnail_url: string | null; title: string; updated_at: string | null; }>'.
+    Type 'null' is not assignable to type '{ category: string | null; cover_image_url: string | null; created_at: string | null; description: string | null; difficulty: string | null; id: string; is_published: boolean | null; slug: string; thumbnail_url: string | null; title: string; updated_at: string | null; }'.
+apps/frontend/src/context/AdminCourseContext.tsx(65,5): error TS2322: Type '({ id, updates, }: { id: string; updates: Database["public"]["Tables"]["courses"]["Update"]; }) => Promise<null>' is not assignable to type 'MutationFunction<{ category: string | null; cover_image_url: string | null; created_at: string | null; description: string | null; difficulty: string | null; id: string; is_published: boolean | null; slug: string; thumbnail_url: string | null; title: string; updated_at: string | null; }, { ...; }>'.
+  Type 'Promise<null>' is not assignable to type 'Promise<{ category: string | null; cover_image_url: string | null; created_at: string | null; description: string | null; difficulty: string | null; id: string; is_published: boolean | null; slug: string; thumbnail_url: string | null; title: string; updated_at: string | null; }>'.
+    Type 'null' is not assignable to type '{ category: string | null; cover_image_url: string | null; created_at: string | null; description: string | null; difficulty: string | null; id: string; is_published: boolean | null; slug: string; thumbnail_url: string | null; title: string; updated_at: string | null; }'.
+apps/frontend/src/context/AdminCourseContext.tsx(95,5): error TS2322: Type '(module: Database["public"]["Tables"]["modules"]["Insert"]) => Promise<null>' is not assignable to type 'MutationFunction<{ course_id: string | null; created_at: string | null; description: string | null; id: string; is_published: boolean | null; module_order: number; title: string; updated_at: string | null; }, { ...; }>'.
+  Type 'Promise<null>' is not assignable to type 'Promise<{ course_id: string | null; created_at: string | null; description: string | null; id: string; is_published: boolean | null; module_order: number; title: string; updated_at: string | null; }>'.
+    Type 'null' is not assignable to type '{ course_id: string | null; created_at: string | null; description: string | null; id: string; is_published: boolean | null; module_order: number; title: string; updated_at: string | null; }'.
+apps/frontend/src/context/AdminCourseContext.tsx(109,5): error TS2322: Type '({ id, updates, }: { id: string; updates: Database["public"]["Tables"]["modules"]["Update"]; }) => Promise<null>' is not assignable to type 'MutationFunction<{ course_id: string | null; created_at: string | null; description: string | null; id: string; is_published: boolean | null; module_order: number; title: string; updated_at: string | null; }, { ...; }>'.
+  Type 'Promise<null>' is not assignable to type 'Promise<{ course_id: string | null; created_at: string | null; description: string | null; id: string; is_published: boolean | null; module_order: number; title: string; updated_at: string | null; }>'.
+    Type 'null' is not assignable to type '{ course_id: string | null; created_at: string | null; description: string | null; id: string; is_published: boolean | null; module_order: number; title: string; updated_at: string | null; }'.
+apps/frontend/src/context/AuthContext.tsx(2,31): error TS6133: 'useCallback' is declared but its value is never read.
+apps/frontend/src/context/AuthContext.tsx(19,1): error TS6133: 'AppError' is declared but its value is never read.
+apps/frontend/src/context/AuthContext.tsx(229,9): error TS2375: Type 'AuthError' is not assignable to type '{ code?: string; }' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+  Types of property 'code' are incompatible.
+    Type '(string & {}) | ErrorCode | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+apps/frontend/src/context/CourseContext.tsx(8,26): error TS5097: An import path can only end with a '.tsx' extension when 'allowImportingTsExtensions' is enabled.
+apps/frontend/src/context/CourseContext.tsx(35,5): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(options: DefinedInitialDataOptions<PaginatedCoursesResult, Error, PaginatedCoursesResult, [string, string | undefined]>, queryClient?: QueryClient | undefined): DefinedUseQueryResult<...>', gave the following error.
+    Object literal may only specify known properties, and 'onError' does not exist in type 'DefinedInitialDataOptions<PaginatedCoursesResult, Error, PaginatedCoursesResult, [string, string | undefined]>'.
+  Overload 2 of 3, '(options: UndefinedInitialDataOptions<PaginatedCoursesResult, Error, PaginatedCoursesResult, [string, string | undefined]>, queryClient?: QueryClient | undefined): UseQueryResult<...>', gave the following error.
+    Object literal may only specify known properties, and 'onError' does not exist in type 'UndefinedInitialDataOptions<PaginatedCoursesResult, Error, PaginatedCoursesResult, [string, string | undefined]>'.
+  Overload 3 of 3, '(options: UseQueryOptions<PaginatedCoursesResult, Error, PaginatedCoursesResult, [string, string | undefined]>, queryClient?: QueryClient | undefined): UseQueryResult<...>', gave the following error.
+    Object literal may only specify known properties, and 'onError' does not exist in type 'UseQueryOptions<PaginatedCoursesResult, Error, PaginatedCoursesResult, [string, string | undefined]>'.
+apps/frontend/src/hooks/useProgressChartData.ts(88,9): error TS2322: Type 'string | null' is not assignable to type 'string'.
+  Type 'null' is not assignable to type 'string'.
+apps/frontend/src/hooks/useProgressChartData.ts(120,49): error TS2538: Type 'null' cannot be used as an index type.
+apps/frontend/src/hooks/useProgressChartData.ts(148,49): error TS2538: Type 'null' cannot be used as an index type.
+apps/frontend/src/hooks/useProgressChartData.ts(165,45): error TS2538: Type 'null' cannot be used as an index type.
+apps/frontend/src/hooks/useSupabaseList.ts(56,9): error TS2322: Type 'DefinedUseQueryResult<unknown, PostgrestError>' is not assignable to type 'UseQueryResult<Row[], PostgrestError>'.
+  Type 'QueryObserverRefetchErrorResult<unknown, PostgrestError>' is not assignable to type 'UseQueryResult<Row[], PostgrestError>'.
+    Type 'QueryObserverRefetchErrorResult<unknown, PostgrestError>' is not assignable to type 'QueryObserverRefetchErrorResult<Row[], PostgrestError>'.
+      Type 'unknown' is not assignable to type 'Row[]'.
+apps/frontend/src/hooks/useSupabaseList.ts(59,5): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(options: DefinedInitialDataOptions<unknown, PostgrestError, unknown, (string | { limit: number; order: "desc" | "asc"; filters: string; } | undefined)[]>, queryClient?: QueryClient | undefined): DefinedUseQueryResult<...>', gave the following error.
+    Object literal may only specify known properties, and 'cacheTime' does not exist in type 'DefinedInitialDataOptions<unknown, PostgrestError, unknown, (string | { limit: number; order: "desc" | "asc"; filters: string; } | undefined)[]>'.
+  Overload 2 of 3, '(options: UndefinedInitialDataOptions<Row[], PostgrestError, Row[], (string | { limit: number; order: "desc" | "asc"; filters: string; } | undefined)[]>, queryClient?: QueryClient | undefined): UseQueryResult<...>', gave the following error.
+    Object literal may only specify known properties, and 'cacheTime' does not exist in type 'UndefinedInitialDataOptions<Row[], PostgrestError, Row[], (string | { limit: number; order: "desc" | "asc"; filters: string; } | undefined)[]>'.
+  Overload 3 of 3, '(options: UseQueryOptions<Row[], PostgrestError, Row[], (string | { limit: number; order: "desc" | "asc"; filters: string; } | undefined)[]>, queryClient?: QueryClient | undefined): UseQueryResult<...>', gave the following error.
+    Object literal may only specify known properties, and 'cacheTime' does not exist in type 'UseQueryOptions<Row[], PostgrestError, Row[], (string | { limit: number; order: "desc" | "asc"; filters: string; } | undefined)[]>'.
+apps/frontend/src/hooks/useSupabaseList.ts(61,68): error TS2345: Argument of type 'string' is not assignable to parameter of type '("user_id" extends keyof { achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12...'.
+apps/frontend/src/hooks/useSupabaseList.ts(63,83): error TS2345: Argument of type 'Row[keyof Row]' is not assignable to parameter of type '(string extends keyof { achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 mo...'.
+  Type 'Row[string] | Row[number] | Row[symbol]' is not assignable to type '(string extends keyof { achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 mo...'.
+    Type 'Row[string]' is not assignable to type '(string extends keyof { achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 mo...'.
+apps/frontend/src/hooks/useSupabaseList.ts(65,54): error TS2345: Argument of type '() => Promise<{ data: (({ achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { created_at?: string | null; description?: string | null...' is not assignable to parameter of type '() => PromiseLike<{ data: Row[] | null; error: PostgrestError | null; }>'.
+  Call signature return types 'Promise<{ data: (({ achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 more ....' and 'PromiseLike<{ data: Row[] | null; error: PostgrestError | null; }>' are incompatible.
+    The types of 'then' are incompatible between these types.
+      Type '<TResult1 = { data: (({ achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 mo...' is not assignable to type '<TResult1 = { data: Row[] | null; error: PostgrestError | null; }, TResult2 = never>(onfulfilled?: ((value: { data: Row[] | null; error: PostgrestError | null; }) => TResult1 | PromiseLike<...>) | null | undefined, onrejected?: ((reason: any) => TResult2 | PromiseLike<...>) | ... 1 more ... | undefined) => PromiseLi...'.
+        Types of parameters 'onfulfilled' and 'onfulfilled' are incompatible.
+          Types of parameters 'value' and 'value' are incompatible.
+            Type '{ data: (({ achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { created_at?: string | null; description?: string | null; earned?: boo...' is not assignable to type '{ data: Row[] | null; error: PostgrestError | null; }'.
+              Types of property 'data' are incompatible.
+                Type '(({ achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 more ...; user_setting...' is not assignable to type 'Row[] | null'.
+                  Type '(({ achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 more ...; user_setting...' is not assignable to type 'Row[]'.
+                    Type '({ achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 more ...; user_settings...' is not assignable to type 'Row'.
+                      Type '(T extends string ? { achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 more...' is not assignable to type 'Row'.
+                        Type 'T extends string ? { achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 more ...' is not assignable to type 'Row'.
+                          Type '({ achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 more ...; user_settings...' is not assignable to type 'Row'.
+                            Type '{ achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 more ...; user_settings:...' is not assignable to type 'Row'.
+                              Type 'SelectQueryError<"Could not retrieve a valid record or error value"> | SelectQueryError<"Processing node failed.">' is not assignable to type 'Row'.
+                                Type 'SelectQueryError<"Could not retrieve a valid record or error value">' is not assignable to type 'Row'.
+                                  Type 'SelectQueryError<"Could not retrieve a valid record or error value">' is not assignable to type '{ created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; } | ... 12 more ... | { ...; }'.
+                                    Type '{ achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 more ...; user_settings:...' is not assignable to type '{ created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; } | ... 12 more ... | { ...; }'.
+                                      Type 'SelectQueryError<"Could not retrieve a valid record or error value"> | SelectQueryError<"Processing node failed.">' is not assignable to type '{ created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; } | ... 12 more ... | { ...; }'.
+                                        Type 'SelectQueryError<"Could not retrieve a valid record or error value">' is not assignable to type '{ created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; } | ... 12 more ... | { ...; }'.
+                                          Type '{ achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 more ...; user_settings:...' is not assignable to type '{ created_at: string | null; id: string; learning_preferences: Json; notification_settings: Json; privacy_settings: Json; updated_at: string | null; user_id: string; }'.
+                                            Type 'SelectQueryError<"Could not retrieve a valid record or error value"> | SelectQueryError<"Processing node failed.">' is not assignable to type '{ created_at: string | null; id: string; learning_preferences: Json; notification_settings: Json; privacy_settings: Json; updated_at: string | null; user_id: string; }'.
+                                              Type '{ error: true; } & String' is missing the following properties from type '{ created_at: string | null; id: string; learning_preferences: Json; notification_settings: Json; privacy_settings: Json; updated_at: string | null; user_id: string; }': created_at, id, learning_preferences, notification_settings, and 3 more.
+apps/frontend/src/hooks/useSupabaseList.ts(77,5): error TS2322: Type '(payload: Insert) => Promise<Row | null>' is not assignable to type 'MutationFunction<Row, Insert>'.
+  Type 'Promise<Row | null>' is not assignable to type 'Promise<Row>'.
+    Type 'Row | null' is not assignable to type 'Row'.
+      Type 'null' is not assignable to type 'Row'.
+        Type 'null' is not assignable to type '{ created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; } | ... 12 more ... | { ...; }'.
+apps/frontend/src/hooks/useSupabaseList.ts(78,52): error TS2345: Argument of type '() => Promise<{ data: (({ achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { created_at?: string | null; description?: string | null...' is not assignable to parameter of type '() => PromiseLike<{ data: Row | null; error: PostgrestError | null; }>'.
+  Call signature return types 'Promise<{ data: (({ achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 more ....' and 'PromiseLike<{ data: Row | null; error: PostgrestError | null; }>' are incompatible.
+    The types of 'then' are incompatible between these types.
+      Type '<TResult1 = { data: (({ achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 mo...' is not assignable to type '<TResult1 = { data: Row | null; error: PostgrestError | null; }, TResult2 = never>(onfulfilled?: ((value: { data: Row | null; error: PostgrestError | null; }) => TResult1 | PromiseLike<...>) | null | undefined, onrejected?: ((reason: any) => TResult2 | PromiseLike<...>) | ... 1 more ... | undefined) => PromiseLike<....'.
+        Types of parameters 'onfulfilled' and 'onfulfilled' are incompatible.
+          Types of parameters 'value' and 'value' are incompatible.
+            Type '{ data: (({ achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { created_at?: string | null; description?: string | null; earned?: boo...' is not assignable to type '{ data: Row | null; error: PostgrestError | null; }'.
+              Types of property 'data' are incompatible.
+                Type '(({ achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 more ...; user_setting...' is not assignable to type 'Row | null'.
+                  Type '({ achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 more ...; user_settings...' is not assignable to type 'Row | null'.
+                    Type '(T extends string ? { achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 more...' is not assignable to type 'Row | null'.
+                      Type 'T extends string ? { achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 more ...' is not assignable to type 'Row | null'.
+                        Type '({ achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 more ...; user_settings...' is not assignable to type 'Row | null'.
+                          Type '{ achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 more ...; user_settings:...' is not assignable to type 'Row | null'.
+                            Type 'SelectQueryError<"Could not retrieve a valid record or error value"> | SelectQueryError<"Processing node failed.">' is not assignable to type 'Row | null'.
+                              Type 'SelectQueryError<"Could not retrieve a valid record or error value">' is not assignable to type 'Row | null'.
+                                Type 'SelectQueryError<"Could not retrieve a valid record or error value">' is not assignable to type 'Row'.
+                                  Type 'SelectQueryError<"Could not retrieve a valid record or error value">' is not assignable to type '{ created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; } | ... 12 more ... | { ...; }'.
+apps/frontend/src/hooks/useSupabaseList.ts(79,62): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(values: { achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 more ...; user_settings: { ...; }; }[T] extends { ...; } ? { ...; }[T]["Insert"] : never, options?: { ...; } | undefined): PostgrestFilterBuilder<...>', gave the following error.
+    Argument of type 'Insert' is not assignable to parameter of type '{ achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 more ...; user_settings:...' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+      Type '{ created_at?: string | null; description?: string | null; earned?: boolean | null; icon?: string | null; id?: string; rarity?: string | null; title: string; user_id?: string | null; xp_reward?: number | null; } | ... 12 more ... | { ...; }' is not assignable to type '{ achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 more ...; user_settings:...' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+        Type '{ created_at?: string | null; description?: string | null; earned?: boolean | null; icon?: string | null; id?: string; rarity?: string | null; title: string; user_id?: string | null; xp_reward?: number | null; }' is not assignable to type '{ achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 more ...; user_settings:...' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+  Overload 2 of 2, '(values: ({ achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 more ...; user_settings: { ...; }; }[T] extends { ...; } ? { ...; }[T]["Insert"] : never)[], options?: { ...; } | undefined): PostgrestFilterBuilder<...>', gave the following error.
+    Argument of type '{ created_at?: string | null; description?: string | null; earned?: boolean | null; icon?: string | null; id?: string; rarity?: string | null; title: string; user_id?: string | null; xp_reward?: number | null; } | ... 12 more ... | { ...; }' is not assignable to parameter of type '({ achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 more ...; user_settings...'.
+      Type '{ created_at?: string | null; description?: string | null; earned?: boolean | null; icon?: string | null; id?: string; rarity?: string | null; title: string; user_id?: string | null; xp_reward?: number | null; }' is missing the following properties from type '({ achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 more ...; user_settings...': length, pop, push, concat, and 35 more.
+apps/frontend/src/hooks/useSupabaseList.ts(82,25): error TS2345: Argument of type '{ data: Row | null; error: PostgrestError | null; }' is not assignable to parameter of type 'Result<Row | null, Error>'.
+  Type '{ data: Row | null; error: PostgrestError | null; }' is not assignable to type '{ data: null; error: Error; }'.
+    Types of property 'data' are incompatible.
+      Type 'Row | null' is not assignable to type 'null'.
+        Type 'Row' is not assignable to type 'null'.
+          Type '{ created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; } | ... 12 more ... | { ...; }' is not assignable to type 'null'.
+            Type '{ created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }' is not assignable to type 'null'.
+apps/frontend/src/hooks/useSupabaseList.ts(88,5): error TS2322: Type '({ id, updates }: { id: string; updates: Update; }) => Promise<Row | null>' is not assignable to type 'MutationFunction<Row, { id: string; updates: Update; }>'.
+  Type 'Promise<Row | null>' is not assignable to type 'Promise<Row>'.
+    Type 'Row | null' is not assignable to type 'Row'.
+      Type 'null' is not assignable to type 'Row'.
+        Type 'null' is not assignable to type '{ created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; } | ... 12 more ... | { ...; }'.
+apps/frontend/src/hooks/useSupabaseList.ts(89,52): error TS2345: Argument of type '() => Promise<{ data: (({ achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { created_at?: string | null; description?: string | null...' is not assignable to parameter of type '() => PromiseLike<{ data: Row | null; error: PostgrestError | null; }>'.
+  Call signature return types 'Promise<{ data: (({ achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 more ....' and 'PromiseLike<{ data: Row | null; error: PostgrestError | null; }>' are incompatible.
+    The types of 'then' are incompatible between these types.
+      Type '<TResult1 = { data: (({ achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 mo...' is not assignable to type '<TResult1 = { data: Row | null; error: PostgrestError | null; }, TResult2 = never>(onfulfilled?: ((value: { data: Row | null; error: PostgrestError | null; }) => TResult1 | PromiseLike<...>) | null | undefined, onrejected?: ((reason: any) => TResult2 | PromiseLike<...>) | ... 1 more ... | undefined) => PromiseLike<....'.
+        Types of parameters 'onfulfilled' and 'onfulfilled' are incompatible.
+          Types of parameters 'value' and 'value' are incompatible.
+            Type '{ data: (({ achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { created_at?: string | null; description?: string | null; earned?: boo...' is not assignable to type '{ data: Row | null; error: PostgrestError | null; }'.
+              Types of property 'data' are incompatible.
+                Type '(({ achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 more ...; user_setting...' is not assignable to type 'Row | null'.
+                  Type '({ achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 more ...; user_settings...' is not assignable to type 'Row | null'.
+                    Type '(T extends string ? { achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 more...' is not assignable to type 'Row | null'.
+                      Type 'T extends string ? { achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 more ...' is not assignable to type 'Row | null'.
+                        Type '({ achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 more ...; user_settings...' is not assignable to type 'Row | null'.
+                          Type '{ achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 more ...; user_settings:...' is not assignable to type 'Row | null'.
+                            Type 'SelectQueryError<"Could not retrieve a valid record or error value"> | SelectQueryError<"Processing node failed.">' is not assignable to type 'Row | null'.
+                              Type 'SelectQueryError<"Could not retrieve a valid record or error value">' is not assignable to type 'Row | null'.
+                                Type 'SelectQueryError<"Could not retrieve a valid record or error value">' is not assignable to type 'Row'.
+                                  Type 'SelectQueryError<"Could not retrieve a valid record or error value">' is not assignable to type '{ created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; } | ... 12 more ... | { ...; }'.
+apps/frontend/src/hooks/useSupabaseList.ts(90,62): error TS2379: Argument of type 'Update' is not assignable to parameter of type '{ achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 more ...; user_settings:...' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+  Type '{ created_at?: string | null; description?: string | null; earned?: boolean | null; icon?: string | null; id?: string; rarity?: string | null; title?: string; user_id?: string | null; xp_reward?: number | null; } | ... 12 more ... | { ...; }' is not assignable to type '{ achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 more ...; user_settings:...' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+    Type '{ created_at?: string | null; description?: string | null; earned?: boolean | null; icon?: string | null; id?: string; rarity?: string | null; title?: string; user_id?: string | null; xp_reward?: number | null; }' is not assignable to type '{ achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 more ...; user_settings:...' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+apps/frontend/src/hooks/useSupabaseList.ts(90,80): error TS2345: Argument of type 'string' is not assignable to parameter of type '("id" extends keyof { achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 more...'.
+apps/frontend/src/hooks/useSupabaseList.ts(93,25): error TS2345: Argument of type '{ data: Row | null; error: PostgrestError | null; }' is not assignable to parameter of type 'Result<Row | null, Error>'.
+  Type '{ data: Row | null; error: PostgrestError | null; }' is not assignable to type '{ data: null; error: Error; }'.
+    Types of property 'data' are incompatible.
+      Type 'Row | null' is not assignable to type 'null'.
+        Type 'Row' is not assignable to type 'null'.
+          Type '{ created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; } | ... 12 more ... | { ...; }' is not assignable to type 'null'.
+            Type '{ created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }' is not assignable to type 'null'.
+apps/frontend/src/hooks/useSupabaseList.ts(101,73): error TS2345: Argument of type 'string' is not assignable to parameter of type '("id" extends keyof { achievements: { Row: { created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 12 more...'.
+apps/frontend/src/lib/__mocks__/supabase.ts(32,9): error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
+apps/frontend/src/lib/__mocks__/supabase.ts(33,30): error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
+apps/frontend/src/lib/__mocks__/supabase.ts(40,10): error TS2551: Property 'mockResolvedValue' does not exist on type '{ select: Mock<Procedure>; insert: Mock<Procedure>; update: Mock<Procedure>; delete: Mock<Procedure>; eq: Mock<Procedure>; ... 12 more ...; mockResolvedValueOnce: (value: unknown) => ...; }'. Did you mean 'mockResolvedValueOnce'?
+apps/frontend/src/lib/__mocks__/supabase.ts(55,34): error TS2345: Argument of type '(tableName: string) => { select: Mock<Procedure>; insert: Mock<Procedure>; update: Mock<Procedure>; delete: Mock<Procedure>; ... 13 more ...; mockResolvedValueOnce: (value: unknown) => { ...; }; }' is not assignable to parameter of type 'NormalizedProcedure<() => { select: Mock<Procedure>; insert: Mock<Procedure>; update: Mock<Procedure>; delete: Mock<Procedure>; ... 13 more ...; mockResolvedValueOnce: (value: unknown) => { ...; }; }>'.
+  Target signature provides too few arguments. Expected 1 or more, but got 0.
+apps/frontend/src/lib/__mocks__/supabase.ts(73,14): error TS2551: Property 'mockResolvedValue' does not exist on type '{ select: Mock<Procedure>; insert: Mock<Procedure>; update: Mock<Procedure>; delete: Mock<Procedure>; eq: Mock<Procedure>; ... 12 more ...; mockResolvedValueOnce: (value: unknown) => { ...; }; }'. Did you mean 'mockResolvedValueOnce'?
+apps/frontend/src/lib/__mocks__/supabase.ts(75,10): error TS2551: Property 'mockResolvedValue' does not exist on type '{ select: Mock<Procedure>; insert: Mock<Procedure>; update: Mock<Procedure>; delete: Mock<Procedure>; eq: Mock<Procedure>; ... 12 more ...; mockResolvedValueOnce: (value: unknown) => { ...; }; }'. Did you mean 'mockResolvedValueOnce'?
+apps/frontend/src/pages/admin-dashboard/components/PerformanceMetrics.tsx(40,26): error TS7006: Parameter 'status' implicitly has an 'any' type.
+apps/frontend/src/pages/admin-dashboard/components/PerformanceMetrics.tsx(53,23): error TS7006: Parameter 'status' implicitly has an 'any' type.
+apps/frontend/src/pages/admin-dashboard/components/PerformanceMetrics.tsx(66,30): error TS7006: Parameter 'status' implicitly has an 'any' type.
+apps/frontend/src/pages/admin-dashboard/components/PerformanceMetrics.tsx(79,26): error TS7006: Parameter 'status' implicitly has an 'any' type.
+apps/frontend/src/pages/admin-dashboard/components/PopularCoursesChart.tsx(11,8): error TS2305: Module '"recharts"' has no exported member 'TooltipPayload'.
+apps/frontend/src/pages/admin-dashboard/components/RecentActivity.tsx(19,19): error TS7006: Parameter 'date' implicitly has an 'any' type.
+apps/frontend/src/pages/admin-dashboard/components/RecentActivity.tsx(20,31): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+apps/frontend/src/pages/admin-dashboard/components/RecentActivity.tsx(20,44): error TS2363: The right-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+apps/frontend/src/pages/admin-dashboard/components/RecentActivity.tsx(35,30): error TS7006: Parameter 'type' implicitly has an 'any' type.
+apps/frontend/src/pages/admin-dashboard/components/RecentActivity.tsx(138,41): error TS2339: Property 'full_name' does not exist on type 'SelectQueryError<"could not find the relation between activity_log and profiles">'.
+apps/frontend/src/pages/admin-dashboard/components/RecentActivity.tsx(138,78): error TS2339: Property 'avatar_url' does not exist on type 'SelectQueryError<"could not find the relation between activity_log and profiles">'.
+apps/frontend/src/pages/admin-dashboard/index.tsx(45,32): error TS2322: Type '"distinct"' is not assignable to type '"exact" | "planned" | "estimated" | undefined'.
+apps/frontend/src/pages/admin-dashboard/index.tsx(70,57): error TS18047: 'curr.duration_minutes' is possibly 'null'.
+apps/frontend/src/pages/admin-dashboard/index.tsx(142,57): error TS2554: Expected 0 arguments, but got 1.
+apps/frontend/src/pages/auth/components/GoogleAuthButton.tsx(25,42): error TS18046: 'error' is of type 'unknown'.
+apps/frontend/src/pages/auth/components/RegisterForm.tsx(48,40): error TS18046: 'error' is of type 'unknown'.
+apps/frontend/src/pages/auth/components/RegisterForm.tsx(50,20): error TS18046: 'error' is of type 'unknown'.
+apps/frontend/src/pages/auth/index.tsx(38,29): error TS7006: Parameter 'userData' implicitly has an 'any' type.
+apps/frontend/src/pages/cms/components/CourseEditor.tsx(13,11): error TS2304: Cannot find name 'CmsCourse'.
+apps/frontend/src/pages/cms/components/CourseEditor.tsx(14,18): error TS2304: Cannot find name 'CmsCourse'.
+apps/frontend/src/pages/cms/components/CourseEditor.tsx(82,50): error TS2304: Cannot find name 'CmsCourse'.
+apps/frontend/src/pages/cms/components/LessonEditor.tsx(28,22): error TS2339: Property 'content' does not exist on type 'CmsLesson'.
+apps/frontend/src/pages/cms/components/LessonEditor.tsx(30,23): error TS2339: Property 'videoUrl' does not exist on type 'CmsLesson'.
+apps/frontend/src/pages/cms/components/LessonEditor.tsx(32,20): error TS2339: Property 'order' does not exist on type 'CmsLesson'.
+apps/frontend/src/pages/cms/components/LessonEditor.tsx(33,22): error TS2339: Property 'hasQuiz' does not exist on type 'CmsLesson'.
+apps/frontend/src/pages/cms/components/LessonEditor.tsx(34,28): error TS2339: Property 'allowComments' does not exist on type 'CmsLesson'.
+apps/frontend/src/pages/cms/components/LessonEditor.tsx(35,24): error TS2339: Property 'isPreview' does not exist on type 'CmsLesson'.
+apps/frontend/src/pages/cms/components/LessonEditor.tsx(73,14): error TS2379: Argument of type '{ title: string; content: string; duration: number; videoUrl: string; status: string; order: number; hasQuiz: boolean; allowComments: boolean; isPreview: boolean; type?: "lesson"; completions?: number; ... 4 more ...; updatedAt?: string; }' is not assignable to parameter of type 'CmsLesson' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+  Property 'type' is optional in type '{ title: string; content: string; duration: number; videoUrl: string; status: string; order: number; hasQuiz: boolean; allowComments: boolean; isPreview: boolean; type?: "lesson"; completions?: number; ... 4 more ...; updatedAt?: string; }' but required in type 'CmsLesson'.
+apps/frontend/src/pages/cms/components/LessonEditor.tsx(80,18): error TS18047: 'event.target.files' is possibly 'null'.
+apps/frontend/src/pages/cms/components/LessonEditor.tsx(93,25): error TS7006: Parameter 'text' implicitly has an 'any' type.
+apps/frontend/src/pages/cms/components/LessonEditor.tsx(94,34): error TS7006: Parameter 'line' implicitly has an 'any' type.
+apps/frontend/src/pages/cms/components/LessonEditor.tsx(94,40): error TS7006: Parameter 'index' implicitly has an 'any' type.
+apps/frontend/src/pages/cms/components/LessonEditor.tsx(662,43): error TS2554: Expected 0 arguments, but got 1.
+apps/frontend/src/pages/cms/components/MediaLibrary.tsx(47,37): error TS2339: Property 'size' does not exist on type 'FileObject'.
+apps/frontend/src/pages/cms/components/MediaLibrary.tsx(61,16): error TS2345: Argument of type 'string' is not assignable to parameter of type '"documents" | "images" | "videos"'.
+apps/frontend/src/pages/cms/components/MediaLibrary.tsx(71,60): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ readonly images: "course-images"; readonly videos: "lesson-videos"; readonly documents: "documents"; }'.
+  No index signature with a parameter of type 'string' was found on type '{ readonly images: "course-images"; readonly videos: "lesson-videos"; readonly documents: "documents"; }'.
+apps/frontend/src/pages/cms/components/MediaLibrary.tsx(72,20): error TS2345: Argument of type 'string' is not assignable to parameter of type '"documents" | "images" | "videos"'.
+apps/frontend/src/pages/cms/components/MediaLibrary.tsx(90,19): error TS2345: Argument of type 'MediaItem[]' is not assignable to parameter of type 'MediaItem'.
+  Type 'MediaItem[]' is missing the following properties from type 'MediaItem': id, name, url, size, and 2 more.
+apps/frontend/src/pages/cms/components/MediaLibrary.tsx(139,19): error TS2339: Property 'dimensions' does not exist on type 'MediaItem'.
+apps/frontend/src/pages/cms/components/MediaLibrary.tsx(139,44): error TS2339: Property 'dimensions' does not exist on type 'MediaItem'.
+apps/frontend/src/pages/cms/components/MediaLibrary.tsx(140,19): error TS2339: Property 'duration' does not exist on type 'MediaItem'.
+apps/frontend/src/pages/cms/components/MediaLibrary.tsx(140,42): error TS2339: Property 'duration' does not exist on type 'MediaItem'.
+apps/frontend/src/pages/cms/components/MediaLibrary.tsx(141,19): error TS2339: Property 'pages' does not exist on type 'MediaItem'.
+apps/frontend/src/pages/cms/components/MediaLibrary.tsx(141,39): error TS2339: Property 'pages' does not exist on type 'MediaItem'.
+apps/frontend/src/pages/cms/components/ModuleEditor.tsx(17,5): error TS2353: Object literal may only specify known properties, and 'order' does not exist in type 'Partial<CmsModule> | (() => Partial<CmsModule>)'.
+apps/frontend/src/pages/cms/components/ModuleEditor.tsx(17,20): error TS2339: Property 'order' does not exist on type 'CmsModule'.
+apps/frontend/src/pages/cms/components/ModuleEditor.tsx(18,33): error TS2339: Property 'learningObjectives' does not exist on type 'CmsModule'.
+apps/frontend/src/pages/cms/components/ModuleEditor.tsx(19,32): error TS2339: Property 'estimatedDuration' does not exist on type 'CmsModule'.
+apps/frontend/src/pages/cms/components/ModuleEditor.tsx(20,25): error TS2339: Property 'isOptional' does not exist on type 'CmsModule'.
+apps/frontend/src/pages/cms/components/ModuleEditor.tsx(39,10): error TS18048: 'formData.title' is possibly 'undefined'.
+apps/frontend/src/pages/cms/components/ModuleEditor.tsx(43,10): error TS18048: 'formData.description' is possibly 'undefined'.
+apps/frontend/src/pages/cms/components/ModuleEditor.tsx(55,20): error TS2379: Argument of type '{ type?: "module"; courseId?: string; lessons?: CmsLesson[]; id?: string; title?: string; description?: string; createdAt?: string; updatedAt?: string; }' is not assignable to parameter of type 'CmsModule' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+  Property 'type' is optional in type '{ type?: "module"; courseId?: string; lessons?: CmsLesson[]; id?: string; title?: string; description?: string; createdAt?: string; updatedAt?: string; }' but required in type 'CmsModule'.
+apps/frontend/src/pages/cms/components/ModuleEditor.tsx(142,39): error TS2339: Property 'order' does not exist on type 'Partial<CmsModule>'.
+apps/frontend/src/pages/cms/components/ModuleEditor.tsx(143,56): error TS2345: Argument of type '"order"' is not assignable to parameter of type 'keyof CmsModule'.
+apps/frontend/src/pages/cms/components/ModuleEditor.tsx(155,39): error TS2339: Property 'estimatedDuration' does not exist on type 'Partial<CmsModule>'.
+apps/frontend/src/pages/cms/components/ModuleEditor.tsx(157,43): error TS2345: Argument of type '"estimatedDuration"' is not assignable to parameter of type 'keyof CmsModule'.
+apps/frontend/src/pages/cms/components/ModuleEditor.tsx(170,39): error TS2339: Property 'isOptional' does not exist on type 'Partial<CmsModule>'.
+apps/frontend/src/pages/cms/components/ModuleEditor.tsx(171,54): error TS2345: Argument of type '"isOptional"' is not assignable to parameter of type 'keyof CmsModule'.
+apps/frontend/src/pages/cms/components/ModuleEditor.tsx(188,33): error TS2339: Property 'learningObjectives' does not exist on type 'Partial<CmsModule>'.
+apps/frontend/src/pages/cms/components/ModuleEditor.tsx(189,50): error TS2345: Argument of type '"learningObjectives"' is not assignable to parameter of type 'keyof CmsModule'.
+apps/frontend/src/pages/cms/components/ModuleEditor.tsx(322,32): error TS2339: Property 'isOptional' does not exist on type 'Partial<CmsModule>'.
+apps/frontend/src/pages/cms/components/ModuleEditor.tsx(327,34): error TS2339: Property 'isOptional' does not exist on type 'Partial<CmsModule>'.
+apps/frontend/src/pages/cms/components/ModuleEditor.tsx(335,80): error TS2339: Property 'order' does not exist on type 'Partial<CmsModule>'.
+apps/frontend/src/pages/cms/components/ModuleEditor.tsx(341,31): error TS2339: Property 'estimatedDuration' does not exist on type 'Partial<CmsModule>'.
+apps/frontend/src/pages/cms/components/ModuleEditor.tsx(357,43): error TS2554: Expected 0 arguments, but got 1.
+apps/frontend/src/pages/cms/index.tsx(115,36): error TS2345: Argument of type '(course: CourseWithContent) => CmsCourse' is not assignable to parameter of type '(value: CourseWithProgress, index: number, array: CourseWithProgress[]) => CmsCourse'.
+  Types of parameters 'course' and 'value' are incompatible.
+    Type 'CourseWithProgress' is not assignable to type 'CourseWithContent'.
+      Type 'CourseWithProgress' is not assignable to type '{ modules: ({ course_id: string | null; created_at: string | null; description: string | null; id: string; is_published: boolean | null; module_order: number; title: string; updated_at: string | null; } & { ...; })[]; }'.
+        Property 'modules' is optional in type 'CourseWithProgress' but required in type '{ modules: ({ course_id: string | null; created_at: string | null; description: string | null; id: string; is_published: boolean | null; module_order: number; title: string; updated_at: string | null; } & { ...; })[]; }'.
+apps/frontend/src/pages/cms/index.tsx(159,11): error TS2353: Object literal may only specify known properties, and 'price' does not exist in type 'Omit<{ category: string | null; cover_image_url: string | null; created_at: string | null; description: string | null; difficulty: string | null; id: string; is_published: boolean | null; slug: string; thumbnail_url: string | null; title: string; updated_at: string | null; }, "id"> & { ...; }'.
+apps/frontend/src/pages/lesson-viewer/components/LessonNavigation.tsx(36,25): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+apps/frontend/src/pages/lesson-viewer/components/LessonNavigation.tsx(37,26): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+apps/frontend/src/pages/lesson-viewer/components/LessonNavigation.tsx(39,23): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+apps/frontend/src/pages/lesson-viewer/components/LessonNavigation.tsx(44,28): error TS7006: Parameter 'lessons' implicitly has an 'any' type.
+apps/frontend/src/pages/lesson-viewer/components/LessonNavigation.tsx(45,28): error TS7006: Parameter 'total' implicitly has an 'any' type.
+apps/frontend/src/pages/lesson-viewer/components/LessonNavigation.tsx(45,35): error TS7006: Parameter 'lesson' implicitly has an 'any' type.
+apps/frontend/src/pages/lesson-viewer/components/LessonNavigation.tsx(51,29): error TS7006: Parameter 'lessons' implicitly has an 'any' type.
+apps/frontend/src/pages/lesson-viewer/components/LessonNavigation.tsx(52,27): error TS7006: Parameter 'lesson' implicitly has an 'any' type.
+apps/frontend/src/pages/lesson-viewer/components/LessonNavigation.tsx(131,45): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+apps/frontend/src/pages/lesson-viewer/components/LessonNavigation.tsx(150,36): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+apps/frontend/src/pages/lesson-viewer/components/NoteTaking.tsx(30,28): error TS7006: Parameter 'e' implicitly has an 'any' type.
+apps/frontend/src/pages/lesson-viewer/components/NoteTaking.tsx(52,27): error TS7006: Parameter 'timestamp' implicitly has an 'any' type.
+apps/frontend/src/pages/lesson-viewer/components/TextContent.tsx(23,13): error TS7030: Not all code paths return a value.
+apps/frontend/src/pages/lesson-viewer/components/TextContent.tsx(28,33): error TS2339: Property 'scrollTop' does not exist on type 'never'.
+apps/frontend/src/pages/lesson-viewer/components/TextContent.tsx(29,36): error TS2339: Property 'scrollHeight' does not exist on type 'never'.
+apps/frontend/src/pages/lesson-viewer/components/TextContent.tsx(29,59): error TS2339: Property 'clientHeight' does not exist on type 'never'.
+apps/frontend/src/pages/lesson-viewer/components/TextContent.tsx(38,15): error TS2339: Property 'addEventListener' does not exist on type 'never'.
+apps/frontend/src/pages/lesson-viewer/components/TextContent.tsx(39,28): error TS2339: Property 'removeEventListener' does not exist on type 'never'.
+apps/frontend/src/pages/lesson-viewer/components/TextContent.tsx(47,36): error TS2339: Property 'scrollTop' does not exist on type 'never'.
+apps/frontend/src/pages/lesson-viewer/components/TextContent.tsx(58,24): error TS7006: Parameter 'bookmark' implicitly has an 'any' type.
+apps/frontend/src/pages/lesson-viewer/components/TextContent.tsx(61,15): error TS2339: Property 'scrollTo' does not exist on type 'never'.
+apps/frontend/src/pages/lesson-viewer/components/TextContent.tsx(65,26): error TS7006: Parameter 'bookmarkId' implicitly has an 'any' type.
+apps/frontend/src/pages/lesson-viewer/components/TextContent.tsx(83,24): error TS7006: Parameter 'text' implicitly has an 'any' type.
+apps/frontend/src/pages/lesson-viewer/components/TextContent.tsx(84,34): error TS7006: Parameter 'line' implicitly has an 'any' type.
+apps/frontend/src/pages/lesson-viewer/components/TextContent.tsx(84,40): error TS7006: Parameter 'index' implicitly has an 'any' type.
+apps/frontend/src/pages/lesson-viewer/components/TextContent.tsx(191,50): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ light: string; dark: string; sepia: string; }'.
+  No index signature with a parameter of type 'string' was found on type '{ light: string; dark: string; sepia: string; }'.
+apps/frontend/src/pages/lesson-viewer/components/TextContent.tsx(191,73): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ sm: string; base: string; lg: string; xl: string; }'.
+  No index signature with a parameter of type 'string' was found on type '{ sm: string; base: string; lg: string; xl: string; }'.
+apps/frontend/src/pages/lesson-viewer/components/VideoPlayer.tsx(100,11): error TS2322: Type 'string | null' is not assignable to type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'.
+apps/frontend/src/pages/lesson-viewer/index.tsx(88,28): error TS2339: Property 'type' does not exist on type '{ content: Json; created_at: string | null; duration: number | null; id: string; is_published: boolean | null; lesson_order: number; module_id: string | null; title: string; updated_at: string | null; }'.
+apps/frontend/src/pages/lesson-viewer/index.tsx(89,11): error TS2322: Type 'string | number' is not assignable to type 'string'.
+  Type 'number' is not assignable to type 'string'.
+apps/frontend/src/pages/lesson-viewer/index.tsx(90,32): error TS2339: Property 'xp_reward' does not exist on type '{ content: Json; created_at: string | null; duration: number | null; id: string; is_published: boolean | null; lesson_order: number; module_id: string | null; title: string; updated_at: string | null; }'.
+apps/frontend/src/pages/lesson-viewer/index.tsx(91,21): error TS2322: Type 'string | null' is not assignable to type 'string'.
+  Type 'null' is not assignable to type 'string'.
+apps/frontend/src/pages/lesson-viewer/index.tsx(93,34): error TS2339: Property 'video_url' does not exist on type '{ content: Json; created_at: string | null; duration: number | null; id: string; is_published: boolean | null; lesson_order: number; module_id: string | null; title: string; updated_at: string | null; }'.
+apps/frontend/src/pages/lesson-viewer/index.tsx(94,36): error TS2339: Property 'transcript' does not exist on type '{ content: Json; created_at: string | null; duration: number | null; id: string; is_published: boolean | null; lesson_order: number; module_id: string | null; title: string; updated_at: string | null; }'.
+apps/frontend/src/pages/lesson-viewer/index.tsx(95,37): error TS2339: Property 'text_content' does not exist on type '{ content: Json; created_at: string | null; duration: number | null; id: string; is_published: boolean | null; lesson_order: number; module_id: string | null; title: string; updated_at: string | null; }'.
+apps/frontend/src/pages/lesson-viewer/index.tsx(97,33): error TS2339: Property 'resources' does not exist on type '{ content: Json; created_at: string | null; duration: number | null; id: string; is_published: boolean | null; lesson_order: number; module_id: string | null; title: string; updated_at: string | null; }'.
+apps/frontend/src/pages/lesson-viewer/index.tsx(110,11): error TS2345: Argument of type '{ id: string; title: string; lessons: { id: string; title: string; duration: string | number; completed: false; current: false; }[]; }[]' is not assignable to parameter of type 'SetStateAction<ModuleItem[]>'.
+  Type '{ id: string; title: string; lessons: { id: string; title: string; duration: string | number; completed: false; current: false; }[]; }[]' is not assignable to type 'ModuleItem[]'.
+    Type '{ id: string; title: string; lessons: { id: string; title: string; duration: string | number; completed: false; current: false; }[]; }' is not assignable to type 'ModuleItem'.
+      Types of property 'lessons' are incompatible.
+        Type '{ id: string; title: string; duration: string | number; completed: false; current: false; }[]' is not assignable to type 'LessonItem[]'.
+          Type '{ id: string; title: string; duration: string | number; completed: false; current: false; }' is not assignable to type 'LessonItem'.
+            Types of property 'duration' are incompatible.
+              Type 'string | number' is not assignable to type 'string'.
+                Type 'number' is not assignable to type 'string'.
+apps/frontend/src/pages/lesson-viewer/index.tsx(156,9): error TS18047: 'selection' is possibly 'null'.
+apps/frontend/src/pages/lesson-viewer/index.tsx(157,23): error TS18047: 'selection' is possibly 'null'.
+apps/frontend/src/pages/lesson-viewer/index.tsx(247,19): error TS2322: Type 'string | null' is not assignable to type 'string'.
+  Type 'null' is not assignable to type 'string'.
+apps/frontend/src/pages/program-overview/components/CoursePathway.tsx(15,10): error TS7053: Element implicitly has an 'any' type because expression of type 'CourseDifficulty' can't be used to index type '{}'.
+  Property 'advanced' does not exist on type '{}'.
+apps/frontend/src/pages/program-overview/components/CoursePathway.tsx(16,7): error TS7053: Element implicitly has an 'any' type because expression of type 'CourseDifficulty' can't be used to index type '{}'.
+  Property 'advanced' does not exist on type '{}'.
+apps/frontend/src/pages/program-overview/components/CoursePathway.tsx(18,5): error TS7053: Element implicitly has an 'any' type because expression of type 'CourseDifficulty' can't be used to index type '{}'.
+  Property 'advanced' does not exist on type '{}'.
+apps/frontend/src/pages/program-overview/components/CoursePathway.tsx(23,57): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
+  No index signature with a parameter of type 'string' was found on type '{}'.
+apps/frontend/src/pages/program-overview/components/CoursePathway.tsx(40,9): error TS18048: 'progress' is possibly 'undefined'.
+apps/frontend/src/pages/program-overview/components/CoursePathway.tsx(69,18): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
+  No index signature with a parameter of type 'string' was found on type '{}'.
+apps/frontend/src/pages/program-overview/components/CoursePathway.tsx(70,18): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
+  No index signature with a parameter of type 'string' was found on type '{}'.
+apps/frontend/src/pages/program-overview/components/CoursePathway.tsx(83,16): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
+  No index signature with a parameter of type 'string' was found on type '{}'.
+apps/frontend/src/pages/program-overview/components/CoursePathway.tsx(83,48): error TS7006: Parameter 'course' implicitly has an 'any' type.
+apps/frontend/src/pages/program-overview/components/CoursePathway.tsx(83,56): error TS7006: Parameter 'courseIndex' implicitly has an 'any' type.
+apps/frontend/src/pages/program-overview/components/CoursePathway.tsx(93,34): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
+  No index signature with a parameter of type 'string' was found on type '{}'.
+apps/frontend/src/pages/program-overview/components/FilterSidebar.tsx(122,52): error TS2345: Argument of type 'string | null' is not assignable to parameter of type 'string'.
+  Type 'null' is not assignable to type 'string'.
+apps/frontend/src/pages/program-overview/components/FilterSidebar.tsx(123,64): error TS2345: Argument of type 'string | null' is not assignable to parameter of type 'string'.
+  Type 'null' is not assignable to type 'string'.
+apps/frontend/src/pages/program-overview/index.tsx(12,6): error TS6196: 'CoursesRow' is declared but never used.
+apps/frontend/src/pages/program-overview/index.tsx(34,42): error TS2304: Cannot find name 'CourseWithProgress'.
+apps/frontend/src/pages/program-overview/index.tsx(44,11): error TS2322: Type '{ search: string; skillLevel: string[]; duration: string[]; category: string[]; status: string[]; }' is not assignable to type 'CourseFilters'.
+  Types of property 'status' are incompatible.
+    Type 'string[]' is not assignable to type 'CourseProgressStatus[]'.
+      Type 'string' is not assignable to type 'CourseProgressStatus'.
+apps/frontend/src/pages/program-overview/index.tsx(52,25): error TS2345: Argument of type 'number | undefined' is not assignable to parameter of type 'SetStateAction<number>'.
+  Type 'undefined' is not assignable to type 'SetStateAction<number>'.
+apps/frontend/src/pages/program-overview/index.tsx(130,42): error TS2345: Argument of type 'string' is not assignable to parameter of type 'SetStateAction<CourseSortOption>'.
+apps/frontend/src/pages/public-homepage/components/BenefitsSection.tsx(65,27): error TS7006: Parameter 'color' implicitly has an 'any' type.
+apps/frontend/src/pages/public-homepage/components/BenefitsSection.tsx(92,12): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ primary: { bg: string; border: string; icon: string; badge: string; }; accent: { bg: string; border: string; icon: string; badge: string; }; warning: { bg: string; border: string; icon: string; badge: string; }; success: { ...; }; }'.
+apps/frontend/src/pages/public-homepage/components/DataVisualization.tsx(117,34): error TS18046: 'theme.boxShadow' is of type 'unknown'.
+apps/frontend/src/pages/public-homepage/components/DataVisualization.tsx(159,34): error TS18046: 'theme.boxShadow' is of type 'unknown'.
+apps/frontend/src/pages/public-homepage/components/ProgramOverview.tsx(103,30): error TS7006: Parameter 'difficulty' implicitly has an 'any' type.
+apps/frontend/src/pages/user-dashboard/components/ProgressChart.tsx(13,8): error TS2305: Module '"recharts"' has no exported member 'TooltipPayload'.
+apps/frontend/src/pages/user-dashboard/components/ProgressChart.tsx(41,34): error TS2339: Property 'courses' does not exist on type 'CourseContextValue'.
+apps/frontend/src/pages/user-dashboard/components/ProgressChart.tsx(44,42): error TS2345: Argument of type 'unknown[]' is not assignable to parameter of type '{ completed_at: string | null; created_at: string | null; id: string; lesson_id: string | null; status: string | null; updated_at: string | null; user_id: string | null; }[]'.
+  Type 'unknown' is not assignable to type '{ completed_at: string | null; created_at: string | null; id: string; lesson_id: string | null; status: string | null; updated_at: string | null; user_id: string | null; }'.
+apps/frontend/src/pages/user-dashboard/components/RecentActivity.tsx(64,18): error TS2375: Type '{ src: string | undefined; alt: string; className: string; }' is not assignable to type 'AppImageProps' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+  Types of property 'src' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+apps/frontend/src/pages/user-dashboard/components/RecentActivity.tsx(109,18): error TS2375: Type '{ src: string | undefined; alt: string; className: string; }' is not assignable to type 'AppImageProps' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+  Types of property 'src' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+apps/frontend/src/pages/user-dashboard/index.tsx(179,31): error TS2322: Type '{ action: string; created_at: string | null; details: Json; id: string; type: string; user_id: string; }[]' is not assignable to type 'Activity[]'.
+  Type '{ action: string; created_at: string | null; details: Json; id: string; type: string; user_id: string; }' is missing the following properties from type 'Activity': title, description, icon, timestamp
+apps/frontend/src/pages/user-dashboard/index.tsx(277,36): error TS2322: Type '{ created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }[]' is not assignable to type 'Achievement[]'.
+  Property 'xpReward' is missing in type '{ created_at: string | null; description: string | null; earned: boolean | null; icon: string | null; id: string; rarity: string | null; title: string; user_id: string | null; xp_reward: number | null; }' but required in type 'Achievement'.
+apps/frontend/src/pages/user-management-admin/components/BulkActionsBar.tsx(58,29): error TS7006: Parameter 'actionId' implicitly has an 'any' type.
+apps/frontend/src/pages/user-management-admin/components/CreateUserModal.tsx(52,9): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type 'Partial<Record<keyof UserForm, string>>'.
+  No index signature with a parameter of type 'string' was found on type 'Partial<Record<keyof UserForm, string>>'.
+apps/frontend/src/pages/user-management-admin/components/CreateUserModal.tsx(106,9): error TS2322: Type 'number' is not assignable to type 'string'.
+apps/frontend/src/pages/user-management-admin/components/UserDetailsPanel.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+apps/frontend/src/pages/user-management-admin/components/UserDetailsPanel.tsx(23,20): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ active: { color: string; label: string; icon: string; }; inactive: { color: string; label: string; icon: string; }; pending: { color: string; label: string; icon: string; }; }'.
+  No index signature with a parameter of type 'string' was found on type '{ active: { color: string; label: string; icon: string; }; inactive: { color: string; label: string; icon: string; }; pending: { color: string; label: string; icon: string; }; }'.
+apps/frontend/src/pages/user-management-admin/components/UserDetailsPanel.tsx(40,20): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ admin: { color: string; label: string; icon: string; }; student: { color: string; label: string; icon: string; }; }'.
+  No index signature with a parameter of type 'string' was found on type '{ admin: { color: string; label: string; icon: string; }; student: { color: string; label: string; icon: string; }; }'.
+apps/frontend/src/pages/user-management-admin/components/UserDetailsPanel.tsx(51,22): error TS7006: Parameter 'dateString' implicitly has an 'any' type.
+apps/frontend/src/pages/user-management-admin/components/UserDetailsPanel.tsx(148,43): error TS2345: Argument of type 'string' is not assignable to parameter of type 'SetStateAction<"progress" | "notes" | "overview" | "activity">'.
+apps/frontend/src/pages/user-management-admin/components/UserFilters.tsx(149,31): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ status: { active: string; inactive: string; pending: string; }; role: { student: string; admin: string; }; registrationDate: { today: string; week: string; month: string; quarter: string; year: string; }; activityLevel: { ...; }; courseProgress: { ...; }; }'.
+  No index signature with a parameter of type 'string' was found on type '{ status: { active: string; inactive: string; pending: string; }; role: { student: string; admin: string; }; registrationDate: { today: string; week: string; month: string; quarter: string; year: string; }; activityLevel: { ...; }; courseProgress: { ...; }; }'.
+apps/frontend/src/pages/user-management-admin/components/UserFilters.tsx(158,57): error TS2345: Argument of type 'string' is not assignable to parameter of type 'keyof AdminFilters'.
+apps/frontend/src/pages/user-management-admin/components/UserTable.tsx(26,23): error TS7006: Parameter 'key' implicitly has an 'any' type.
+apps/frontend/src/pages/user-management-admin/components/UserTable.tsx(31,26): error TS7006: Parameter 'status' implicitly has an 'any' type.
+apps/frontend/src/pages/user-management-admin/components/UserTable.tsx(38,20): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ active: { color: string; label: string; }; inactive: { color: string; label: string; }; pending: { color: string; label: string; }; }'.
+apps/frontend/src/pages/user-management-admin/components/UserTable.tsx(48,24): error TS7006: Parameter 'role' implicitly has an 'any' type.
+apps/frontend/src/pages/user-management-admin/components/UserTable.tsx(54,20): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ admin: { color: string; label: string; }; student: { color: string; label: string; }; }'.
+apps/frontend/src/pages/user-management-admin/components/UserTable.tsx(64,22): error TS7006: Parameter 'dateString' implicitly has an 'any' type.
+apps/frontend/src/pages/user-management-admin/components/UserTable.tsx(72,29): error TS7006: Parameter 'lastActivity' implicitly has an 'any' type.
+apps/frontend/src/pages/user-management-admin/components/UserTable.tsx(74,8): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+apps/frontend/src/pages/user-management-admin/components/UserTable.tsx(74,21): error TS2363: The right-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+apps/frontend/src/pages/user-management-admin/components/UserTable.tsx(97,19): error TS2322: Type '(checked: boolean) => void' is not assignable to type 'ChangeEventHandler<HTMLInputElement>'.
+  Types of parameters 'checked' and 'event' are incompatible.
+    Type 'ChangeEvent<HTMLInputElement>' is not assignable to type 'boolean'.
+apps/frontend/src/pages/user-management-admin/index.tsx(69,19): error TS2339: Property 'status' does not exist on type '{ avatar_url: string | null; company: string | null; created_at: string | null; current_streak: number | null; email: string; full_name: string | null; id: string; is_admin: boolean | null; ... 5 more ...; xp: number | null; }'.
+apps/frontend/src/pages/user-management-admin/index.tsx(72,27): error TS2339: Property 'course_progress' does not exist on type '{ avatar_url: string | null; company: string | null; created_at: string | null; current_streak: number | null; email: string; full_name: string | null; id: string; is_admin: boolean | null; ... 5 more ...; xp: number | null; }'.
+apps/frontend/src/pages/user-management-admin/index.tsx(73,25): error TS2339: Property 'total_courses' does not exist on type '{ avatar_url: string | null; company: string | null; created_at: string | null; current_streak: number | null; email: string; full_name: string | null; id: string; is_admin: boolean | null; ... 5 more ...; xp: number | null; }'.
+apps/frontend/src/pages/user-management-admin/index.tsx(74,29): error TS2339: Property 'completed_courses' does not exist on type '{ avatar_url: string | null; company: string | null; created_at: string | null; current_streak: number | null; email: string; full_name: string | null; id: string; is_admin: boolean | null; ... 5 more ...; xp: number | null; }'.
+apps/frontend/src/pages/user-management-admin/index.tsx(78,25): error TS2339: Property 'achievements' does not exist on type '{ avatar_url: string | null; company: string | null; created_at: string | null; current_streak: number | null; email: string; full_name: string | null; id: string; is_admin: boolean | null; ... 5 more ...; xp: number | null; }'.
+apps/frontend/src/pages/user-management-admin/index.tsx(79,21): error TS2339: Property 'location' does not exist on type '{ avatar_url: string | null; company: string | null; created_at: string | null; current_streak: number | null; email: string; full_name: string | null; id: string; is_admin: boolean | null; ... 5 more ...; xp: number | null; }'.
+apps/frontend/src/pages/user-management-admin/index.tsx(81,18): error TS2339: Property 'notes' does not exist on type '{ avatar_url: string | null; company: string | null; created_at: string | null; current_streak: number | null; email: string; full_name: string | null; id: string; is_admin: boolean | null; ... 5 more ...; xp: number | null; }'.
+apps/frontend/src/pages/user-management-admin/index.tsx(82,28): error TS2339: Property 'enrolled_courses' does not exist on type '{ avatar_url: string | null; company: string | null; created_at: string | null; current_streak: number | null; email: string; full_name: string | null; id: string; is_admin: boolean | null; ... 5 more ...; xp: number | null; }'.
+apps/frontend/src/pages/user-management-admin/index.tsx(84,16): error TS2345: Argument of type '{ id: string; name: string; email: string; avatar: string; role: string; status: any; registrationDate: string; lastActivity: string | null; courseProgress: any; totalCourses: any; completedCourses: any; ... 7 more ...; enrolledCourses: any; }[]' is not assignable to parameter of type 'SetStateAction<AdminUser[]>'.
+  Type '{ id: string; name: string; email: string; avatar: string; role: string; status: any; registrationDate: string; lastActivity: string | null; courseProgress: any; totalCourses: any; completedCourses: any; ... 7 more ...; enrolledCourses: any; }[]' is not assignable to type 'AdminUser[]'.
+    Type '{ id: string; name: string; email: string; avatar: string; role: string; status: any; registrationDate: string; lastActivity: string | null; courseProgress: any; totalCourses: any; completedCourses: any; ... 7 more ...; enrolledCourses: any; }' is not assignable to type 'AdminUser'.
+      Types of property 'role' are incompatible.
+        Type 'string' is not assignable to type '"admin" | "student"'.
+apps/frontend/src/pages/user-management-admin/index.tsx(103,22): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type 'AdminUser'.
+  No index signature with a parameter of type 'string' was found on type 'AdminUser'.
+apps/frontend/src/pages/user-management-admin/index.tsx(104,22): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type 'AdminUser'.
+  No index signature with a parameter of type 'string' was found on type 'AdminUser'.
+apps/frontend/src/pages/user-management-admin/index.tsx(303,17): error TS2322: Type '(user: AdminUser) => void' is not assignable to type '(user: UserTableRow) => void'.
+  Types of parameters 'user' and 'user' are incompatible.
+    Type 'UserTableRow' is missing the following properties from type 'AdminUser': totalCourses, completedCourses, xpPoints, level, and 6 more.
+apps/frontend/src/pages/user-profile-management/components/LearningStatsTab.tsx(54,9): error TS2322: Type '{ hasData: boolean; completedLessonsCount: number; inProgressLessonsCount: number; totalLearningTime: number; coursesCompleted: number; weeklyData: { day: string; minutes: number; xp: number; lessons: number; }[]; subjectData: { ...; }[]; }' is not assignable to type 'Stats'.
+  Types of property 'subjectData' are incompatible.
+    Type '{ name: string; value: unknown; fill: string; }[]' is not assignable to type 'SubjectData[]'.
+      Type '{ name: string; value: unknown; fill: string; }' is not assignable to type 'SubjectData'.
+        Types of property 'value' are incompatible.
+          Type 'unknown' is not assignable to type 'number'.
+apps/frontend/src/pages/user-profile-management/components/LearningStatsTab.tsx(69,24): error TS2339: Property 'lessons' does not exist on type 'CourseWithProgress'.
+apps/frontend/src/pages/user-profile-management/components/LearningStatsTab.tsx(69,37): error TS7006: Parameter 'lesson' implicitly has an 'any' type.
+apps/frontend/src/pages/user-profile-management/components/LearningStatsTab.tsx(69,71): error TS7006: Parameter 'p' implicitly has an 'any' type.
+apps/frontend/src/pages/user-profile-management/components/LearningStatsTab.tsx(81,37): error TS2769: No overload matches this call.
+  Overload 1 of 4, '(value: string | number | Date): Date', gave the following error.
+    Argument of type 'string | null' is not assignable to parameter of type 'string | number | Date'.
+      Type 'null' is not assignable to type 'string | number | Date'.
+  Overload 2 of 4, '(value: string | number): Date', gave the following error.
+    Argument of type 'string | null' is not assignable to parameter of type 'string | number'.
+      Type 'null' is not assignable to type 'string | number'.
+apps/frontend/src/pages/user-profile-management/components/LearningStatsTab.tsx(96,7): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
+  No index signature with a parameter of type 'string' was found on type '{}'.
+apps/frontend/src/pages/user-profile-management/components/LearningStatsTab.tsx(96,29): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
+  No index signature with a parameter of type 'string' was found on type '{}'.
+apps/frontend/src/pages/user-profile-management/components/LearningStatsTab.tsx(239,27): error TS2558: Expected 0 type arguments, but got 1.
+apps/frontend/src/pages/user-profile-management/components/LearningStatsTab.tsx(277,28): error TS2558: Expected 0 type arguments, but got 1.
+apps/frontend/src/pages/user-profile-management/components/LearningStatsTab.tsx(322,29): error TS2558: Expected 0 type arguments, but got 1.
+apps/frontend/src/pages/user-profile-management/components/LearningStatsTab.tsx(432,35): error TS2769: No overload matches this call.
+  Overload 1 of 4, '(value: string | number | Date): Date', gave the following error.
+    Argument of type 'string | null' is not assignable to parameter of type 'string | number | Date'.
+      Type 'null' is not assignable to type 'string | number | Date'.
+  Overload 2 of 4, '(value: string | number): Date', gave the following error.
+    Argument of type 'string | null' is not assignable to parameter of type 'string | number'.
+      Type 'null' is not assignable to type 'string | number'.
+apps/frontend/src/services/userService.ts(186,37): error TS2352: Conversion of type 'NotificationSettings | undefined' to type 'Json' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'NotificationSettings' is not comparable to type 'Json'.
+    Type 'NotificationSettings' is not comparable to type '{ [key: string]: Json | undefined; }'.
+      Index signature for type 'string' is missing in type 'NotificationSettings'.
+apps/frontend/src/services/userService.ts(187,32): error TS2352: Conversion of type 'PrivacySettings | undefined' to type 'Json' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'PrivacySettings' is not comparable to type 'Json'.
+    Type 'PrivacySettings' is not comparable to type '{ [key: string]: Json | undefined; }'.
+      Index signature for type 'string' is missing in type 'PrivacySettings'.
+apps/frontend/src/services/userService.ts(188,36): error TS2352: Conversion of type 'LearningPreferences | undefined' to type 'Json' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'LearningPreferences' is not comparable to type 'Json'.
+    Type 'LearningPreferences' is not comparable to type '{ [key: string]: Json | undefined; }'.
+      Index signature for type 'string' is missing in type 'LearningPreferences'.
+apps/frontend/src/types/tailwind.d.ts(1,16): error TS2436: Ambient module declaration cannot specify relative module name.
+apps/frontend/src/utils/supabaseClient.ts(14,5): error TS2322: Type '{ data: T | null; error: null; }' is not assignable to type 'Result<T, E>'.
+  Type '{ data: T | null; error: null; }' is not assignable to type '{ data: null; error: E; }'.
+    Types of property 'data' are incompatible.
+      Type 'T | null' is not assignable to type 'null'.
+        Type 'T' is not assignable to type 'null'.
+apps/frontend/src/utils/theme.ts(2,28): error TS7016: Could not find a declaration file for module '../../tailwind.config.js'. 'C:/GitHub/ai_foundations_lms/apps/frontend/tailwind.config.js' implicitly has an 'any' type.
+libs/cms-utils/index.ts(56,5): error TS2322: Type '{ id: string; title: string; description: string | undefined; createdAt: string | undefined; updatedAt: string | undefined; courseId: string | undefined; type: "module"; lessons: { id: string; ... 5 more ...; type: "lesson"; }[]; }[]' is not assignable to type 'CmsModule[]'.
+  Type '{ id: string; title: string; description: string | undefined; createdAt: string | undefined; updatedAt: string | undefined; courseId: string | undefined; type: "module"; lessons: { id: string; ... 5 more ...; type: "lesson"; }[]; }' is not assignable to type 'CmsModule' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+    Types of property 'courseId' are incompatible.
+      Type 'string | undefined' is not assignable to type 'string'.
+        Type 'undefined' is not assignable to type 'string'.
+libs/cms-utils/index.ts(80,3): error TS2375: Type '{ id: string; title: string; description: string | undefined; createdAt: string | undefined; updatedAt: string | undefined; type: "course"; modules: never[]; }' is not assignable to type 'CmsCourse' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+  Types of property 'description' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+node_modules/.pnpm/@supabase+auth-js@2.70.0/node_modules/@supabase/auth-js/dist/module/lib/types.d.ts(523,26): error TS2709: Cannot use namespace 'SolanaSignInInput' as a type.
+node_modules/.pnpm/@supabase+auth-js@2.70.0/node_modules/@supabase/auth-js/dist/module/lib/types.d.ts(523,58): error TS2709: Cannot use namespace 'SolanaSignInOutput' as a type.
+node_modules/.pnpm/@supabase+auth-js@2.70.0/node_modules/@supabase/auth-js/dist/module/lib/types.d.ts(523,79): error TS2709: Cannot use namespace 'SolanaSignInOutput' as a type.
+node_modules/.pnpm/@supabase+auth-js@2.70.0/node_modules/@supabase/auth-js/dist/module/lib/types.d.ts(540,41): error TS2709: Cannot use namespace 'SolanaSignInInput' as a type.
+node_modules/.pnpm/@testing-library+jest-dom@6.6.3/node_modules/@testing-library/jest-dom/types/jest.d.ts(1,23): error TS2688: Cannot find type definition file for 'jest'.
+node_modules/.pnpm/@testing-library+jest-dom@6.6.3/node_modules/@testing-library/jest-dom/types/jest.d.ts(9,27): error TS2304: Cannot find name 'expect'.
+node_modules/.pnpm/framer-motion@10.18.0_react_39718d184a546e7029955c4644d61736/node_modules/framer-motion/dist/index.d.ts(1212,11): error TS2430: Interface 'CSSStyleDeclarationWithTransform' incorrectly extends interface 'Omit<CSSStyleDeclaration, "direction" | "transition">'.
+  Types of property 'x' are incompatible.
+    Type 'string | number' is not assignable to type 'string'.
+      Type 'number' is not assignable to type 'string'.
+node_modules/.pnpm/react-router@7.6.2_react-do_5e82c5677b2b3538e19ff3ceaa4cd73c/node_modules/react-router/dist/development/lib-C1JSsICm.d.mts(645,30): error TS2344: Type 'NonIndexRouteObject' does not satisfy the constraint 'AgnosticRouteObject'.
+  Type 'NonIndexRouteObject' is not assignable to type 'AgnosticNonIndexRouteObject' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+    Type 'NonIndexRouteObject' is not assignable to type 'AgnosticBaseRouteObject' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+      Types of property 'caseSensitive' are incompatible.
+        Type 'boolean | undefined' is not assignable to type 'boolean'.
+          Type 'undefined' is not assignable to type 'boolean'.
+node_modules/.pnpm/react-router@7.6.2_react-do_5e82c5677b2b3538e19ff3ceaa4cd73c/node_modules/react-router/dist/development/lib-C1JSsICm.d.mts(672,30): error TS2344: Type 'IndexRouteObject' does not satisfy the constraint 'AgnosticRouteObject'.
+  Type 'IndexRouteObject' is not assignable to type 'AgnosticIndexRouteObject' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+    Type 'IndexRouteObject' is not assignable to type 'AgnosticBaseRouteObject' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+      Types of property 'caseSensitive' are incompatible.
+        Type 'boolean | undefined' is not assignable to type 'boolean'.
+          Type 'undefined' is not assignable to type 'boolean'.
+node_modules/.pnpm/react-router@7.6.2_react-do_5e82c5677b2b3538e19ff3ceaa4cd73c/node_modules/react-router/dist/development/route-data-ByAYLHuM.d.mts(1301,32): error TS2344: Type 'RouteObject' does not satisfy the constraint 'AgnosticRouteObject'.
+  Type 'IndexRouteObject' is not assignable to type 'AgnosticRouteObject' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+    Type 'IndexRouteObject' is not assignable to type 'AgnosticIndexRouteObject' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+      Type 'IndexRouteObject' is not assignable to type 'AgnosticBaseRouteObject' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+        Types of property 'caseSensitive' are incompatible.
+          Type 'boolean | undefined' is not assignable to type 'boolean'.
+            Type 'undefined' is not assignable to type 'boolean'.
+node_modules/.pnpm/react-router@7.6.2_react-do_5e82c5677b2b3538e19ff3ceaa4cd73c/node_modules/react-router/dist/development/route-data-ByAYLHuM.d.mts(1321,32): error TS2344: Type 'RouteObject' does not satisfy the constraint 'AgnosticRouteObject'.
+  Type 'IndexRouteObject' is not assignable to type 'AgnosticRouteObject' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+    Type 'IndexRouteObject' is not assignable to type 'AgnosticIndexRouteObject' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+      Type 'IndexRouteObject' is not assignable to type 'AgnosticBaseRouteObject' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+        Types of property 'caseSensitive' are incompatible.
+          Type 'boolean | undefined' is not assignable to type 'boolean'.
+            Type 'undefined' is not assignable to type 'boolean'.
+node_modules/.pnpm/react-router@7.6.2_react-do_5e82c5677b2b3538e19ff3ceaa4cd73c/node_modules/react-router/dist/development/route-data-ByAYLHuM.d.mts(1328,144): error TS2344: Type 'RouteObjectType' does not satisfy the constraint 'AgnosticRouteObject'.
+  Type 'RouteObject' is not assignable to type 'AgnosticRouteObject' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+    Type 'IndexRouteObject' is not assignable to type 'AgnosticRouteObject' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+      Type 'IndexRouteObject' is not assignable to type 'AgnosticIndexRouteObject' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+        Type 'IndexRouteObject' is not assignable to type 'AgnosticBaseRouteObject' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+          Types of property 'caseSensitive' are incompatible.
+            Type 'boolean | undefined' is not assignable to type 'boolean'.
+              Type 'undefined' is not assignable to type 'boolean'.
+                Type 'RouteObjectType' is not assignable to type 'AgnosticNonIndexRouteObject' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+                  Type 'RouteObject' is not assignable to type 'AgnosticNonIndexRouteObject' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+                    Type 'IndexRouteObject' is not assignable to type 'AgnosticNonIndexRouteObject' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+                      Type 'IndexRouteObject' is not assignable to type 'AgnosticBaseRouteObject' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+                        Types of property 'caseSensitive' are incompatible.
+                          Type 'boolean | undefined' is not assignable to type 'boolean'.
+                            Type 'undefined' is not assignable to type 'boolean'.
+                              Type 'RouteObjectType' is not assignable to type 'AgnosticBaseRouteObject' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+                                Type 'RouteObject' is not assignable to type 'AgnosticBaseRouteObject' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+                                  Type 'IndexRouteObject' is not assignable to type 'AgnosticBaseRouteObject' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+                                    Types of property 'caseSensitive' are incompatible.
+                                      Type 'boolean | undefined' is not assignable to type 'boolean'.
+                                        Type 'undefined' is not assignable to type 'boolean'.
+node_modules/.pnpm/react-router@7.6.2_react-do_5e82c5677b2b3538e19ff3ceaa4cd73c/node_modules/react-router/dist/development/route-data-ByAYLHuM.d.mts(1332,88): error TS2344: Type 'RouteObject' does not satisfy the constraint 'AgnosticRouteObject'.
+  Type 'IndexRouteObject' is not assignable to type 'AgnosticRouteObject' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+    Type 'IndexRouteObject' is not assignable to type 'AgnosticIndexRouteObject' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+      Type 'IndexRouteObject' is not assignable to type 'AgnosticBaseRouteObject' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+        Types of property 'caseSensitive' are incompatible.
+          Type 'boolean | undefined' is not assignable to type 'boolean'.
+            Type 'undefined' is not assignable to type 'boolean'.
+node_modules/.pnpm/react-router@7.6.2_react-do_5e82c5677b2b3538e19ff3ceaa4cd73c/node_modules/react-router/dist/development/route-data-ByAYLHuM.d.mts(1333,80): error TS2344: Type 'RouteObject' does not satisfy the constraint 'AgnosticRouteObject'.
+  Type 'IndexRouteObject' is not assignable to type 'AgnosticRouteObject' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+    Type 'IndexRouteObject' is not assignable to type 'AgnosticIndexRouteObject' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+      Type 'IndexRouteObject' is not assignable to type 'AgnosticBaseRouteObject' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+        Types of property 'caseSensitive' are incompatible.
+          Type 'boolean | undefined' is not assignable to type 'boolean'.
+            Type 'undefined' is not assignable to type 'boolean'.
+node_modules/.pnpm/recharts@2.15.4_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/recharts/types/chart/generateCategoricalChart.d.ts(2,36): error TS7016: Could not find a declaration file for module 'lodash'. 'C:/GitHub/ai_foundations_lms/node_modules/.pnpm/lodash@4.17.21/node_modules/lodash/lodash.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/lodash` if it exists or add a new declaration (.d.ts) file containing `declare module 'lodash';`
+node_modules/.pnpm/vite@6.3.5_@types+node@24.0.7_jiti@2.4.2_yaml@2.8.0/node_modules/vite/dist/node/module-runner.d.ts(149,11): error TS2430: Interface 'ModuleRunnerImportMeta' incorrectly extends interface 'ImportMeta'.
+  Types of property 'env' are incompatible.
+    Type 'ImportMetaEnv' is missing the following properties from type 'ImportMetaEnv': VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY
+playwright.config.ts(1,30): error TS2307: Cannot find module '@playwright/test' or its corresponding type declarations.
+tests/e2e/home.spec.ts(1,30): error TS2307: Cannot find module '@playwright/test' or its corresponding type declarations.
+tests/e2e/home.spec.ts(3,36): error TS7031: Binding element 'page' implicitly has an 'any' type.
+ ELIFECYCLE  Command failed with exit code 2.
