@@ -59,7 +59,11 @@ export default defineConfig(() => {
         {
           find: '@logger',
           replacement: path.resolve(__dirname, '../../libs/logger')
-        }
+        },
+        {
+          find: 'tailwind-config',
+          replacement: path.resolve(__dirname, './tailwind.config.js')
+        },
       ]
     },
 
