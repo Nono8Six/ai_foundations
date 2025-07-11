@@ -1,0 +1,11 @@
+{
+    "extends": "../../tsconfig.json",  // Étend le root pour héritage (strict, etc.)
+    "compilerOptions": {
+      "composite": true,  // Essentiel pour references
+      "noEmit": false,    // Required for referenced projects
+      "outDir": "./dist",  // Output si build
+      "rootDir": "./"  // Sources locales
+    },
+    "include": ["**/*.ts", "**/*.d.ts"],  // Tous TS dans la lib
+    "exclude": ["node_modules", "dist"]
+  }
