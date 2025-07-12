@@ -12,6 +12,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export default defineConfig(() => {
   const shouldAnalyze = process.env.ANALYZE;
   return {
+    envDir: '../../', // Look for .env files in the monorepo root
     build: {
       outDir: 'dist',
       chunkSizeWarningLimit: 2000,

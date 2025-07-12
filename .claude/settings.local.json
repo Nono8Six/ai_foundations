@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm:*)",
+      "Bash(wsl npx:*)",
+      "Bash(SUPABASE_ACCESS_TOKEN=sbp_0059f83aaf50dd0922a68cb6d6230e4c3f7fccbc npx -y @supabase/mcp-server-supabase@latest --read-only --project-ref=oqmllypaarqvabuvbqga --version)",
+      "Bash(node:*)",
+      "Bash(pnpm list:*)",
+      "Bash(ls:*)",
+      "Bash(pnpm install:*)"
+    ],
+    "deny": []
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": ["supabase"]
+}

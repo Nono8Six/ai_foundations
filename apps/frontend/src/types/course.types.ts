@@ -102,6 +102,24 @@ export interface CourseWithProgress extends Omit<Database['public']['Tables']['c
  * Schéma de validation pour la progression d'un cours
  * Correspond à la vue SQL `user_course_progress`
  */
+// Schéma pour les cours de base (sans progression utilisateur)
+export const BaseCourseSchema = z.object({
+  // Champs de base du cours
+  id: z.string().uuid('ID du cours invalide'),
+  title: z.string().min(1, 'Le titre est requis'),
+  description: z.string().nullable(),
+  slug: z.string().min(1, 'Le slug est requis'),
+  cover_image_url: z.string().url('URL de l\'image de couverture invalide').nullable(),
+  thumbnail_url: z.string().url('URL de la miniature invalide').nullable(),
+  category: z.string().nullable(),
+  difficulty: z.enum(['beginner', 'intermediate', 'advanced', 'expert'])
+    .nullable()
+    .transform(val => val || 'beginner'),
+  is_published: z.boolean().default(false),
+  created_at: z.string().nullable(),
+  updated_at: z.string().nullable(),
+});
+
 export const CourseWithProgressSchema = z.object({
   // Champs de base du cours
   id: z.string().uuid('ID du cours invalide'),
