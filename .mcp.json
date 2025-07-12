@@ -2,7 +2,7 @@
   "mcpServers": {
     "supabase": {
       "command": "/mnt/c/GitHub/ai_foundations_lms/scripts/mcp-supabase-wrapper.sh",
-      "args": ["--read-only", "--project-ref=oqmllypaarqvabuvbqga"],
+      "args": ["--project-ref=oqmllypaarqvabuvbqga", "--read-only"],
       "env": {
         "SUPABASE_ACCESS_TOKEN": "sbp_0059f83aaf50dd0922a68cb6d6230e4c3f7fccbc"
       }

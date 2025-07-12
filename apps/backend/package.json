@@ -8,6 +8,7 @@
     "gen:types": "supabase gen types typescript --project-id $SUPABASE_PROJECT_REF > ../frontend/src/types/database.types.ts"
   },
   "devDependencies": {
+    "lint-staged": "^16.1.2",
     "supabase": "2.30.4"
   }
 }

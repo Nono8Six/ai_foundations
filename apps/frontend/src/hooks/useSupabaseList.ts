@@ -66,16 +66,16 @@ export function useSupabaseList<const T extends TablesWithUserIdAndCreatedAt>(
   const query: UseQueryResult<Row[], PostgrestError> = useQuery({
     queryKey,
     enabled: Boolean(userId),
-    gcTime: 0,
+    gcTime: 5 * 60 * 1000, // 5 minutes cache time for better performance
     queryFn: async () => {
       let q = supabaseClient.from(table).select('*');
 
-      // @ts-ignore - TS union limitation; 'user_id' guaranteed by constraint
-      q = q.eq('user_id', userId!);
+      // Type-safe filter by user_id using explicit key checking
+      q = q.eq('user_id' as keyof Row, userId!);
 
       for (const [column, value] of Object.entries(filters)) {
         if (value !== undefined) {
-          q = q.eq(column, value as any);
+          q = q.eq(column as keyof Row, value);
         }
       }
 
@@ -84,8 +84,8 @@ export function useSupabaseList<const T extends TablesWithUserIdAndCreatedAt>(
 
       const { data, error } = await safeQuery<Row[]>(async () => {
         const resp = await q;
-        // @ts-ignore - TS union expansion; data matches Row[] runtime
-        return { data: resp.data as Row[], error: resp.error };
+        // Type assertion is safe here as we're selecting from the correct table
+        return { data: resp.data as Row[] | null, error: resp.error };
       });
       if (error) throw error;
       return data ?? [];
@@ -97,9 +97,9 @@ export function useSupabaseList<const T extends TablesWithUserIdAndCreatedAt>(
   const create = useMutation<Row, PostgrestError, Insert>({
     mutationFn: async (payload: Insert) => {
       const result = await safeQuery<Row>(async () => {
-        const resp = await supabaseClient.from(table).insert(payload as any).select().single();
-        // @ts-ignore - TS union expansion; data matches Row runtime
-        return { data: resp.data as Row, error: resp.error };
+        const resp = await supabaseClient.from(table).insert(payload).select().single();
+        // Type assertion is safe here as insert returns the same type
+        return { data: resp.data as Row | null, error: resp.error };
       });
       return assertData<Row>(result);
     },
@@ -109,10 +109,10 @@ export function useSupabaseList<const T extends TablesWithUserIdAndCreatedAt>(
   const update = useMutation<Row, PostgrestError, { id: string; updates: Update }>({
     mutationFn: async ({ id, updates }) => {
       const result = await safeQuery<Row>(async () => {
-        // @ts-ignore - TS union limitation; 'id' guaranteed by schema
-        const resp = await supabaseClient.from(table).update(updates as any).eq('id', id).select().single();
-        // @ts-ignore - TS union expansion; data matches Row runtime
-        return { data: resp.data as Row, error: resp.error };
+        // Type-safe update using proper key constraints
+        const resp = await supabaseClient.from(table).update(updates).eq('id' as keyof Row, id).select().single();
+        // Type assertion is safe here as update returns the same type
+        return { data: resp.data as Row | null, error: resp.error };
       });
       return assertData<Row>(result);
     },
@@ -122,8 +122,8 @@ export function useSupabaseList<const T extends TablesWithUserIdAndCreatedAt>(
   const remove = useMutation<void, PostgrestError, string>({
     mutationFn: async (id: string) => {
       const { error } = await safeQuery(async () => {
-        // @ts-ignore - TS union limitation; 'id' guaranteed by schema
-        const resp = await supabaseClient.from(table).delete().eq('id', id);
+        // Type-safe delete using proper key constraints
+        const resp = await supabaseClient.from(table).delete().eq('id' as keyof Row, id);
         return { data: null, error: resp.error };
       });
       if (error) throw error;

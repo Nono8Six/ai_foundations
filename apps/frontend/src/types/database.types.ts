@@ -576,6 +576,7 @@ export type Database = {
           title: string | null
           total_lessons: number | null
           updated_at: string | null
+          user_id: string | null
         }
         Relationships: []
       }
@@ -759,18 +760,3 @@ export const Constants = {
     },
   },
 } as const
-
-export type AchievementRowCamel =
-  Omit<Database['public']['Tables']['achievements']['Row'], 'xp_reward'> & {
-    xpReward: Database['public']['Tables']['achievements']['Row']['xp_reward'];
-  };
-
-export type AchievementInsertCamel =
-  Omit<Database['public']['Tables']['achievements']['Insert'], 'xp_reward'> & {
-    xpReward?: Database['public']['Tables']['achievements']['Insert']['xp_reward'];
-  };
-
-export type AchievementUpdateCamel =
-  Omit<Database['public']['Tables']['achievements']['Update'], 'xp_reward'> & {
-    xpReward?: Database['public']['Tables']['achievements']['Update']['xp_reward'];
-  };

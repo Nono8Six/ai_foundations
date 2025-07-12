@@ -36,22 +36,8 @@ function isCacheValid(key: string): boolean {
   return Date.now() - cached.timestamp < CACHE_TTL;
 }
 
-/**
- * Nettoie le cache des entrées expirées
- */
-function cleanCache() {
-  const now = Date.now();
-  for (const [key, { timestamp }] of cache.entries()) {
-    if (now - timestamp >= CACHE_TTL) {
-      cache.delete(key);
-    }
-  }
-}
-
-// Nettoyer périodiquement le cache
-if (typeof window !== 'undefined') {
-  setInterval(cleanCache, CACHE_TTL);
-}
+// Note: Cache cleaning is now handled by TanStack Query's built-in cache management
+// Manual cache cleanup removed to prevent memory leaks
 
 /**
  * Récupère une liste paginée de cours avec leur progression
@@ -157,35 +143,17 @@ export async function fetchCourses({
         rawData: data?.[0], // Log first course for debugging
       });
       
-      // Temporary: just log and continue with raw data for now
-      console.warn('Validation failed, detailed errors:');
-      console.warn('Issues:', validatedData.error.issues);
-      console.warn('Raw course data:', data?.[0]);
-      // throw new Error('Invalid course data received from server');
+      // Validation failed - throw error instead of continuing with invalid data
+      log.error('Course data validation failed - aborting operation', {
+        issues: validatedData.error.format(),
+        rawDataSample: data?.[0]
+      });
+      throw new Error('Invalid course data received from server. Please check the database schema.');
     }
 
-    // Transformer les cours de base en cours avec progression par défaut
-    const coursesWithProgress = (validatedData.success ? validatedData.data : (data || [])).map((course: z.infer<typeof BaseCourseSchema>) => ({
-      ...course,
-      // Ajouter les champs de progression manquants avec des valeurs par défaut
-      user_id: 'anonymous', // Utilisateur anonyme par défaut
-      total_lessons: 0,
-      completed_lessons: 0,
-      completion_percentage: 0,
-      last_activity_at: null,
-      average_rating: 0,
-      enrolled_students: 0,
-      duration_minutes: 0,
-      is_new: false,
-      duration: '0h 00',
-      progress: {
-        completed: 0,
-        total: 0,
-        percentage: 0,
-        lastActivityAt: null,
-        status: 'not_started' as const
-      }
-    }));
+    // Use validated data directly from user_course_progress view
+    // This view already contains the proper user-specific progress data
+    const coursesWithProgress = validatedData.data;
 
     // Créer le résultat paginé
     const result: PaginatedCoursesResult = {

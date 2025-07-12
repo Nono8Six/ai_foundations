@@ -22,7 +22,7 @@
     "supabase:db:push": "pnpm --filter backend exec supabase db push",
     "supabase:db:diff": "pnpm --filter backend exec supabase db diff",
     "supabase:migration:new": "pnpm --filter backend exec supabase migration new",
-    "supabase:gen:types": "cross-env-shell supabase gen types typescript --project-id $SUPABASE_PROJECT_REF --schema public > apps/frontend/src/types/database.types.ts",
+    "supabase:gen:types": "cross-env-shell \"SUPABASE_ACCESS_TOKEN=$SUPABASE_ACCESS_TOKEN supabase gen types typescript --project-id oqmllypaarqvabuvbqga --schema public\" > apps/frontend/src/types/database.types.ts",
     "types:gen": "pnpm supabase:gen:types",
     "validate:env": "node scripts/validate-env.js"
   },
