@@ -40,7 +40,7 @@ function getMigrationStatus() {
     let appliedMigrations = [];
     
     try {
-      const remoteStatus = execSync('supabase migration list --linked', { 
+      const remoteStatus = execSync('supabase migration list --workdir apps/backend', { 
         encoding: 'utf8',
         stdio: 'pipe'
       });

@@ -27,14 +27,15 @@ async function checkDatabaseSync() {
   try {
     // 1. Vérifier la connexion Supabase
     log('🔗', 'Test de connexion Supabase...');
+    
     try {
-      execSync('supabase status --linked', { 
+      execSync('supabase migration list --workdir apps/backend', { 
         encoding: 'utf8', 
         stdio: 'pipe' 
       });
-      log('✅', 'Connexion Supabase active');
+      log('✅', 'Connexion Supabase cloud active');
     } catch (e) {
-      error('Impossible de se connecter à Supabase. Vérifiez votre configuration.');
+      error('Impossible de se connecter à Supabase cloud. Vérifiez la liaison du projet.');
     }
 
     // 2. Comparer les migrations locales vs cloud
@@ -54,7 +55,7 @@ async function checkDatabaseSync() {
 
     // 3. Obtenir le statut des migrations cloud
     try {
-      const remoteMigrations = execSync('supabase migration list --linked', { 
+      const remoteMigrations = execSync('supabase migration list --workdir apps/backend', { 
         encoding: 'utf8',
         stdio: 'pipe'
       });
