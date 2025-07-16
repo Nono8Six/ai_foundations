@@ -1,8 +1,8 @@
 import type { PostgrestError } from '@supabase/supabase-js';
 import { useSupabaseList, type UseSupabaseListOptions } from './useSupabaseList';
-import type { AchievementRowCamel } from '@frontend/types/database.types';
+import type { Tables } from '@frontend/types/database.types';
 
-type AchievementRow = AchievementRowCamel;
+type AchievementRow = Tables<'achievements'>;
 
 export type UseAchievementsOptions<
   T extends Partial<AchievementRow> = Partial<AchievementRow>,
@@ -24,12 +24,7 @@ export function useAchievements(
     options
   );
 
-  const achievements = data.map(({ xp_reward, ...rest }) => ({
-    ...rest,
-    xpReward: xp_reward,
-  }));
-
-  return { achievements, loading, error };
+  return { achievements: data, loading, error };
 }
 
 export default useAchievements;

@@ -205,8 +205,14 @@ export type Database = {
           is_published: boolean | null
           lesson_order: number
           module_id: string | null
+          resources: Json | null
+          text_content: string | null
           title: string
+          transcript: string | null
+          type: Database["public"]["Enums"]["lesson_type"] | null
           updated_at: string | null
+          video_url: string | null
+          xp_reward: number | null
         }
         Insert: {
           content?: Json | null
@@ -216,8 +222,14 @@ export type Database = {
           is_published?: boolean | null
           lesson_order: number
           module_id?: string | null
+          resources?: Json | null
+          text_content?: string | null
           title: string
+          transcript?: string | null
+          type?: Database["public"]["Enums"]["lesson_type"] | null
           updated_at?: string | null
+          video_url?: string | null
+          xp_reward?: number | null
         }
         Update: {
           content?: Json | null
@@ -227,8 +239,14 @@ export type Database = {
           is_published?: boolean | null
           lesson_order?: number
           module_id?: string | null
+          resources?: Json | null
+          text_content?: string | null
           title?: string
+          transcript?: string | null
+          type?: Database["public"]["Enums"]["lesson_type"] | null
           updated_at?: string | null
+          video_url?: string | null
+          xp_reward?: number | null
         }
         Relationships: [
           {
@@ -558,6 +576,42 @@ export type Database = {
       }
     }
     Views: {
+      achievement_row_camel: {
+        Row: {
+          createdAt: string | null
+          description: string | null
+          earned: boolean | null
+          icon: string | null
+          id: string | null
+          rarity: string | null
+          title: string | null
+          userId: string | null
+          xpReward: number | null
+        }
+        Insert: {
+          createdAt?: string | null
+          description?: string | null
+          earned?: boolean | null
+          icon?: string | null
+          id?: string | null
+          rarity?: string | null
+          title?: string | null
+          userId?: string | null
+          xpReward?: number | null
+        }
+        Update: {
+          createdAt?: string | null
+          description?: string | null
+          earned?: boolean | null
+          icon?: string | null
+          id?: string | null
+          rarity?: string | null
+          title?: string | null
+          userId?: string | null
+          xpReward?: number | null
+        }
+        Relationships: []
+      }
       user_course_progress: {
         Row: {
           category: string | null
@@ -590,6 +644,29 @@ export type Database = {
         Args: { search_email: string }
         Returns: boolean
       }
+      get_achievements_camel: {
+        Args: { user_id_param?: string }
+        Returns: {
+          id: string
+          title: string
+          description: string
+          icon: string
+          rarity: string
+          earned: boolean
+          userId: string
+          xpReward: number
+          createdAt: string
+        }[]
+      }
+      get_user_course_progress: {
+        Args: { user_id_param: string; course_id_param: string }
+        Returns: {
+          course_id: string
+          total_lessons: number
+          completed_lessons: number
+          completion_percentage: number
+        }[]
+      }
       get_user_settings: {
         Args: { user_id?: string }
         Returns: {
@@ -621,6 +698,7 @@ export type Database = {
     }
     Enums: {
       achievement_rarity: "common" | "uncommon" | "rare" | "epic" | "legendary"
+      lesson_type: "video" | "text" | "quiz" | "exercise"
       progress_status: "not_started" | "in_progress" | "completed"
       rgpd_request_status: "pending" | "processing" | "completed" | "rejected"
       rgpd_request_type: "access" | "deletion" | "rectification"
@@ -753,6 +831,7 @@ export const Constants = {
   public: {
     Enums: {
       achievement_rarity: ["common", "uncommon", "rare", "epic", "legendary"],
+      lesson_type: ["video", "text", "quiz", "exercise"],
       progress_status: ["not_started", "in_progress", "completed"],
       rgpd_request_status: ["pending", "processing", "completed", "rejected"],
       rgpd_request_type: ["access", "deletion", "rectification"],

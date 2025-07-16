@@ -1,5 +1,5 @@
 // src/context/AuthContext.tsx
-import { useState, useEffect, useCallback, type ReactNode } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 import type {
   Session,
   User,
@@ -15,12 +15,36 @@ import { fetchUserProfile as fetchUserProfileService } from '@frontend/services/
 import { safeQuery } from '@frontend/utils/supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import { log } from '@libs/logger';
-import type { AuthErrorWithCode } from '@frontend/types/auth';
-import type { AppError } from '@frontend/types/app-error';
+import type { AuthErrorWithCode, AuthErrorCode } from '@frontend/types/auth';
 import { toast } from 'sonner';
 import { createContextStrict } from './createContextStrict';
 
 const supabaseClient = supabase as SupabaseClient<Database>;
+
+/**
+ * Creates a type-safe AuthErrorWithCode for exactOptionalPropertyTypes
+ * Modern TypeScript 5.8+ utility function
+ */
+const createAuthError = (
+  message: string, 
+  code?: AuthErrorCode | undefined,
+  originalError?: AuthError | undefined
+): AuthErrorWithCode => {
+  const error = new Error(message) as AuthErrorWithCode;
+  
+  // Explicitly handle undefined for exactOptionalPropertyTypes
+  if (code !== undefined) {
+    error.code = code;
+  }
+  
+  if (originalError !== undefined) {
+    error.originalError = {
+      code: originalError.code
+    };
+  }
+  
+  return error;
+};
 
 export interface AuthContextValue {
   signUp: (args: {
@@ -225,28 +249,38 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (result.error) {
         let userFriendlyMessage =
           'Les identifiants fournis sont incorrects. Vérifiez votre email et mot de passe.';
-        const enhancedError: AuthErrorWithCode = new Error(userFriendlyMessage);
-        enhancedError.originalError = result.error;
+        let errorCode: AuthErrorCode = 'invalid_credentials';
 
         if (result.error.message.includes('Invalid login credentials')) {
           userFriendlyMessage = 'Mot de passe incorrect.';
-          enhancedError.code = 'wrong_password';
+          errorCode = 'wrong_password';
         } else if (result.error.message.includes('Email not confirmed')) {
           userFriendlyMessage =
             'Veuillez confirmer votre email avant de vous connecter. Vérifiez votre boîte de réception.';
-          enhancedError.code = 'email_not_confirmed';
+          errorCode = 'email_not_confirmed';
         } else if (result.error.message.includes('Too many requests')) {
           userFriendlyMessage =
             'Trop de tentatives de connexion. Veuillez patienter quelques minutes avant de réessayer.';
+          errorCode = 'too_many_requests';
         } else if (result.error.message.includes('signup_disabled')) {
           userFriendlyMessage =
             "Les inscriptions sont temporairement désactivées. Contactez l'administrateur.";
+          errorCode = 'network_error';
         } else if (result.error.message.includes('email_address_invalid')) {
           userFriendlyMessage = "L'adresse email fournie n'est pas valide.";
+          errorCode = 'invalid_credentials';
+        } else {
+          errorCode = 'unknown_error';
         }
 
-        enhancedError.message = userFriendlyMessage;
-        enhancedError.code = enhancedError.code || 'invalid_credentials';
+        // Create type-safe error using utility function
+        const enhancedError = createAuthError(
+          userFriendlyMessage,
+          errorCode,
+          result.error
+        );
+
+        // Error is already properly typed and configured
 
         log.error('Sign in error:', enhancedError);
         setAuthError(enhancedError);

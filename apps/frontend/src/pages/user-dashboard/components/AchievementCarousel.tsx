@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import Icon from '@frontend/components/AppIcon';
 import Image from '@frontend/components/AppImage';
-import type {
-  AchievementRowCamel as Achievement,
-} from '@frontend/types/database.types';
+import type { Tables } from '@frontend/types/database.types';
+
+type Achievement = Tables<'achievements'>;
 
 export interface AchievementCarouselProps {
   achievements?: Achievement[];

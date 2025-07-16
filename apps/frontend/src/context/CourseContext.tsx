@@ -1,5 +1,5 @@
 // src/context/CourseContext.tsx
-import { type ReactNode } from 'react';
+import React, { type ReactNode } from 'react';
 import type { QueryObserverResult } from '@tanstack/react-query';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from './AuthContext';
@@ -38,9 +38,14 @@ export const CourseProvider = ({ children }: { children: ReactNode }) => {
     queryFn: () => fetchCourses(),
     enabled: !!user?.id,
     retry: false,
-    onError: (error: Error) =>
-      logError(new Error(`[CourseContext] A critical error occurred: ${error.message}`)),
   });
+
+  // Handle errors in TanStack Query v5 style
+  React.useEffect(() => {
+    if (queryResult.error) {
+      logError(new Error(`[CourseContext] A critical error occurred: ${queryResult.error.message}`));
+    }
+  }, [queryResult.error]);
 
   // Extraction des données avec des valeurs par défaut
   const coursesWithProgress = queryResult.data?.data || [];

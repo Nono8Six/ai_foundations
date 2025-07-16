@@ -87,8 +87,8 @@ importers:
         specifier: ^3.6.2
         version: 3.6.2
       supabase:
-        specifier: 2.30.4
-        version: 2.30.4
+        specifier: ^2.31.4
+        version: 2.31.4
       typescript:
         specifier: ^5.8.3
         version: 5.8.3
@@ -6025,6 +6025,14 @@ packages:
     engines: { npm: '>=8' }
     hasBin: true
 
+  supabase@2.31.4:
+    resolution:
+      {
+        integrity: sha512-5OIhaXuJHq/rdu6yIozmD4kZa1//IzfQTmrSE74DgJOP4Nz6Y5ynMdaCCg8kTWv34MyOMn0GXrbjhObLdsyElA==,
+      }
+    engines: { npm: '>=8' }
+    hasBin: true
+
   supports-color@5.5.0:
     resolution:
       {
@@ -10395,6 +10403,15 @@ snapshots:
       ts-interface-checker: 0.1.13
 
   supabase@2.30.4:
+    dependencies:
+      bin-links: 5.0.0
+      https-proxy-agent: 7.0.6
+      node-fetch: 3.3.2
+      tar: 7.4.3
+    transitivePeerDependencies:
+      - supports-color
+
+  supabase@2.31.4:
     dependencies:
       bin-links: 5.0.0
       https-proxy-agent: 7.0.6

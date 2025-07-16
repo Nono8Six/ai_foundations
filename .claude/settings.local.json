@@ -27,7 +27,8 @@
       "Bash(pnpm supabase gen types:*)",
       "Bash(pnpm add:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(mkdir:*)"
     ],
     "deny": []
   },

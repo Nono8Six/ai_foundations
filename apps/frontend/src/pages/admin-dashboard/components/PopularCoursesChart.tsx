@@ -8,7 +8,6 @@ import {
   Tooltip,
   ResponsiveContainer,
   type TooltipProps as RechartsTooltipProps,
-  type TooltipPayload,
 } from 'recharts';
 import Icon from '@frontend/components/AppIcon';
 import { supabase } from '@frontend/lib/supabase';

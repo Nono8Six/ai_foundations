@@ -52,20 +52,11 @@ pnpm format
 ### Supabase Cloud Management
 
 ```bash
-# Check Supabase cloud project status
-pnpm supabase:status
-
-# Push schema changes to cloud
-pnpm supabase:db:push
-
 # Generate TypeScript types from cloud schema
-pnpm supabase:gen:types
+pnpm types:gen
 
-# Create new migration
-pnpm supabase:migration:new <migration_name>
-
-# Diff local changes against cloud
-pnpm supabase:db:diff
+# Validate environment variables
+pnpm validate:env
 ```
 
 ### Quick Setup
@@ -158,11 +149,9 @@ pnpm dev
 
 ### Database Changes (Cloud-First)
 
-- Create migrations with `pnpm supabase:migration:new <name>`
-- Test changes on Supabase preview branches when available
-- Push to cloud with `pnpm supabase:db:push`
-- Always run `pnpm supabase:gen:types` after schema changes
-- Use descriptive migration names following conventional commits style
+- Make schema changes directly in Supabase Dashboard (SQL Editor)
+- Always run `pnpm types:gen` after schema changes to update TypeScript types
+- No local migrations needed - cloud is the source of truth
 
 ### Environment Setup (Simplified)
 
@@ -208,6 +197,6 @@ pnpm dev
 
 - **Single source of truth**: All data lives in Supabase cloud
 - **No Docker complexity**: Just `pnpm dev` to start
-- **Type safety**: Run `pnpm supabase:gen:types` after any schema changes
+- **Type safety**: Run `pnpm types:gen` after any schema changes
 - **Simple setup**: Copy `.env.example` → configure cloud credentials → start coding
-- **Testing**: Use Supabase preview branches for isolated feature testing
+- **Database changes**: Use Supabase Dashboard SQL Editor directly

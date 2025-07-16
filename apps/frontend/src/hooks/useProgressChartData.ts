@@ -85,7 +85,7 @@ export function useProgressChartData(
       lessonMap[lesson.id] = {
         ...lesson,
         courseId: courseId,
-        category: course ? course.category : 'Unknown',
+        category: course ? (course.category || 'Unknown') : 'Unknown',
         // Ensure duration is a number, default to 0 if not provided or invalid
         duration: typeof lesson.duration === 'number' ? lesson.duration : 0,
       };
@@ -114,6 +114,7 @@ export function useProgressChartData(
         // Check if completed_at is a valid date string before parsing
         if (
           p.completed_at &&
+          p.lesson_id &&
           format(parseISO(p.completed_at), 'yyyy-MM-dd') === format(dayDate, 'yyyy-MM-dd')
         ) {
           lessonsCompletedThisDay++;
@@ -142,6 +143,7 @@ export function useProgressChartData(
       completedProgress.forEach(p => {
         if (
           p.completed_at &&
+          p.lesson_id &&
           format(parseISO(p.completed_at), 'yyyy-MM') === format(monthDate, 'yyyy-MM')
         ) {
           lessonsCompletedThisMonth++;
@@ -162,10 +164,12 @@ export function useProgressChartData(
     // --- Subject Data Aggregation ---
     const subjectCounts: Record<string, number> = {};
     completedProgress.forEach(p => {
-      const lessonDetails = enrichedLessons[p.lesson_id];
-      if (lessonDetails) {
-        const category = lessonDetails.category || 'Unknown';
-        subjectCounts[category] = (subjectCounts[category] || 0) + 1;
+      if (p.lesson_id) {
+        const lessonDetails = enrichedLessons[p.lesson_id];
+        if (lessonDetails) {
+          const category = lessonDetails.category || 'Unknown';
+          subjectCounts[category] = (subjectCounts[category] || 0) + 1;
+        }
       }
     });
     const subjectData = Object.entries(subjectCounts).map(([name, value]) => ({

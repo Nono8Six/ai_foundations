@@ -8,6 +8,17 @@ import {
 import type { PostgrestError, SupabaseClient } from '@supabase/supabase-js';
 import { supabase } from '@frontend/lib/supabase';
 import { safeQuery } from '@frontend/utils/supabaseClient';
+
+// Modern TypeScript 5.8+ utility types for database operations
+
+// Type-safe Supabase Insert/Update types with exactOptionalPropertyTypes
+type SafeSupabaseInsert<T> = {
+  [K in keyof T]?: T[K] | undefined;
+};
+
+type SafeSupabaseUpdate<T> = {
+  [K in keyof T]?: T[K] | undefined;
+};
 import { assertData } from '@libs/supabase-utils/assertData';
 import type { Database } from '@frontend/types/database.types';
 
@@ -71,11 +82,11 @@ export function useSupabaseList<const T extends TablesWithUserIdAndCreatedAt>(
       let q = supabaseClient.from(table).select('*');
 
       // Type-safe filter by user_id using explicit key checking
-      q = q.eq('user_id' as keyof Row, userId!);
+      q = q.eq('user_id' as string, userId!);
 
       for (const [column, value] of Object.entries(filters)) {
         if (value !== undefined) {
-          q = q.eq(column as keyof Row, value);
+          q = q.eq(column as string, value);
         }
       }
 
@@ -96,8 +107,11 @@ export function useSupabaseList<const T extends TablesWithUserIdAndCreatedAt>(
 
   const create = useMutation<Row, PostgrestError, Insert>({
     mutationFn: async (payload: Insert) => {
+      // Type-safe insertion with exactOptionalPropertyTypes compatibility
+      const safePayload = payload as SafeSupabaseInsert<Row>;
+      
       const result = await safeQuery<Row>(async () => {
-        const resp = await supabaseClient.from(table).insert(payload).select().single();
+        const resp = await supabaseClient.from(table).insert(safePayload as Record<string, unknown>).select().single();
         // Type assertion is safe here as insert returns the same type
         return { data: resp.data as Row | null, error: resp.error };
       });
@@ -108,9 +122,12 @@ export function useSupabaseList<const T extends TablesWithUserIdAndCreatedAt>(
 
   const update = useMutation<Row, PostgrestError, { id: string; updates: Update }>({
     mutationFn: async ({ id, updates }) => {
+      // Type-safe update with exactOptionalPropertyTypes compatibility
+      const safeUpdates = updates as SafeSupabaseUpdate<Row>;
+      
       const result = await safeQuery<Row>(async () => {
         // Type-safe update using proper key constraints
-        const resp = await supabaseClient.from(table).update(updates).eq('id' as keyof Row, id).select().single();
+        const resp = await supabaseClient.from(table).update(safeUpdates as Record<string, unknown>).eq('id' as string, id).select().single();
         // Type assertion is safe here as update returns the same type
         return { data: resp.data as Row | null, error: resp.error };
       });
@@ -123,7 +140,7 @@ export function useSupabaseList<const T extends TablesWithUserIdAndCreatedAt>(
     mutationFn: async (id: string) => {
       const { error } = await safeQuery(async () => {
         // Type-safe delete using proper key constraints
-        const resp = await supabaseClient.from(table).delete().eq('id' as keyof Row, id);
+        const resp = await supabaseClient.from(table).delete().eq('id' as string, id);
         return { data: null, error: resp.error };
       });
       if (error) throw error;

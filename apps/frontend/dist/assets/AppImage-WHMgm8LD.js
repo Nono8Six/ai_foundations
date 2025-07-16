@@ -1,0 +1,2 @@
+import{j as m,l as o}from"./index-muy6mdYR.js";const g=({src:s,alt:t="Image Name",className:a="",...n})=>{const r=e=>e&&(e.startsWith("/")||/^(https?:|data:)/.test(e))?e:"/assets/images/no_image.png";return m.jsxDEV("img",{src:r(s),alt:t,className:a,onError:e=>{o.warn("Image load error for:",s),e.target.src="/assets/images/no_image.png"},...n},void 0,!1,{fileName:"/mnt/c/GitHub/ai_foundations_lms/apps/frontend/src/components/AppImage.tsx",lineNumber:24,columnNumber:5},void 0)};export{g as I};
+//# sourceMappingURL=AppImage-WHMgm8LD.js.map
