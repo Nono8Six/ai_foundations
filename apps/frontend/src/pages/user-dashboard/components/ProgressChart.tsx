@@ -11,6 +11,15 @@ import {
   ResponsiveContainer,
   type TooltipProps as RechartsTooltipProps,
 } from 'recharts';
+import type { Payload } from 'recharts/types/component/DefaultTooltipContent';
+
+interface ChartTooltipPayload extends Payload<number, string> {
+  payload: {
+    hours?: number;
+    lessons?: number;
+    xp?: number;
+  };
+}
 import { useCourses } from '@frontend/context/CourseContext';
 import { useProgressChartData } from '@frontend/hooks/useProgressChartData';
 import Icon from '@frontend/components/AppIcon';
@@ -21,10 +30,10 @@ const ProgressChart: React.FC = () => {
   const [activeTab, setActiveTab] = useState('weekly');
 
   // On choisit la version de la branche "main", qui est la plus à jour
-  const { userProgress, lessons, modules, isLoading } = useCourses();
+  const { coursesWithProgress, userProgress, lessons, modules, isLoading } = useCourses();
 
   // On passe les données brutes au hook qui se charge des calculs
-  const chartData = useProgressChartData((userProgress ?? []) as any[], (lessons ?? []) as any[], [], (modules ?? []) as any[]);
+  const chartData = useProgressChartData(userProgress, lessons, coursesWithProgress, modules);
 
   const [hasData, setHasData] = useState(false);
 
@@ -47,7 +56,7 @@ const ProgressChart: React.FC = () => {
 
   const CustomTooltip = ({ active, payload, label }: RechartsTooltipProps<number, string>) => {
     const safePayload = useMemo(
-      () => (payload?.length ? (payload as any[]) : undefined),
+      () => (payload && payload.length ? (payload as ChartTooltipPayload[]) : undefined),
       [payload]
     );
 
@@ -55,7 +64,7 @@ const ProgressChart: React.FC = () => {
       return (
         <div className='bg-surface border border-border rounded-lg p-3 shadow-medium'>
           <p className='font-medium text-text-primary mb-2'>{label}</p>
-          {safePayload.map((entry: any, index) => (
+          {safePayload.map((entry, index) => (
             <p key={index} className='text-sm' style={{ color: entry.color }}>
               {entry.dataKey === 'hours' && `Heures: ${(entry.payload?.hours ?? 0).toFixed(1)}h`}
               {entry.dataKey === 'lessons' && `Leçons: ${entry.payload?.lessons ?? 0}`}
