@@ -9,6 +9,6 @@
   },
   "devDependencies": {
     "lint-staged": "^16.1.2",
-    "supabase": "2.30.4"
+    "supabase": "2.31.4"
   }
 }

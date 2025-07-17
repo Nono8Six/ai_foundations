@@ -105,8 +105,8 @@ importers:
         specifier: ^16.1.2
         version: 16.1.2
       supabase:
-        specifier: 2.30.4
-        version: 2.30.4
+        specifier: 2.31.4
+        version: 2.31.4
 
   apps/frontend:
     dependencies:
@@ -5880,14 +5880,6 @@ packages:
     engines: { node: '>=16 || 14 >=14.17' }
     hasBin: true
 
-  supabase@2.30.4:
-    resolution:
-      {
-        integrity: sha512-AOCyd2vmBBMTXbnahiCU0reRNxKS4n5CrPciUF2tcTrQ8dLzl1HwcLfe5DrG8E0QRcKHPDdzprmh/2+y4Ta5MA==,
-      }
-    engines: { npm: '>=8' }
-    hasBin: true
-
   supabase@2.31.4:
     resolution:
       {
@@ -10055,15 +10047,6 @@ snapshots:
       mz: 2.7.0
       pirates: 4.0.7
       ts-interface-checker: 0.1.13
-
-  supabase@2.30.4:
-    dependencies:
-      bin-links: 5.0.0
-      https-proxy-agent: 7.0.6
-      node-fetch: 3.3.2
-      tar: 7.4.3
-    transitivePeerDependencies:
-      - supports-color
 
   supabase@2.31.4:
     dependencies:
