@@ -1,5 +1,5 @@
 // src/hooks/useProgressChartData.ts
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import type { Database } from '@frontend/types/database.types';
 
 type UserProgressRow = Database['public']['Tables']['user_progress']['Row'];
@@ -30,6 +30,12 @@ interface ChartData {
   weekly: WeeklyData[];
   monthly: MonthlyData[];
   subject: SubjectData[];
+}
+
+interface EnrichedLesson extends LessonRow {
+  courseId: string | undefined;
+  category: string;
+  duration: number;
 }
 
 // Temporary fix: Using native Date methods instead of date-fns
@@ -99,6 +105,10 @@ export function useProgressChartData(
     subject: [],
   });
 
+  const hasDataRef = useRef(false);
+
+  const emptyLessonMapRef = useRef<Record<string, EnrichedLesson>>({});
+
   const enrichedLessons = useMemo(() => {
     if (
       !lessons ||
@@ -108,14 +118,8 @@ export function useProgressChartData(
       !modules ||
       modules.length === 0
     ) {
-      return {} as Record<string, EnrichedLesson>;
+      return emptyLessonMapRef.current;
     }
-    interface EnrichedLesson extends LessonRow {
-      courseId: string | undefined;
-      category: string;
-      duration: number;
-    }
-
     const lessonMap: Record<string, EnrichedLesson> = {};
     const moduleCourseMap = modules.reduce<Record<string, string | undefined>>(
       (acc, module) => {
@@ -140,10 +144,20 @@ export function useProgressChartData(
   }, [lessons, courses, modules]);
 
   useEffect(() => {
-    if (!userProgress || userProgress.length === 0 || Object.keys(enrichedLessons).length === 0) {
+    const noData =
+      !userProgress ||
+      userProgress.length === 0 ||
+      Object.keys(enrichedLessons).length === 0;
+
+    if (noData) {
+      if (!hasDataRef.current) {
+        return;
+      }
+      hasDataRef.current = false;
       setChartData({ weekly: [], monthly: [], subject: [] });
       return;
     }
+    hasDataRef.current = true;
 
     const completedProgress = userProgress.filter(p => p.status === 'completed' && p.completed_at);
 
