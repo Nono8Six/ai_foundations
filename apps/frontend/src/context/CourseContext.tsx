@@ -8,14 +8,15 @@ import { logError } from './ErrorContext';
 import { fetchCourses } from '@frontend/services/courseService';
 import type { PaginatedCoursesResult, CourseWithProgress } from '@frontend/types/course.types';
 import type { NoInfer } from '@frontend/types/utils';
+import type { Database } from '@frontend/types/database.types';
 
 type CourseData = PaginatedCoursesResult;
 
 export interface CourseContextValue {
   coursesWithProgress: CourseWithProgress[];
-  userProgress: unknown[];
-  lessons: unknown[];
-  modules: unknown[];
+  userProgress: Database['public']['Tables']['user_progress']['Row'][];
+  lessons: Database['public']['Tables']['lessons']['Row'][];
+  modules: Database['public']['Tables']['modules']['Row'][];
   isLoading: boolean;
   refetchCourses: () => Promise<QueryObserverResult<CourseData | null, unknown>>;
 }
