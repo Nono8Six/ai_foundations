@@ -8,14 +8,15 @@ import { logError } from './ErrorContext';
 import { fetchCourses } from '@frontend/services/courseService';
 import type { PaginatedCoursesResult, CourseWithProgress } from '@frontend/types/course.types';
 import type { NoInfer } from '@frontend/types/utils';
+import type { Database } from '@frontend/types/database.types';
 
 type CourseData = PaginatedCoursesResult;
 
 export interface CourseContextValue {
   coursesWithProgress: CourseWithProgress[];
-  userProgress: unknown[];
-  lessons: unknown[];
-  modules: unknown[];
+  userProgress: Database['public']['Tables']['user_progress']['Row'][];
+  lessons: Database['public']['Tables']['lessons']['Row'][];
+  modules: Database['public']['Tables']['modules']['Row'][];
   isLoading: boolean;
   refetchCourses: () => Promise<QueryObserverResult<CourseData | null, unknown>>;
 }
@@ -49,12 +50,24 @@ export const CourseProvider = ({ children }: { children: ReactNode }) => {
   // Extraction des données avec des valeurs par défaut
   const coursesWithProgress = queryResult.data?.data || [];
 
+  const defaultUserProgress = React.useMemo<
+    Database['public']['Tables']['user_progress']['Row'][]
+  >(() => [], []);
+
+  const defaultLessons = React.useMemo<
+    Database['public']['Tables']['lessons']['Row'][]
+  >(() => [], []);
+
+  const defaultModules = React.useMemo<
+    Database['public']['Tables']['modules']['Row'][]
+  >(() => [], []);
+
   // La valeur du contexte utilise directement les résultats de useQuery
   const value: CourseContextValue = {
     coursesWithProgress,
-    userProgress: [],
-    lessons: [],
-    modules: [],
+    userProgress: defaultUserProgress,
+    lessons: defaultLessons,
+    modules: defaultModules,
     isLoading: queryResult.isLoading,
     refetchCourses: queryResult.refetch,
   };
