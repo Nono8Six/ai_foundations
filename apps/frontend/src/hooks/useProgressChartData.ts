@@ -32,14 +32,60 @@ interface ChartData {
   subject: SubjectData[];
 }
 
-import {
-  format,
-  parseISO,
-  eachDayOfInterval,
-  subDays,
-  eachMonthOfInterval,
-  subMonths,
-} from 'date-fns';
+// Temporary fix: Using native Date methods instead of date-fns
+// import {
+//   format,
+//   parseISO,
+//   eachDayOfInterval,
+//   subDays,
+//   eachMonthOfInterval,
+//   subMonths,
+// } from 'date-fns';
+
+// Helper functions to replace date-fns temporarily
+const format = (date: Date, formatStr: string) => {
+  if (formatStr === 'EEE') {
+    return date.toLocaleDateString('en-US', { weekday: 'short' });
+  }
+  if (formatStr === 'MMM yyyy') {
+    return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+  }
+  return date.toLocaleDateString();
+};
+
+const parseISO = (dateStr: string) => new Date(dateStr);
+
+const subDays = (date: Date, days: number) => {
+  const result = new Date(date);
+  result.setDate(result.getDate() - days);
+  return result;
+};
+
+const subMonths = (date: Date, months: number) => {
+  const result = new Date(date);
+  result.setMonth(result.getMonth() - months);
+  return result;
+};
+
+const eachDayOfInterval = (interval: { start: Date; end: Date }) => {
+  const days = [];
+  const current = new Date(interval.start);
+  while (current <= interval.end) {
+    days.push(new Date(current));
+    current.setDate(current.getDate() + 1);
+  }
+  return days;
+};
+
+const eachMonthOfInterval = (interval: { start: Date; end: Date }) => {
+  const months = [];
+  const current = new Date(interval.start);
+  while (current <= interval.end) {
+    months.push(new Date(current));
+    current.setMonth(current.getMonth() + 1);
+  }
+  return months;
+};
 
 export function useProgressChartData(
   userProgress: UserProgressRow[] | undefined,
