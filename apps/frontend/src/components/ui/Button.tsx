@@ -10,7 +10,7 @@ export type ButtonProps<C extends React.ElementType> = Polymorphic<C, {
 }>;
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps<'button'>>(
-  function Button(
+  (
     {
       as: Comp = 'button',
       variant = 'primary',
@@ -20,7 +20,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps<'button'>>(
       ...props
     },
     ref
-  ) {
+  ) => {
     const Component = Comp as React.ElementType;
 
     const base =

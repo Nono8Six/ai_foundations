@@ -135,7 +135,7 @@ const NoteTaking: React.FC<NoteTakingProps> = ({
           {selectedText && (
             <div className='mb-3 p-2 bg-warning-50 border border-warning-200 rounded text-sm'>
               <p className='text-warning-800 font-medium mb-1'>Texte sélectionné :</p>
-              <p className='text-warning-700 italic'>"{selectedText}"</p>
+              <p className='text-warning-700 italic'>&ldquo;{selectedText}&rdquo;</p>
             </div>
           )}
 
@@ -206,7 +206,7 @@ const NoteTaking: React.FC<NoteTakingProps> = ({
                   {/* Selected Text (if any) */}
                   {note.selectedText && (
                     <div className='mb-2 p-2 bg-warning-50 border-l-2 border-warning rounded text-sm'>
-                      <p className='text-warning-800 italic'>"{note.selectedText}"</p>
+                      <p className='text-warning-800 italic'>&ldquo;{note.selectedText}&rdquo;</p>
                     </div>
                   )}
 

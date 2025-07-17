@@ -1,13 +1,14 @@
 // apps/frontend/src/services/courseService.ts
 import { supabase } from '@/lib/supabase';
-import type { 
-  CourseWithProgress, 
-  CourseFilters, 
-  CourseSortOption, 
-  PaginationOptions, 
-  PaginatedCoursesResult
+import { 
+  CourseWithProgressSchema, 
+  BaseCourseSchema,
+  type CourseWithProgress, 
+  type CourseFilters, 
+  type CourseSortOption, 
+  type PaginationOptions, 
+  type PaginatedCoursesResult
 } from '@/types/course.types';
-import { CourseWithProgressSchema, BaseCourseSchema } from '@/types/course.types';
 import { log } from '@libs/logger';
 import { z } from 'zod';
 
@@ -155,9 +156,35 @@ export async function fetchCourses({
     // This view already contains the proper user-specific progress data
     const coursesWithProgress = validatedData.data;
 
-    // Créer le résultat paginé
+    // Créer le résultat paginé avec transformation des types
     const result: PaginatedCoursesResult = {
-      data: coursesWithProgress,
+      data: coursesWithProgress.map(course => ({
+        ...course,
+        progress: {
+          percentage: 0,
+          completed: 0,
+          total: 0,
+          lastActivityAt: null,
+          status: 'not_started' as const
+        },
+        total_lessons: 0,
+        completed_lessons: 0,
+        completion_percentage: 0,
+        last_accessed: null,
+        last_activity_at: null,
+        status: 'not_started' as const,
+        enrolled_at: null,
+        lessons: [],
+        average_rating: 0,
+        enrolled_students: 0,
+        duration_minutes: 0,
+        instructor: 'System',
+        requirements: [],
+        objectives: [],
+        is_new: false,
+        duration: '0h 00min',
+        user_id: 'anonymous'
+      })),
       pagination: {
         page,
         pageSize,

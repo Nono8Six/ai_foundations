@@ -63,6 +63,14 @@ const AchievementCarousel: React.FC<AchievementCarouselProps> = ({ achievements 
   }
 
   const currentAchievement = achievements[currentIndex];
+  
+  if (!currentAchievement) {
+    return (
+      <div className='bg-surface rounded-xl border border-border p-6'>
+        <p className='text-sm text-text-secondary'>Aucun succès disponible.</p>
+      </div>
+    );
+  }
   const earnedCount = achievements.filter(a => a.earned).length;
 
   return (
@@ -85,7 +93,7 @@ const AchievementCarousel: React.FC<AchievementCarouselProps> = ({ achievements 
         <div className='flex items-center gap-4'>
           <div className='w-12 h-12 rounded-full overflow-hidden flex-shrink-0'>
             <Image
-              src={currentAchievement.icon}
+              src={currentAchievement.icon ?? '/default-icon.png'}
               alt={currentAchievement.title}
               className='w-full h-full object-cover'
             />
@@ -95,7 +103,7 @@ const AchievementCarousel: React.FC<AchievementCarouselProps> = ({ achievements 
             <p className='text-sm text-text-secondary'>{currentAchievement.description}</p>
           </div>
           <div className={`text-sm font-medium ${getRarityTextColor(currentAchievement.rarity)}`}>
-            {currentAchievement.xpReward} XP
+            {currentAchievement.xp_reward} XP
           </div>
         </div>
       </div>
@@ -133,7 +141,7 @@ const AchievementCarousel: React.FC<AchievementCarouselProps> = ({ achievements 
           </div>
           <div>
             <p className='text-lg font-semibold text-text-primary'>
-              {achievements.filter(a => a.earned).reduce((sum, a) => sum + a.xpReward, 0)}
+              {achievements.filter(a => a.earned).reduce((sum, a) => sum + (a.xp_reward ?? 0), 0)}
             </p>
             <p className='text-xs text-text-secondary'>XP des succès</p>
           </div>

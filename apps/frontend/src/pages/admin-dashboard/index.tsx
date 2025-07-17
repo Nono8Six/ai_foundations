@@ -40,7 +40,7 @@ const AdminDashboardContent: React.FC = () => {
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
         const { data: activeUsersData, error: activeUsersError } = await supabase
           .from('activity_log')
-          .select('user_id', { count: 'distinct' })
+          .select('user_id', { count: 'exact' })
           .gte('created_at', sevenDaysAgo.toISOString());
         if (activeUsersError) throw activeUsersError;
         const activeUsersCount = activeUsersData ? activeUsersData.length : 0;
@@ -65,7 +65,7 @@ const AdminDashboardContent: React.FC = () => {
         const validSessions = sessionData.filter(s => s.duration_minutes !== null);
         const avgSessionTime =
           validSessions.length > 0
-            ? validSessions.reduce((acc, curr) => acc + curr.duration_minutes, 0) /
+            ? validSessions.reduce((acc, curr) => acc + (curr.duration_minutes ?? 0), 0) /
               validSessions.length
             : 0;
 
@@ -137,7 +137,7 @@ const AdminDashboardContent: React.FC = () => {
       value:
         dashboardMetrics.revenue === 'N/A'
           ? 'N/A'
-          : `€${dashboardMetrics.revenue.toLocaleString('fr-FR')}`, // Placeholder
+          : `€${(dashboardMetrics.revenue as unknown as number).toLocaleString('fr-FR')}`, // Placeholder
       change: '+15.7%', // Placeholder
       changeType: 'positive',
       icon: 'Euro',

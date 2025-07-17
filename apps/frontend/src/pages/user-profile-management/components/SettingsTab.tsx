@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@frontend/context/AuthContext';
 import { getUserSettings, updateUserSettings } from '@frontend/services/userService';
-import type { UserSettings } from '@frontend/types/userSettings';
-import type {
+import type { 
+  UserSettings,
   NotificationSettings,
   NotificationSettingKey,
   PrivacySettings,

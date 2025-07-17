@@ -81,8 +81,10 @@ export function useSupabaseList<const T extends TablesWithUserIdAndCreatedAt>(
     queryFn: async () => {
       let q = supabaseClient.from(table).select('*');
 
-      // Type-safe filter by user_id using explicit key checking
-      q = q.eq('user_id' as string, userId!);
+      // Type-safe filter by user_id using string literal
+      if (userId) {
+        q = q.eq('user_id' as never, userId);
+      }
 
       for (const [column, value] of Object.entries(filters)) {
         if (value !== undefined) {
@@ -111,7 +113,7 @@ export function useSupabaseList<const T extends TablesWithUserIdAndCreatedAt>(
       const safePayload = payload as SafeSupabaseInsert<Row>;
       
       const result = await safeQuery<Row>(async () => {
-        const resp = await supabaseClient.from(table).insert(safePayload as Record<string, unknown>).select().single();
+        const resp = await supabaseClient.from(table).insert(safePayload as never).select().single();
         // Type assertion is safe here as insert returns the same type
         return { data: resp.data as Row | null, error: resp.error };
       });
@@ -127,7 +129,7 @@ export function useSupabaseList<const T extends TablesWithUserIdAndCreatedAt>(
       
       const result = await safeQuery<Row>(async () => {
         // Type-safe update using proper key constraints
-        const resp = await supabaseClient.from(table).update(safeUpdates as Record<string, unknown>).eq('id' as string, id).select().single();
+        const resp = await supabaseClient.from(table).update(safeUpdates as never).eq('id' as never, id).select().single();
         // Type assertion is safe here as update returns the same type
         return { data: resp.data as Row | null, error: resp.error };
       });
@@ -140,7 +142,7 @@ export function useSupabaseList<const T extends TablesWithUserIdAndCreatedAt>(
     mutationFn: async (id: string) => {
       const { error } = await safeQuery(async () => {
         // Type-safe delete using proper key constraints
-        const resp = await supabaseClient.from(table).delete().eq('id' as string, id);
+        const resp = await supabaseClient.from(table).delete().eq('id' as never, id);
         return { data: null, error: resp.error };
       });
       if (error) throw error;

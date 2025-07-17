@@ -47,7 +47,7 @@ const CoursePathway: React.FC<CoursePathwayProps> = ({ courses }) => {
 
   const getProgressColor = (progress?: number): string => {
     if (progress === 100) return 'bg-success';
-    if (progress > 0) return 'bg-primary';
+    if ((progress ?? 0) > 0) return 'bg-primary';
     return 'bg-secondary-200';
   };
 
@@ -90,7 +90,7 @@ const CoursePathway: React.FC<CoursePathwayProps> = ({ courses }) => {
             )}
 
             <div className='space-y-6'>
-              {groupedCourses[difficulty].map((course: CourseWithProgress, courseIndex: number) => {
+              {groupedCourses[difficulty]?.map((course: CourseWithProgress, courseIndex: number) => {
                 const progress = course.progress?.percentage ?? 0;
                 const isEnrolled = progress > 0;
                 const imageSrc =
@@ -179,11 +179,11 @@ const CoursePathway: React.FC<CoursePathwayProps> = ({ courses }) => {
                         )}
 
                         {/* Prerequisites */}
-                        {course.prerequisites?.length > 0 && (
+                        {(course.prerequisites?.length ?? 0) > 0 && (
                           <div className='mb-4'>
                             <p className='text-xs text-text-secondary mb-2'>Prérequis:</p>
                             <div className='flex flex-wrap gap-1'>
-                              {course.prerequisites.map((prereq: string, index: number) => (
+                              {course.prerequisites?.map((prereq: string, index: number) => (
                                 <span
                                   key={index}
                                   className='px-2 py-1 bg-secondary-100 text-secondary-700 text-xs rounded'

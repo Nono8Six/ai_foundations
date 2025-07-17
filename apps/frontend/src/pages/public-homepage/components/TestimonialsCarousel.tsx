@@ -112,6 +112,10 @@ const TestimonialsCarousel: React.FC = () => {
   };
 
   const currentTestimonial = testimonials[currentIndex];
+  
+  if (!currentTestimonial) {
+    return null; // ou un loading state
+  }
 
   return (
     <section className='py-16 lg:py-20 bg-surface'>

@@ -84,15 +84,15 @@ const LessonViewer: React.FC = () => {
           id: lessonData.id,
           title: lessonData.title,
           type: lessonData.type || 'video',
-          duration: lessonData.duration || '',
+          duration: lessonData.duration?.toString() ?? '',
           xpReward: lessonData.xp_reward || 0,
-          module: { id: lessonData.module_id, title: '', course: { id: '', title: '' } },
+          module: { id: lessonData.module_id ?? '', title: '', course: { id: '', title: '' } },
           content: {
             videoUrl: lessonData.video_url,
             transcript: lessonData.transcript,
             textContent: lessonData.text_content,
           },
-          resources: lessonData.resources || [],
+          resources: Array.isArray(lessonData.resources) ? lessonData.resources as unknown as LessonResource[] : [],
         });
       }
 
@@ -111,7 +111,7 @@ const LessonViewer: React.FC = () => {
             lessons: (m.lessons || []).map(l => ({
               id: l.id,
               title: l.title,
-              duration: l.duration || '',
+              duration: l.duration?.toString() ?? '',
               completed: false,
               current: false,
             })),
@@ -144,15 +144,17 @@ const LessonViewer: React.FC = () => {
       id: Date.now(),
       content: note,
       timestamp: new Date().toISOString(),
-      selectedText: selectedText,
+      selectedText,
     };
     setUserNotes([...userNotes, newNote]);
   };
 
   const handleTextSelection = () => {
     const selection = window.getSelection();
-    if (selection.toString().length > 0) {
+    if (selection && selection.toString().length > 0) {
       setSelectedText(selection.toString());
+    } else {
+      setSelectedText('');
     }
   };
 
@@ -242,7 +244,7 @@ const LessonViewer: React.FC = () => {
                 />
               ) : (
                 <TextContent
-                  content={currentLesson.content.textContent}
+                  content={currentLesson.content.textContent ?? ''}
                   onProgress={setLessonProgress}
                 />
               )}

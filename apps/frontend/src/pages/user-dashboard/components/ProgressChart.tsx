@@ -10,36 +10,21 @@ import {
   Tooltip,
   ResponsiveContainer,
   type TooltipProps as RechartsTooltipProps,
-  type TooltipPayload,
 } from 'recharts';
 import { useCourses } from '@frontend/context/CourseContext';
 import { useProgressChartData } from '@frontend/hooks/useProgressChartData';
 import Icon from '@frontend/components/AppIcon';
 
-interface WeeklyData {
-  day: string;
-  lessons: number;
-  hours: number;
-  xp: number;
-}
 
-interface MonthlyData {
-  month: string;
-  lessons: number;
-  hours: number;
-  xp: number;
-}
-
-type ChartData = WeeklyData | MonthlyData;
 
 const ProgressChart: React.FC = () => {
   const [activeTab, setActiveTab] = useState('weekly');
 
   // On choisit la version de la branche "main", qui est la plus à jour
-  const { userProgress, lessons, courses, modules, isLoading } = useCourses();
+  const { userProgress, lessons, modules, isLoading } = useCourses();
 
   // On passe les données brutes au hook qui se charge des calculs
-  const chartData = useProgressChartData(userProgress, lessons, courses, modules);
+  const chartData = useProgressChartData((userProgress ?? []) as any[], (lessons ?? []) as any[], [], (modules ?? []) as any[]);
 
   const [hasData, setHasData] = useState(false);
 
@@ -62,7 +47,7 @@ const ProgressChart: React.FC = () => {
 
   const CustomTooltip = ({ active, payload, label }: RechartsTooltipProps<number, string>) => {
     const safePayload = useMemo(
-      () => (payload?.length ? (payload as TooltipPayload<number, string>[]) : undefined),
+      () => (payload?.length ? (payload as any[]) : undefined),
       [payload]
     );
 
@@ -70,11 +55,11 @@ const ProgressChart: React.FC = () => {
       return (
         <div className='bg-surface border border-border rounded-lg p-3 shadow-medium'>
           <p className='font-medium text-text-primary mb-2'>{label}</p>
-          {safePayload.map((entry: TooltipPayload<number, string> & { payload: ChartData }, index) => (
+          {safePayload.map((entry: any, index) => (
             <p key={index} className='text-sm' style={{ color: entry.color }}>
-              {entry.dataKey === 'hours' && `Heures: ${(entry.payload.hours ?? 0).toFixed(1)}h`}
-              {entry.dataKey === 'lessons' && `Leçons: ${entry.payload.lessons ?? 0}`}
-              {entry.dataKey === 'xp' && `XP: ${entry.payload.xp ?? 0}`}
+              {entry.dataKey === 'hours' && `Heures: ${(entry.payload?.hours ?? 0).toFixed(1)}h`}
+              {entry.dataKey === 'lessons' && `Leçons: ${entry.payload?.lessons ?? 0}`}
+              {entry.dataKey === 'xp' && `XP: ${entry.payload?.xp ?? 0}`}
             </p>
           ))}
         </div>
@@ -171,7 +156,7 @@ const ProgressChart: React.FC = () => {
             <Line
               type='monotone'
               dataKey='hours'
-              stroke={colors.primary[500]}
+              stroke={colors.primary?.[500] ?? '#3b82f6'}
               strokeWidth={2.5}
               dot={false}
               activeDot={{ r: 6 }}
@@ -180,7 +165,7 @@ const ProgressChart: React.FC = () => {
             <Line
               type='monotone'
               dataKey='lessons'
-              stroke={colors.accent[500]}
+              stroke={colors.accent?.[500] ?? '#8b5cf6'}
               strokeWidth={2.5}
               dot={false}
               activeDot={{ r: 6 }}

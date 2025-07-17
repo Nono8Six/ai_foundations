@@ -28,7 +28,7 @@ interface ActivityItem {
 
 // Helper function to format time since date
 const timeSince = (date: string): string => {
-  const seconds = Math.floor((new Date() - new Date(date)) / 1000);
+  const seconds = Math.floor((new Date().getTime() - new Date(date).getTime()) / 1000);
   let interval = seconds / 31536000;
   if (interval > 1) return `Il y a ${Math.floor(interval)} an(s)`;
   interval = seconds / 2592000;
@@ -143,16 +143,19 @@ const RecentActivity: React.FC = () => {
       } else {
         const transformedData = data.map(activity => {
           const typeProps = getActivityTypeProps(activity.type);
-          const user = activity.profiles
-            ? { name: activity.profiles.full_name, avatar: activity.profiles.avatar_url }
+          const user = activity.profiles && typeof activity.profiles === 'object' && activity.profiles !== null && 'full_name' in activity.profiles
+            ? { 
+                name: ((activity.profiles as { full_name?: string | null; avatar_url?: string | null }).full_name) ?? 'Utilisateur', 
+                avatar: ((activity.profiles as { full_name?: string | null; avatar_url?: string | null }).avatar_url) ?? null 
+              }
             : typeProps.defaultUser;
 
           return {
             id: activity.id,
             type: activity.type,
-            user: user,
+            user,
             action: activity.action || typeProps.label, // Use Supabase action or default label
-            timestamp: timeSince(activity.created_at),
+            timestamp: timeSince(activity.created_at ?? new Date().toISOString()),
             icon: typeProps.icon,
             iconColor: typeProps.iconColor,
             label: typeProps.label, // Adding label for consistency

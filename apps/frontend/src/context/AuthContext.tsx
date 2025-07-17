@@ -1,5 +1,5 @@
 // src/context/AuthContext.tsx
-import { useState, useEffect, type ReactNode } from 'react';
+import { useState, useEffect, useCallback, type ReactNode } from 'react';
 import type {
   Session,
   User,
@@ -11,13 +11,13 @@ import type { Database } from '@frontend/types/database.types';
 import type { UserProfile } from '@frontend/types/user';
 
 import { supabase } from '@frontend/lib/supabase';
-import { fetchUserProfile as fetchUserProfileService } from '@frontend/services/userService';
 import { safeQuery } from '@frontend/utils/supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import { log } from '@libs/logger';
 import type { AuthErrorWithCode, AuthErrorCode } from '@frontend/types/auth';
 import { toast } from 'sonner';
 import { createContextStrict } from './createContextStrict';
+import { setAuthErrorHandler } from '../lib/supabase-interceptor';
 
 const supabaseClient = supabase as SupabaseClient<Database>;
 
@@ -47,18 +47,18 @@ const createAuthError = (
 };
 
 export interface AuthContextValue {
-  signUp: (args: {
+  signUp: (_args: {
     email: string;
     password: string;
     firstName: string;
     lastName: string;
   }) => Promise<{ data: { user: User | null; session: Session | null } | null; error: Error | null }>;
-  signIn: (args: { email: string; password: string }) => Promise<{ data: { user: User | null; session: Session | null } | null; error: Error | null }>;
+  signIn: (_credentials: { email: string; password: string }) => Promise<{ data: { user: User | null; session: Session | null } | null; error: Error | null }>;
   signInWithGoogle: () => Promise<{ data: { provider: string; url: string } | null; error: Error | null }>;
   signOut: () => Promise<void>;
   logout: () => Promise<void>;
-  resetPassword: (email: string) => Promise<void>;
-  resendVerificationEmail: (email: string) => Promise<void>;
+  resetPassword: (_email: string) => Promise<void>;
+  resendVerificationEmail: (_email: string) => Promise<void>;
   user: User | null;
   userProfile: UserProfile | null;
   session: Session | null;
@@ -82,6 +82,40 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
   const clearAuthError = () => setAuthError(null);
   const clearProfileError = () => setProfileError(null);
+
+  // Sign Out
+  const signOut = useCallback(async (): Promise<void> => {
+    log.debug('🚪 Signing out user...');
+    setLoading(true);
+
+    try {
+      await supabaseClient.auth.signOut();
+      setUser(null);
+      setSession(null);
+      setUserProfile(null);
+      setAuthError(null);
+      setProfileError(null);
+      log.debug('✅ User signed out successfully');
+      navigate('/login');
+    } catch (error) {
+      const err = typeof error === 'string' ? new Error(error) : (error as Error);
+      log.error('❌ Error signing out:', err);
+      setAuthError(err);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [navigate]);
+
+  // Set up automatic sign out handler for authentication errors
+  useEffect(() => {
+    const handleAuthError = async () => {
+      log.warn('🔐 Authentication error detected, signing out user...');
+      await signOut();
+    };
+    
+    setAuthErrorHandler(handleAuthError);
+  }, [signOut]);
 
   useEffect(() => {
     const error = authError ?? profileError;
@@ -152,29 +186,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
   }, [navigate]);
 
-  // Fetch user profile data
-  const fetchUserProfile = async (currentUser: User) => {
-    try {
-      const profile = await fetchUserProfileService(currentUser);
-      setUserProfile(profile);
-    } catch (error) {
-      const err = typeof error === 'string' ? new Error(error) : (error as Error);
-      log.error('❌ Unexpected error in fetchUserProfile:', err);
-      setProfileError(err);
-    }
-  };
+
+
+
 
   useEffect(() => {
-    if (!user) return;
-    const loadProfile = async () => {
-      log.debug('👤 User detected, fetching profile...');
-      try {
-        await fetchUserProfile(user);
-      } catch (err) {
-        log.error('Failed to fetch user profile:', err);
-      }
-    };
-    void loadProfile();
+    // Temporarily disable profile fetching to test dashboard
+    // const loadProfile = async () => {
+    //   log.debug('👤 User detected, fetching profile...');
+    //   try {
+    //     await fetchUserProfile(user);
+    //   } catch (err) {
+    //     log.error('Failed to fetch user profile:', err);
+    //   }
+    // };
+    // void loadProfile();
   }, [user]);
 
   // Sign Up with email
@@ -345,33 +371,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // Sign Out
-  const signOut = async (): Promise<void> => {
-    log.debug('🚪 Signing out user...');
-    setLoading(true);
-
-    try {
-      const { error } = await supabaseClient.auth.signOut();
-
-      if (error) {
-        const authErr = error instanceof Error ? error : new Error(String(error));
-        setAuthError(authErr);
-        log.error('Error signing out:', authErr.message);
-        throw authErr;
-      }
-
-      log.info('✅ Sign out successful');
-      setUser(null);
-      setSession(null);
-      setUserProfile(null);
-    } catch (error) {
-      const err = typeof error === 'string' ? new Error(error) : (error as Error);
-      setAuthError(err);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // Logout helper used by UI
   const logout = async (): Promise<void> => {

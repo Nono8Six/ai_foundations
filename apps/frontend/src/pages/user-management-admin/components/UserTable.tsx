@@ -35,7 +35,7 @@ const UserTable: React.FC<UserTableProps> = ({
       pending: { color: 'bg-warning-100 text-warning-700', label: 'En attente' },
     };
 
-    const config = statusConfig[status] || statusConfig.pending;
+    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
     return (
       <span
         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${config.color}`}
@@ -51,7 +51,7 @@ const UserTable: React.FC<UserTableProps> = ({
       student: { color: 'bg-secondary-100 text-secondary-700', label: 'Étudiant' },
     };
 
-    const config = roleConfig[role] || roleConfig.student;
+    const config = roleConfig[role as keyof typeof roleConfig] || roleConfig.student;
     return (
       <span
         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${config.color}`}
@@ -71,7 +71,7 @@ const UserTable: React.FC<UserTableProps> = ({
 
   const getActivityStatus = (lastActivity: string) => {
     const daysSinceActivity = Math.floor(
-      (new Date() - new Date(lastActivity)) / (1000 * 60 * 60 * 24)
+      (new Date().getTime() - new Date(lastActivity).getTime()) / (1000 * 60 * 60 * 24)
     );
 
     if (daysSinceActivity === 0) return { color: 'text-success', label: "Aujourd'hui" };
@@ -94,7 +94,7 @@ const UserTable: React.FC<UserTableProps> = ({
                 <input
                   type='checkbox'
                   checked={selectedUsers.length === users.length && users.length > 0}
-                  onChange={onSelectAll}
+                  onChange={(e) => onSelectAll(e.target.checked)}
                   className='h-4 w-4 text-primary focus:ring-primary border-border rounded'
                 />
               </th>

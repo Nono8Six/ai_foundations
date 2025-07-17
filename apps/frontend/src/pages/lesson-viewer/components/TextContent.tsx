@@ -14,7 +14,7 @@ export interface TextContentProps {
 }
 
 const TextContent: React.FC<TextContentProps> = ({ content, onProgress }) => {
-  const contentRef = useRef(null);
+  const contentRef = useRef<HTMLDivElement>(null);
   const [readingProgress, setReadingProgress] = useState(0);
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
   const [fontSize, setFontSize] = useState('base');
@@ -38,6 +38,7 @@ const TextContent: React.FC<TextContentProps> = ({ content, onProgress }) => {
       element.addEventListener('scroll', handleScroll);
       return () => element.removeEventListener('scroll', handleScroll);
     }
+    return undefined;
   }, [onProgress]);
 
   const addBookmark = () => {
@@ -188,7 +189,7 @@ const TextContent: React.FC<TextContentProps> = ({ content, onProgress }) => {
         {/* Main Content */}
         <div
           ref={contentRef}
-          className={`flex-1 overflow-auto p-8 ${themeClasses[theme]} ${fontSizeClasses[fontSize]}`}
+          className={`flex-1 overflow-auto p-8 ${themeClasses[theme as keyof typeof themeClasses]} ${fontSizeClasses[fontSize as keyof typeof fontSizeClasses]}`}
         >
           <div className='max-w-4xl mx-auto'>
             <div className='prose prose-lg max-w-none'>{parseContent(content)}</div>

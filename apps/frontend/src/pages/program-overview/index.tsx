@@ -6,16 +6,13 @@ import { log } from '@libs/logger';
 import CourseCard from './components/CourseCard';
 import FilterSidebar from './components/FilterSidebar';
 import CoursePathway from './components/CoursePathway';
-import type { Database } from '@frontend/types/database.types';
-import type { CourseSortOption } from '@frontend/types/course.types';
-
-type CoursesRow = Database['public']['Tables']['courses']['Row'];
+import type { CourseSortOption, CourseWithProgress } from '@frontend/types/course.types';
 
 export interface ProgramFilters {
   skillLevel: string[];
   duration: string[];
   category: string[];
-  status: string[];
+  status: ('not_started' | 'in_progress' | 'completed')[];
 }
 
 const ProgramOverview: React.FC = () => {
@@ -49,7 +46,7 @@ const ProgramOverview: React.FC = () => {
           pagination: { page, pageSize },
         });
         setCourses(data);
-        setTotalCourses(pagination.total);
+        setTotalCourses(pagination.total ?? 0);
       } catch (error) {
         log.error('Error loading courses', error);
         setCourses([]);
@@ -127,7 +124,7 @@ const ProgramOverview: React.FC = () => {
 
               <select
                 value={sortBy}
-                onChange={e => setSortBy(e.target.value)}
+                onChange={e => setSortBy(e.target.value as CourseSortOption)}
                 className='px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent'
               >
                 <option value='progress_desc'>Popularité</option>

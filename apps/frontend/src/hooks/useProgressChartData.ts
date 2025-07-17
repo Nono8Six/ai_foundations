@@ -84,7 +84,7 @@ export function useProgressChartData(
       const course = courses.find(c => c.id === courseId);
       lessonMap[lesson.id] = {
         ...lesson,
-        courseId: courseId,
+        courseId,
         category: course ? (course.category || 'Unknown') : 'Unknown',
         // Ensure duration is a number, default to 0 if not provided or invalid
         duration: typeof lesson.duration === 'number' ? lesson.duration : 0,

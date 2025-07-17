@@ -61,7 +61,7 @@ const RecentActivity: React.FC<RecentActivityProps> = ({ activities = [] }) => {
                 <p className='text-sm text-text-secondary'>{activity.description}</p>
               </div>
               <div className='w-8 h-8 rounded-full overflow-hidden flex-shrink-0'>
-                <Image src={activity.badge} alt='Badge' className='w-full h-full object-cover' />
+                <Image src={activity.badge ?? '/default-badge.png'} alt='Badge' className='w-full h-full object-cover' />
               </div>
             </div>
           </div>
@@ -107,7 +107,7 @@ const RecentActivity: React.FC<RecentActivityProps> = ({ activities = [] }) => {
               </div>
               <div className='w-12 h-8 rounded overflow-hidden flex-shrink-0'>
                 <Image
-                  src={activity.thumbnail}
+                  src={activity.thumbnail ?? '/default-thumbnail.png'}
                   alt={activity.description}
                   className='w-full h-full object-cover'
                 />

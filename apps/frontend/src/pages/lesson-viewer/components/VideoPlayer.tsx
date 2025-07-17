@@ -97,7 +97,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ videoUrl, transcript, onProgr
       <div className='flex-1 bg-black relative group'>
         <video
           ref={videoRef}
-          src={videoUrl}
+          src={videoUrl ?? undefined}
           className='w-full h-full object-contain'
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}

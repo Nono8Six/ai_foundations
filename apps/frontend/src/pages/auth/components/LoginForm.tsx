@@ -1,7 +1,7 @@
 // src/pages/auth/components/LoginForm.tsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
+import { useForm, type FieldError } from 'react-hook-form';
 import { isAuthErrorWithCode } from '@frontend/utils/auth';
 import { toast } from 'sonner';
 import Icon from '@frontend/components/AppIcon';
@@ -9,7 +9,6 @@ import Button from '@frontend/components/ui/Button';
 import TextInput from '@frontend/components/ui/TextInput';
 import { useAuth } from '@frontend/context/AuthContext';
 import { log } from '@libs/logger';
-import type { FieldError } from 'react-hook-form';
 
 // Types
 interface UserData {

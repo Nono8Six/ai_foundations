@@ -61,12 +61,12 @@ const LearningStatsTab: React.FC = () => {
         totalLearningTime: 0,
         coursesCompleted: 0,
         weeklyData: [],
-        subjectData: [],
+        subjectData: [] as SubjectData[],
       };
     }
 
     const userProgress = courses.flatMap(course =>
-      course.lessons
+      (course as any).lessons || []
         ?.map((lesson: { progress?: { status?: string } }) => lesson.progress)
         .filter((p: { status?: string } | undefined): p is { status?: string } => Boolean(p)) || []
     );
@@ -80,19 +80,22 @@ const LearningStatsTab: React.FC = () => {
     const lastWeek = new Date();
     lastWeek.setDate(lastWeek.getDate() - 7);
     activities.forEach(activity => {
-      const activityDate = new Date(activity.created_at);
+      const activityDate = new Date(activity.created_at ?? new Date());
       if (activityDate >= lastWeek) {
         const dayIndex = (activityDate.getDay() + 6) % 7;
         if (activity.type === 'lesson_completed') {
-          weeklyData[dayIndex].lessons += 1;
-          weeklyData[dayIndex].minutes += 15;
-          weeklyData[dayIndex].xp += 50;
+          const dayData = weeklyData[dayIndex];
+          if (dayData) {
+            dayData.lessons += 1;
+            dayData.minutes += 15;
+            dayData.xp += 50;
+          }
         }
       }
     });
 
     // --- Subject Distribution ---
-    const subjects = {};
+    const subjects: Record<string, number> = {};
     courses.forEach(course => {
       const category = course.category || 'IA Générale';
       subjects[category] = (subjects[category] || 0) + 1;
@@ -108,7 +111,7 @@ const LearningStatsTab: React.FC = () => {
     const subjectData = Object.entries(subjects).map(([name, value], index) => ({
       name,
       value,
-      fill: chartColors[index % chartColors.length],
+      fill: chartColors[index % chartColors.length] ?? '#3b82f6',
     }));
 
     // --- Overview Stats ---
@@ -238,7 +241,7 @@ const LearningStatsTab: React.FC = () => {
           {stats.weeklyData.length > 0 ? (
             <div className='h-64'>
               <ResponsiveContainer width='100%' height='100%'>
-                <BarChart<WeeklyData> data={stats.weeklyData}>
+                <BarChart data={stats.weeklyData}>
                   <CartesianGrid strokeDasharray='3 3' stroke={colors.border} />
                   <XAxis dataKey='day' stroke={colors.secondary} fontSize={12} />
                   <YAxis stroke={colors.secondary} fontSize={12} />
@@ -276,7 +279,7 @@ const LearningStatsTab: React.FC = () => {
           {stats.weeklyData.length > 0 && stats.weeklyData.some(d => d.xp > 0) ? (
             <div className='h-64'>
               <ResponsiveContainer width='100%' height='100%'>
-                <LineChart<WeeklyData> data={stats.weeklyData}>
+                <LineChart data={stats.weeklyData}>
                   <CartesianGrid strokeDasharray='3 3' stroke={colors.border} />
                   <XAxis dataKey='day' stroke={colors.secondary} fontSize={12} />
                   <YAxis stroke={colors.secondary} fontSize={12} />
@@ -321,7 +324,7 @@ const LearningStatsTab: React.FC = () => {
             <>
               <div className='h-64'>
                 <ResponsiveContainer width='100%' height='100%'>
-                  <PieChart<SubjectData>>
+                  <PieChart>
                     <Pie
                       data={stats.subjectData}
                       cx='50%'
@@ -431,7 +434,7 @@ const LearningStatsTab: React.FC = () => {
                         {achievement.rarity}
                       </span>
                       <span className='text-xs text-text-secondary'>
-                        {new Date(achievement.created_at).toLocaleDateString('fr-FR')}
+                        {new Date(achievement.created_at ?? new Date()).toLocaleDateString('fr-FR')}
                       </span>
                     </div>
                   </div>

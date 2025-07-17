@@ -36,7 +36,7 @@ const UserDashboard: React.FC = () => {
     if (!courses || courses.length === 0) return null;
 
     const inProgressCourse = courses.find(
-      course => course.progress.completed > 0 && course.progress.completed < course.progress.total
+      course => course.progress && course.progress.completed > 0 && course.progress.completed < course.progress.total
     );
     if (inProgressCourse) {
       return {
@@ -46,7 +46,7 @@ const UserDashboard: React.FC = () => {
       };
     }
 
-    const unstartedCourse = courses.find(course => course.progress.completed === 0);
+    const unstartedCourse = courses.find(course => course.progress && course.progress.completed === 0);
     if (unstartedCourse) {
       return {
         title: `Commencer ${unstartedCourse.title}`,
@@ -54,7 +54,7 @@ const UserDashboard: React.FC = () => {
       };
     }
 
-    if (courses.length > 0) {
+    if (courses.length > 0 && courses[0]) {
       return {
         title: `Revoir ${courses[0].title}`,
         href: `/lesson-viewer/${courses[0].id}`,
@@ -75,7 +75,7 @@ const UserDashboard: React.FC = () => {
       currentStreak: userProfile?.current_streak || 0,
       totalCourses: courses.length,
       completedCourses: courses.filter(
-        c => c.progress.completed > 0 && c.progress.completed === c.progress.total
+        c => c.progress && c.progress.completed > 0 && c.progress.completed === c.progress.total
       ).length,
       totalLessons: courses.reduce((acc, course) => acc + (course.progress?.total || 0), 0),
       completedLessons: courses.reduce((acc, course) => acc + (course.progress?.completed || 0), 0),
@@ -174,7 +174,13 @@ const UserDashboard: React.FC = () => {
           <div className='grid grid-cols-1 lg:grid-cols-4 gap-8'>
             <div className='lg:col-span-3 space-y-8'>
               <ProgressChart />
-              <RecentActivity activities={activities} />
+              <RecentActivity activities={activities.map(a => ({
+                ...a,
+                title: a.action,
+                description: typeof a.details === 'string' ? a.details : JSON.stringify(a.details),
+                icon: 'Activity',
+                timestamp: a.created_at ?? new Date().toISOString()
+              })) ?? []} />
 
               <div className='bg-surface rounded-xl border border-border p-6'>
                 <div className='flex items-center justify-between mb-6'>

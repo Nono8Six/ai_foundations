@@ -28,8 +28,8 @@ const LessonNavigation: React.FC<LessonNavigationProps> = ({
   moduleStructure,
   currentLessonId,
 }) => {
-  const [expandedModules, setExpandedModules] = useState(new Set([1])); // First module expanded by default
-  const currentLessonOrder = Number(currentLessonId);
+  const [expandedModules, setExpandedModules] = useState(new Set(['1'])); // First module expanded by default
+  const currentLessonOrder = parseInt(currentLessonId?.toString() ?? '0', 10);
 
   const toggleModule = (moduleId: string) => {
     const newExpanded = new Set(expandedModules);
@@ -43,8 +43,9 @@ const LessonNavigation: React.FC<LessonNavigationProps> = ({
 
   const getTotalDuration = (lessons: Lesson[]): number => {
     return lessons.reduce((total: number, lesson: Lesson) => {
-      const minutes = parseInt(lesson.duration.split(' ')[0]);
-      return total + minutes;
+      const durationParts = lesson.duration.split(' ');
+      const minutes = parseInt(durationParts[0] ?? '0');
+      return total + (isNaN(minutes) ? 0 : minutes);
     }, 0);
   };
 
@@ -128,7 +129,7 @@ const LessonNavigation: React.FC<LessonNavigationProps> = ({
                 </div>
                 <Icon
                   aria-hidden='true'
-                  name={expandedModules.has(module.id) ? 'ChevronDown' : 'ChevronRight'}
+                  name={expandedModules.has(module.id.toString()) ? 'ChevronDown' : 'ChevronRight'}
                   size={20}
                   className='text-text-secondary'
                 />
@@ -147,10 +148,10 @@ const LessonNavigation: React.FC<LessonNavigationProps> = ({
               </div>
 
               {/* Lessons List */}
-              {expandedModules.has(module.id) && (
+              {expandedModules.has(module.id.toString()) && (
                 <div className='bg-secondary-25'>
                   {module.lessons.map(lesson => {
-                    const lessonOrder = Number(lesson.id);
+                    const lessonOrder = parseInt(lesson.id, 10);
                     const isCurrent = lessonOrder === currentLessonOrder;
                     return (
                       <div

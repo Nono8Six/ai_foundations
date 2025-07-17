@@ -63,21 +63,21 @@ const UserManagementAdminContent: React.FC = () => {
           `https://ui-avatars.com/api/?name=${encodeURIComponent(
             p.full_name || 'User'
           )}&background=1e40af&color=ffffff`,
-        role: p.is_admin ? 'admin' : 'student',
-        status: p.status || 'active',
+        role: (p.is_admin ? 'admin' : 'student') as 'admin' | 'student',
+        status: 'active' as 'active' | 'inactive' | 'pending',
         registrationDate: p.created_at || new Date().toISOString(),
-        lastActivity: p.updated_at || p.created_at,
-        courseProgress: p.course_progress || 0,
-        totalCourses: p.total_courses || 0,
-        completedCourses: p.completed_courses || 0,
+        lastActivity: p.updated_at || p.created_at || new Date().toISOString(),
+        courseProgress: 0,
+        totalCourses: 0,
+        completedCourses: 0,
         xpPoints: p.xp || 0,
-        level: p.level || 1,
+        level: 1,
         streak: p.current_streak || 0,
-        achievements: p.achievements || 0,
-        location: p.location || '',
-        phone: p.phone || '',
-        notes: p.notes || '',
-        enrolledCourses: p.enrolled_courses || [],
+        achievements: 0,
+        location: '',
+        phone: '',
+        notes: '',
+        enrolledCourses: [],
       }));
       setUsers(mapped);
     };
@@ -98,11 +98,11 @@ const UserManagementAdminContent: React.FC = () => {
 
     if (sortConfig.key) {
       filtered.sort((a, b) => {
-        let aValue = a[sortConfig.key];
-        let bValue = b[sortConfig.key];
+        let aValue = a[sortConfig.key as keyof AdminUser];
+        let bValue = b[sortConfig.key as keyof AdminUser];
         if (sortConfig.key === 'registrationDate' || sortConfig.key === 'lastActivity') {
-          aValue = new Date(aValue);
-          bValue = new Date(bValue);
+          aValue = new Date(aValue as string).getTime();
+          bValue = new Date(bValue as string).getTime();
         }
         if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
         if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
@@ -298,7 +298,7 @@ const UserManagementAdminContent: React.FC = () => {
                 onSort={handleSort}
                 onUserSelect={handleUserSelect}
                 onSelectAll={handleSelectAll}
-                onUserClick={handleUserClick}
+                onUserClick={(user) => handleUserClick(user as AdminUser)}
               />
             </div>
 

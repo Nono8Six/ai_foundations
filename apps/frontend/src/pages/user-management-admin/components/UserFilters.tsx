@@ -146,7 +146,10 @@ const UserFilters: React.FC<UserFiltersProps> = ({ filters, setFilters }) => {
                   },
                 };
 
-                const label = filterLabels[key]?.[value] || value;
+                const filterGroup = filterLabels[key as keyof typeof filterLabels];
+                const label = (filterGroup && typeof filterGroup === 'object' && value in filterGroup) 
+                  ? (filterGroup as any)[value] 
+                  : value;
 
                 return (
                   <span
@@ -155,7 +158,7 @@ const UserFilters: React.FC<UserFiltersProps> = ({ filters, setFilters }) => {
                   >
                     {label}
                     <button
-                      onClick={() => handleFilterChange(key, 'all')}
+                      onClick={() => handleFilterChange(key as keyof AdminFilters, 'all')}
                       className='ml-1 hover:text-primary-900 transition-colors'
                     >
                       <Icon name='X' size={12} aria-label='Supprimer filtre' />

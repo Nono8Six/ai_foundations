@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Icon from '@frontend/components/AppIcon';
 import Image from '@frontend/components/AppImage';
 import type { AdminUser } from '@frontend/types/adminUser';
@@ -20,7 +20,7 @@ const UserDetailsPanel = ({ user, onClose }: UserDetailsPanelProps) => {
       pending: { color: 'bg-warning-100 text-warning-700', label: 'En attente', icon: 'Clock' },
     };
 
-    const config = statusConfig[status] || statusConfig.pending;
+    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
     return (
       <span
         className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${config.color}`}
@@ -37,7 +37,7 @@ const UserDetailsPanel = ({ user, onClose }: UserDetailsPanelProps) => {
       student: { color: 'bg-secondary-100 text-secondary-700', label: 'Étudiant', icon: 'User' },
     };
 
-    const config = roleConfig[role] || roleConfig.student;
+    const config = roleConfig[role as keyof typeof roleConfig] || roleConfig.student;
     return (
       <span
         className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${config.color}`}
@@ -145,7 +145,7 @@ const UserDetailsPanel = ({ user, onClose }: UserDetailsPanelProps) => {
           {tabs.map(tab => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => setActiveTab(tab.id as 'overview' | 'progress' | 'activity' | 'notes')}
               className={`flex-1 flex items-center justify-center px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
                 activeTab === tab.id
                   ? 'bg-primary text-white'

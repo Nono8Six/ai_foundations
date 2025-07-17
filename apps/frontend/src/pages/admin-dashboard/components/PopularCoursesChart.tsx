@@ -23,7 +23,7 @@ interface CourseData {
 const CustomTooltip = ({ active, payload, label }: RechartsTooltipProps<number, string>) => {
   const data = useMemo(() => {
     if (payload?.length) {
-      return (payload[0] as TooltipPayload<number, string>).payload as CourseData;
+      return (payload[0] as { payload: CourseData }).payload;
     }
     return null;
   }, [payload]);

@@ -49,7 +49,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({ onClose, onUserCreate
     }));
 
     // Clear error when user starts typing
-    if (errors[name]) {
+    if (errors[name as keyof UserForm]) {
       setErrors(prev => ({
         ...prev,
         [name]: '',
@@ -100,23 +100,25 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({ onClose, onUserCreate
 
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise<void>(resolve => {
+        setTimeout(resolve, 1000);
+      });
 
       const newUser: AdminUser = {
-        id: Date.now(),
+        id: Date.now().toString(),
         ...formData,
         avatar: `https://images.unsplash.com/photo-${Math.floor(Math.random() * 1000000000)}?w=150`,
-        registrationDate: new Date().toISOString().split('T')[0],
-        lastActivity: new Date().toISOString().split('T')[0],
+        registrationDate: new Date().toISOString().split('T')[0] ?? '',
+        lastActivity: new Date().toISOString().split('T')[0] ?? '',
         courseProgress: 0,
-        totalCourses: formData.initialCourses.length,
+        totalCourses: formData.initialCourses?.length ?? 0,
         completedCourses: 0,
         xpPoints: 0,
         level: 1,
         streak: 0,
         achievements: 0,
         notes: "Nouvel utilisateur créé par l'administrateur.",
-        enrolledCourses: formData.initialCourses,
+        enrolledCourses: formData.initialCourses ?? [],
       };
 
       log.info('New user created', { 

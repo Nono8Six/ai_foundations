@@ -112,7 +112,7 @@ const DataVisualization: React.FC = () => {
                       backgroundColor: colors.surface,
                       border: `1px solid ${colors.border}`,
                       borderRadius: '0.5rem',
-                      boxShadow: theme.boxShadow.medium,
+                      boxShadow: (theme.boxShadow as any)?.medium ?? '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
                     }}
                   />
                   <Bar
@@ -154,7 +154,7 @@ const DataVisualization: React.FC = () => {
                       backgroundColor: colors.surface,
                       border: `1px solid ${colors.border}`,
                       borderRadius: '0.5rem',
-                      boxShadow: theme.boxShadow.medium,
+                      boxShadow: (theme.boxShadow as any)?.medium ?? '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
                     }}
                   />
                   <Line
@@ -271,8 +271,8 @@ const DataVisualization: React.FC = () => {
               <h3 className='text-lg font-semibold text-text-primary'>Témoignage</h3>
             </div>
             <blockquote className='text-text-secondary mb-4 italic'>
-              "Grâce à AI Foundations, j&rsquo;ai automatisé 60% de mes tâches comptables. Un gain de
-              temps incroyable !"
+              &ldquo;Grâce à AI Foundations, j&rsquo;ai automatisé 60% de mes tâches comptables. Un gain de
+              temps incroyable !&rdquo;
             </blockquote>
             <div className='flex items-center'>
               <div className='w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center mr-3'>

@@ -1,18 +1,18 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "composite": true,
+    "composite": false,
     "outDir": "./dist",
-    "rootDir": "../..//",
+    "rootDir": "../..",
     "baseUrl": ".",
-    "types": ["vite/client"],
-    "typeRoots": ["./node_modules/@types", "./src/types"],
-    "target": "ES2020",
+
+    "target": "ESNext",
     "useDefineForClassFields": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
     "moduleResolution": "bundler",
+    "moduleDetection": "force",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -22,6 +22,9 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "paths": {
       "@/*": ["./src/*"],
       "@frontend/*": ["./src/*"],
@@ -31,9 +34,11 @@
       "@contexts/*": ["./src/context/*"],
       "@lib/*": ["./src/lib/*"],
       "@libs/*": ["../../libs/*"]
-    }
+    },
+    "typeRoots": ["../../node_modules/@types", "./src/types"],
+    "types": ["vite/client"]
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts", "src/vite-env.d.ts"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts", "src/types/**/*", "src/vite-env.d.ts", "../../src/env.d.ts"],
   "exclude": [
     "node_modules",
     "dist",
@@ -42,7 +47,9 @@
     "**/*.spec.ts",
     "**/*.spec.tsx"
   ],
-  "references": [  // Nouveau : Linke les libs pour typecheck cross-package
-    { "path": "../../libs/supabase-utils/tsconfig.json" }
-  ]
+  // "references": [  // Nouveau : Linke les libs pour typecheck cross-package
+  //   { "path": "../../libs/supabase-utils/tsconfig.json" },
+  //   { "path": "../../libs/logger/tsconfig.json" },
+  //   { "path": "../../libs/cms-utils/tsconfig.json" }
+  // ]
 }

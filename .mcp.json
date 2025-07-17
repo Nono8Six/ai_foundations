@@ -1,11 +1,21 @@
 {
   "mcpServers": {
     "supabase": {
-      "command": "/mnt/c/GitHub/ai_foundations_lms/scripts/mcp-supabase-wrapper.sh",
-      "args": ["--project-ref=oqmllypaarqvabuvbqga", "--read-only"],
+      "command": "mcp-server-supabase",
+      "args": [
+        "--read-only",
+        "--project-ref=oqmllypaarqvabuvbqga"
+      ],
       "env": {
         "SUPABASE_ACCESS_TOKEN": "sbp_0059f83aaf50dd0922a68cb6d6230e4c3f7fccbc"
       }
     }
+  },
+  "context7": {
+    "command": "context7-mcp"
+  },
+  "client": {
+    "name": "claude-code",
+    "version": "1.0.0"
   }
 }

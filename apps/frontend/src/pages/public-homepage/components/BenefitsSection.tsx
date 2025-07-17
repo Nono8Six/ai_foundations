@@ -87,7 +87,7 @@ const BenefitsSection: React.FC = () => {
         badge: 'bg-success text-white',
       },
     };
-    return colors[color] || colors.primary;
+    return colors[color as keyof typeof colors] || colors.primary;
   };
 
   const containerVariants = {

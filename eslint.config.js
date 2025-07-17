@@ -69,6 +69,27 @@ export default tseslint.config(
       'no-console': ['warn', { allow: ['warn', 'error'] }],
       'no-unused-vars': 'off', // Handled by @typescript-eslint/no-unused-vars
       '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      
+      // TypeScript strict rules
+      '@typescript-eslint/ban-ts-comment': 'error',
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-non-null-assertion': 'warn',
+      
+      // Modern JavaScript rules
+      'prefer-const': 'error',
+      'no-var': 'error',
+      'object-shorthand': 'warn',
+      'prefer-arrow-callback': 'warn',
+      'prefer-template': 'warn',
+      'eqeqeq': ['error', 'always'],
+      'no-duplicate-imports': 'error',
+      'no-useless-rename': 'error',
+      'no-useless-return': 'error',
+      'array-callback-return': 'error',
+      'no-await-in-loop': 'warn',
+      'no-promise-executor-return': 'error',
+      'prefer-promise-reject-errors': 'error',
+      'no-return-await': 'error',
     },
   },
 

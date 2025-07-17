@@ -1,5 +1,5 @@
-import { supabase } from '@frontend/lib/supabase';
 import type { SupabaseClient, User } from '@supabase/supabase-js';
+import { supabase } from '@frontend/lib/supabase';
 import type { Database, Json } from '@frontend/types/database.types';
 import type {
   UpdateUserProfilePayload,
@@ -52,7 +52,9 @@ export async function fetchUserProfile(user: User): Promise<UserProfile> {
     .select('*')
     .eq('id', user.id);
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
 
   if (!profileData || profileData.length === 0) {
     const defaultProfile: UserProfile = {
@@ -111,6 +113,9 @@ export async function getUserSettings(userId: string): Promise<UserSettings | nu
 
   if (data && data.length > 0) {
     const settings = data[0];
+    if (!settings) {
+      throw new Error('No settings data found');
+    }
     return {
       id: settings.id,
       user_id: settings.user_id,
@@ -156,6 +161,10 @@ export async function getUserSettings(userId: string): Promise<UserSettings | nu
 
   if (createError) throw createError;
 
+  if (!newSettings) {
+    throw new Error('Failed to create new settings');
+  }
+  
   return {
     id: newSettings.id,
     user_id: newSettings.user_id,
@@ -180,12 +189,25 @@ export async function updateUserSettings(
     updated_at: new Date().toISOString(),
   };
 
+  // Convertir les objets en JSON de manière sûre
+  const notificationSettingsJson = merged.notification_settings 
+    ? toJson(merged.notification_settings as unknown as Json) 
+    : null;
+  
+  const privacySettingsJson = merged.privacy_settings 
+    ? toJson(merged.privacy_settings as unknown as Json) 
+    : null;
+    
+  const learningPreferencesJson = merged.learning_preferences 
+    ? toJson(merged.learning_preferences as unknown as Json) 
+    : null;
+
   const { data, error } = await supabaseClient
     .from('user_settings')
     .update({
-      notification_settings: toJson(merged.notification_settings as Json),
-      privacy_settings: toJson(merged.privacy_settings as Json),
-      learning_preferences: toJson(merged.learning_preferences as Json),
+      notification_settings: notificationSettingsJson,
+      privacy_settings: privacySettingsJson,
+      learning_preferences: learningPreferencesJson,
       updated_at: merged.updated_at,
     })
     .eq('user_id', userId)
@@ -195,6 +217,9 @@ export async function updateUserSettings(
 
   if (data && data.length > 0) {
     const updated = data[0];
+    if (!updated) {
+      throw new Error('No updated settings data found');
+    }
     return {
       id: updated.id,
       user_id: updated.user_id,

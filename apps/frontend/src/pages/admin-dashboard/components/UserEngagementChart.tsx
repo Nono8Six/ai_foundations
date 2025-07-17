@@ -152,8 +152,12 @@ const UserEngagementChart: React.FC<UserEngagementChartProps> = ({ timeRange }) 
             .fill(null)
             .map((_, i) => {
               const day = new Date(now.getTime() - (6 - i) * 24 * 60 * 60 * 1000);
+              const dayName = dayLabels[day.getDay()];
+              if (!dayName) {
+                throw new Error('Invalid day name');
+              }
               return {
-                time: dayLabels[day.getDay()],
+                time: dayName,
                 dateObj: day, // For sorting/matching
                 usersSet: new Set<string>(),
                 sessions: 0,
@@ -254,10 +258,13 @@ const UserEngagementChart: React.FC<UserEngagementChartProps> = ({ timeRange }) 
               
               // Find the correct week bucket
               for (let i = processedData.length - 1; i >= 0; i--) {
-                const weekStart = processedData[i].weekStart;
+                const weekData = processedData[i];
+                if (!weekData) continue;
+                
+                const weekStart = weekData.weekStart;
                 if (weekStart && sessionDate >= weekStart) {
-                  processedData[i].sessions++;
-                  processedData[i].usersSet.add(session.user_id);
+                  weekData.sessions++;
+                  weekData.usersSet.add(session.user_id);
                   break;
                 }
               }

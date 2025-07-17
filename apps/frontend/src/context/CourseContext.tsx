@@ -1,7 +1,6 @@
 // src/context/CourseContext.tsx
 import React, { type ReactNode } from 'react';
-import type { QueryObserverResult } from '@tanstack/react-query';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, type QueryObserverResult } from '@tanstack/react-query';
 import { useAuth } from './AuthContext';
 import { createContextStrict } from './createContextStrict';
 

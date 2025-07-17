@@ -27,7 +27,7 @@ const mockQueryBuilder = (
   single: vi.fn().mockResolvedValue(resolveData), // For queries expecting a single row
   // Mock the promise resolution for general select queries
   // This allows us to use await supabase.from(...).select(...)
-  then: vi.fn(function (onFulfilled, onRejected) {
+  then: vi.fn(function (this: any, onFulfilled, onRejected) {
     // If this.mockResolvedValueOnce has been called, use its value
     if (this.mockResolvedValue) {
       return Promise.resolve(this.mockResolvedValue).then(onFulfilled, onRejected);
@@ -36,7 +36,7 @@ const mockQueryBuilder = (
     return Promise.resolve(resolveData).then(onFulfilled, onRejected);
   }),
   // Helper to easily set the resolved value for a specific chain
-  mockResolvedValueOnce: function (value: unknown) {
+  mockResolvedValueOnce (this: any, value: unknown) {
     this.mockResolvedValue = value;
     return this; // Return this to allow further chaining if needed, though usually it's the end
   },
@@ -52,7 +52,7 @@ export const supabase = {
 // Helper to reset mocks and set specific resolutions for chained calls
 // This is particularly useful if a single test makes multiple `from` calls
 // or if a component's `useEffect` makes multiple calls.
-supabase.from.mockImplementation((tableName: string) => {
+supabase.from.mockImplementation(((tableName: string) => {
   // Default mock behavior for any table
   let defaultResponse = { data: [], error: null, count: 0 };
   if (tableName === 'profiles') {
@@ -70,10 +70,10 @@ supabase.from.mockImplementation((tableName: string) => {
   // This allows different resolutions for different `from('table')` calls in the same test
   const newBuilder = mockQueryBuilder(defaultResponse);
   // Attach a convenience method to the builder itself to set its specific resolution
-  newBuilder.mockResolvedValue = function (value: unknown) {
+  newBuilder.mockResolvedValueOnce = function (this: any, value: unknown) {
     // Renamed to avoid conflict
     this.mockResolvedValue = value; // This sets the value on the builder instance
     return this;
   };
   return newBuilder;
-});
+}) as any);

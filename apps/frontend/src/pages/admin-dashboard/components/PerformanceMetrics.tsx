@@ -121,16 +121,16 @@ const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({ metrics }) => {
           {availableMetrics.map(metric => (
             <div
               key={metric.id}
-              className={`p-4 rounded-lg border transition-colors ${getStatusBg(metric.status)}`}
+              className={`p-4 rounded-lg border transition-colors ${getStatusBg(metric.status as MetricStatus)}`}
             >
               <div className='flex items-center justify-between mb-2'>
                 <div className='flex items-center space-x-3'>
-                  <div className={`p-2 rounded-lg ${getStatusBg(metric.status)}`}>
+                  <div className={`p-2 rounded-lg ${getStatusBg(metric.status as MetricStatus)}`}>
                     <Icon
                       aria-hidden='true'
                       name={metric.icon}
                       size={16}
-                      className={getStatusColor(metric.status)}
+                      className={getStatusColor(metric.status as MetricStatus)}
                     />
                   </div>
                   <div>
@@ -142,10 +142,10 @@ const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({ metrics }) => {
                   <p className='text-lg font-semibold text-text-primary'>{metric.value}</p>
                   <div className='flex items-center justify-end space-x-1 mt-1'>
                     <div
-                      className={`w-2 h-2 rounded-full ${getStatusIndicator(metric.status)}`}
+                      className={`w-2 h-2 rounded-full ${getStatusIndicator(metric.status as MetricStatus)}`}
                     ></div>
-                    <span className={`text-xs font-medium ${getStatusColor(metric.status)}`}>
-                      {getStatusLabel(metric.status)}
+                    <span className={`text-xs font-medium ${getStatusColor(metric.status as MetricStatus)}`}>
+                      {getStatusLabel(metric.status as MetricStatus)}
                     </span>
                   </div>
                 </div>

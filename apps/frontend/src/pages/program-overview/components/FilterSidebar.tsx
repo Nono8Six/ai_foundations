@@ -24,11 +24,11 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, onFilterChange, 
     { value: 'not-started', label: 'Non commencé' },
   ];
 
-  const handleFilterToggle = (filterType: keyof ProgramFilters, value: string) => {
+  const handleFilterToggle = (filterType: keyof ProgramFilters, value: string | ('completed' | 'not_started' | 'in_progress')) => {
     const currentFilters = filters[filterType];
-    const newFilters = currentFilters.includes(value)
+    const newFilters = currentFilters.includes(value as any)
       ? currentFilters.filter(item => item !== value)
-      : [...currentFilters, value];
+      : [...currentFilters, value as any];
 
     onFilterChange({
       ...filters,
@@ -119,8 +119,8 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, onFilterChange, 
             <label key={category} className='flex items-center gap-3 cursor-pointer group'>
               <input
                 type='checkbox'
-                checked={filters.category.includes(category)}
-                onChange={() => handleFilterToggle('category', category)}
+                checked={filters.category.includes(category ?? '')}
+                onChange={() => handleFilterToggle('category', category ?? '')}
                 className='w-4 h-4 text-primary border-border rounded focus:ring-primary focus:ring-2'
               />
               <span className='text-sm text-text-secondary group-hover:text-text-primary transition-colors'>
@@ -142,8 +142,8 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, onFilterChange, 
             <label key={status.value} className='flex items-center gap-3 cursor-pointer group'>
               <input
                 type='checkbox'
-                checked={filters.status.includes(status.value)}
-                onChange={() => handleFilterToggle('status', status.value)}
+                checked={filters.status.includes(status.value as any)}
+                onChange={() => handleFilterToggle('status', status.value as any)}
                 className='w-4 h-4 text-primary border-border rounded focus:ring-primary focus:ring-2'
               />
               <span className='text-sm text-text-secondary group-hover:text-text-primary transition-colors'>

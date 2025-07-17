@@ -4,8 +4,7 @@ import type { Database } from '@frontend/types/database.types';
 
 type ActivityRow = Database['public']['Tables']['activity_log']['Row'];
 
-export interface UseRecentActivityOptions<T extends Partial<ActivityRow> = Partial<ActivityRow>>
-  extends UseSupabaseListOptions<T> {}
+export type UseRecentActivityOptions<T extends Partial<ActivityRow> = Partial<ActivityRow>> = UseSupabaseListOptions<T>;
 
 export interface UseRecentActivityResult {
   activities: ActivityRow[];
