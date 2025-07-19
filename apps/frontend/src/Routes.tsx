@@ -3,6 +3,7 @@ import { Routes as RouterRoutes, Route, Navigate } from 'react-router-dom';
 import ScrollToTop from './components/ScrollToTop';
 import ErrorBoundary from './components/ErrorBoundary';
 import ProtectedRoute from './components/ProtectedRoute';
+import { AdminRoute } from './components/AdminRoute';
 import RootLayout from './components/RootLayout';
 
 // --- Lazy Loading des pages ---
@@ -44,6 +45,10 @@ const AppRoutes: React.FC = () => {
               <Route path='/profile' element={<UserProfileManagement />} />
               <Route path='/lesson-viewer' element={<LessonViewer />} />
               <Route path='/lesson-viewer/:lessonId' element={<LessonViewer />} />
+            </Route>
+
+            {/* Routes admin protégées */}
+            <Route element={<AdminRoute />}>
               <Route path='/admin-dashboard' element={<AdminDashboard />} />
               <Route path='/user-management-admin' element={<UserManagementAdmin />} />
               <Route path='/cms' element={<ContentManagementCoursesModulesLessons />} />

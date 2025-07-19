@@ -10,7 +10,7 @@ import type {
 import type { Database } from '@frontend/types/database.types';
 import type { UserProfile } from '@frontend/types/user';
 
-import { supabase } from '@frontend/lib/supabase';
+import { supabase, startTokenMonitoring, stopTokenMonitoring } from '@frontend/lib/supabase';
 import { safeQuery } from '@frontend/utils/supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import { log } from '@libs/logger';
@@ -18,6 +18,7 @@ import type { AuthErrorWithCode, AuthErrorCode } from '@frontend/types/auth';
 import { toast } from 'sonner';
 import { createContextStrict } from './createContextStrict';
 import { setAuthErrorHandler } from '../lib/supabase-interceptor';
+import { fetchUserProfile } from '@frontend/services/userService';
 
 const supabaseClient = supabase as SupabaseClient<Database>;
 
@@ -89,6 +90,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
 
     try {
+      // Arrêter le monitoring des tokens avant de se déconnecter
+      stopTokenMonitoring();
+      
       await supabaseClient.auth.signOut();
       setUser(null);
       setSession(null);
@@ -137,6 +141,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         log.debug('📋 Initial session:', session);
         setSession(session ?? null);
         setUser(session?.user ?? null);
+        
+        // Si une session existe, démarrer le monitoring des tokens
+        if (session?.user) {
+          log.debug('🔍 Starting token monitoring for existing session');
+          startTokenMonitoring();
+        }
       } catch (err) {
         const error = typeof err === 'string' ? new Error(err) : (err as Error);
         log.error('❌ Error getting initial session:', error.message);
@@ -163,12 +173,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         if (event === 'SIGNED_IN' && session?.user) {
           log.debug('✅ User signed in');
+          // Démarrer le monitoring des tokens
+          startTokenMonitoring();
           if (window.location.pathname === '/verify-email') {
             navigate('/espace');
           }
         } else if (event === 'SIGNED_OUT') {
           log.debug('🚪 User signed out, clearing profile...');
           setUserProfile(null);
+          // Arrêter le monitoring des tokens
+          stopTokenMonitoring();
         } else if (event === 'TOKEN_REFRESHED') {
           log.debug('🔄 Token refreshed');
         } else if (event === 'USER_UPDATED') {
@@ -191,17 +205,58 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 
   useEffect(() => {
-    // Temporarily disable profile fetching to test dashboard
-    // const loadProfile = async () => {
-    //   log.debug('👤 User detected, fetching profile...');
-    //   try {
-    //     await fetchUserProfile(user);
-    //   } catch (err) {
-    //     log.error('Failed to fetch user profile:', err);
-    //   }
-    // };
-    // void loadProfile();
-  }, [user]);
+    if (!user || !session) return;
+    
+    const loadProfile = async () => {
+      log.debug('👤 User detected with valid session, fetching profile...');
+      log.debug('📋 User ID:', user.id);
+      log.debug('📋 Session access token exists:', !!session.access_token);
+      log.debug('📋 Session expires at:', session.expires_at ? new Date(session.expires_at * 1000).toISOString() : 'never');
+      
+      // Vérifier si la session n'est pas expirée
+      const now = Math.floor(Date.now() / 1000);
+      if (session.expires_at && session.expires_at < now) {
+        log.warn('⚠️ Session is expired, attempting refresh...');
+        try {
+          const refreshResult = await supabaseClient.auth.refreshSession();
+          if (refreshResult.error) {
+            log.error('❌ Session refresh failed:', refreshResult.error);
+            setProfileError(new Error('Session expired - please sign in again'));
+            return;
+          }
+          log.debug('✅ Session refreshed successfully');
+        } catch (refreshErr) {
+          log.error('❌ Session refresh attempt failed:', refreshErr);
+          setProfileError(new Error('Session expired - please sign in again'));
+          return;
+        }
+      }
+      
+      // Ajouter un délai pour permettre au token d'être complètement établi
+      await new Promise<void>((resolve) => { setTimeout(resolve, 100); });
+      
+      try {
+        const profile = await fetchUserProfile(user);
+        setUserProfile(profile);
+        setProfileError(null); // Clear any previous errors
+        log.debug('✅ User profile loaded successfully:', profile);
+      } catch (err) {
+        const error = typeof err === 'string' ? new Error(err) : (err as Error);
+        log.error('❌ Failed to fetch user profile:', error);
+        log.error('❌ Error details:', error.message);
+        
+        // Si c'est une erreur d'authentification, forcer la déconnexion
+        if (error.message.includes('Authentication failed') || error.message.includes('sign in again')) {
+          log.warn('🚪 Authentication error detected, signing out...');
+          await signOut();
+        } else {
+          setProfileError(error);
+        }
+      }
+    };
+    
+    void loadProfile();
+  }, [user, session, signOut]);
 
   // Sign Up with email
   const signUp = async ({

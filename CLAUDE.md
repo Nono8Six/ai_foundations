@@ -49,7 +49,7 @@ pnpm test:coverage
 pnpm format
 ```
 
-### Supabase Cloud Management
+### Supabase Cloud Management (Cloud-Only Setup)
 
 ```bash
 # Generate TypeScript types from cloud schema
@@ -57,6 +57,15 @@ pnpm types:gen
 
 # Validate environment variables
 pnpm validate:env
+
+# Link to cloud project for migrations (if needed)
+pnpm exec supabase link --project-ref oqmllypaarqvabuvbqga
+
+# Push local migrations to cloud
+pnpm exec supabase db push
+
+# Pull cloud changes to local
+pnpm exec supabase db pull
 ```
 
 ### Quick Setup
@@ -99,15 +108,16 @@ pnpm dev
 - **Component co-location** with page-specific components in subdirectories
 - **Path aliases** configured: `@` (src), `@frontend` (src), `@utils`, `@services`, `@components`, `@contexts`, `@lib`, `@libs` (workspace libs)
 
-### Backend Integration (Cloud-First)
+### Backend Integration (Cloud-Only)
 
 - **Supabase Cloud** as Backend-as-a-Service with PostgreSQL
-- **Direct cloud connection** for development (no local Supabase needed)
+- **100% cloud-based development** - no local setup required
 - **Row Level Security (RLS)** for data protection
 - **Generated TypeScript types** from cloud schema
 - **PKCE authentication flow** with multi-provider support (Email, Google OAuth)
 - **Real-time subscriptions** capability
-- **Supabase branching** for feature development and testing
+- **Migration management** via Supabase CLI and cloud dashboard
+- **Zero Docker dependencies** - pure cloud workflow
 
 ### State Management
 
@@ -147,18 +157,30 @@ pnpm dev
 - Handle errors consistently using the Result type pattern
 - Validate API responses with Zod schemas
 
-### Database Changes (Cloud-First)
+### Database Changes (Cloud-Only Workflow)
+
+**Preferred Method - Supabase Dashboard:**
 
 - Make schema changes directly in Supabase Dashboard (SQL Editor)
-- Always run `pnpm types:gen` after schema changes to update TypeScript types
-- No local migrations needed - cloud is the source of truth
+- Changes are applied instantly to cloud database
+- Run `pnpm types:gen` to update TypeScript types
 
-### Environment Setup (Simplified)
+**Alternative Method - Local Migrations:**
+
+- Create migration: `pnpm exec supabase migration new "description"`
+- Edit migration file in `apps/backend/supabase/migrations/`
+- Push to cloud: `pnpm exec supabase db push`
+- Generate types: `pnpm types:gen`
+
+**Note:** No local database setup required - all operations target cloud directly.
+
+### Environment Setup (Cloud-Only)
 
 - Copy `.env.example` to `.env` and configure Supabase cloud credentials
-- No Docker required - direct connection to Supabase cloud
-- Validate environment variables with the provided validation script
-- AI Tools Friendly: Single source of truth (cloud database)
+- **Zero local setup required** - direct connection to Supabase cloud
+- Validate environment variables with `pnpm validate:env`
+- **AI Tools Friendly:** Single source of truth (cloud database)
+- **No Docker/PostgreSQL installation needed**
 
 ## Key Files and Directories
 
@@ -195,8 +217,9 @@ pnpm dev
 
 ### For AI Tools (Claude, Copilot, etc.)
 
-- **Single source of truth**: All data lives in Supabase cloud
-- **No Docker complexity**: Just `pnpm dev` to start
+- **Pure cloud workflow**: All data lives in Supabase cloud
+- **Zero local dependencies**: No Docker, PostgreSQL, or containers needed
+- **Instant setup**: Copy `.env.example` → configure cloud credentials → start coding
 - **Type safety**: Run `pnpm types:gen` after any schema changes
-- **Simple setup**: Copy `.env.example` → configure cloud credentials → start coding
 - **Database changes**: Use Supabase Dashboard SQL Editor directly
+- **Clean environment**: No local database corruption or setup issues

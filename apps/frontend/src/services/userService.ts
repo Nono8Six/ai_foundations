@@ -17,6 +17,7 @@ import {
   PrivacySettingsSchema,
   LearningPreferencesSchema,
 } from '@frontend/types/userSettingsSchemas';
+import { log } from '@libs/logger';
 
 const supabaseClient = supabase as SupabaseClient<Database>;
 
@@ -47,12 +48,82 @@ const parseLearningPreferences = (v: Json | null): LearningPreferences => {
 };
 
 export async function fetchUserProfile(user: User): Promise<UserProfile> {
+  // Vérifier la session actuelle avant de faire la requête
+  const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
+  
+  if (sessionError) {
+    log.error('❌ Session error:', sessionError);
+    throw new Error('Session not valid');
+  }
+  
+  if (!sessionData.session) {
+    log.error('❌ No active session found');
+    throw new Error('No active session');
+  }
+  
+  log.debug('📋 Session user ID:', sessionData.session.user.id);
+  log.debug('📋 Requested user ID:', user.id);
+  log.debug('📋 Session access token length:', sessionData.session.access_token.length);
+  log.debug('📋 Token expires at:', sessionData.session.expires_at ? new Date(sessionData.session.expires_at * 1000).toISOString() : 'never');
+  
+  // Vérifier si le token n'est pas expiré
+  const now = Math.floor(Date.now() / 1000);
+  if (sessionData.session.expires_at && sessionData.session.expires_at < now) {
+    log.error('❌ Token is expired');
+    throw new Error('Token expired - please sign in again');
+  }
+  
+  // Forcer l'utilisation du token en configurant les headers
   const { data: profileData, error } = await supabaseClient
     .from('profiles')
     .select('*')
     .eq('id', user.id);
 
   if (error) {
+    log.error('❌ Error fetching user profile:', error);
+    log.error('❌ Error code:', error.code);
+    log.error('❌ Error message:', error.message);
+    log.error('❌ Error details:', error.details);
+    
+    // Si c'est une erreur 500, c'est probablement un problème d'authentification JWT
+    if (error.message.includes('Internal Server Error') || error.message.includes('500')) {
+      log.error('❌ 500 error detected - likely JWT authentication issue');
+      
+      // Essayer de rafraîchir la session
+      try {
+        const { data: refreshData, error: refreshError } = await supabaseClient.auth.refreshSession();
+        if (refreshError) {
+          log.error('❌ Session refresh failed:', refreshError);
+          throw new Error('Authentication failed - please sign in again');
+        }
+        
+        if (refreshData.session) {
+          log.debug('✅ Session refreshed successfully');
+          // Retry la requête avec la session rafraîchie
+          const { data: retryData, error: retryError } = await supabaseClient
+            .from('profiles')
+            .select('*')
+            .eq('id', user.id);
+            
+          if (retryError) {
+            log.error('❌ Retry failed after session refresh:', retryError);
+            throw new Error('Authentication failed - please sign in again');
+          }
+          
+          if (retryData && retryData.length > 0) {
+            return retryData[0] as UserProfile;
+          }
+        }
+      } catch (refreshErr) {
+        log.error('❌ Session refresh attempt failed:', refreshErr);
+        throw new Error('Authentication failed - please sign in again');
+      }
+    }
+    
+    // If it's an authentication/RLS error, throw a more specific error
+    if (error.message.includes('row-level security') || error.message.includes('authentication')) {
+      throw new Error('User not properly authenticated');
+    }
     throw error;
   }
 

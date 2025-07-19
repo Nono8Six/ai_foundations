@@ -48,6 +48,34 @@ ai_foundations_lms/
 
 ## 📚 Documentation
 
+- [Commandes disponibles](SCRIPTS.md) - Documentation complète des commandes et de leur utilisation
+- [Documentation Supabase](https://supabase.com/docs) - Documentation officielle de Supabase
+- [Documentation Vite](https://vitejs.dev/guide/) - Guide de développement Vite
+
+## 🛠 Commandes Principales
+
+Pour une documentation détaillée de chaque commande, consultez [SCRIPTS.md](SCRIPTS.md).
+
+### Développement
+
+```bash
+# Démarrer l'application en mode développement
+pnpm dev
+
+# Générer les types TypeScript à partir du schéma Supabase
+pnpm gen:types
+```
+
+### Base de Données
+
+```bash
+# Synchroniser le schéma local avec Supabase cloud
+pnpm db:pull
+
+# (Optionnel) Pousser les migrations locales vers le cloud
+pnpm db:push
+```
+
 - **[CLOUD_SYNC_GUIDE.md](CLOUD_SYNC_GUIDE.md)** - Guide complet de synchronisation
 - **[CLAUDE.md](CLAUDE.md)** - Instructions pour Claude Code
 

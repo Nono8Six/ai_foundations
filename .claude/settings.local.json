@@ -1,41 +1,26 @@
 {
   "permissions": {
     "allow": [
-      "Bash(rm:*)",
-      "Bash(wsl npx:*)",
-      "Bash(node:*)",
-      "Bash(pnpm list:*)",
       "Bash(ls:*)",
-      "Bash(pnpm install:*)",
-      "Bash(pnpm supabase:gen:types:*)",
+      "Bash(rm:*)",
+      "Bash(mkdir:*)",
       "Bash(find:*)",
-      "Bash(pnpm supabase:db:push:*)",
-      "Bash(pnpm exec:*)",
-      "Bash(pnpm supabase:migration:new:*)",
+      "Bash(node:*)",
+      "Bash(pnpm:*)",
+      "Bash(npm:*)",
       "Bash(supabase db:*)",
-      "Bash(SUPABASE_ACCESS_TOKEN=sbp_0059f83aaf50dd0922a68cb6d6230e4c3f7fccbc mcp-server-supabase --read-only --project-ref=oqmllypaarqvabuvbqga)",
-      "Bash(pnpm types:gen:*)",
-      "Bash(SUPABASE_ACCESS_TOKEN=sbp_0059f83aaf50dd0922a68cb6d6230e4c3f7fccbc pnpm exec supabase gen types typescript --project-id oqmllypaarqvabuvbqga --schema public)",
-      "mcp__supabase__list_migrations",
-      "mcp__supabase__execute_sql",
-      "mcp__supabase__list_tables",
-      "mcp__supabase__apply_migration",
-      "mcp__supabase__get_advisors",
-      "Bash(pnpm supabase migration:*)",
-      "Bash(pnpm supabase db push:*)",
-      "Bash(pnpm supabase gen types:*)",
-      "Bash(pnpm add:*)",
+      "Bash(supabase gen types:*)",
+      "Bash(supabase migration:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(mkdir:*)",
-      "Bash(context7-mcp:*)",
-      "mcp__context7__resolve-library-id",
-      "mcp__context7__get-library-docs"
+      "Bash(git push:*)",
+      "Bash(git pull:*)",
+      "mcp__supabase__*",
+      "mcp__context7__*",
+      "mcp__supabase-deploya__*"
     ],
     "deny": []
   },
   "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": [
-    "supabase"
-  ]
+  "enabledMcpjsonServers": ["supabase", "context7", "supabase-deploya"]
 }

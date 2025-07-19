@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      achievement_row_camel_type: {
+        Row: {
+          createdAt: string | null
+          description: string | null
+          earned: boolean | null
+          icon: string | null
+          id: string
+          rarity: string | null
+          title: string
+          userId: string | null
+          xpReward: number | null
+        }
+        Insert: {
+          createdAt?: string | null
+          description?: string | null
+          earned?: boolean | null
+          icon?: string | null
+          id?: string
+          rarity?: string | null
+          title: string
+          userId?: string | null
+          xpReward?: number | null
+        }
+        Update: {
+          createdAt?: string | null
+          description?: string | null
+          earned?: boolean | null
+          icon?: string | null
+          id?: string
+          rarity?: string | null
+          title?: string
+          userId?: string | null
+          xpReward?: number | null
+        }
+        Relationships: []
+      }
       achievements: {
         Row: {
           created_at: string | null
@@ -636,13 +672,23 @@ export type Database = {
       }
     }
     Functions: {
-      current_user_is_admin: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
       email_exists: {
         Args: { search_email: string }
         Returns: boolean
+      }
+      get_achievement_row_camel_type: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          title: string
+          description: string
+          icon: string
+          rarity: string
+          earned: boolean
+          userId: string
+          xpReward: number
+          createdAt: string
+        }[]
       }
       get_achievements_camel: {
         Args: { user_id_param?: string }
@@ -674,6 +720,10 @@ export type Database = {
           privacy_settings: Json
           learning_preferences: Json
         }[]
+      }
+      is_admin_user: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
       }
       update_user_profile: {
         Args: { profile_data: Json; user_id?: string }

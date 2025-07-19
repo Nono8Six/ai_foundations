@@ -1,13 +1,11 @@
 import pino, { Logger, type LoggerOptions } from 'pino';
 
 // Type augmentation for import.meta
-interface ImportMetaEnv {
-  VITE_LOG_LEVEL?: string;
-  [key: string]: string | undefined;
-}
-
-interface ImportMeta {
-  env: ImportMetaEnv;
+interface CustomImportMeta extends ImportMeta {
+  env: {
+    VITE_LOG_LEVEL?: string;
+    [key: string]: string | undefined;
+  };
 }
 
 // Type for the global window object
@@ -25,8 +23,9 @@ const isBrowser = typeof window !== 'undefined';
 const getLogLevel = (): string => {
   if (isBrowser) {
     // In browser, check for Vite's import.meta.env or window.__ENV__
+    const meta = import.meta as unknown as CustomImportMeta;
     return (
-      (import.meta as ImportMeta).env?.VITE_LOG_LEVEL ??
+      meta.env?.VITE_LOG_LEVEL ??
       window.__ENV__?.LOG_LEVEL ??
       (process.env.NODE_ENV === 'production' ? 'warn' : 'info')
     );
