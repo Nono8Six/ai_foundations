@@ -1,14 +1,17 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-let fromMock: vi.Mock;
+const fromMock = vi.fn();
 
-vi.mock('@frontend/lib/supabase', () => {
-  fromMock = vi.fn();
-  return { supabase: { from: fromMock } };
-});
+vi.mock('@frontend/lib/supabase', () => ({
+  supabase: { from: fromMock }
+}));
 
 vi.mock('@frontend/types/course.types', () => ({
-  CourseProgressSchema: {
+  CourseWithProgressSchema: {
+    safeParse: (d: unknown) => ({ success: true, data: d }),
+    parse: (d: unknown) => d,
+  },
+  BaseCourseSchema: {
     safeParse: (d: unknown) => ({ success: true, data: d }),
     parse: (d: unknown) => d,
   },

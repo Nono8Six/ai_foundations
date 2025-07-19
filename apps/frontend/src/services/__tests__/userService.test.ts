@@ -1,11 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-let fromMock: vi.Mock;
+const fromMock = vi.fn();
 
-vi.mock('@frontend/lib/supabase', () => {
-  fromMock = vi.fn();
-  return { supabase: { from: fromMock } };
-});
+vi.mock('@frontend/lib/supabase', () => ({
+  supabase: { from: fromMock }
+}));
 
 function qb(result: { data: unknown; error: unknown }) {
   return {

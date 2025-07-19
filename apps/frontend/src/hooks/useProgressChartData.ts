@@ -56,6 +56,15 @@ const format = (date: Date, formatStr: string) => {
   if (formatStr === 'MMM yyyy') {
     return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
   }
+  if (formatStr === 'MMM') {
+    return date.toLocaleDateString('en-US', { month: 'short' });
+  }
+  if (formatStr === 'yyyy-MM-dd') {
+    return date.toISOString().split('T')[0];
+  }
+  if (formatStr === 'yyyy-MM') {
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+  }
   return date.toLocaleDateString();
 };
 

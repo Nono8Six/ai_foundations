@@ -1,17 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-let storageFromMock: vi.Mock;
-let safeQueryMock: vi.Mock;
+const storageFromMock = vi.fn();
+const safeQueryMock = vi.fn(async (fn: () => Promise<unknown>) => fn());
 
-vi.mock('@frontend/lib/supabase', () => {
-  storageFromMock = vi.fn();
-  return { supabase: { storage: { from: storageFromMock } } };
-});
+vi.mock('@frontend/lib/supabase', () => ({
+  supabase: { storage: { from: storageFromMock } }
+}));
 
-vi.mock('@frontend/utils/supabaseClient', () => {
-  safeQueryMock = vi.fn(async (fn: () => Promise<unknown>) => fn());
-  return { safeQuery: safeQueryMock };
-});
+vi.mock('@frontend/utils/supabaseClient', () => ({
+  safeQuery: safeQueryMock
+}));
 
 function storageBuilder(listRes: unknown, uploadRes: { error: unknown } = { error: null }) {
   return {
@@ -47,6 +45,10 @@ describe('uploadToBucket', () => {
   it('uploads file and returns url', async () => {
     const builder = storageBuilder({ data: null, error: null });
     storageFromMock.mockReturnValue(builder);
+    safeQueryMock.mockImplementation(async (fn) => {
+      const result = await fn();
+      return result;
+    });
     const { uploadToBucket } = await import('../storageService');
     const file = new File(['a'], 'a.png', { type: 'image/png' });
     vi.spyOn(Date, 'now').mockReturnValue(5);
@@ -58,6 +60,10 @@ describe('uploadToBucket', () => {
   it('throws when upload fails', async () => {
     const builder = storageBuilder({ data: null, error: null }, { error: new Error('bad') });
     storageFromMock.mockReturnValue(builder);
+    safeQueryMock.mockImplementation(async (fn) => {
+      const result = await fn();
+      return result;
+    });
     const { uploadToBucket } = await import('../storageService');
     await expect(uploadToBucket('images', new File([], 'f.txt'))).rejects.toThrow('bad');
   });

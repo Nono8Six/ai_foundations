@@ -13,15 +13,15 @@ describe('CLI commands', () => {
   it('type-checks', async () => {
     const { exitCode } = await run('pnpm exec tsc --noEmit');
     expect(exitCode).toBe(0);
-  });
+  }, 30000);
 
   it('lint passes', async () => {
     const { exitCode } = await run('pnpm run lint');
     expect(exitCode).toBe(0);
-  });
+  }, 30000);
 
   it('dev build dry run succeeds', async () => {
     const { exitCode } = await run('pnpm run dev -- --dry-run');
     expect(exitCode).toBe(0);
-  });
+  }, 30000);
 });

@@ -1,29 +1,30 @@
 // src/hooks/useProgressChartData.test.ts
 import { renderHook } from '@testing-library/react';
+import { describe, it, expect, afterEach, vi } from 'vitest';
 import { useProgressChartData } from './useProgressChartData';
 import type { Database } from '@frontend/types/database.types';
+import { subDays, format } from 'date-fns';
 
 type LessonRow = Database['public']['Tables']['lessons']['Row'];
 type CourseRow = Database['public']['Tables']['courses']['Row'];
 type ModuleRow = Database['public']['Tables']['modules']['Row'];
 type UserProgressRow = Database['public']['Tables']['user_progress']['Row'];
-import { subDays, format } from 'date-fns';
 
-// Mock data
-const mockLessons: LessonRow[] = [
+// Mock data with minimal required fields
+const mockLessons: Partial<LessonRow>[] = [
   { id: 'l1', module_id: 'm1', duration: 30 }, // 0.5 hours
   { id: 'l2', module_id: 'm1', duration: 60 }, // 1 hour
   { id: 'l3', module_id: 'm2', duration: 45 }, // 0.75 hours
   { id: 'l4', module_id: 'm3', duration: null }, // No duration
 ];
 
-const mockCourses: CourseRow[] = [
+const mockCourses: Partial<CourseRow>[] = [
   { id: 'c1', category: 'Math' },
   { id: 'c2', category: 'Science' },
   { id: 'c3', category: 'Math' },
 ];
 
-const mockModules: ModuleRow[] = [
+const mockModules: Partial<ModuleRow>[] = [
   { id: 'm1', course_id: 'c1' },
   { id: 'm2', course_id: 'c2' },
   { id: 'm3', course_id: 'c3' },
@@ -37,7 +38,7 @@ describe('useProgressChartData', () => {
     const { result } = renderHook<
       undefined,
       ReturnType<typeof useProgressChartData>
-    >(() => useProgressChartData([], mockLessons, mockCourses, mockModules));
+    >(() => useProgressChartData([], mockLessons as LessonRow[], mockCourses as CourseRow[], mockModules as ModuleRow[]));
     expect(result.current.weekly).toEqual([]);
     expect(result.current.monthly).toEqual([]);
     expect(result.current.subject).toEqual([]);
@@ -50,20 +51,20 @@ describe('useProgressChartData', () => {
     let { result } = renderHook<
       undefined,
       ReturnType<typeof useProgressChartData>
-    >(() => useProgressChartData(mockUserProgress, [], mockCourses, mockModules));
+    >(() => useProgressChartData(mockUserProgress, [], mockCourses as CourseRow[], mockModules as ModuleRow[]));
     expect(result.current.weekly).toEqual([]);
 
     ({
       result,
     } = renderHook<undefined, ReturnType<typeof useProgressChartData>>(() =>
-      useProgressChartData(mockUserProgress, mockLessons, [], mockModules)
+      useProgressChartData(mockUserProgress, mockLessons as LessonRow[], [], mockModules as ModuleRow[])
     ));
     expect(result.current.weekly).toEqual([]);
 
     ({
       result,
     } = renderHook<undefined, ReturnType<typeof useProgressChartData>>(() =>
-      useProgressChartData(mockUserProgress, mockLessons, mockCourses, [])
+      useProgressChartData(mockUserProgress, mockLessons as LessonRow[], mockCourses as CourseRow[], [])
     ));
     expect(result.current.weekly).toEqual([]);
   });
@@ -82,23 +83,23 @@ describe('useProgressChartData', () => {
       undefined,
       ReturnType<typeof useProgressChartData>
     >(() =>
-      useProgressChartData(mockUserProgress, mockLessons, mockCourses, mockModules)
+      useProgressChartData(mockUserProgress, mockLessons as LessonRow[], mockCourses as CourseRow[], mockModules as ModuleRow[])
     );
 
-    const todayFormatted = format(today, 'EEE');
-    const yesterdayFormatted = format(yesterday, 'EEE');
+    const todayFormatted = today.toLocaleDateString('en-US', { weekday: 'short' });
+    const yesterdayFormatted = yesterday.toLocaleDateString('en-US', { weekday: 'short' });
 
     const todayData = result.current.weekly.find(d => d.day === todayFormatted);
     const yesterdayData = result.current.weekly.find(d => d.day === yesterdayFormatted);
 
     expect(result.current.weekly.length).toBe(7); // Should have 7 days
     expect(todayData).toBeDefined();
-    expect(todayData.lessons).toBe(1);
-    expect(todayData.hours).toBe(0.5);
+    expect(todayData?.lessons).toBe(1);
+    expect(todayData?.hours).toBe(0.5);
 
     expect(yesterdayData).toBeDefined();
-    expect(yesterdayData.lessons).toBe(1);
-    expect(yesterdayData.hours).toBe(1);
+    expect(yesterdayData?.lessons).toBe(1);
+    expect(yesterdayData?.hours).toBe(1);
   });
 
   it('should process monthly data correctly', (): void => {
@@ -117,30 +118,31 @@ describe('useProgressChartData', () => {
       undefined,
       ReturnType<typeof useProgressChartData>
     >(() =>
-      useProgressChartData(mockUserProgress, mockLessons, mockCourses, mockModules)
+      useProgressChartData(mockUserProgress, mockLessons as LessonRow[], mockCourses as CourseRow[], mockModules as ModuleRow[])
     );
 
     expect(result.current.monthly.length).toBe(6); // Should have 6 months
 
-    const currentMonthFormatted = format(today, 'MMM');
-    const lastMonthFormatted = format(lastMonth, 'MMM');
-    const twoMonthsAgoFormatted = format(twoMonthsAgo, 'MMM');
+    // Use the same format as hook: short month names
+    const currentMonthFormatted = today.toLocaleDateString('en-US', { month: 'short' });
+    const lastMonthFormatted = lastMonth.toLocaleDateString('en-US', { month: 'short' });
+    const twoMonthsAgoFormatted = twoMonthsAgo.toLocaleDateString('en-US', { month: 'short' });
 
     const currentMonthData = result.current.monthly.find(m => m.month === currentMonthFormatted);
     const lastMonthData = result.current.monthly.find(m => m.month === lastMonthFormatted);
     const twoMonthsAgoData = result.current.monthly.find(m => m.month === twoMonthsAgoFormatted);
 
     expect(currentMonthData).toBeDefined();
-    expect(currentMonthData.lessons).toBe(1);
-    expect(currentMonthData.hours).toBe(0.5);
+    expect(currentMonthData?.lessons).toBe(1);
+    expect(currentMonthData?.hours).toBe(0.5);
 
     expect(lastMonthData).toBeDefined();
-    expect(lastMonthData.lessons).toBe(2);
-    expect(lastMonthData.hours).toBe(1.5);
+    expect(lastMonthData?.lessons).toBe(2);
+    expect(lastMonthData?.hours).toBe(1.5);
 
     expect(twoMonthsAgoData).toBeDefined();
-    expect(twoMonthsAgoData.lessons).toBe(1);
-    expect(twoMonthsAgoData.hours).toBe(0.75);
+    expect(twoMonthsAgoData?.lessons).toBe(1);
+    expect(twoMonthsAgoData?.hours).toBe(0.75);
   });
 
   it('should aggregate subject data correctly', (): void => {
@@ -155,7 +157,7 @@ describe('useProgressChartData', () => {
       undefined,
       ReturnType<typeof useProgressChartData>
     >(() =>
-      useProgressChartData(mockUserProgress, mockLessons, mockCourses, mockModules)
+      useProgressChartData(mockUserProgress, mockLessons as LessonRow[], mockCourses as CourseRow[], mockModules as ModuleRow[])
     );
 
     const mathData = result.current.subject.find(s => s.name === 'Math');
@@ -177,14 +179,14 @@ describe('useProgressChartData', () => {
       undefined,
       ReturnType<typeof useProgressChartData>
     >(() =>
-      useProgressChartData(mockUserProgress, mockLessons, mockCourses, mockModules)
+      useProgressChartData(mockUserProgress, mockLessons as LessonRow[], mockCourses as CourseRow[], mockModules as ModuleRow[])
     );
 
-    const todayFormatted = format(today, 'EEE');
+    const todayFormatted = today.toLocaleDateString('en-US', { weekday: 'short' });
     const todayData = result.current.weekly.find(d => d.day === todayFormatted);
 
-    expect(todayData.lessons).toBe(1);
-    expect(todayData.hours).toBe(0); // Duration is null, so hours should be 0
+    expect(todayData?.lessons).toBe(1);
+    expect(todayData?.hours).toBe(0); // Duration is null, so hours should be 0
   });
 
   it('should filter out progress items without completed_at', (): void => {
@@ -197,12 +199,12 @@ describe('useProgressChartData', () => {
       undefined,
       ReturnType<typeof useProgressChartData>
     >(() =>
-      useProgressChartData(mockUserProgress, mockLessons, mockCourses, mockModules)
+      useProgressChartData(mockUserProgress, mockLessons as LessonRow[], mockCourses as CourseRow[], mockModules as ModuleRow[])
     );
 
-    const todayFormatted = format(today, 'EEE');
+    const todayFormatted = today.toLocaleDateString('en-US', { weekday: 'short' });
     const todayData = result.current.weekly.find(d => d.day === todayFormatted);
 
-    expect(todayData.lessons).toBe(1); // Only l1 should be counted
+    expect(todayData?.lessons).toBe(1); // Only l1 should be counted
   });
 });
