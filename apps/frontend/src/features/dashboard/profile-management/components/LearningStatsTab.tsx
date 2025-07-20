@@ -16,7 +16,7 @@ import {
   Cell,
 } from 'recharts';
 import { useAuth } from '@features/auth/contexts/AuthContext';
-import { useCourses } from '@shared/contexts/CourseContext';
+import { useCourses } from '@features/courses/contexts/CourseContext';
 import { useAchievements } from '@shared/hooks/useAchievements';
 import { useRecentActivity } from '@shared/hooks/useRecentActivity';
 import Icon from '@shared/components/AppIcon';

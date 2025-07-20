@@ -41,13 +41,13 @@ export {
   usePrefersReducedMotion,
   usePrefersHighContrast,
   themeUtils
-} from '../../hooks/useTheme';
+} from '@shared/hooks/useTheme';
 export type { 
   Theme, 
   ResolvedTheme, 
   ThemeContextValue, 
   ThemeProviderProps 
-} from '../../hooks/useTheme';
+} from '@shared/hooks/useTheme';
 
 // Re-export accessibility hooks for convenience
 export {
@@ -59,7 +59,7 @@ export {
   useSkipLinks,
   generateAccessibleId,
   isElementAccessible
-} from '../../hooks/useAccessibility';
+} from '@shared/hooks/useAccessibility';
 export type {
   KeyboardHandlers
-} from '../../hooks/useAccessibility';
+} from '@shared/hooks/useAccessibility';

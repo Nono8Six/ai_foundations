@@ -20,7 +20,7 @@ interface ChartTooltipPayload extends Payload<number, string> {
     xp?: number;
   };
 }
-import { useCourses } from '@shared/contexts/CourseContext';
+import { useCourses } from '@features/courses/contexts/CourseContext';
 import { useProgressChartData } from '@shared/hooks/useProgressChartData';
 import Icon from '@shared/components/AppIcon';
 

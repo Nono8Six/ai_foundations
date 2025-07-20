@@ -6,7 +6,7 @@
  */
 
 import { useCallback, useEffect } from 'react';
-import { useAuthV2 } from '@shared/contexts/AuthContextV2';
+import { useAuthV2 } from '@features/auth/contexts/AuthContextV2';
 import { withAdminCheck, type AuthClaims } from '@core/auth/claims';
 import { log } from '@libs/logger';
 import type { User, Session } from '@supabase/supabase-js';

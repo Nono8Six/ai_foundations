@@ -6,7 +6,7 @@ import { safeQuery } from '@core/supabase/utils';
 import { assertData } from '@libs/supabase-utils/assertData';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@frontend/types/database.types';
-import { useAuth } from './AuthContext';
+import { useAuth } from '@features/auth/contexts/AuthContext';
 import { createContextStrict } from "@shared/contexts/createContextStrict";
 import type { NoInfer } from '@frontend/types/utils';
 

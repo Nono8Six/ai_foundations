@@ -1,10 +1,10 @@
 // src/context/CourseContext.tsx
 import React, { type ReactNode } from 'react';
 import { useQuery, type QueryObserverResult } from '@tanstack/react-query';
-import { useAuth } from './AuthContext';
+import { useAuth } from '@features/auth/contexts/AuthContext';
 import { createContextStrict } from "@shared/contexts/createContextStrict";
 
-import { logError } from './ErrorContext';
+import { logError } from '@shared/contexts/ErrorContext';
 import { fetchCourses } from '@shared/services/courseService';
 import type { PaginatedCoursesResult, CourseWithProgress } from '@frontend/types/course.types';
 import type { NoInfer } from '@frontend/types/utils';

@@ -5,7 +5,7 @@
  * et améliorer les performances d'authentification
  */
 
-import { supabase } from './supabase';
+import { supabase } from '@core/supabase/client';
 import { log } from '@libs/logger';
 import type { User } from '@supabase/supabase-js';
 

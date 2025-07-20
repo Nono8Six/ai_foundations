@@ -1,5 +1,5 @@
 import React, { useState, useEffect, ReactElement } from 'react';
-import { useAdminCourses } from '@shared/contexts/AdminCourseContext';
+import { useAdminCourses } from '@features/admin/contexts/AdminCourseContext';
 import { toast } from 'sonner';
 import { fetchCoursesWithContent } from '@shared/services/courseService';
 import { log } from '@libs/logger';
