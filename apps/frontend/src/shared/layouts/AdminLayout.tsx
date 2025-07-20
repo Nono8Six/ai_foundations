@@ -1,7 +1,7 @@
 import React, { useState, createContext, useContext } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import Icon, { IconName } from './AppIcon';
-import Image from './AppImage';
+import Icon, { IconName } from '@shared/components/AppIcon';
+import Image from '@shared/components/AppImage';
 
 interface SidebarContextValue {
   setSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
