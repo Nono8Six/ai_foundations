@@ -17,10 +17,16 @@
       "Bash(git pull:*)",
       "mcp__supabase__*",
       "mcp__context7__*",
-      "mcp__supabase-deploya__*"
+      "mcp__supabase-deploya__*",
+      "Bash(mv:*)",
+      "Bash(cp:*)"
     ],
     "deny": []
   },
   "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": ["supabase", "context7", "supabase-deploya"]
+  "enabledMcpjsonServers": [
+    "supabase",
+    "context7",
+    "supabase-deploya"
+  ]
 }

@@ -33,26 +33,53 @@ export default defineConfig(() => {
           find: '@frontend',
           replacement: path.resolve(__dirname, './src')
         },
+        // New modular structure aliases
+        {
+          find: '@core',
+          replacement: path.resolve(__dirname, './src/core')
+        },
+        {
+          find: '@shared',
+          replacement: path.resolve(__dirname, './src/shared')
+        },
+        {
+          find: '@features',
+          replacement: path.resolve(__dirname, './src/features')
+        },
+        // Updated aliases for new structure
         {
           find: '@utils',
-          replacement: path.resolve(__dirname, './src/utils')
+          replacement: path.resolve(__dirname, './src/shared/utils')
         },
         {
           find: '@services',
-          replacement: path.resolve(__dirname, './src/services')
+          replacement: path.resolve(__dirname, './src/shared/services')
         },
         {
           find: '@components',
-          replacement: path.resolve(__dirname, './src/components')
+          replacement: path.resolve(__dirname, './src/shared/components')
         },
         {
           find: '@contexts',
-          replacement: path.resolve(__dirname, './src/context')
+          replacement: path.resolve(__dirname, './src/shared/contexts')
         },
         {
-          find: '@lib',
-          replacement: path.resolve(__dirname, './src/lib')
+          find: '@ui',
+          replacement: path.resolve(__dirname, './src/shared/ui')
         },
+        {
+          find: '@layouts',
+          replacement: path.resolve(__dirname, './src/shared/layouts')
+        },
+        {
+          find: '@hooks',
+          replacement: path.resolve(__dirname, './src/shared/hooks')
+        },
+        {
+          find: '@/lib',
+          replacement: path.resolve(__dirname, './src/shared/utils')
+        },
+        // Libs aliases (unchanged)
         {
           find: '@libs',
           replacement: path.resolve(__dirname, '../../libs')

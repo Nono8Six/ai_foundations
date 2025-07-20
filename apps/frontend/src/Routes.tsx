@@ -1,24 +1,24 @@
 import React, { Suspense, lazy } from 'react';
 import { Routes as RouterRoutes, Route, Navigate } from 'react-router-dom';
-import ScrollToTop from './components/ScrollToTop';
-import ErrorBoundary from './components/ErrorBoundary';
-import ProtectedRoute from './components/ProtectedRoute';
-import { AdminRoute } from './components/AdminRoute';
-import RootLayout from './components/RootLayout';
+import ScrollToTop from '@shared/components/ScrollToTop';
+import ErrorBoundary from '@shared/components/ErrorBoundary';
+import ProtectedRoute from '@shared/components/ProtectedRoute';
+import { AdminRoute } from '@shared/components/AdminRoute';
+import RootLayout from '@shared/layouts/RootLayout';
 
 // --- Lazy Loading des pages ---
-const PublicHomepage = lazy(() => import('./pages/public-homepage/index'));
-const ProgramOverview = lazy(() => import('./pages/program-overview/index'));
-const AuthenticationLoginRegister = lazy(() => import('./pages/auth/index'));
-const ForgotPassword = lazy(() => import('./pages/auth/ForgotPassword'));
-const UserDashboard = lazy(() => import('./pages/user-dashboard/index'));
-const UserProfileManagement = lazy(() => import('./pages/user-profile-management/index'));
-const LessonViewer = lazy(() => import('./pages/lesson-viewer/index'));
-const AdminDashboard = lazy(() => import('./pages/admin-dashboard/index'));
-const UserManagementAdmin = lazy(() => import('./pages/user-management-admin/index'));
-const ContentManagementCoursesModulesLessons = lazy(() => import('./pages/cms/index'));
-const NotFound = lazy(() => import('./pages/not-found/index'));
-const VerifyEmail = lazy(() => import('./pages/verify-email/index'));
+const PublicHomepage = lazy(() => import('@features/public/pages/index'));
+const ProgramOverview = lazy(() => import('@features/courses/program-overview/index'));
+const AuthenticationLoginRegister = lazy(() => import('@features/auth/pages/index'));
+const ForgotPassword = lazy(() => import('@features/auth/pages/ForgotPassword'));
+const UserDashboard = lazy(() => import('@features/dashboard/user/index'));
+const UserProfileManagement = lazy(() => import('@features/dashboard/profile-management/index'));
+const LessonViewer = lazy(() => import('@features/courses/lesson-viewer/index'));
+const AdminDashboard = lazy(() => import('@features/admin/dashboard/index'));
+const UserManagementAdmin = lazy(() => import('@features/admin/user-management/index'));
+const ContentManagementCoursesModulesLessons = lazy(() => import('@features/cms/pages/index'));
+const NotFound = lazy(() => import('@features/public/pages/index'));
+const VerifyEmail = lazy(() => import('@features/auth/pages/verify-email/index'));
 
 // --- Composant de chargement ---
 const PageLoader: React.FC = () => (
