@@ -1,0 +1,116 @@
+/* Admin Navigation Enhancements */
+
+/* Smooth transitions for all navigation elements */
+.admin-nav-item {
+  @apply transition-all duration-200 ease-out;
+  transform: translateY(0);
+}
+
+.admin-nav-item:hover {
+  transform: translateY(-1px);
+}
+
+.admin-nav-item.active {
+  @apply shadow-sm;
+  background: linear-gradient(135deg, rgb(var(--primary) / 0.1) 0%, rgb(var(--primary) / 0.05) 100%);
+}
+
+/* Active indicator animation */
+.admin-nav-indicator {
+  @apply transition-all duration-300 ease-out;
+  transform: translateX(-50%) scaleX(0);
+  transform-origin: center;
+}
+
+.admin-nav-item.active .admin-nav-indicator {
+  transform: translateX(-50%) scaleX(1);
+}
+
+/* Mobile menu animations */
+.mobile-menu-enter {
+  @apply opacity-0 transform scale-95;
+}
+
+.mobile-menu-enter-active {
+  @apply opacity-100 transform scale-100 transition-all duration-200 ease-out;
+}
+
+.mobile-menu-exit {
+  @apply opacity-100 transform scale-100;
+}
+
+.mobile-menu-exit-active {
+  @apply opacity-0 transform scale-95 transition-all duration-150 ease-in;
+}
+
+/* Backdrop blur effect */
+.mobile-menu-backdrop {
+  backdrop-filter: blur(4px);
+  @apply transition-all duration-200 ease-out;
+}
+
+/* Icon hover animations */
+.nav-icon {
+  @apply transition-all duration-200 ease-out;
+}
+
+.nav-icon:hover {
+  transform: scale(1.1);
+}
+
+/* Notification pulse */
+.notification-dot {
+  animation: pulse-glow 2s infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgb(var(--error) / 0.7);
+  }
+  50% {
+    opacity: 0.8;
+    box-shadow: 0 0 0 4px rgb(var(--error) / 0);
+  }
+}
+
+/* Smooth focus states */
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary;
+  transition: box-shadow 0.15s ease-out, border-color 0.15s ease-out;
+}
+
+/* Performance optimizations */
+.admin-nav-container {
+  contain: layout style paint;
+  will-change: transform;
+}
+
+.admin-nav-item {
+  contain: layout paint;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .admin-nav-item,
+  .admin-nav-indicator,
+  .nav-icon,
+  .mobile-menu-enter-active,
+  .mobile-menu-exit-active {
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
+  }
+  
+  .notification-dot {
+    animation: none !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .admin-nav-item.active {
+    @apply border-2 border-primary;
+    background: rgb(var(--primary) / 0.2);
+  }
+}
