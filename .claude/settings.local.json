@@ -19,7 +19,13 @@
       "mcp__context7__*",
       "mcp__supabase-deploya__*",
       "Bash(mv:*)",
-      "Bash(cp:*)"
+      "Bash(cp:*)",
+      "Bash(sed:*)",
+      "Bash(for:*)",
+      "Bash(do echo \"Fixing: $file\")",
+      "Bash(rg:*)",
+      "Bash(done)",
+      "Bash(grep:*)"
     ],
     "deny": []
   },

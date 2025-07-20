@@ -149,6 +149,32 @@ const SettingsTab: React.FC = () => {
     link.click();
   };
 
+  const resetCookiePreferences = (): void => {
+    // Supprimer les préférences de cookies sauvegardées
+    localStorage.removeItem('cookies-accepted');
+    alert('Préférences de cookies réinitialisées. La bannière de cookies apparaîtra à nouveau lors de votre prochaine visite sur la page d\'accueil.');
+  };
+
+  const clearAllData = (): void => {
+    // Effacer toutes les données locales
+    if (window.confirm('Êtes-vous sûr de vouloir effacer toutes les données locales ? Cela inclut les préférences, le cache et les données hors ligne.')) {
+      localStorage.clear();
+      sessionStorage.clear();
+      
+      // Effacer le cache du service worker si disponible
+      if ('caches' in window) {
+        caches.keys().then(names => {
+          names.forEach(name => {
+            caches.delete(name);
+          });
+        });
+      }
+      
+      alert('Toutes les données locales ont été effacées. La page va se recharger.');
+      window.location.reload();
+    }
+  };
+
   if (isLoading) {
     return (
       <div className='flex items-center justify-center py-8'>
@@ -392,6 +418,40 @@ const SettingsTab: React.FC = () => {
               >
                 <Icon aria-hidden='true' name='Download' size={16} className='mr-2' />
                 Exporter
+              </button>
+            </div>
+
+            <div className='flex items-center justify-between p-4 bg-warning-50 rounded-lg'>
+              <div>
+                <p className='text-sm font-medium text-text-primary'>Réinitialiser les cookies</p>
+                <p className='text-xs text-text-secondary'>
+                  Effacer vos préférences de cookies et réafficher la bannière
+                </p>
+              </div>
+              <button
+                type='button'
+                onClick={resetCookiePreferences}
+                className='inline-flex items-center px-4 py-2 border border-warning-300 rounded-lg text-sm font-medium text-warning-700 bg-warning-100 hover:bg-warning-200 transition-colors'
+              >
+                <Icon aria-hidden='true' name='Cookie' size={16} className='mr-2' />
+                Réinitialiser
+              </button>
+            </div>
+
+            <div className='flex items-center justify-between p-4 bg-error-50 rounded-lg'>
+              <div>
+                <p className='text-sm font-medium text-error-700'>Effacer toutes les données locales</p>
+                <p className='text-xs text-error-600'>
+                  Supprimer cache, préférences et données hors ligne (nécessite rechargement)
+                </p>
+              </div>
+              <button
+                type='button'
+                onClick={clearAllData}
+                className='inline-flex items-center px-4 py-2 border border-error-300 rounded-lg text-sm font-medium text-error-700 bg-error-100 hover:bg-error-200 transition-colors'
+              >
+                <Icon aria-hidden='true' name='Trash2' size={16} className='mr-2' />
+                Effacer tout
               </button>
             </div>
           </div>
