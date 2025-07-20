@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '@shared/contexts/AuthContext';
+import { useAuth } from '@features/auth/contexts/AuthContext';
 import { getUserSettings, updateUserSettings } from '@shared/services/userService';
 import type { 
   UserSettings,

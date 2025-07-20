@@ -1,7 +1,7 @@
 // apps/frontend/src/components/ui/Button.tsx
 import React from 'react';
-import { cn } from '@/lib/utils';
-import type { Polymorphic } from '@/types/polymorphic';
+import { cn } from '@shared/utils/utils';
+import type { Polymorphic } from '@frontend/types/polymorphic';
 
 export type ButtonProps<C extends React.ElementType> = Polymorphic<C, {
   variant?: 'primary' | 'secondary' | 'outline' | 'danger';

@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 import Icon from '@shared/components/AppIcon';
 import Button from '@shared/ui/Button';
 import TextInput from '@shared/ui/TextInput';
-import { useAuth } from '@shared/contexts/AuthContext';
+import { useAuth } from '@features/auth/contexts/AuthContext';
 import { log } from '@libs/logger';
 
 // Types

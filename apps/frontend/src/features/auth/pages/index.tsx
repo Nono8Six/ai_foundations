@@ -1,7 +1,7 @@
 // src/pages/authentication-login-register/index.jsx
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '@shared/contexts/AuthContext';
+import { useAuth } from '@features/auth/contexts/AuthContext';
 import { toast } from 'sonner';
 
 import Icon from '@shared/components/AppIcon';

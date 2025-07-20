@@ -5,7 +5,7 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useAuth } from '@shared/contexts/AuthContext';
+import { useAuth } from '@features/auth/contexts/AuthContext';
 
 /* ================================
    TYPES ET INTERFACES

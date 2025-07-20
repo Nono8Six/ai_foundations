@@ -1,5 +1,5 @@
 import React from 'react';
-import { Avatar as AvatarRoot, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar as AvatarRoot, AvatarImage, AvatarFallback } from '@shared/ui/avatar';
 
 export interface UserAvatarProps {
   src?: string | null | undefined;

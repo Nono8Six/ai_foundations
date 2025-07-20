@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '@shared/contexts/AuthContext';
+import { useAuth } from '@features/auth/contexts/AuthContext';
 import Icon from '@shared/components/AppIcon';
 import Image from '@shared/components/AppImage';
 import PersonalInfoTab from './components/PersonalInfoTab';

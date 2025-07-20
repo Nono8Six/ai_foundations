@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from 'react-router-dom';
-import { useAuth } from '@shared/contexts/AuthContext';
+import { useAuth } from '@features/auth/contexts/AuthContext';
 
 export const AdminRoute = (): JSX.Element => {
   const { user, userProfile, loading } = useAuth();

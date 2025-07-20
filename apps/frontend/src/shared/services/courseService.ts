@@ -1,5 +1,5 @@
 // apps/frontend/src/services/courseService.ts
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@core/supabase/client';
 import { 
   CourseWithProgressSchema, 
   BaseCourseSchema,
@@ -8,7 +8,7 @@ import {
   type CourseSortOption, 
   type PaginationOptions, 
   type PaginatedCoursesResult
-} from '@/types/course.types';
+} from '@frontend/types/course.types';
 import { log } from '@libs/logger';
 import { z } from 'zod';
 

@@ -5,7 +5,7 @@ import { vi, describe, it, expect } from 'vitest';
 
 import ProtectedRoute from '../ProtectedRoute';
 
-vi.mock('../../context/AuthContext', () => ({
+vi.mock('@features/auth/contexts/AuthContext', () => ({
   useAuth: () => ({ user: null }),
 }));
 

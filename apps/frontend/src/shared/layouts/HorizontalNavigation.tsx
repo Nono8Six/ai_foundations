@@ -5,7 +5,7 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { useAuth } from '@shared/contexts/AuthContext';
+import { useAuth } from '@features/auth/contexts/AuthContext';
 import Icon, { IconName } from '@shared/components/AppIcon';
 import { cn } from '@shared/utils/utils';
 

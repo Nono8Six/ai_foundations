@@ -15,7 +15,7 @@ import {
   Pie,
   Cell,
 } from 'recharts';
-import { useAuth } from '@shared/contexts/AuthContext';
+import { useAuth } from '@features/auth/contexts/AuthContext';
 import { useCourses } from '@shared/contexts/CourseContext';
 import { useAchievements } from '@shared/hooks/useAchievements';
 import { useRecentActivity } from '@shared/hooks/useRecentActivity';

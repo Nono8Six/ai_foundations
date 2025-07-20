@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 
-import { useAuth } from '@shared/contexts/AuthContext';
+import { useAuth } from '@features/auth/contexts/AuthContext';
 import TextInput from '@shared/ui/TextInput';
 import Button from '@shared/ui/Button';
 import Card from '@shared/ui/Card';

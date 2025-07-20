@@ -12,7 +12,7 @@ import { MemoryRouter } from 'react-router-dom';
 
 const mockSignOut = vi.fn();
 const mockLogout = vi.fn(async () => mockSignOut());
-vi.mock('../../../context/AuthContext', () => ({
+vi.mock('@features/auth/contexts/AuthContext', () => ({
   useAuth: () => ({
     user: { id: '1', email: 'test@example.com' },
     userProfile: { full_name: 'Test User', avatar_url: '', level: 1, xp: 0, current_streak: 0 },
@@ -20,7 +20,7 @@ vi.mock('../../../context/AuthContext', () => ({
   }),
 }));
 
-vi.mock('../../../context/CourseContext', () => ({
+vi.mock('@features/courses/contexts/CourseContext', () => ({
   useCourses: () => ({
     courses: [],
     userProgress: [],
@@ -31,12 +31,12 @@ vi.mock('../../../context/CourseContext', () => ({
 var mockUseRecentActivity;
 var mockUseAchievements;
 
-vi.mock('../../../hooks/useRecentActivity', () => {
+vi.mock('@shared/hooks/useRecentActivity', () => {
   mockUseRecentActivity = vi.fn(() => ({ activities: [] }));
   return { useRecentActivity: mockUseRecentActivity };
 });
 
-vi.mock('../../../hooks/useAchievements', () => {
+vi.mock('@shared/hooks/useAchievements', () => {
   mockUseAchievements = vi.fn(() => ({
     achievements: [
       {

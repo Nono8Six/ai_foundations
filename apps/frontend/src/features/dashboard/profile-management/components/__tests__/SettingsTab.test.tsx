@@ -28,12 +28,12 @@ const mockGetUserSettings = vi.fn(() =>
 );
 const mockUpdateUserSettings = vi.fn();
 
-vi.mock('../../../../services/userService', () => ({
+vi.mock('@features/users/services/userService', () => ({
   updateUserSettings: mockUpdateUserSettings,
   getUserSettings: mockGetUserSettings,
 }));
 
-vi.mock('../../../../context/AuthContext', () => ({
+vi.mock('@features/auth/contexts/AuthContext', () => ({
   useAuth: () => ({ user: { id: 'u1' } }),
 }));
 

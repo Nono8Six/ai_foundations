@@ -5,7 +5,7 @@
 
 import React, { ReactNode, useState } from 'react';
 import { Link, useLocation, Navigate } from 'react-router-dom';
-import { useAuth } from '@shared/contexts/AuthContext';
+import { useAuth } from '@features/auth/contexts/AuthContext';
 import Icon, { type IconName } from '@shared/components/AppIcon';
 import PerfectHeader from '@shared/layouts/PerfectHeader';
 import { cn } from '@shared/utils/utils';

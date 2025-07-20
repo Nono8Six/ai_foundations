@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '@shared/contexts/AuthContext';
+import { useAuth } from '@features/auth/contexts/AuthContext';
 import Icon from '@shared/components/AppIcon';
 import { fetchCourses } from '@shared/services/courseService';
 import { log } from '@libs/logger';

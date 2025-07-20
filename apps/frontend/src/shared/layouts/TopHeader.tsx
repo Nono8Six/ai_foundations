@@ -5,7 +5,7 @@
 
 import React, { useState, useRef, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '@shared/contexts/AuthContext';
+import { useAuth } from '@features/auth/contexts/AuthContext';
 import { useScreenReaderAnnouncer } from '@shared/hooks/useAccessibility';
 import HorizontalNavigation from './HorizontalNavigation';
 import { 

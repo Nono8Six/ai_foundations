@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAuth } from '@shared/contexts/AuthContext';
+import { useAuth } from '@features/auth/contexts/AuthContext';
 import Icon from '@shared/components/AppIcon';
 
 const VerifyEmail: React.FC = () => {

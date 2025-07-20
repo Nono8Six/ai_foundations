@@ -1,8 +1,8 @@
 // src/pages/user-dashboard/index.jsx
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import { useCourses } from '../../context/CourseContext';
+import { useAuth } from '@features/auth/contexts/AuthContext';
+import { useCourses } from '@features/courses/contexts/CourseContext';
 import Icon from '@shared/components/AppIcon';
 import Image from '@shared/components/AppImage';
 import ErrorBoundary from '@shared/components/ErrorBoundary';

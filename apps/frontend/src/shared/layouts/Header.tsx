@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { useAuth } from '@shared/contexts/AuthContext';
+import { useAuth } from '@features/auth/contexts/AuthContext';
 import Icon, { type IconName } from './AppIcon';
 import Avatar from './Avatar';
 import { log } from '@libs/logger';
@@ -10,8 +10,8 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-} from '@/components/ui/dropdown-menu';
-import { Skeleton } from '@/components/ui/skeleton';
+} from '@shared/ui/dropdown-menu';
+import { Skeleton } from '@shared/ui/skeleton';
 
 // Typage des éléments de navigation
 interface NavItem {

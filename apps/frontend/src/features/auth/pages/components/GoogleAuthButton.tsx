@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuth } from '@shared/contexts/AuthContext';
+import { useAuth } from '@features/auth/contexts/AuthContext';
 import { log } from '@libs/logger';
 
 export interface GoogleAuthButtonProps {
