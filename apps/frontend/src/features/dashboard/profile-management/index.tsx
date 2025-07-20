@@ -13,6 +13,7 @@ const UserProfileManagement: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+
   // Check for tab parameter in URL
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -22,14 +23,14 @@ const UserProfileManagement: React.FC = () => {
     }
   }, [location]);
 
-  // Use real user data instead of mock data
+  // Use real user data from userProfile
   const userData = {
     id: user?.id || '',
     name: userProfile?.full_name || user?.user_metadata?.full_name || user?.email || 'Utilisateur',
     email: user?.email || '',
-    phone: '', // This would need to be added to the profiles table if needed
-    profession: '', // This would need to be added to the profiles table if needed
-    company: '', // This would need to be added to the profiles table if needed
+    phone: userProfile?.phone || '', // Now correctly using the real data
+    profession: userProfile?.profession || '', // Now correctly using the real data
+    company: userProfile?.company || '', // Now correctly using the real data
     avatar:
       userProfile?.avatar_url ||
       `https://ui-avatars.com/api/?name=${encodeURIComponent(userProfile?.full_name || user?.email || 'User')}&background=1e40af&color=fff`,

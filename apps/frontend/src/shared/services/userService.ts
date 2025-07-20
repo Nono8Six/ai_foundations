@@ -231,15 +231,75 @@ export async function getUserSettings(userId: string): Promise<UserSettings | nu
     if (!settings) {
       throw new Error('No settings data found');
     }
-    return {
+    
+    const result = {
       id: settings.id,
       user_id: settings.user_id,
       notification_settings: parseNotificationSettings(settings.notification_settings),
       privacy_settings: parsePrivacySettings(settings.privacy_settings),
       learning_preferences: parseLearningPreferences(settings.learning_preferences),
+      // Gestion sécurisée de cookie_preferences avec vérification de type stricte
+      cookie_preferences: (() => {
+        const defaultPrefs = {
+          essential: true,
+          analytics: false,
+          marketing: false,
+          functional: false,
+          acceptedAt: null as string | null,
+          lastUpdated: null as string | null
+        };
+
+        try {
+          const prefs = settings.cookie_preferences;
+          if (!prefs || typeof prefs !== 'object' || Array.isArray(prefs)) {
+            return defaultPrefs;
+          }
+
+          // Type guard pour vérifier les propriétés de l'objet
+          const isCookiePrefs = (obj: unknown): obj is typeof defaultPrefs => {
+            return (
+              typeof obj === 'object' &&
+              obj !== null &&
+              'essential' in obj &&
+              'analytics' in obj &&
+              'marketing' in obj &&
+              'functional' in obj
+            );
+          };
+
+          // Si les préférences sont déjà au bon format, les retourner directement
+          if (isCookiePrefs(prefs)) {
+            return {
+              essential: Boolean(prefs.essential),
+              analytics: Boolean(prefs.analytics),
+              marketing: Boolean(prefs.marketing),
+              functional: Boolean(prefs.functional),
+              acceptedAt: typeof prefs.acceptedAt === 'string' ? prefs.acceptedAt : null,
+              lastUpdated: typeof prefs.lastUpdated === 'string' ? prefs.lastUpdated : null
+            };
+          }
+
+          // Sinon, essayer d'extraire les valeurs une par une
+          const safePrefs = {
+            essential: Boolean((prefs as any).essential ?? defaultPrefs.essential),
+            analytics: Boolean((prefs as any).analytics ?? defaultPrefs.analytics),
+            marketing: Boolean((prefs as any).marketing ?? defaultPrefs.marketing),
+            functional: Boolean((prefs as any).functional ?? defaultPrefs.functional),
+            acceptedAt: typeof (prefs as any).acceptedAt === 'string' ? (prefs as any).acceptedAt : null,
+            lastUpdated: typeof (prefs as any).lastUpdated === 'string' ? (prefs as any).lastUpdated : null
+          };
+
+          return safePrefs;
+        } catch (e) {
+          log.warn('Erreur lors du parsing de cookie_preferences', { error: e });
+          return defaultPrefs;
+        }
+      })(),
       created_at: settings.created_at || null,
       updated_at: settings.updated_at || null,
     };
+    
+    return result;
   }
 
   const defaultSettings = {
@@ -308,6 +368,14 @@ export async function updateUserSettings(
       notification_settings: parseNotificationSettings(null),
       privacy_settings: parsePrivacySettings(null),
       learning_preferences: parseLearningPreferences(null),
+      cookie_preferences: {
+        essential: true,
+        analytics: false,
+        marketing: false,
+        functional: false,
+        acceptedAt: null,
+        lastUpdated: null,
+      },
       created_at: null,
       updated_at: null,
     };

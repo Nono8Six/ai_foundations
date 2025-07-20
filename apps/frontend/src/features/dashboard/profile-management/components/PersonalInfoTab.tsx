@@ -1,9 +1,11 @@
 import React, { useState, ChangeEvent } from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { toast } from 'sonner';
 import { updateUserProfile } from '@shared/services/userService';
 import Icon from '@shared/components/AppIcon';
 import Image from '@shared/components/AppImage';
+import PhoneInput from '@shared/components/PhoneInput';
+import { validateAndFormatFrenchPhone, cleanPhoneForStorage } from '@shared/utils/phoneFormatter';
 import { log } from '@libs/logger';
 
 interface FormData {
@@ -38,6 +40,9 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ userData }) => {
     formState: { errors },
     reset,
     setError,
+    control,
+    setValue,
+    clearErrors,
   } = useForm<FormData>({
     defaultValues: {
       name: userData.name,
@@ -52,10 +57,12 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ userData }) => {
     try {
       setIsSubmitting(true);
 
+      // Le téléphone est optionnel, ne pas bloquer la sauvegarde
+
       // Prepare the update data
       const updates = {
         full_name: data.name,
-        phone: data.phone || null,
+        phone: data.phone ? cleanPhoneForStorage(data.phone) : null,
         profession: data.profession || null,
         company: data.company || null,
         // Add avatar_url if it was changed
@@ -111,6 +118,7 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ userData }) => {
   const handleCancel = () => {
     reset();
     setAvatarPreview(userData.avatar);
+    clearErrors();
     setIsEditing(false);
   };
 
@@ -135,7 +143,13 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ userData }) => {
         )}
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className='space-y-6'>
+      <form onSubmit={handleSubmit(onSubmit)} className='space-y-6' autoComplete="off">
+        {/* Champs cachés pour confondre l'autofill */}
+        <div style={{ display: 'none' }}>
+          <input type="text" name="username" autoComplete="username" />
+          <input type="password" name="password" autoComplete="current-password" />
+        </div>
+        
         {/* Avatar Upload */}
         <div className='bg-secondary-50 rounded-lg p-6'>
           <h4 className='text-base font-medium text-text-primary mb-4'>Photo de profil</h4>
@@ -156,6 +170,7 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ userData }) => {
                     accept='image/*'
                     onChange={handleAvatarChange}
                     className='hidden'
+                    autoComplete="off"
                   />
                 </label>
               )}
@@ -197,6 +212,7 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ userData }) => {
                 minLength: { value: 2, message: 'Le nom doit contenir au moins 2 caractères' },
               })}
               disabled={!isEditing}
+              autoComplete="name"
               className={`w-full px-3 py-2 border rounded-lg text-sm transition-colors ${
                 isEditing
                   ? 'border-border focus:border-primary focus:ring-1 focus:ring-primary bg-surface'
@@ -219,6 +235,7 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ userData }) => {
               type='email'
               {...register('email')}
               disabled={true} // Email is always disabled as it's managed by auth
+              autoComplete="email"
               className='w-full px-3 py-2 border border-transparent bg-secondary-50 text-text-secondary rounded-lg text-sm'
             />
             <p className='mt-1 text-xs text-text-secondary'>L&rsquo;email ne peut pas être modifié ici</p>
@@ -226,18 +243,42 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ userData }) => {
 
           {/* Phone */}
           <div>
-            <label className='block text-sm font-medium text-text-primary mb-2'>Téléphone</label>
-            <input
-              type='tel'
-              {...register('phone')}
-              disabled={!isEditing}
-              className={`w-full px-3 py-2 border rounded-lg text-sm transition-colors ${
-                isEditing
-                  ? 'border-border focus:border-primary focus:ring-1 focus:ring-primary bg-surface'
-                  : 'border-transparent bg-secondary-50 text-text-secondary'
-              }`}
-              placeholder='Ex: 06 12 34 56 78'
-            />
+            <label className='block text-sm font-medium text-text-primary mb-2'>
+              Téléphone
+              {isEditing && (
+                <span className='text-xs text-text-secondary ml-1 font-normal'>
+                  (Format français)
+                </span>
+              )}
+            </label>
+            {isEditing ? (
+              <Controller
+                name="phone"
+                control={control}
+                render={({ field }) => (
+                  <PhoneInput
+                    value={field.value}
+                    onChange={(value) => {
+                      field.onChange(value);
+                      setValue('phone', value);
+                    }}
+                    disabled={false}
+                    showValidationIcon={true}
+                    showTypeHint={true}
+                    className="focus:border-primary focus:ring-1 focus:ring-primary"
+                  />
+                )}
+              />
+            ) : (
+              <input
+                type='tel'
+                value={userData.phone ? validateAndFormatFrenchPhone(userData.phone).formatted : ''}
+                disabled={true}
+                autoComplete="tel"
+                className='w-full px-3 py-2 border border-transparent bg-secondary-50 text-text-secondary rounded-lg text-sm'
+                placeholder='Aucun numéro renseigné'
+              />
+            )}
           </div>
 
           {/* Profession */}
@@ -247,6 +288,7 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ userData }) => {
               type='text'
               {...register('profession')}
               disabled={!isEditing}
+              autoComplete="organization-title"
               className={`w-full px-3 py-2 border rounded-lg text-sm transition-colors ${
                 isEditing
                   ? 'border-border focus:border-primary focus:ring-1 focus:ring-primary bg-surface'
@@ -263,6 +305,7 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ userData }) => {
               type='text'
               {...register('company')}
               disabled={!isEditing}
+              autoComplete="organization"
               className={`w-full px-3 py-2 border rounded-lg text-sm transition-colors ${
                 isEditing
                   ? 'border-border focus:border-primary focus:ring-1 focus:ring-primary bg-surface'

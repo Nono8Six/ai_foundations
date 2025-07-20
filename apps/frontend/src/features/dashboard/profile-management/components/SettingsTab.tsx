@@ -87,6 +87,7 @@ const SettingsTab: React.FC = () => {
     loadUserSettings();
   }, [user]);
 
+
   const handleSaveSettings = async () => {
     if (!user) {
       toast.error('Vous devez être connecté pour sauvegarder les paramètres');
