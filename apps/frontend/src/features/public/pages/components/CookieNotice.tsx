@@ -4,9 +4,10 @@ import Icon from '@shared/components/AppIcon';
 
 export interface CookieNoticeProps {
   onAccept: () => void;
+  onOpenSettings?: () => void;
 }
 
-const CookieNotice: React.FC<CookieNoticeProps> = ({ onAccept }) => {
+const CookieNotice: React.FC<CookieNoticeProps> = ({ onAccept, onOpenSettings }) => {
   return (
     <motion.div
       initial={{ y: 100, opacity: 0 }}
@@ -43,7 +44,10 @@ const CookieNotice: React.FC<CookieNoticeProps> = ({ onAccept }) => {
               Accepter
             </button>
 
-            <button className='px-4 py-2 border border-border text-text-secondary rounded-lg hover:bg-secondary-50 transition-colors duration-200 text-sm'>
+            <button 
+              onClick={onOpenSettings}
+              className='px-4 py-2 border border-border text-text-secondary rounded-lg hover:bg-secondary-50 transition-colors duration-200 text-sm'
+            >
               Paramètres
             </button>
           </div>
