@@ -301,7 +301,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ className }) => {
             'hover:bg-primary-600 transition-colors touch-target'
           )}
         >
-          S'inscrire
+          S&apos;inscrire
         </Link>
       </div>
     );

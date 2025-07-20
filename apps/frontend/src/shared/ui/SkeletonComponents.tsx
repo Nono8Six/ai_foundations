@@ -35,8 +35,8 @@ export const Skeleton: React.FC<SkeletonProps> = ({
   );
 
   const style = {
-    width: width,
-    height: height,
+    width,
+    height,
   };
 
   if (variant === 'text' && lines > 1) {
