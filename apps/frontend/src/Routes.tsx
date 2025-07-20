@@ -17,7 +17,7 @@ const LessonViewer = lazy(() => import('@features/courses/lesson-viewer/index'))
 const AdminDashboard = lazy(() => import('@features/admin/dashboard/index'));
 const UserManagementAdmin = lazy(() => import('@features/admin/user-management/index'));
 const ContentManagementCoursesModulesLessons = lazy(() => import('@features/cms/pages/index'));
-const NotFound = lazy(() => import('@features/public/pages/index'));
+const NotFound = lazy(() => import('@features/public/pages/NotFound'));
 const VerifyEmail = lazy(() => import('@features/auth/pages/verify-email/index'));
 
 // --- Composant de chargement ---
