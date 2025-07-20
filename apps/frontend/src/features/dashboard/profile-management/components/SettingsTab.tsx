@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@features/auth/contexts/AuthContext';
 import { getUserSettings, updateUserSettings } from '@shared/services/userService';
+import { toast } from 'sonner';
 import type { 
   UserSettings,
   NotificationSettings,
@@ -9,9 +10,12 @@ import type {
   PrivacySettingKey,
   LearningPreferences,
   LearningPreferenceKey,
+  CookiePreferences,
+  CookiePreferenceKey,
 } from '@frontend/types/userSettings';
 import Icon from '@shared/components/AppIcon';
 import { log } from '@libs/logger';
+import { CookieService } from '@shared/services/cookieService';
 
 const SettingsTab: React.FC = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -42,6 +46,15 @@ const SettingsTab: React.FC = () => {
     autoplay: true,
   });
 
+  const [cookiePreferences, setCookiePreferences] = useState<CookiePreferences>({
+    essential: true,
+    analytics: false,
+    marketing: false,
+    functional: false,
+    acceptedAt: null,
+    lastUpdated: null,
+  });
+
   // Load user settings on component mount
   useEffect(() => {
     const loadUserSettings = async () => {
@@ -60,6 +73,9 @@ const SettingsTab: React.FC = () => {
           if (settings.learning_preferences) {
             setLearningPreferences(settings.learning_preferences as LearningPreferences);
           }
+          if (settings.cookie_preferences) {
+            setCookiePreferences(settings.cookie_preferences as CookiePreferences);
+          }
         }
       } catch (error) {
         log.error('Error loading user settings', { error });
@@ -72,6 +88,14 @@ const SettingsTab: React.FC = () => {
   }, [user]);
 
   const handleSaveSettings = async () => {
+    if (!user) {
+      toast.error('Vous devez être connecté pour sauvegarder les paramètres');
+      return;
+    }
+
+    log.debug('=== DÉBUT DE LA SAUVEGARDE DES PARAMÈTRES ===');
+    log.debug(`User ID: ${user.id}`);
+    
     try {
       setIsSubmitting(true);
 
@@ -79,16 +103,77 @@ const SettingsTab: React.FC = () => {
         notification_settings: notificationSettings,
         privacy_settings: privacySettings,
         learning_preferences: learningPreferences,
+        cookie_preferences: cookiePreferences,
       };
 
-      if (!user) return;
-      await updateUserSettings(user.id, settingsData);
+      log.debug('Données à sauvegarder: %o', settingsData);
 
-      // Show success message
-      alert('Paramètres sauvegardés avec succès !');
+      // Afficher une notification de chargement
+      const loadingToast = toast.loading('Sauvegarde des paramètres en cours...');
+      
+      try {
+        // Sauvegarder les paramètres
+        log.debug('Appel à updateUserSettings...');
+        const result = await updateUserSettings(user.id, settingsData);
+        log.debug('Résultat de updateUserSettings: %o', result);
+        
+        if (!result) {
+          log.error('ERREUR: Aucune donnée retournée par updateUserSettings');
+          throw new Error('Aucune donnée retournée par updateUserSettings');
+        }
+        
+        // Mettre à jour la notification pour indiquer le succès
+        toast.success('Paramètres sauvegardés avec succès !', {
+          id: loadingToast,
+          duration: 3000,
+        });
+        
+        log.debug('=== SAUVEGARDE RÉUSSIE ===');
+        log.debug('Rafraîchissement des paramètres depuis la base de données...');
+        
+        // Rafraîchir les paramètres depuis la base de données
+        try {
+          log.debug('Appel à getUserSettings...');
+          const updatedSettings = await getUserSettings(user.id);
+          log.debug('Paramètres récupérés après sauvegarde: %o', updatedSettings);
+          
+          if (updatedSettings) {
+            log.debug('Mise à jour du state local avec les nouvelles données...');
+            if (updatedSettings.notification_settings) {
+              log.debug('Mise à jour des paramètres de notification');
+              setNotificationSettings(updatedSettings.notification_settings as NotificationSettings);
+            }
+            if (updatedSettings.privacy_settings) {
+              log.debug('Mise à jour des paramètres de confidentialité');
+              setPrivacySettings(updatedSettings.privacy_settings as PrivacySettings);
+            }
+            if (updatedSettings.learning_preferences) {
+              log.debug('Mise à jour des préférences d\'apprentissage');
+              setLearningPreferences(updatedSettings.learning_preferences as LearningPreferences);
+            }
+            if (updatedSettings.cookie_preferences) {
+              log.debug('Mise à jour des préférences de cookies');
+              setCookiePreferences(updatedSettings.cookie_preferences as CookiePreferences);
+            }
+            log.debug('=== MISE À JOUR DU STATE TERMINÉE ===');
+          } else {
+            log.warn('AUCUNE DONNÉE: Aucun paramètre mis à jour reçu de la base de données');
+          }
+        } catch (refreshError) {
+          log.error('ERREUR lors du rafraîchissement des paramètres: %o', refreshError);
+          log.error('Error refreshing settings after save', { error: refreshError });
+          // Ne pas afficher d'erreur à l'utilisateur, les paramètres ont peut-être été sauvegardés
+        }
+      } catch (error) {
+        log.error('Error saving settings', { error });
+        toast.error('Erreur lors de la sauvegarde des paramètres. Veuillez réessayer.', {
+          id: loadingToast,
+          duration: 5000,
+        });
+      }
     } catch (error) {
-      log.error('Error saving settings', { error });
-      alert('Erreur lors de la sauvegarde des paramètres. Veuillez réessayer.');
+      log.error('Error in save settings process', { error });
+      toast.error('Une erreur inattendue est survenue. Veuillez réessayer.');
     } finally {
       setIsSubmitting(false);
     }
@@ -121,6 +206,18 @@ const SettingsTab: React.FC = () => {
     }));
   };
 
+  const handleCookiePreferenceChange = (setting: CookiePreferenceKey): void => {
+    if (setting === 'essential') return; // Essential cookies cannot be disabled
+    
+    setCookiePreferences(prev => ({
+      ...prev,
+      [setting]: setting === 'acceptedAt' || setting === 'lastUpdated' 
+        ? new Date().toISOString() 
+        : !prev[setting],
+      lastUpdated: new Date().toISOString(),
+    }));
+  };
+
   const handleDeleteAccount = (): void => {
     // Simulate account deletion
     log.info('Account deletion requested by user');
@@ -149,30 +246,95 @@ const SettingsTab: React.FC = () => {
     link.click();
   };
 
-  const resetCookiePreferences = (): void => {
-    // Supprimer les préférences de cookies sauvegardées
-    localStorage.removeItem('cookies-accepted');
-    alert('Préférences de cookies réinitialisées. La bannière de cookies apparaîtra à nouveau lors de votre prochaine visite sur la page d\'accueil.');
+  const resetCookiePreferences = async (): Promise<void> => {
+    toast.promise(
+      (async () => {
+        await CookieService.resetCookiePreferences(user?.id || null);
+        
+        // Reset local state
+        setCookiePreferences({
+          essential: true,
+          analytics: false,
+          marketing: false,
+          functional: false,
+          acceptedAt: null,
+          lastUpdated: null,
+        });
+      })(),
+      {
+        loading: 'Réinitialisation des préférences de cookies...',
+        success: () => 'Préférences de cookies réinitialisées. La bannière de cookies apparaîtra à nouveau lors de votre prochaine visite sur la page d\'accueil.',
+        error: (error) => {
+          log.error('Error resetting cookie preferences', { error });
+          return 'Erreur lors de la réinitialisation des préférences de cookies.';
+        },
+      }
+    );
   };
 
   const clearAllData = (): void => {
-    // Effacer toutes les données locales
-    if (window.confirm('Êtes-vous sûr de vouloir effacer toutes les données locales ? Cela inclut les préférences, le cache et les données hors ligne.')) {
-      localStorage.clear();
-      sessionStorage.clear();
-      
-      // Effacer le cache du service worker si disponible
-      if ('caches' in window) {
-        caches.keys().then(names => {
-          names.forEach(name => {
-            caches.delete(name);
-          });
-        });
-      }
-      
-      alert('Toutes les données locales ont été effacées. La page va se recharger.');
-      window.location.reload();
-    }
+    toast.custom((t) => (
+      <div className="w-full max-w-sm overflow-hidden rounded-lg bg-surface shadow-lg border border-border">
+        <div className="p-4">
+          <div className="flex items-start">
+            <div className="flex-shrink-0 pt-0.5">
+              <Icon name="AlertTriangle" size={20} className="text-warning-500" />
+            </div>
+            <div className="ml-3 w-0 flex-1">
+              <p className="text-sm font-medium text-text-primary">Effacer toutes les données locales</p>
+              <p className="mt-1 text-sm text-text-secondary">
+                Êtes-vous sûr de vouloir effacer toutes les données locales ? Cela inclut les préférences, le cache et les données hors ligne.
+              </p>
+              <div className="mt-4 flex space-x-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    toast.dismiss(t);
+                  }}
+                  className="inline-flex items-center px-3 py-1.5 border border-border rounded-md text-sm font-medium text-text-primary bg-surface hover:bg-secondary-50"
+                >
+                  Annuler
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    toast.dismiss(t);
+                    
+                    // Show loading toast
+                    const loadingToast = toast.loading('Nettoyage des données...');
+                    
+                    // Clear all data
+                    localStorage.clear();
+                    sessionStorage.clear();
+                    
+                    // Clear service worker cache if available
+                    if ('caches' in window) {
+                      caches.keys().then(names => {
+                        names.forEach(name => {
+                          caches.delete(name);
+                        });
+                      });
+                    }
+                    
+                    // Update loading toast to success
+                    toast.success('Toutes les données locales ont été effacées. La page va se recharger.', {
+                      id: loadingToast,
+                      duration: 2000,
+                      onAutoClose: () => window.location.reload()
+                    });
+                  }}
+                  className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-error-600 hover:bg-error-700"
+                >
+                  Tout effacer
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    ), {
+      duration: Infinity, // Don't auto-dismiss
+    });
   };
 
   if (isLoading) {
@@ -394,6 +556,62 @@ const SettingsTab: React.FC = () => {
                   </button>
                 </div>
               ))}
+          </div>
+        </div>
+
+        {/* Cookie Management */}
+        <div className='bg-surface rounded-lg border border-border p-6'>
+          <h4 className='text-base font-semibold text-text-primary mb-4 flex items-center'>
+            <Icon aria-hidden='true' name='Cookie' size={20} className='mr-2' />
+            Gestion des cookies
+          </h4>
+          <div className='space-y-4'>
+            <p className='text-sm text-text-secondary mb-4'>
+              Gérez vos préférences de cookies pour améliorer votre expérience de navigation.
+            </p>
+            
+            {Object.entries(cookiePreferences)
+              .filter(([key]) => !['acceptedAt', 'lastUpdated'].includes(key))
+              .map(([key, value]) => (
+                <div key={key} className='flex items-center justify-between'>
+                  <div>
+                    <p className='text-sm font-medium text-text-primary'>
+                      {key === 'essential' && 'Cookies essentiels'}
+                      {key === 'analytics' && 'Cookies analytiques'}
+                      {key === 'marketing' && 'Cookies marketing'}
+                      {key === 'functional' && 'Cookies fonctionnels'}
+                    </p>
+                    <p className='text-xs text-text-secondary'>
+                      {key === 'essential' && 'Nécessaires au fonctionnement du site (obligatoires)'}
+                      {key === 'analytics' && 'Nous aident à comprendre comment vous utilisez le site'}
+                      {key === 'marketing' && 'Utilisés pour personnaliser les publicités'}
+                      {key === 'functional' && 'Améliorent votre expérience avec des fonctionnalités avancées'}
+                    </p>
+                  </div>
+                  <button
+                    type='button'
+                    onClick={() => handleCookiePreferenceChange(key as CookiePreferenceKey)}
+                    disabled={key === 'essential'}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                      value ? 'bg-primary' : 'bg-secondary-300'
+                    } ${key === 'essential' ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                        value ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
+                </div>
+              ))}
+            
+            {cookiePreferences.acceptedAt && (
+              <div className='mt-4 p-3 bg-secondary-50 rounded-lg'>
+                <p className='text-xs text-text-secondary'>
+                  Dernière mise à jour : {new Date(cookiePreferences.acceptedAt).toLocaleString('fr-FR')}
+                </p>
+              </div>
+            )}
           </div>
         </div>
 

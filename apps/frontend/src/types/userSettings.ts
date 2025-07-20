@@ -27,12 +27,24 @@ export interface LearningPreferences {
 
 export type LearningPreferenceKey = keyof LearningPreferences;
 
+export interface CookiePreferences {
+  essential: boolean;
+  analytics: boolean;
+  marketing: boolean;
+  functional: boolean;
+  acceptedAt: string | null;
+  lastUpdated: string | null;
+}
+
+export type CookiePreferenceKey = keyof CookiePreferences;
+
 export interface UserSettings {
   id: string;
   user_id: string;
   notification_settings: NotificationSettings;
   privacy_settings: PrivacySettings;
   learning_preferences: LearningPreferences;
+  cookie_preferences?: CookiePreferences;
   created_at: string | null;
   updated_at: string | null;
 }

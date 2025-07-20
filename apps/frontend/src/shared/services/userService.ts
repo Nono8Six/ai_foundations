@@ -2,7 +2,6 @@ import type { SupabaseClient, User } from '@supabase/supabase-js';
 import { supabase } from '@core/supabase/client';
 import type { Database, Json } from '@frontend/types/database.types';
 import type {
-  UpdateUserProfilePayload,
   UpdateUserProfileResponse,
 } from '@frontend/types/rpc.types';
 import type { UserProfile } from '@frontend/types/user';
@@ -18,6 +17,11 @@ import {
   LearningPreferencesSchema,
 } from '@frontend/types/userSettingsSchemas';
 import { log } from '@libs/logger';
+
+// Debug logger qui ne sera actif qu'en développement
+const debug = process.env.NODE_ENV === 'development' 
+  ? (message: string, ...args: unknown[]) => log.debug(`[UserService] ${message}`, ...args)
+  : () => undefined;
 
 const supabaseClient = supabase as SupabaseClient<Database>;
 
@@ -158,20 +162,60 @@ export async function fetchUserProfile(user: User): Promise<UserProfile> {
   return profileData[0] as UserProfile;
 }
 
+interface ProfileUpdates {
+  full_name?: string;
+  email?: string;
+  avatar_url?: string | null;
+  phone?: string | null;
+  profession?: string | null;
+  company?: string | null;
+  level?: number;
+  xp?: number;
+  current_streak?: number;
+  is_admin?: boolean;
+  last_completed_at?: string | null;
+}
+
 export async function updateUserProfile(
   userId: string,
-  updates: UpdateUserProfilePayload['profile_data']
+  updates: ProfileUpdates
 ): Promise<UpdateUserProfileResponse> {
+  // Créer un objet de données profil valide avec des valeurs par défaut
+  const profileUpdate: Record<string, unknown> = {
+    id: userId,
+    updated_at: new Date().toISOString()
+  };
+
+  // Ajouter uniquement les champs fournis dans updates
+  if (updates.full_name !== undefined) profileUpdate.full_name = updates.full_name;
+  if (updates.email !== undefined) profileUpdate.email = updates.email;
+  if (updates.avatar_url !== undefined) profileUpdate.avatar_url = updates.avatar_url;
+  if (updates.phone !== undefined) profileUpdate.phone = updates.phone;
+  if (updates.profession !== undefined) profileUpdate.profession = updates.profession;
+  if (updates.company !== undefined) profileUpdate.company = updates.company;
+  if (updates.level !== undefined) profileUpdate.level = updates.level;
+  if (updates.xp !== undefined) profileUpdate.xp = updates.xp;
+  if (updates.current_streak !== undefined) profileUpdate.current_streak = updates.current_streak;
+  if (updates.is_admin !== undefined) profileUpdate.is_admin = updates.is_admin;
+  if (updates.last_completed_at !== undefined) profileUpdate.last_completed_at = updates.last_completed_at;
+
+  // Les noms des paramètres doivent correspondre exactement à ceux définis dans les types générés
   const { data, error } = await supabaseClient.rpc('update_user_profile', {
-    profile_data: updates,
-    user_id: userId,
-  });
+    p_user_id: userId,
+    p_profile_data: profileUpdate as unknown as Json
+  } as const);
 
-  if (error) throw error;
+  if (error) {
+    log.error('Error updating user profile:', error);
+    throw error;
+  }
 
-  const profileData = (Array.isArray(data) ? data[0] : data) as UpdateUserProfileResponse;
-  if (!profileData) throw new Error('No data returned from update_user_profile');
-  return profileData;
+  const result = (Array.isArray(data) ? data[0] : data) as UpdateUserProfileResponse;
+  if (!result) {
+    throw new Error('No data returned from update_user_profile');
+  }
+  
+  return result;
 }
 
 export async function getUserSettings(userId: string): Promise<UserSettings | null> {
@@ -251,57 +295,197 @@ export async function updateUserSettings(
   userId: string,
   updates: Partial<UserSettings>
 ): Promise<UserSettings | null> {
-  const current = await getUserSettings(userId);
-
-  const merged = {
-    ...current,
-    ...updates,
-    user_id: userId,
-    updated_at: new Date().toISOString(),
-  };
-
-  // Convertir les objets en JSON de manière sûre
-  const notificationSettingsJson = merged.notification_settings 
-    ? toJson(merged.notification_settings as unknown as Json) 
-    : null;
+  log.debug('=== DÉBUT updateUserSettings ===');
+  log.debug(`User ID: ${userId}`);
+  log.debug('Mises à jour reçues: %o', updates);
   
-  const privacySettingsJson = merged.privacy_settings 
-    ? toJson(merged.privacy_settings as unknown as Json) 
-    : null;
-    
-  const learningPreferencesJson = merged.learning_preferences 
-    ? toJson(merged.learning_preferences as unknown as Json) 
-    : null;
+  try {
+    // Récupérer les paramètres actuels
+    log.debug('Récupération des paramètres actuels...');
+    const current = await getUserSettings(userId) || {
+      id: '',
+      user_id: userId,
+      notification_settings: parseNotificationSettings(null),
+      privacy_settings: parsePrivacySettings(null),
+      learning_preferences: parseLearningPreferences(null),
+      created_at: null,
+      updated_at: null,
+    };
 
-  const { data, error } = await supabaseClient
-    .from('user_settings')
-    .update({
+    // Fusionner avec les nouvelles valeurs
+    const merged = {
+      ...current,
+      ...updates,
+      user_id: userId,
+      updated_at: new Date().toISOString(),
+    };
+    
+    debug('Données fusionnées avant envoi: %o', merged);
+
+    // Convertir les objets en JSON de manière sûre
+    const notificationSettingsJson = merged.notification_settings 
+      ? toJson(merged.notification_settings as unknown as Json) 
+      : null;
+    
+    const privacySettingsJson = merged.privacy_settings 
+      ? toJson(merged.privacy_settings as unknown as Json) 
+      : null;
+      
+    const learningPreferencesJson = merged.learning_preferences 
+      ? toJson(merged.learning_preferences as unknown as Json) 
+      : null;
+      
+    const cookiePreferencesJson = merged.cookie_preferences
+      ? toJson(merged.cookie_preferences as unknown as Json)
+      : null;
+
+    debug('Données converties en JSON pour Supabase: %o', {
       notification_settings: notificationSettingsJson,
       privacy_settings: privacySettingsJson,
       learning_preferences: learningPreferencesJson,
-      updated_at: merged.updated_at,
-    })
-    .eq('user_id', userId)
-    .select();
+      cookie_preferences: cookiePreferencesJson,
+      updated_at: merged.updated_at
+    });
 
-  if (error) throw error;
-
-  if (data && data.length > 0) {
-    const updated = data[0];
-    if (!updated) {
-      throw new Error('No updated settings data found');
+    // Vérifier si l'enregistrement existe déjà
+    debug('Vérification de l\'existence de l\'enregistrement...');
+    const { data: existingData } = await supabaseClient
+      .from('user_settings')
+      .select('id')
+      .eq('user_id', userId)
+      .maybeSingle();
+      
+    debug('Enregistrement existant: %o', existingData);
+    
+    let query;
+    if (existingData) {
+      // Mise à jour de l'enregistrement existant
+      debug('Mise à jour de l\'enregistrement existant...');
+      query = supabaseClient
+        .from('user_settings')
+        .update({
+          notification_settings: notificationSettingsJson,
+          privacy_settings: privacySettingsJson,
+          learning_preferences: learningPreferencesJson,
+          cookie_preferences: cookiePreferencesJson,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('user_id', userId);
+    } else {
+      // Création d'un nouvel enregistrement
+      debug('Création d\'un nouvel enregistrement...');
+      query = supabaseClient
+        .from('user_settings')
+        .insert([{
+          user_id: userId,
+          notification_settings: notificationSettingsJson,
+          privacy_settings: privacySettingsJson,
+          learning_preferences: learningPreferencesJson,
+          cookie_preferences: cookiePreferencesJson,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        }]);
     }
-    return {
-      id: updated.id,
-      user_id: updated.user_id,
-      notification_settings: parseNotificationSettings(updated.notification_settings),
-      privacy_settings: parsePrivacySettings(updated.privacy_settings),
-      learning_preferences: parseLearningPreferences(updated.learning_preferences),
-      created_at: updated.created_at || null,
-      updated_at: updated.updated_at || null,
-    };
-  }
+    
+    // Exécuter la requête et récupérer les données mises à jour
+    const { data, error } = await query.select().single();
+    
+    if (error) {
+      log.error('Erreur lors de la sauvegarde des paramètres:', error);
+      throw error;
+    }
+    
+    debug('Réponse de Supabase: %o', data);
 
-  return null;
+    if (data) {
+      // Créer un objet de résultat complet avec des valeurs par défaut
+      const result: UserSettings = {
+        id: data.id,
+        user_id: data.user_id,
+        notification_settings: parseNotificationSettings(data.notification_settings),
+        privacy_settings: parsePrivacySettings(data.privacy_settings),
+        learning_preferences: parseLearningPreferences(data.learning_preferences),
+        // Gestion sécurisée de cookie_preferences avec vérification de type stricte
+        cookie_preferences: (() => {
+          const defaultPrefs = {
+            essential: true,
+            analytics: false,
+            marketing: false,
+            functional: false,
+            acceptedAt: null as string | null,
+            lastUpdated: null as string | null
+          };
+
+          try {
+            const prefs = data.cookie_preferences;
+            if (!prefs || typeof prefs !== 'object' || Array.isArray(prefs)) {
+              return defaultPrefs;
+            }
+
+            // Type guard pour vérifier les propriétés de l'objet
+            const isCookiePrefs = (obj: unknown): obj is typeof defaultPrefs => {
+              return (
+                typeof obj === 'object' &&
+                obj !== null &&
+                'essential' in obj &&
+                'analytics' in obj &&
+                'marketing' in obj &&
+                'functional' in obj
+              );
+            };
+
+            // Si les préférences sont déjà au bon format, les retourner directement
+            if (isCookiePrefs(prefs)) {
+              return {
+                essential: Boolean(prefs.essential),
+                analytics: Boolean(prefs.analytics),
+                marketing: Boolean(prefs.marketing),
+                functional: Boolean(prefs.functional),
+                acceptedAt: typeof prefs.acceptedAt === 'string' ? prefs.acceptedAt : null,
+                lastUpdated: typeof prefs.lastUpdated === 'string' ? prefs.lastUpdated : null
+              };
+            }
+
+            // Sinon, essayer d'extraire les valeurs une par une
+            const safePrefs = {
+              ...defaultPrefs,
+              essential: Boolean(prefs.essential),
+              analytics: Boolean(prefs.analytics),
+              marketing: Boolean(prefs.marketing),
+              functional: Boolean(prefs.functional),
+            };
+
+            if ('acceptedAt' in prefs && (typeof prefs.acceptedAt === 'string' || prefs.acceptedAt === null)) {
+              safePrefs.acceptedAt = prefs.acceptedAt;
+            }
+
+            if ('lastUpdated' in prefs && (typeof prefs.lastUpdated === 'string' || prefs.lastUpdated === null)) {
+              safePrefs.lastUpdated = prefs.lastUpdated;
+            }
+
+            return safePrefs;
+          } catch (e) {
+            log.warn('Erreur lors du parsing de cookie_preferences', { error: e });
+            return defaultPrefs;
+          }
+        })(),
+        created_at: data.created_at || null,
+        updated_at: data.updated_at || null,
+      };
+      
+      debug('Paramètres mis à jour avec succès: %o', result);
+      debug('=== FIN updateUserSettings (succès) ===');
+      return result;
+    }
+    
+    log.error('Aucune donnée retournée par Supabase après la mise à jour');
+    return null;
+  } catch (error) {
+log.error('ERREUR dans updateUserSettings:', { error });
+    if (error && typeof error === 'object' && 'stack' in error) {
+      log.error(`Stack: ${String((error as Error).stack) || 'Pas de stack trace disponible'}`);
+    }
+    throw error;
+  }
 }
 

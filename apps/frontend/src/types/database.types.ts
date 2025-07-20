@@ -582,6 +582,7 @@ export type Database = {
       }
       user_settings: {
         Row: {
+          cookie_preferences: Json | null
           created_at: string | null
           id: string
           learning_preferences: Json | null
@@ -591,6 +592,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          cookie_preferences?: Json | null
           created_at?: string | null
           id?: string
           learning_preferences?: Json | null
@@ -600,6 +602,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          cookie_preferences?: Json | null
           created_at?: string | null
           id?: string
           learning_preferences?: Json | null
@@ -726,15 +729,22 @@ export type Database = {
         Returns: boolean
       }
       update_user_profile: {
-        Args: { profile_data: Json; user_id?: string }
+        Args: { p_user_id: string; p_profile_data: Json }
         Returns: {
           id: string
-          updated_at: string
+          email: string
           full_name: string
           avatar_url: string
           phone: string
           profession: string
           company: string
+          level: number
+          xp: number
+          current_streak: number
+          is_admin: boolean
+          last_completed_at: string
+          created_at: string
+          updated_at: string
         }[]
       }
       update_user_settings: {
