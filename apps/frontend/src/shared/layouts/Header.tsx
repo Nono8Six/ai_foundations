@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@features/auth/contexts/AuthContext';
-import Icon, { type IconName } from './AppIcon';
-import Avatar from './Avatar';
+import Icon, { type IconName } from '@shared/components/AppIcon';
+import Avatar from '@shared/components/Avatar';
 import { log } from '@libs/logger';
 import {
   DropdownMenu,
