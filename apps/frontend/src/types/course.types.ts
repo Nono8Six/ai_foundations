@@ -289,3 +289,120 @@ export function calculateProgressPercentage(
   if (total === 0) return 0;
   return Math.round((completed / total) * 100);
 }
+
+// ====================================
+// CMS-SPECIFIC TYPES AND SCHEMAS
+// ====================================
+
+/**
+ * Statut de publication pour le CMS
+ */
+export type CmsPublicationStatus = 'draft' | 'published' | 'archived';
+
+/**
+ * Interface pour un cours dans le contexte CMS
+ * Plus simple que CourseWithProgress, adaptée aux besoins d'administration
+ */
+export interface CmsCourse {
+  /** Identifiant unique du cours */
+  id: string;
+  /** Titre du cours */
+  title: string;
+  /** Description du cours (optionnelle) */
+  description?: string | null;
+  /** Slug unique pour l'URL */
+  slug: string;
+  /** URL de l'image de couverture */
+  cover_image_url?: string | null;
+  /** URL de la miniature */
+  thumbnail_url?: string | null;
+  /** Catégorie du cours */
+  category?: string | null;
+  /** Niveau de difficulté */
+  difficulty?: CourseDifficulty | null;
+  /** Statut de publication */
+  is_published: boolean;
+  /** Date de création */
+  created_at: string;
+  /** Date de dernière mise à jour */
+  updated_at: string;
+  /** Prix du cours (pour le CMS) */
+  price?: number;
+  /** Statut éditorial pour le CMS */
+  status?: CmsPublicationStatus;
+  /** Nombre total de modules (calculé) */
+  modules_count?: number;
+  /** Nombre total de leçons (calculé) */
+  lessons_count?: number;
+  /** Durée totale estimée en minutes */
+  estimated_duration?: number;
+  /** Modules associés (optionnel pour le CMS) */
+  modules?: Array<{
+    id: string;
+    title: string;
+    description?: string | null;
+    module_order: number;
+    is_published: boolean;
+    lessons?: Array<{
+      id: string;
+      title: string;
+      lesson_order: number;
+      is_published: boolean;
+      duration?: number | null;
+    }>;
+  }>;
+}
+
+/**
+ * Schéma Zod pour la validation des cours dans le CMS
+ * Plus flexible que CourseWithProgressSchema, adapté aux besoins d'administration
+ */
+export const CmsCourseSchema = z.object({
+  // Champs obligatoires de base
+  id: z.string().uuid('ID du cours invalide'),
+  title: z.string().min(1, 'Le titre est requis'),
+  slug: z.string().min(1, 'Le slug est requis'),
+  is_published: z.boolean(),
+  created_at: z.string().refine(
+    (val) => !isNaN(Date.parse(val)),
+    'Date de création invalide'
+  ),
+  updated_at: z.string().refine(
+    (val) => !isNaN(Date.parse(val)),
+    'Date de mise à jour invalide'
+  ),
+  
+  // Champs optionnels très flexibles
+  description: z.any().optional(),
+  cover_image_url: z.any().optional(),
+  thumbnail_url: z.any().optional(),
+  category: z.any().optional(),
+  difficulty: z.any().optional(),
+  
+  // Champs spécifiques au CMS avec valeurs par défaut
+  price: z.number().min(0).optional().default(0),
+  status: z.enum(['draft', 'published', 'archived']).optional().default('draft'),
+  modules_count: z.number().int().min(0).optional().default(0),
+  lessons_count: z.number().int().min(0).optional().default(0),
+  estimated_duration: z.number().int().min(0).optional().default(0),
+  
+  // Modules optionnels pour le CMS étendu
+  modules: z.array(z.any()).optional()
+}).transform(course => ({
+  ...course,
+  // Garantir que les champs optionnels ont des valeurs par défaut appropriées
+  description: course.description || null,
+  cover_image_url: course.cover_image_url || null,
+  thumbnail_url: course.thumbnail_url || null,
+  category: course.category || null,
+  difficulty: course.difficulty || null,
+  price: course.price ?? 0,
+  status: course.status || (course.is_published ? 'published' : 'draft'),
+  modules_count: course.modules_count ?? 0,
+  lessons_count: course.lessons_count ?? 0,
+  estimated_duration: course.estimated_duration ?? 0,
+  modules: course.modules || []
+}));
+
+// Type déduit du schéma CMS - conservé pour référence future
+// export type CmsCourseParsed = z.infer<typeof CmsCourseSchema>;

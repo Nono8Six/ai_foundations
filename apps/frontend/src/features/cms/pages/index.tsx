@@ -1,21 +1,19 @@
 import React, { useState, useEffect, ReactElement } from 'react';
 import { useAdminCourses } from '@features/admin/contexts/AdminCourseContext';
 import { toast } from 'sonner';
-import { fetchCoursesWithContent } from '@shared/services/courseService';
+import { fetchCoursesForCMS, dbRowToCmsCourse } from '@shared/services/courseService';
 import { log } from '@libs/logger';
 import type { Database } from '@frontend/types/database.types';
+import type { CmsCourse as CmsCourseType } from '@frontend/types/course.types';
 import {
   type CmsContentItem,
   type CmsCourse,
   type CmsModule,
   type CmsLesson,
   type CourseWithContent,
-  courseApiToCmsCourse,
-  courseRowToCmsCourse,
 } from '@libs/cms-utils';
 
 import Icon from '@shared/components/AppIcon';
-import AdminLayout, { useAdminSidebar } from '@shared/layouts/AdminLayout';
 import ContentTree, { ContentNode } from './components/ContentTree';
 import CourseEditor from './components/CourseEditor';
 import ModuleEditor from './components/ModuleEditor';
@@ -31,7 +29,44 @@ const isCmsContentItem = (item: unknown): item is CmsContentItem =>
   'type' in item &&
   ['course', 'module', 'lesson'].includes((item as { type?: string }).type ?? '');
 
-const mapToContentNode = (item: CourseWithContent | CmsContentItem): ContentNode => {
+const mapToContentNode = (item: CmsCourseType | CourseWithContent | CmsContentItem): ContentNode => {
+  // Si c'est un CmsCourseType (nouveau format)
+  if (item && typeof item === 'object' && 'modules_count' in item) {
+    const cmsItem = item as CmsCourseType;
+    const result: ContentNode = {
+      id: cmsItem.id,
+      title: cmsItem.title,
+      type: 'course',
+      status: cmsItem.status === 'published' ? 'published' : 'draft',
+      price: cmsItem.price || 0,
+      ...(cmsItem.description ? { description: cmsItem.description } : {})
+    };
+    
+    // Si des modules sont présents
+    if (cmsItem.modules?.length) {
+      result.modules = cmsItem.modules.map(module => ({
+        id: module.id,
+        title: module.title,
+        type: 'module' as const,
+        status: module.is_published ? 'published' : 'draft',
+        ...(module.description ? { description: module.description } : {}),
+        ...(module.lessons?.length
+          ? {
+              lessons: module.lessons.map(lesson => ({
+                id: lesson.id,
+                title: lesson.title,
+                type: 'lesson' as const,
+                status: lesson.is_published ? 'published' : 'draft',
+                ...(lesson.duration ? { duration: lesson.duration } : {})
+              }))
+            }
+          : {})
+      }));
+    }
+    return result;
+  }
+  
+  // Si c'est un CmsContentItem (format existant)
   if (isCmsContentItem(item)) {
     const baseNode: Omit<ContentNode, 'type'> = {
       id: item.id,
@@ -61,7 +96,8 @@ const mapToContentNode = (item: CourseWithContent | CmsContentItem): ContentNode
       };
     }
   }
-  // API fallback
+  
+  // API fallback (ancien format)
   const result: ContentNode = {
     id: item.id,
     title: item.title,
@@ -93,8 +129,7 @@ const mapToContentNode = (item: CourseWithContent | CmsContentItem): ContentNode
 };
 
 
-const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
-  const { setSidebarOpen } = useAdminSidebar();
+const ContentManagementCoursesModulesLessons = (): ReactElement => {
   const [selectedContent, setSelectedContent] = useState<CmsContentItem | null>(null);
   const [contentType, setContentType] = useState<'course' | 'module' | 'lesson'>('course');
   const [showMediaLibrary, setShowMediaLibrary] = useState(false);
@@ -102,7 +137,7 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [showBulkOperations, setShowBulkOperations] = useState(false);
 
-  const [contentData, setContentData] = useState<CmsCourse[]>([]);
+  const [contentData, setContentData] = useState<CmsCourseType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   const { createCourse, updateCourse, deleteCourse } = useAdminCourses();
@@ -111,13 +146,20 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
     const load = async () => {
       setLoading(true);
       try {
-        const courses = await fetchCoursesWithContent();
-        setContentData(
-          courses.map(course => courseApiToCmsCourse(course as unknown as CourseWithContent))
-        );
+        log.info('Starting to fetch courses for CMS using robust validation...');
+        const cmsCourses = await fetchCoursesForCMS();
+        log.info('CMS courses fetched successfully:', cmsCourses);
+        
+        setContentData(cmsCourses);
+        log.info(`Content data set successfully: ${cmsCourses.length} courses`);
       } catch (err) {
-        log.error('Failed to fetch courses', err);
-        toast.error('Erreur lors du chargement du contenu');
+        log.error('Failed to fetch courses for CMS', err);
+        log.error('Error details:', {
+          message: err instanceof Error ? err.message : 'Unknown error',
+          stack: err instanceof Error ? err.stack : undefined,
+          error: err
+        });
+        toast.error('Erreur lors du chargement du contenu CMS');
       } finally {
         setLoading(false);
       }
@@ -143,33 +185,20 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
           ? courseData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
           : `course-${Date.now()}`;
 
-        // Préparation des données pour l'API
-        const updates = {
-          title: courseData.title,
-          description: courseData.description || '',
-          price: courseData.price || 0,
-          status: courseData.status || 'draft',
-          slug,
-          updated_at: new Date().toISOString()
-        } as const;
-
+        // Préparation des données pour l'API (seulement les champs de la table courses)
         const courseDataForApi: Omit<Database['public']['Tables']['courses']['Row'], 'id'> & {
           id?: string;
-          price?: number;
-          status?: string;
         } = {
-          title: updates.title,
-          description: updates.description,
-          price: updates.price,
-          status: updates.status as 'draft' | 'published' | 'archived',
-          slug: updates.slug,
-          updated_at: updates.updated_at,
-          category: null,
-          cover_image_url: null,
-          difficulty: null,
-          is_published: false,
-          thumbnail_url: null,
-          created_at: courseData.createdAt || new Date().toISOString()
+          title: courseData.title,
+          description: courseData.description || null,
+          slug,
+          cover_image_url: courseData.cover_image_url || null,
+          thumbnail_url: courseData.thumbnail_url || null,
+          category: courseData.category || null,
+          difficulty: courseData.difficulty || null,
+          is_published: courseData.status === 'published' ? true : false,
+          updated_at: new Date().toISOString(),
+          created_at: courseData.created_at || new Date().toISOString()
         };
         if (courseData.id && !courseData.id.startsWith('temp-')) {
           courseDataForApi.id = courseData.id;
@@ -178,7 +207,7 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
           // Update
           const { id, ...updates } = courseDataForApi;
           const result = await updateCourse({ id, updates });
-          savedCourse = courseRowToCmsCourse(result);
+          savedCourse = dbRowToCmsCourse(result);
           setContentData(prev => prev.map(c => (c.id === savedCourse.id ? savedCourse : c)));
           toast.success('Cours mis à jour avec succès !');
         } else {
@@ -186,7 +215,7 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { id: _discard, ...newCourseData } = courseDataForApi;
           const result = await createCourse(newCourseData);
-          savedCourse = courseRowToCmsCourse(result);
+          savedCourse = dbRowToCmsCourse(result);
           setContentData(prev => [...prev, savedCourse]);
           toast.success('Cours créé avec succès !');
         }
@@ -327,19 +356,14 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
   }
 
   return (
-    <>
-      <header className='bg-surface shadow-subtle border-b border-border fixed top-16 left-0 right-0 z-30 lg:left-64'>
-        <div className='flex items-center h-16 px-6'>
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className='lg:hidden p-2 rounded-md hover:bg-secondary-100 transition-colors'
-          >
-            <Icon aria-hidden='true' name='Menu' size={20} />
-          </button>
-          <h1 className='text-xl font-semibold text-text-primary ml-4'>Gestion du Contenu</h1>
+    <div className='min-h-screen bg-background'>
+      <main className='p-6'>
+        <div className='mb-6'>
+          <h1 className='text-3xl font-bold text-text-primary mb-2'>Gestion du Contenu</h1>
+          <p className='text-text-secondary'>
+            Créez et gérez les cours, modules et leçons de votre plateforme
+          </p>
         </div>
-      </header>
-      <main className='p-6 pt-16'>
         <div className='flex h-[calc(100vh-4rem)]'>
           <div className='w-80 bg-surface border-r border-border flex flex-col'>
             <div className='p-4 border-b border-border'>
@@ -418,16 +442,8 @@ const ContentManagementCoursesModulesLessonsContent = (): ReactElement => {
           />
         )}
       </main>
-    </>
+    </div>
   );
 };
-
-type ContentManagementCoursesModulesLessonsProps = Record<string, never>;
-
-const ContentManagementCoursesModulesLessons: React.FC<ContentManagementCoursesModulesLessonsProps> = () => (
-  <AdminLayout>
-    <ContentManagementCoursesModulesLessonsContent />
-  </AdminLayout>
-);
 
 export default ContentManagementCoursesModulesLessons;

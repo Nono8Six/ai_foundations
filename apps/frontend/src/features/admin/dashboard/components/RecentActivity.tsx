@@ -128,10 +128,7 @@ const RecentActivity: React.FC = () => {
           action,
           details,
           created_at,
-          profiles (
-            full_name,
-            avatar_url
-          )
+          user_id
         `
         )
         .order('created_at', { ascending: false })
@@ -140,29 +137,51 @@ const RecentActivity: React.FC = () => {
       if (error) {
         log.error('Error fetching recent activity:', error);
         setActivitiesData([]);
-      } else {
-        const transformedData = data.map(activity => {
-          const typeProps = getActivityTypeProps(activity.type);
-          const user = activity.profiles && typeof activity.profiles === 'object' && activity.profiles !== null && 'full_name' in activity.profiles
-            ? { 
-                name: ((activity.profiles as { full_name?: string | null; avatar_url?: string | null }).full_name) ?? 'Utilisateur', 
-                avatar: ((activity.profiles as { full_name?: string | null; avatar_url?: string | null }).avatar_url) ?? null 
-              }
-            : typeProps.defaultUser;
-
-          return {
-            id: activity.id,
-            type: activity.type,
-            user,
-            action: activity.action || typeProps.label, // Use Supabase action or default label
-            timestamp: timeSince(activity.created_at ?? new Date().toISOString()),
-            icon: typeProps.icon,
-            iconColor: typeProps.iconColor,
-            label: typeProps.label, // Adding label for consistency
-          };
-        });
-        setActivitiesData(transformedData);
+        return;
       }
+
+      if (!data || data.length === 0) {
+        setActivitiesData([]);
+        return;
+      }
+
+      // Fetch profiles separately for the user_ids we found
+      const userIds = [...new Set(data.map(activity => activity.user_id))];
+      const { data: profilesData, error: profilesError } = await supabase
+        .from('profiles')
+        .select('id, full_name, avatar_url')
+        .in('id', userIds);
+
+      if (profilesError) {
+        log.error('Error fetching profiles:', profilesError);
+      }
+
+      const profilesMap = new Map(
+        profilesData?.map(profile => [profile.id, profile]) || []
+      );
+
+      const transformedData = data.map(activity => {
+        const typeProps = getActivityTypeProps(activity.type);
+        const profile = profilesMap.get(activity.user_id);
+        const user = profile
+          ? { 
+              name: profile.full_name || 'Utilisateur', 
+              avatar: profile.avatar_url || null 
+            }
+          : typeProps.defaultUser;
+
+        return {
+          id: activity.id,
+          type: activity.type,
+          user,
+          action: activity.action || typeProps.label,
+          timestamp: timeSince(activity.created_at ?? new Date().toISOString()),
+          icon: typeProps.icon,
+          iconColor: typeProps.iconColor,
+          label: typeProps.label,
+        };
+      });
+      setActivitiesData(transformedData);
     } catch (err) {
       log.error('Unexpected error in fetchRecentActivity:', err);
       setActivitiesData([]);

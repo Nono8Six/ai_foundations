@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Icon from '@shared/components/AppIcon';
 import { supabase } from '@core/supabase/client';
-import AdminLayout, { useAdminSidebar } from "@shared/layouts/AdminLayout";
 import { log } from '@libs/logger';
 import RecentActivity from './components/RecentActivity';
 import UserEngagementChart from './components/UserEngagementChart';
@@ -10,8 +9,7 @@ import PopularCoursesChart from './components/PopularCoursesChart';
 import GeographicDistribution from './components/GeographicDistribution';
 import PerformanceMetrics from './components/PerformanceMetrics';
 
-const AdminDashboardContent: React.FC = () => {
-  const { setSidebarOpen } = useAdminSidebar();
+const AdminDashboard: React.FC = () => {
   const [selectedTimeRange, setSelectedTimeRange] = useState('7d');
   const [dashboardData, setDashboardData] = useState({
     totalUsers: 0,
@@ -152,62 +150,58 @@ const AdminDashboardContent: React.FC = () => {
   ];
 
   return (
-    <>
-      {/* Top navigation */}
-      <header className='bg-surface shadow-subtle border-b border-border fixed top-16 left-0 right-0 z-30 lg:left-64'>
-        <div className='flex items-center justify-between h-16 px-6'>
-          <div className='flex items-center space-x-4'>
-            <button
-              onClick={() => setSidebarOpen(true)}
-              className='lg:hidden p-2 rounded-md hover:bg-secondary-100 transition-colors'
-            >
-              <Icon name='Menu' size={20} aria-label='Ouvrir le menu' />
-            </button>
-            <h1 className='text-xl font-semibold text-text-primary'>
-              Tableau de bord administrateur
-            </h1>
-          </div>
-
-          <div className='flex items-center space-x-4'>
-            {/* Global search */}
-            <div className='relative hidden md:block'>
-              <Icon
-                aria-hidden='true'
-                name='Search'
-                size={18}
-                className='absolute left-3 top-1/2 transform -translate-y-1/2 text-text-secondary'
-              />
-              <input
-                type='text'
-                placeholder='Rechercher...'
-                className='pl-10 pr-4 py-2 w-64 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent'
-              />
+    <div className='min-h-screen bg-background'>
+      {/* Dashboard content */}
+      <main className='p-6'>
+        {/* Page header */}
+        <div className='mb-8'>
+          <div className='flex items-center justify-between'>
+            <div>
+              <h1 className='text-3xl font-bold text-text-primary mb-2'>
+                Tableau de bord administrateur
+              </h1>
+              <p className="text-text-secondary">
+                Vue d&apos;ensemble des performances et de l&apos;activité de la plateforme
+              </p>
             </div>
+            
+            <div className='flex items-center space-x-4'>
+              {/* Global search */}
+              <div className='relative hidden md:block'>
+                <Icon
+                  aria-hidden='true'
+                  name='Search'
+                  size={18}
+                  className='absolute left-3 top-1/2 transform -translate-y-1/2 text-text-secondary'
+                />
+                <input
+                  type='text'
+                  placeholder='Rechercher...'
+                  className='pl-10 pr-4 py-2 w-64 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-surface'
+                />
+              </div>
 
-            {/* Time range selector */}
-            <select
-              value={selectedTimeRange}
-              onChange={e => setSelectedTimeRange(e.target.value)}
-              className='px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm'
-            >
-              {timeRanges.map(range => (
-                <option key={range.value} value={range.value}>
-                  {range.label}
-                </option>
-              ))}
-            </select>
+              {/* Time range selector */}
+              <select
+                value={selectedTimeRange}
+                onChange={e => setSelectedTimeRange(e.target.value)}
+                className='px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm bg-surface'
+              >
+                {timeRanges.map(range => (
+                  <option key={range.value} value={range.value}>
+                    {range.label}
+                  </option>
+                ))}
+              </select>
 
-            {/* Notifications */}
-            <button className='relative p-2 rounded-lg hover:bg-secondary-100 transition-colors'>
-              <Icon name='Bell' size={20} aria-label='Notifications' />
-              <span className='absolute top-1 right-1 w-2 h-2 bg-error rounded-full'></span>
-            </button>
+              {/* Notifications */}
+              <button className='relative p-2 rounded-lg hover:bg-secondary-100 transition-colors'>
+                <Icon name='Bell' size={20} aria-label='Notifications' />
+                <span className='absolute top-1 right-1 w-2 h-2 bg-error rounded-full'></span>
+              </button>
+            </div>
           </div>
         </div>
-      </header>
-
-      {/* Dashboard content */}
-      <main className='p-6 pt-32'>
         {loading ? (
           <div className='flex justify-center items-center h-64'>
             <p className='text-xl text-text-secondary'>Chargement des données...</p>
@@ -309,14 +303,8 @@ const AdminDashboardContent: React.FC = () => {
           </>
         )}
       </main>
-    </>
+    </div>
   );
 };
-
-const AdminDashboard: React.FC = () => (
-  <AdminLayout>
-    <AdminDashboardContent />
-  </AdminLayout>
-);
 
 export default AdminDashboard;

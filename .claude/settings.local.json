@@ -25,14 +25,11 @@
       "Bash(do echo \"Fixing: $file\")",
       "Bash(rg:*)",
       "Bash(done)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "mcp__supabase__execute_sql"
     ],
     "deny": []
   },
   "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": [
-    "supabase",
-    "context7",
-    "supabase-deploya"
-  ]
+  "enabledMcpjsonServers": ["supabase", "context7", "supabase-deploya"]
 }

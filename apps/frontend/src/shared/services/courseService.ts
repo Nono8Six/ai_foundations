@@ -3,11 +3,13 @@ import { supabase } from '@core/supabase/client';
 import { 
   CourseWithProgressSchema, 
   BaseCourseSchema,
+  CmsCourseSchema,
   type CourseWithProgress, 
   type CourseFilters, 
   type CourseSortOption, 
   type PaginationOptions, 
-  type PaginatedCoursesResult
+  type PaginatedCoursesResult,
+  type CmsCourse
 } from '@frontend/types/course.types';
 import { log } from '@libs/logger';
 import { z } from 'zod';
@@ -60,7 +62,10 @@ export async function fetchCourses({
   
   // Vérifier le cache
   if (isCacheValid(cacheKey)) {
-    return cache.get(cacheKey)!.data;
+    const cached = cache.get(cacheKey);
+    if (cached) {
+      return cached.data;
+    }
   }
   
   try {
@@ -256,20 +261,263 @@ export async function fetchCourseWithContent(courseId: string): Promise<CourseWi
   }
 }
 
-export async function fetchCoursesWithContent(): Promise<CourseWithProgress[]> {
-  const { data, error } = await supabaseClient
-    .from('user_course_progress')
-    .select(
-      `*, modules(*, lessons(*, user_progress!inner(completed_at, status)))`
-    );
+/**
+ * Transforme les données brutes de cours en format CMS
+ */
+function transformToCmsFormat(rawCourse: Record<string, unknown>): Record<string, unknown> {
+  return {
+    ...rawCourse,
+    // Garantir les champs requis avec des valeurs par défaut
+    price: (rawCourse.price as number) || 0,
+    status: rawCourse.is_published ? 'published' : 'draft',
+    modules_count: 0, // À calculer si nécessaire
+    lessons_count: 0, // À calculer si nécessaire
+    estimated_duration: 0, // À calculer si nécessaire
+  };
+}
 
-  if (error) {
-    throw new Error(error.message);
+/**
+ * Récupère tous les cours pour le CMS avec validation robuste
+ * Utilise le schéma CMS dédié pour une validation appropriée
+ */
+export async function fetchCoursesForCMS(): Promise<CmsCourse[]> {
+  try {
+    log.info('Fetching courses for CMS with robust validation...');
+    
+    const { data, error } = await supabaseClient
+      .from('courses')
+      .select('*');
+
+    if (error) {
+      log.error('Supabase error:', error);
+      throw new Error(`Erreur Supabase: ${error.message}`);
+    }
+
+    if (!data) {
+      log.warn('No courses found');
+      return [];
+    }
+
+    log.info(`Found ${data.length} courses, validating with CMS schema...`);
+
+    // Transformation et validation avec le schéma CMS
+    const validatedCourses = data.map((course, index) => {
+      try {
+        // Transformer les données au format CMS
+        const transformedCourse = transformToCmsFormat(course);
+        
+        // Valider avec le schéma CMS dédié
+        const validatedCourse = CmsCourseSchema.parse(transformedCourse);
+        
+        log.info(`Successfully validated course ${index}: ${validatedCourse.title}`);
+        return validatedCourse as CmsCourse;
+        
+      } catch (validationError) {
+        log.error(`CMS schema validation failed for course ${index}:`, {
+          error: validationError,
+          courseData: course,
+          transformedCourse
+        });
+        
+        // Log des détails d'erreur Zod avec plus de détails
+        if (validationError && typeof validationError === 'object' && 'issues' in validationError) {
+          const issues = (validationError as { issues: Array<Record<string, unknown>> }).issues;
+          log.error(`Validation issues (${issues.length} errors):`, issues);
+          
+          // Log chaque erreur individuellement pour plus de clarté
+          issues.forEach((issue: Record<string, unknown>, i: number) => {
+            log.error(`  Issue ${i + 1}:`, {
+              path: issue.path,
+              message: issue.message,
+              code: issue.code,
+              received: issue.received,
+              expected: issue.expected
+            });
+          });
+        }
+        
+        throw new Error(`Validation échouée pour le cours "${course.title || 'Sans titre'}": ${
+          validationError instanceof Error ? validationError.message : 'Erreur inconnue'
+        }`);
+      }
+    });
+
+    log.info(`Successfully validated ${validatedCourses.length} courses for CMS`);
+    return validatedCourses;
+    
+  } catch (error) {
+    log.error('Error in fetchCoursesForCMS:', error);
+    throw error;
   }
+}
 
-  return (data || []).map(d =>
-    CourseWithProgressSchema.parse(d) as CourseWithProgress
-  );
+/**
+ * Récupère les cours avec leurs modules et leçons pour le CMS étendu
+ */
+export async function fetchCoursesWithContentForCMS(): Promise<CmsCourse[]> {
+  try {
+    log.info('Fetching courses with content for CMS...');
+    
+    // Requête avec jointures pour récupérer modules et leçons
+    const { data, error } = await supabaseClient
+      .from('courses')
+      .select(`
+        *,
+        modules (
+          id,
+          title,
+          description,
+          module_order,
+          is_published,
+          lessons (
+            id,
+            title,
+            lesson_order,
+            is_published,
+            duration
+          )
+        )
+      `);
+
+    if (error) {
+      throw new Error(`Erreur Supabase: ${error.message}`);
+    }
+
+    if (!data) return [];
+
+    // Transformation avec calculs des compteurs
+    const coursesWithCounts = data.map(course => {
+      const modules = course.modules || [];
+      const allLessons = modules.flatMap(module => module.lessons || []);
+      
+      return transformToCmsFormat({
+        ...course,
+        modules_count: modules.length,
+        lessons_count: allLessons.length,
+        estimated_duration: allLessons.reduce((total, lesson) => total + (lesson.duration || 0), 0),
+        modules
+      });
+    });
+
+    // Validation avec le schéma CMS
+    return coursesWithCounts.map(course => CmsCourseSchema.parse(course)) as CmsCourse[];
+    
+  } catch (error) {
+    log.error('Error in fetchCoursesWithContentForCMS:', error);
+    throw error;
+  }
+}
+
+/**
+ * Convertit un cours CMS en format CourseWithProgress pour la compatibilité
+ * Utilisé quand le CMS doit retourner des données au format interface utilisateur
+ */
+export function cmsCourseToProgressCourse(cmsCourse: CmsCourse): CourseWithProgress {
+  return {
+    ...cmsCourse,
+    // Champs spécifiques à CourseWithProgress
+    user_id: 'anonymous',
+    total_lessons: cmsCourse.lessons_count || 0,
+    completed_lessons: 0,
+    completion_percentage: 0,
+    last_activity_at: null,
+    status: 'not_started' as const,
+    average_rating: 0,
+    enrolled_students: 0,
+    duration_minutes: cmsCourse.estimated_duration || 0,
+    is_new: false,
+    difficulty: (cmsCourse.difficulty || 'beginner') as 'beginner' | 'intermediate' | 'advanced' | 'expert',
+    duration: cmsCourse.estimated_duration 
+      ? cmsCourse.estimated_duration < 60 
+        ? `${cmsCourse.estimated_duration} min`
+        : `${Math.floor(cmsCourse.estimated_duration / 60)}h${cmsCourse.estimated_duration % 60 ? ` ${cmsCourse.estimated_duration % 60}min` : ''}`
+      : '0h 00min',
+    progress: {
+      completed: 0,
+      total: cmsCourse.lessons_count || 0,
+      percentage: 0,
+      lastActivityAt: null,
+      status: 'not_started' as const
+    },
+    // Garder les champs optionnels
+    prerequisites: [],
+    tags: [],
+    previewLessons: 0,
+    instructor: 'System'
+  };
+}
+
+/**
+ * Convertit un cours CourseWithProgress en format CMS
+ * Utilisé pour la migration depuis l'ancien format
+ */
+export function progressCourseToCmsCourse(progressCourse: CourseWithProgress): CmsCourse {
+  return {
+    id: progressCourse.id,
+    title: progressCourse.title,
+    description: progressCourse.description,
+    slug: progressCourse.slug,
+    cover_image_url: progressCourse.cover_image_url,
+    thumbnail_url: progressCourse.thumbnail_url,
+    category: progressCourse.category,
+    difficulty: progressCourse.difficulty,
+    is_published: progressCourse.is_published,
+    created_at: progressCourse.created_at || new Date().toISOString(),
+    updated_at: progressCourse.updated_at || new Date().toISOString(),
+    price: 0, // Default pour CMS
+    status: progressCourse.is_published ? 'published' : 'draft',
+    modules_count: progressCourse.total_lessons || 0,
+    lessons_count: progressCourse.total_lessons || 0,
+    estimated_duration: progressCourse.duration_minutes || 0
+  };
+}
+
+/**
+ * Convertit une ligne de base de données courses en format CMS
+ * Utilisé après create/update pour transformer la réponse de Supabase
+ */
+export function dbRowToCmsCourse(dbRow: Record<string, unknown>): CmsCourse {
+  return {
+    id: dbRow.id as string,
+    title: dbRow.title as string,
+    description: dbRow.description as string | null,
+    slug: dbRow.slug as string,
+    cover_image_url: dbRow.cover_image_url as string | null,
+    thumbnail_url: dbRow.thumbnail_url as string | null,
+    category: dbRow.category as string | null,
+    difficulty: dbRow.difficulty as string | null,
+    is_published: dbRow.is_published as boolean,
+    created_at: dbRow.created_at as string,
+    updated_at: dbRow.updated_at as string,
+    price: 0, // Les cours n'ont pas de prix dans la DB, valeur par défaut CMS
+    status: dbRow.is_published ? 'published' : 'draft',
+    modules_count: 0, // À calculer si nécessaire
+    lessons_count: 0, // À calculer si nécessaire
+    estimated_duration: 0 // À calculer si nécessaire
+  };
+}
+
+/**
+ * Fonction principale pour récupérer les cours avec contenu
+ * Utilise maintenant l'architecture CMS robuste
+ */
+export async function fetchCoursesWithContent(): Promise<CourseWithProgress[]> {
+  try {
+    log.info('Fetching courses with content using robust CMS architecture...');
+    
+    // Utiliser le service CMS robuste
+    const cmsCoarses = await fetchCoursesForCMS();
+    
+    // Convertir au format CourseWithProgress pour la compatibilité
+    const progressCourses = cmsCoarses.map(cmsCourseToProgressCourse);
+    
+    log.info(`Successfully converted ${progressCourses.length} CMS courses to progress format`);
+    return progressCourses;
+    
+  } catch (error) {
+    log.error('Error in fetchCoursesWithContent:', error);
+    throw error;
+  }
 }
 
 export const CoursesFromSupabaseSchema = z.object({

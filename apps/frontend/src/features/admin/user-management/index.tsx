@@ -1,7 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { supabase } from '@core/supabase/client';
 import Icon from '@shared/components/AppIcon';
-import AdminLayout, { useAdminSidebar } from "@shared/layouts/AdminLayout";
 import { log } from '@libs/logger';
 import UserTable from './components/UserTable';
 import UserDetailsPanel from './components/UserDetailsPanel';
@@ -23,8 +22,7 @@ export interface SortConfig {
   direction: 'asc' | 'desc';
 }
 
-const UserManagementAdminContent: React.FC = () => {
-  const { setSidebarOpen } = useAdminSidebar();
+const UserManagementAdmin: React.FC = () => {
 
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
@@ -143,20 +141,9 @@ const UserManagementAdminContent: React.FC = () => {
   };
 
   return (
-    <>
-      <header className='bg-surface shadow-subtle border-b border-border fixed top-16 left-0 right-0 z-30 lg:left-64'>
-        <div className='flex items-center h-16 px-6'>
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className='lg:hidden p-2 rounded-md hover:bg-secondary-100 transition-colors'
-          >
-            <Icon aria-hidden='true' name='Menu' size={20} />
-          </button>
-          <h1 className='text-xl font-semibold text-text-primary ml-4'>Gestion des Utilisateurs</h1>
-        </div>
-      </header>
-      <main className='p-6 pt-16'>
-        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
+    <div className='min-h-screen bg-background'>
+      <main className='p-6'>
+        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='mb-8'>
             <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between'>
               <div>
@@ -318,14 +305,8 @@ const UserManagementAdminContent: React.FC = () => {
           />
         )}
       </main>
-    </>
+    </div>
   );
 };
-
-const UserManagementAdmin: React.FC = () => (
-  <AdminLayout>
-    <UserManagementAdminContent />
-  </AdminLayout>
-);
 
 export default UserManagementAdmin;
