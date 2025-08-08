@@ -51,11 +51,13 @@ function groupActivities(
       });
     }
 
-    const group = groupsMap.get(groupKey)!;
-    group.activities.push(activity);
-    
-    if (activity.xpDelta) {
-      group.totalXP += activity.xpDelta;
+    const group = groupsMap.get(groupKey);
+    if (group) {
+      group.activities.push(activity);
+      
+      if (activity.xpDelta) {
+        group.totalXP += activity.xpDelta;
+      }
     }
   });
 
@@ -71,10 +73,11 @@ function getGroupKey(date: Date, groupBy: 'day' | 'week' | 'month'): string {
   switch (groupBy) {
     case 'day':
       return date.toISOString().split('T')[0]; // "2025-01-08"
-    case 'week':
+    case 'week': {
       const year = date.getFullYear();
       const week = getWeekNumber(date);
       return `${year}-W${String(week).padStart(2, '0')}`; // "2025-W02"
+    }
     case 'month':
       return date.toISOString().substring(0, 7); // "2025-01"
     default:
@@ -121,7 +124,7 @@ function getGroupLabel(groupKey: string, groupBy: 'day' | 'week' | 'month'): str
       }
       
       case 'month': {
-        const date = new Date(groupKey + '-01');
+        const date = new Date(`${groupKey  }-01`);
         return date.toLocaleDateString('fr-FR', { 
           month: 'long', 
           year: 'numeric' 

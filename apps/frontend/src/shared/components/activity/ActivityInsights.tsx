@@ -167,7 +167,7 @@ const ActivityInsights: React.FC<ActivityInsightsProps> = ({
           </h5>
           
           <div className="flex items-end justify-between h-16 space-x-1">
-            {aggregates.eventsByDay.slice(-7).map((dayStats, index) => {
+            {aggregates.eventsByDay.slice(-7).map((dayStats, _index) => {
               const maxCount = Math.max(...aggregates.eventsByDay.map(d => d.count));
               const height = maxCount > 0 ? (dayStats.count / maxCount) * 100 : 0;
               const date = new Date(dayStats.date);

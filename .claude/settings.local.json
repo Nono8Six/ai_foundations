@@ -26,10 +26,20 @@
       "Bash(rg:*)",
       "Bash(done)",
       "Bash(grep:*)",
-      "mcp__supabase__execute_sql"
+      "mcp__supabase__execute_sql",
+      "mcp__supabase__generate_typescript_types",
+      "mcp__supabase-deploya__execute_sql_query",
+      "mcp__supabase-deploya__get_table_schema",
+      "mcp__supabase-deploya__get_db_schemas",
+      "mcp__supabase-deploya__get_tables",
+      "Bash(git rm:*)"
     ],
     "deny": []
   },
   "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": ["supabase", "context7", "supabase-deploya"]
+  "enabledMcpjsonServers": [
+    "supabase",
+    "context7",
+    "supabase-deploya"
+  ]
 }

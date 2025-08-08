@@ -2,7 +2,6 @@ export interface NotificationSettings {
   emailNotifications: boolean;
   pushNotifications: boolean;
   weeklyReport: boolean;
-  achievementAlerts: boolean;
   reminderNotifications: boolean;
 }
 
@@ -11,7 +10,6 @@ export type NotificationSettingKey = keyof NotificationSettings;
 export interface PrivacySettings {
   profileVisibility: 'private' | 'public';
   showProgress: boolean;
-  showAchievements: boolean;
   allowMessages: boolean;
 }
 

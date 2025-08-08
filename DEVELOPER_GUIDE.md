@@ -1,11 +1,12 @@
 # Guide du Développeur - IA Foundations LMS
 
 ## Table des matières
-- [Commandes Principales](#commandes-principales-racine-du-projet)
+- [Prérequis](#prérequis)
+- [Commandes Principales (Racine du Projet)](#commandes-principales-racine-du-projet)
   - [Développement](#développement)
   - [Tests](#tests)
   - [Qualité de Code](#qualité-de-code)
-  - [Base de Données](#base-de-données-supabase)
+  - [Base de Données Supabase](#base-de-données-supabase)
   - [Utilitaires](#utilitaires)
 - [Frontend](#frontend)
   - [Développement](#développement-1)
@@ -15,38 +16,39 @@
   - [Développement](#développement-2)
   - [Base de Données](#base-de-données)
   - [Migrations](#migrations)
-  - [Qualité de Code](#qualité-de-code-1)
 - [Workflows Recommandés](#workflows-recommandés)
+- [Dépannage](#dépannage)
+
+## Prérequis
+
+- Node.js 18+
+- pnpm 8+
+- Supabase CLI
+- Docker (pour Supabase en local)
 
 ## Commandes Principales (Racine du Projet)
 
 ### Développement
 
 #### `pnpm dev`
-**Description** : Lance l'application frontend en mode développement.  
-**Dossier** : `/` (racine du projet)  
-**Terminal** : Terminal principal du projet  
+**Description** : Lance le frontend en mode développement.  
+**Port** : 5173 par défaut  
 **Quand l'utiliser** :
-- Au démarrage d'une session de développement
-- Après avoir cloné le dépôt pour la première fois (après `pnpm install`)
-- Après avoir changé de branche Git
+- Pour démarrer le développement frontend
+- Après avoir cloné le dépôt (après `pnpm install`)
 
 #### `pnpm start`
 **Alias** : `pnpm dev`
 
 #### `pnpm build`
-**Description** : Construit l'application pour la production.  
-**Dossier** : `/` (racine du projet)  
-**Terminal** : Terminal de build/CI  
+**Description** : Construit l'application frontend pour la production.  
+**Dossier de sortie** : `apps/frontend/dist`  
 **Quand l'utiliser** :
 - Avant un déploiement en production
 - Pour tester la version de production localement
-- Pour vérifier les erreurs de build
 
 #### `pnpm preview`
-**Description** : Prévoyez l'application en production localement.  
-**Dossier** : `/` (racine du projet)  
-**Terminal** : Terminal secondaire  
+**Description** : Prévoyez l'application frontend en production localement.  
 **Prérequis** : Avoir exécuté `pnpm build` au préalable  
 **Quand l'utiliser** :
 - Pour tester la version de production localement
@@ -56,40 +58,35 @@
 
 #### `pnpm test`
 **Description** : Exécute les tests unitaires du frontend.  
-**Dossier** : `/` (racine du projet)  
-**Terminal** : Terminal de test  
-**Quand l'utiliser** :
-- Après des modifications de logique métier
-- Avant de créer une Pull Request
-- En continu pendant le développement avec `--watch`
+**Options** :
+- `--watch` : Exécute les tests en mode watch
+- `--coverage` : Génère un rapport de couverture
+- `--ui` : Lance l'interface utilisateur de test
 
-#### `pnpm test:backend`
-**Description** : Exécute les tests du backend.  
-**Dossier** : `/` (racine du projet)  
+#### `pnpm test:watch`
+**Description** : Exécute les tests en mode watch.  
 **Quand l'utiliser** :
-- Pour tester la logique côté serveur
-- Avant de déployer des changements d'API
+- Pendant le développement pour un retour immédiat
+- Pour déboguer des tests spécifiques
 
-#### `pnpm test:all`
-**Description** : Exécute tous les tests (frontend et backend).  
-**Dossier** : `/` (racine du projet)  
+#### `pnpm test:coverage`
+**Description** : Génère un rapport de couverture de code.  
+**Dossier de sortie** : `coverage/`  
 **Quand l'utiliser** :
-- Avant de pousser des changements majeurs
-- En préparation d'une release
+- Avant une PR pour vérifier la couverture des tests
+- Pour identifier le code non testé
 
 #### `pnpm test:output`
 **Description** : Exécute les tests et sauvegarde les résultats dans un fichier JSON.  
-**Dossier** : `/` (racine du projet)  
-**Fichier de sortie** : `test-results.json`  
+**Fichier de sortie** : `apps/frontend/test-results.json`  
 **Quand l'utiliser** :
-- Pour analyser les résultats des tests plus en détail
-- Pour partager les résultats avec l'équipe
+- Pour l'intégration continue
+- Pour analyser les résultats des tests
 
 ### Qualité de Code
 
 #### `pnpm lint`
 **Description** : Vérifie le code avec ESLint.  
-**Dossier** : `/` (racine du projet)  
 **Quand l'utiliser** :
 - Avant chaque commit
 - Après avoir résolu des conflits Git
@@ -97,44 +94,45 @@
 
 #### `pnpm typecheck`
 **Description** : Vérifie les types TypeScript.  
-**Dossier** : `/` (racine du projet)  
 **Quand l'utiliser** :
 - Après des modifications de types
 - Avant de pousser du code
-- En cas d'erreurs de compilation
+- Pour détecter les erreurs de typage
 
 #### `pnpm format`
 **Description** : Formate le code avec Prettier.  
-**Dossier** : `/` (racine du projet)  
 **Quand l'utiliser** :
 - Avant chaque commit
-- Après avoir collé du code
-- Pour uniformiser le style de code
+- Pour maintenir un style de code cohérent
+- Automatiquement via les hooks Git (recommandé)
 
-#### `pnpm validate`
-**Description** : Exécute le linting et les tests.  
+### Base de Données Supabase (Cloud-First)
+
+#### Configuration requise
+Avant d'utiliser les commandes Supabase, assurez-vous d'avoir configuré ces variables d'environnement :
+- `SUPABASE_URL` : L'URL de votre projet Supabase
+- `SUPABASE_ANON_KEY` : La clé anonyme de votre projet
+- `SUPABASE_PROJECT_REF` : La référence de votre projet (trouvable dans l'URL du dashboard Supabase)
+
+#### `pnpm gen:types`
+**Description** : Génère les types TypeScript à partir du schéma de la base de données cloud.  
+**Fichier de sortie** : `apps/frontend/src/types/database.types.ts`  
+**Prérequis** : 
+- Être connecté à Supabase CLI (`supabase login`)
+- Avoir les variables d'environnement configurées
+
 **Quand l'utiliser** :
-- Avant de pousser du code
-- Pour s'assurer que tout est valide
+- Après des changements de schéma dans la base de données cloud
+- Pour mettre à jour les types côté frontend
 
-### Base de Données (Supabase)
+**Exemple** :
+```bash
+# Se connecter à Supabase CLI (une seule fois)
+supabase login
 
-#### `pnpm db:pull`
-**Description** : Télécharge le schéma de la base de données distante.  
-**Quand l'utiliser** :
-- Après des changements de schéma en production
-- Pour synchroniser l'environnement local avec la production
-
-#### `pnpm db:push`
-**Description** : Pousse les changements de schéma local vers la base de données.  
-**Quand l'utiliser** :
-- Après avoir créé des migrations locales
-- Pour appliquer des changements de schéma
-
-#### `pnpm migration:new`
-**Description** : Crée une nouvelle migration.  
-**Quand l'utiliser** :
-- Après chaque modification du schéma de base de données
+# Générer les types
+pnpm gen:types
+```
 
 ### Utilitaires
 
@@ -160,82 +158,82 @@
 **Options** :
 - `--host` : Écoute sur toutes les interfaces réseau
 - `--port` : Spécifie un port personnalisé
+- `--open` : Ouvre automatiquement dans le navigateur
 
 ### Tests
 
-#### `pnpm --filter frontend test:ui`
-**Description** : Lance l'interface utilisateur de test.  
-**Quand l'utiliser** :
-- Pour déboguer visuellement les tests
-- Pour examiner l'état du DOM pendant les tests
+#### `pnpm --filter frontend test`
+**Description** : Exécute les tests unitaires.  
+**Options** :
+- `--watch` : Exécute en mode watch
+- `--ui` : Lance l'interface utilisateur de test
+- `--coverage` : Génère un rapport de couverture
 
-#### `pnpm --filter frontend test:coverage`
-**Description** : Génère un rapport de couverture de code.  
+#### `pnpm --filter frontend test:output`
+**Description** : Exécute les tests et sauvegarde les résultats dans un fichier JSON.  
+**Fichier de sortie** : `test-results.json`  
 **Quand l'utiliser** :
-- Pour identifier le code non testé
-- Avant une revue de code
+- Pour l'intégration continue
+- Pour analyser les résultats des tests
 
 ### Build
 
 #### `pnpm --filter frontend build`
 **Description** : Construit l'application pour la production.  
+**Dossier de sortie** : `dist/`  
 **Options** :
 - `--sourcemap` : Génère des source maps pour le débogage
 - `--mode analyze` : Génère un rapport d'analyse du bundle
 
+#### `pnpm --filter frontend preview`
+**Description** : Prévoyez l'application en production localement.  
+**Prérequis** : Avoir exécuté `pnpm build` au préalable
+
 ## Backend
 
-### Développement
+### Développement avec Supabase Cloud
 
-#### `pnpm --filter supabase-backend dev`
-**Description** : Lance le serveur de développement backend avec rechargement à chaud.  
+#### `pnpm --filter backend gen:types`
+**Description** : Génère les types TypeScript à partir du schéma de la base de données cloud.  
+**Fichier de sortie** : `apps/frontend/src/types/database.types.ts`  
+
+**Prérequis** : 
+1. Installer Supabase CLI : `npm install -g supabase`
+2. Se connecter : `supabase login`
+3. Configurer les variables d'environnement :
+   - `SUPABASE_URL`
+   - `SUPABASE_ANON_KEY`
+   - `SUPABASE_PROJECT_REF`
+
 **Quand l'utiliser** :
-- Pendant le développement du backend
-- Pour tester des changements d'API
+- Après des modifications du schéma dans l'interface web de Supabase
+- Pour synchroniser les types TypeScript avec la structure actuelle de la base de données
 
-### Base de Données
+**Exemple** :
+```bash
+# Générer les types
+pnpm gen:types
 
-#### `pnpm --filter supabase-backend db:start`
-**Description** : Démarre les services Supabase localement.  
-**Quand l'utiliser** :
-- Pour travailler avec une base de données locale
-- Pour tester des migrations
+# Ou directement avec la référence du projet
+SUPABASE_PROJECT_REF=votre-ref-projet pnpm gen:types
+```
 
-#### `pnpm --filter supabase-backend db:status`
-**Description** : Affiche l'état des services Supabase.  
-**Quand l'utiliser** :
-- Pour vérifier que tout est correctement démarré
-- En cas de problèmes de connexion
+### Gestion des migrations (Cloud-First)
 
-### Migrations
-
-#### `pnpm --filter supabase-backend migration:up`
-**Description** : Applique les migrations en attente.  
-**Quand l'utiliser** :
-- Après avoir créé une nouvelle migration
-- Après un `git pull` avec de nouvelles migrations
-
-#### `pnpm --filter supabase-backend migration:down`
-**Description** : Annule la dernière migration.  
-**Quand l'utiliser** :
-- Pour annuler une migration problématique
-- Pour revenir à une version antérieure du schéma
-
-### Qualité de Code
-
-#### `pnpm --filter supabase-backend lint`
-**Description** : Vérifie le code TypeScript du backend.  
-**Quand l'utiliser** :
-- Avant de pousser du code
-- Pour maintenir la qualité du code
+En mode cloud-first, les migrations sont gérées directement via l'interface web de Supabase :
+1. Connectez-vous à [app.supabase.com](https://app.supabase.com)
+2. Sélectionnez votre projet
+3. Allez dans l'onglet "Table Editor" pour gérer vos tables
+4. Utilisez l'interface pour créer/modifier les tables
+5. Exécutez `pnpm gen:types` pour mettre à jour les types TypeScript
 
 ## Workflows Recommandés
 
 ### Démarrage d'une Nouvelle Fonctionnalité
 ```bash
 # Terminal 1 - Backend
-pnpm --filter supabase-backend db:start
-pnpm --filter supabase-backend dev
+pnpm --filter backend db:start
+pnpm --filter backend dev
 
 # Terminal 2 - Frontend
 pnpm dev
@@ -270,21 +268,60 @@ pnpm gen:types
 
 ## Dépannage
 
-### Problèmes de Dépendances
+### Problèmes courants
+
+#### Les types ne sont pas mis à jour
 ```bash
-# Nettoyer et réinstaller
-pnpm clean
+# 1. Vérifiez que vous êtes connecté à Supabase CLI
+supabase status
+
+# 2. Vérifiez les variables d'environnement
+echo $SUPABASE_PROJECT_REF
+echo $SUPABASE_URL
+
+# 3. Générez les types avec plus de verbosité
+SUPABASE_DEBUG=1 pnpm gen:types
+```
+
+#### Problèmes d'authentification
+```bash
+# Vérifiez que vous êtes connecté
+supabase status
+
+# Si non connecté, connectez-vous
+supabase login
+
+# Vérifiez que vous avez les bonnes permissions sur le projet
+```
+
+#### Problèmes de connexion à la base de données
+```bash
+# Vérifiez que les variables d'environnement sont définies
+echo $SUPABASE_URL
+echo $SUPABASE_ANON_KEY
+
+# Testez la connexion avec curl
+curl -s "$SUPABASE_URL/rest/v1/" -H "apikey: $SUPABASE_ANON_KEY"
+```
+
+#### Problèmes avec les dépendances
+```bash
+# Supprimez le dossier node_modules et le fichier pnpm-lock.yaml
+rm -rf node_modules pnpm-lock.yaml
+rm -rf apps/frontend/node_modules
+rm -rf apps/backend/node_modules
+
+# Réinstallez les dépendances
 pnpm install
 ```
 
-### Problèmes de Base de Données
+#### Problèmes avec les tests
 ```bash
-# Redémarrer les services
-pnpm db:stop
-pnpm db:start
+# Exécutez les tests en mode debug
+pnpm test --debug
 
-# Réinitialiser la base de données (attention : supprime les données)
-pnpm db:reset
+# Exécutez un test spécifique
+pnpm test path/to/test/file.test.ts
 ```
 
 ### Problèmes de Cache

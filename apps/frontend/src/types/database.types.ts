@@ -14,78 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      achievement_row_camel_type: {
-        Row: {
-          createdAt: string | null
-          description: string | null
-          earned: boolean | null
-          icon: string | null
-          id: string
-          rarity: string | null
-          title: string
-          userId: string | null
-          xpReward: number | null
-        }
-        Insert: {
-          createdAt?: string | null
-          description?: string | null
-          earned?: boolean | null
-          icon?: string | null
-          id?: string
-          rarity?: string | null
-          title: string
-          userId?: string | null
-          xpReward?: number | null
-        }
-        Update: {
-          createdAt?: string | null
-          description?: string | null
-          earned?: boolean | null
-          icon?: string | null
-          id?: string
-          rarity?: string | null
-          title?: string
-          userId?: string | null
-          xpReward?: number | null
-        }
-        Relationships: []
-      }
-      achievements: {
-        Row: {
-          created_at: string | null
-          description: string | null
-          earned: boolean | null
-          icon: string | null
-          id: string
-          rarity: string | null
-          title: string
-          user_id: string | null
-          xp_reward: number | null
-        }
-        Insert: {
-          created_at?: string | null
-          description?: string | null
-          earned?: boolean | null
-          icon?: string | null
-          id?: string
-          rarity?: string | null
-          title: string
-          user_id?: string | null
-          xp_reward?: number | null
-        }
-        Update: {
-          created_at?: string | null
-          description?: string | null
-          earned?: boolean | null
-          icon?: string | null
-          id?: string
-          rarity?: string | null
-          title?: string
-          user_id?: string | null
-          xp_reward?: number | null
-        }
-        Relationships: []
-      }
       activity_log: {
         Row: {
           action: string
@@ -111,7 +39,15 @@ export type Database = {
           type?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_activity_log_user_id"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       coupons: {
         Row: {
@@ -395,6 +331,7 @@ export type Database = {
           level: number | null
           phone: string | null
           profession: string | null
+          profile_completion_history: Json | null
           updated_at: string | null
           xp: number | null
         }
@@ -411,6 +348,7 @@ export type Database = {
           level?: number | null
           phone?: string | null
           profession?: string | null
+          profile_completion_history?: Json | null
           updated_at?: string | null
           xp?: number | null
         }
@@ -427,6 +365,7 @@ export type Database = {
           level?: number | null
           phone?: string | null
           profession?: string | null
+          profile_completion_history?: Json | null
           updated_at?: string | null
           xp?: number | null
         }
@@ -542,6 +481,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "fk_user_progress_user_id"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "user_progress_lesson_id_fkey"
             columns: ["lesson_id"]
             isOneToOne: false
@@ -611,46 +557,18 @@ export type Database = {
           updated_at?: string | null
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_user_settings_user_id"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
-      achievement_row_camel: {
-        Row: {
-          createdAt: string | null
-          description: string | null
-          earned: boolean | null
-          icon: string | null
-          id: string | null
-          rarity: string | null
-          title: string | null
-          userId: string | null
-          xpReward: number | null
-        }
-        Insert: {
-          createdAt?: string | null
-          description?: string | null
-          earned?: boolean | null
-          icon?: string | null
-          id?: string | null
-          rarity?: string | null
-          title?: string | null
-          userId?: string | null
-          xpReward?: number | null
-        }
-        Update: {
-          createdAt?: string | null
-          description?: string | null
-          earned?: boolean | null
-          icon?: string | null
-          id?: string | null
-          rarity?: string | null
-          title?: string | null
-          userId?: string | null
-          xpReward?: number | null
-        }
-        Relationships: []
-      }
       user_course_progress: {
         Row: {
           category: string | null
@@ -675,37 +593,13 @@ export type Database = {
       }
     }
     Functions: {
+      create_profile_completion_achievements: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       email_exists: {
         Args: { search_email: string }
         Returns: boolean
-      }
-      get_achievement_row_camel_type: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          id: string
-          title: string
-          description: string
-          icon: string
-          rarity: string
-          earned: boolean
-          userId: string
-          xpReward: number
-          createdAt: string
-        }[]
-      }
-      get_achievements_camel: {
-        Args: { user_id_param?: string }
-        Returns: {
-          id: string
-          title: string
-          description: string
-          icon: string
-          rarity: string
-          earned: boolean
-          userId: string
-          xpReward: number
-          createdAt: string
-        }[]
       }
       get_user_course_progress: {
         Args: { user_id_param: string; course_id_param: string }
@@ -757,7 +651,6 @@ export type Database = {
       }
     }
     Enums: {
-      achievement_rarity: "common" | "uncommon" | "rare" | "epic" | "legendary"
       lesson_type: "video" | "text" | "quiz" | "exercise"
       progress_status: "not_started" | "in_progress" | "completed"
       rgpd_request_status: "pending" | "processing" | "completed" | "rejected"
@@ -890,7 +783,6 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      achievement_rarity: ["common", "uncommon", "rare", "epic", "legendary"],
       lesson_type: ["video", "text", "quiz", "exercise"],
       progress_status: ["not_started", "in_progress", "completed"],
       rgpd_request_status: ["pending", "processing", "completed", "rejected"],

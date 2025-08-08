@@ -5,7 +5,7 @@
  * les événements d'activité utilisateur (XP, complétion, etc.)
  */
 
-import { supabase } from '@/core/supabase/client';
+import { supabase } from '@core/supabase/client';
 import { ActivityEvent } from '@shared/utils/activityFormatter';
 
 export interface ActivityFilters {

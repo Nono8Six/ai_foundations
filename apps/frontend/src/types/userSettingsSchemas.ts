@@ -4,7 +4,6 @@ export const NotificationSettingsSchema = z.object({
   emailNotifications: z.boolean(),
   pushNotifications: z.boolean(),
   weeklyReport: z.boolean(),
-  achievementAlerts: z.boolean(),
   reminderNotifications: z.boolean(),
 });
 export type NotificationSettingsParsed = z.infer<typeof NotificationSettingsSchema>;
@@ -12,7 +11,6 @@ export type NotificationSettingsParsed = z.infer<typeof NotificationSettingsSche
 export const PrivacySettingsSchema = z.object({
   profileVisibility: z.enum(['private', 'public']),
   showProgress: z.boolean(),
-  showAchievements: z.boolean(),
   allowMessages: z.boolean(),
 });
 export type PrivacySettingsParsed = z.infer<typeof PrivacySettingsSchema>;

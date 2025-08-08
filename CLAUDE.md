@@ -223,3 +223,42 @@ pnpm dev
 - **Type safety**: Run `pnpm types:gen` after any schema changes
 - **Database changes**: Use Supabase Dashboard SQL Editor directly
 - **Clean environment**: No local database corruption or setup issues
+
+## Data and Mock Policy
+
+### Strict Rules - NO EXCEPTIONS
+
+- **NEVER use hardcoded data** in components or services
+- **NEVER use mock data** or simulated values
+- **IF data doesn't exist in database** → show elegant empty state
+- **NO redundancy** with data already displayed elsewhere (e.g., profile header)
+- **Calculations based ONLY** on real database data
+
+### Authorized Data Sources
+
+- Table `profiles`: xp, level, current_streak, last_completed_at
+- Future tables: xp_history, user_achievements, lesson_progress
+- **Nothing else** is authorized for display
+
+### Empty States Policy
+
+- Prefer encouraging message + clear call-to-action
+- Explain what will appear once data is available
+- Link to actions that will generate the data
+- NEVER show placeholder or fake data
+
+### Examples of What NOT to Do
+
+❌ Hardcoded skills: `['Frontend', 'Backend', 'Database']`
+❌ Fake XP calculations: `1000 XP = Level 2`
+❌ Mock recommendations: `"Complete 3 lessons to level up"`
+❌ Arbitrary progress: `"60% to next level"`
+❌ Duplicate data: Showing XP/level when already in header
+
+### Examples of What TO Do
+
+✅ Check if `xp_history` table exists and has data
+✅ If no data: "Your XP history will appear here once you start learning"
+✅ If data exists: Display actual chronological XP gains
+✅ Link to `/programmes` to start generating real data
+✅ Use only `userProfile.xp`, `userProfile.level` from database

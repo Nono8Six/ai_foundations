@@ -1,8 +1,10 @@
 {
   "mcpServers": {
     "supabase": {
-      "command": "npx",
+      "command": "cmd",
       "args": [
+        "/c",
+        "npx",
         "-y",
         "@supabase/mcp-server-supabase@latest",
         "--read-only",
@@ -13,11 +15,20 @@
       }
     },
     "context7": {
-      "command": "npx",
-      "args": ["-y", "context7-mcp@latest"]
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx",
+        "-y",
+        "@upstash/context7-mcp@latest"
+      ]
     },
     "supabase-deploya": {
-      "command": "C:\\Users\\arnau\\.local\\bin\\supabase-mcp-server",
+      "command": "supabase-mcp-server",
+      "args": [
+        "--read-only",
+        "--project-ref=oqmllypaarqvabuvbqga"
+      ],
       "env": {
         "SUPABASE_PROJECT_REF": "oqmllypaarqvabuvbqga",
         "SUPABASE_DB_PASSWORD": "AGZUATc3D2RhEB6A",

@@ -17,8 +17,7 @@ import { useAuth } from '@features/auth/contexts/AuthContext';
 // Services et formatters
 import { 
   ActivityService,
-  type ActivityFilters,
-  type ActivityPagination 
+  type ActivityFilters
 } from '@shared/services/activityService';
 import { 
   formatActivities, 
@@ -88,7 +87,7 @@ const StatsPage: React.FC = () => {
     isFetchingNextPage,
     hasNextPage,
     fetchNextPage,
-    refetch: refetchActivities
+    refetch: _refetchActivities
   } = useInfiniteQuery({
     queryKey: queryKeys.activities,
     queryFn: ({ pageParam = 0 }) => {

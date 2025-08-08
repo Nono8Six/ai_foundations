@@ -67,6 +67,7 @@ export interface AuthContextValue {
   authError: Error | null;
   profileError: Error | null;
   isAdmin: boolean;
+  refreshUserProfile: () => Promise<void>;
   clearAuthError: () => void;
   clearProfileError: () => void;
 }
@@ -83,6 +84,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
   const clearAuthError = () => setAuthError(null);
   const clearProfileError = () => setProfileError(null);
+  
+  // Refresh user profile method
+  const refreshUserProfile = useCallback(async () => {
+    if (!user) {
+      log.warn('Cannot refresh profile: no user logged in');
+      return;
+    }
+    
+    try {
+      log.debug('🔄 Refreshing user profile...');
+      const profile = await fetchUserProfile(user);
+      setUserProfile(profile);
+      setProfileError(null);
+      log.debug('✅ User profile refreshed successfully:', profile);
+    } catch (err) {
+      const error = typeof err === 'string' ? new Error(err) : (err as Error);
+      log.error('❌ Failed to refresh user profile:', error);
+      setProfileError(error);
+    }
+  }, [user]);
 
   // Sign Out
   const signOut = useCallback(async (): Promise<void> => {
@@ -518,6 +539,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     isAdmin,
     clearAuthError,
     clearProfileError,
+    refreshUserProfile,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -1,13 +1,1 @@
-#!/usr/bin/env sh
-
-echo "🐶 Running pre-commit hook..."
-
-echo "   Running lint-staged..."
-pnpm exec lint-staged || {
-  echo "   ❌ lint-staged failed. Please check the errors above."
-  exit 1
-}
-echo "   ✅ lint-staged completed."
-
-echo "✅ Pre-commit hook passed."
-exit 0
+npm test

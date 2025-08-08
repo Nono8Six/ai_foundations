@@ -1,14 +1,11 @@
 {
-  "name": "supabase-backend",
+  "name": "backend",
   "private": true,
   "scripts": {
-    "db:pull": "supabase db pull",
-    "db:push": "supabase db push",
-    "migration:new": "supabase migration new",
-    "gen:types": "supabase gen types typescript --project-id oqmllypaarqvabuvbqga > ../frontend/src/types/database.types.ts"
+    "gen:types": "node ../../scripts/gen-types.js"
   },
   "devDependencies": {
     "lint-staged": "^16.1.2",
-    "supabase": "2.31.4"
+    "supabase": "^2.31.8"
   }
 }

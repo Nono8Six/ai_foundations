@@ -1,12 +1,15 @@
-import React, { useState, ChangeEvent } from 'react';
+import React, { useState } from 'react';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { toast } from 'sonner';
 import { updateUserProfile } from '@shared/services/userService';
 import Icon from '@shared/components/AppIcon';
-import Image from '@shared/components/AppImage';
 import PhoneInput from '@shared/components/PhoneInput';
 import { validateAndFormatFrenchPhone, cleanPhoneForStorage } from '@shared/utils/phoneFormatter';
 import { log } from '@libs/logger';
+import { useAuth } from '@features/auth/contexts/AuthContext';
+// import ProfileCompletionGamification from './ProfileCompletionGamification';
+import { showXPRewardNotification, showLevelUpNotification, XP_REWARDS } from './XPNotificationSystem';
+import type { UserProfile } from '@frontend/types/user';
 
 interface FormData {
   name: string;
@@ -25,14 +28,64 @@ export interface PersonalInfoTabProps {
     phone?: string | null;
     profession?: string | null;
     company?: string | null;
-    joinDate?: string; // Added missing joinDate property
+    joinDate?: string;
   };
+  profile?: UserProfile;
+  isEditingFromHero?: boolean;
+  onEditingChange?: (isEditing: boolean) => void;
+  avatarPreview?: string;
 }
 
-const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ userData }) => {
+const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ 
+  userData, 
+  profile,
+  isEditingFromHero = false, 
+  onEditingChange,
+  avatarPreview: externalAvatarPreview
+}) => {
+  const { refreshUserProfile } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
-  const [avatarPreview, setAvatarPreview] = useState<string>(userData.avatar);
+  const [localAvatarPreview, setLocalAvatarPreview] = useState<string>(userData.avatar);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [focusedField, setFocusedField] = useState<string | null>(null);
+  // Remove custom refs since react-hook-form provides its own refs
+  
+  // Use external editing state if provided, otherwise use internal state
+  const effectiveIsEditing = isEditingFromHero !== undefined ? isEditingFromHero : isEditing;
+  const effectiveAvatarPreview = externalAvatarPreview || localAvatarPreview;
+  
+  // Sync with external editing state
+  React.useEffect(() => {
+    if (isEditingFromHero !== undefined) {
+      setIsEditing(isEditingFromHero);
+    }
+  }, [isEditingFromHero]);
+  
+  // Handle field focus from gamification
+  const handleFieldFocus = (fieldName: string, points: number) => {
+    if (!effectiveIsEditing && onEditingChange) {
+      onEditingChange(true);
+    } else if (!effectiveIsEditing) {
+      setIsEditing(true);
+    }
+    
+    setFocusedField(fieldName);
+    
+    // Focus the field after a short delay to allow for state updates
+    setTimeout(() => {
+      if (fieldName === 'phone' || fieldName === 'profession' || fieldName === 'company') {
+        setFocus(fieldName as keyof FormData);
+      }
+    }, 300);
+    
+    // Show toast with gamification message
+    import('sonner').then(({ toast }) => {
+      toast.success(`🎯 Complétez ce champ pour gagner +${points} XP !`, {
+        duration: 4000,
+        description: 'Chaque information ajoutée améliore votre profil'
+      });
+    });
+  };
 
   const {
     register,
@@ -43,15 +96,29 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ userData }) => {
     control,
     setValue,
     clearErrors,
+    setFocus,
   } = useForm<FormData>({
     defaultValues: {
       name: userData.name,
       email: userData.email,
-      phone: userData.phone || '',
-      profession: userData.profession || '',
-      company: userData.company || '',
+      phone: userData.phone ?? '',
+      profession: userData.profession ?? '',
+      company: userData.company ?? '',
     },
   });
+
+  // Update form values when userData changes - AFTER useForm initialization
+  React.useEffect(() => {
+    if (userData.name) { // Only reset when userData is loaded
+      reset({
+        name: userData.name,
+        email: userData.email,
+        phone: userData.phone ?? '',
+        profession: userData.profession ?? '',
+        company: userData.company ?? '',
+      });
+    }
+  }, [userData.name, userData.email, userData.phone, userData.profession, userData.company, reset]);
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     try {
@@ -59,26 +126,191 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ userData }) => {
 
       // Le téléphone est optionnel, ne pas bloquer la sauvegarde
 
-      // Prepare the update data
+      // Prepare the update data - Normalize strings and avoid empty strings in DB
       const updates = {
-        full_name: data.name,
-        phone: data.phone ? cleanPhoneForStorage(data.phone) : null,
-        profession: data.profession || null,
-        company: data.company || null,
+        full_name: data.name.trim(),
+        phone: data.phone?.trim() ? cleanPhoneForStorage(data.phone.trim()) : null,
+        profession: data.profession?.trim() || null,
+        company: data.company?.trim() || null,
         // Add avatar_url if it was changed
-        ...(avatarPreview !== userData.avatar && { avatar_url: avatarPreview }),
+        ...(effectiveAvatarPreview !== userData.avatar && { avatar_url: effectiveAvatarPreview }),
       };
 
-      log.debug('Submitting profile updates', { updates });
+      log.debug('🚀 Starting profile update submission');
+      log.debug('📝 Form data received:', { data });
+      log.debug('👤 Current userData:', { userData });
+      log.debug('💾 Updates to be sent:', { updates });
+      
+
+      // Track what fields are being changed for better feedback
+      const changedFields = [];
+      
+      // Normalize values for comparison - handle null vs empty string issues
+      const normalizeValue = (value: string | null | undefined) => {
+        return value?.trim() || null;
+      };
+      
+      // Current vs new values (normalized)
+      const currentValues = {
+        name: userData.name || '',
+        phone: normalizeValue(userData.phone),
+        profession: normalizeValue(userData.profession),
+        company: normalizeValue(userData.company)
+      };
+      
+      const newValues = {
+        name: data.name.trim(),
+        phone: normalizeValue(data.phone),
+        profession: normalizeValue(data.profession),
+        company: normalizeValue(data.company)
+      };
+      
+      // Detailed comparison logging
+      log.debug('🔍 COMPARISON ANALYSIS:');
+      log.debug('Current values:', currentValues);
+      log.debug('New values:', newValues);
+      
+      
+      if (newValues.name !== currentValues.name) {
+        changedFields.push('Nom');
+        log.debug('✅ Name changed:', currentValues.name, '→', newValues.name);
+      }
+      if (newValues.phone !== currentValues.phone) {
+        changedFields.push('Téléphone');
+        log.debug('✅ Phone changed:', currentValues.phone, '→', newValues.phone);
+      }
+      if (newValues.profession !== currentValues.profession) {
+        changedFields.push('Profession');
+        log.debug('✅ Profession changed:', currentValues.profession, '→', newValues.profession);
+      }
+      if (newValues.company !== currentValues.company) {
+        changedFields.push('Entreprise');
+        log.debug('✅ Company changed:', currentValues.company, '→', newValues.company);
+      }
+
+      log.debug('🔄 Final changed fields detected:', { changedFields });
+      
 
       // Update the profile in Supabase using service
-      await updateUserProfile(userData.id, updates);
+      const updatedProfile = await updateUserProfile(userData.id, updates);
+      log.debug('✅ Profile update completed:', { updatedProfile });
+      
+      // Verify the update was successful by checking the returned data
+      if (updatedProfile) {
+        log.debug('📊 Verification - Updated profile contains:', {
+          profession: updatedProfile.profession,
+          company: updatedProfile.company,
+          professionFilled: !!updatedProfile.profession,
+          companyFilled: !!updatedProfile.company
+        });
+      }
 
       log.info('Profile updated successfully', { userId: userData.id });
-      setIsEditing(false);
+      
+      // Update editing state
+      if (onEditingChange) {
+        onEditingChange(false);
+      } else {
+        setIsEditing(false);
+      }
 
-      // Show success message
-      toast.success('Profil mis à jour avec succès');
+      // Force profile refresh and update form with new data
+      try {
+        log.debug('🔄 Refreshing user profile after successful update...');
+        await refreshUserProfile();
+        log.debug('✅ User profile refreshed successfully after update');
+        
+        // Force form reset with updated values after a short delay to ensure context update
+        setTimeout(() => {
+          log.debug('🔁 Forcing form reset with saved values');
+          // Use the updatedProfile data to reset the form with the actual saved values
+          if (updatedProfile) {
+            reset({
+              name: updatedProfile.full_name || userData.name,
+              email: updatedProfile.email || userData.email, 
+              phone: updatedProfile.phone || '',
+              profession: updatedProfile.profession || '',
+              company: updatedProfile.company || ''
+            });
+            log.debug('✅ Form reset with updated profile data');
+          }
+        }, 500);
+        
+      } catch (refreshError) {
+        log.warn('⚠️ Failed to refresh profile, forcing hard refresh:', refreshError);
+        // Show warning toast but still try to continue
+        toast.warning('Rafraîchissement échoué', {
+          description: 'La page va se recharger pour afficher les modifications'
+        });
+        
+        // Fallback to page reload after showing the success message
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+      }
+      
+      // Show XP notifications for newly completed fields
+      const isPhoneCompleted = !userData.phone && data.phone;
+      const isProfessionCompleted = !userData.profession && data.profession;
+      const isCompanyCompleted = !userData.company && data.company;
+      const isAvatarCompleted = effectiveAvatarPreview !== userData.avatar && !effectiveAvatarPreview.includes('ui-avatars.com');
+      
+      let totalXPEarned = 0;
+      const actionsCompleted = [];
+      
+      if (isPhoneCompleted) {
+        totalXPEarned += XP_REWARDS.PHONE_ADDED;
+        actionsCompleted.push('Téléphone ajouté');
+        showXPRewardNotification('Téléphone ajouté', XP_REWARDS.PHONE_ADDED, 'Communication facilitée');
+      }
+      
+      if (isProfessionCompleted) {
+        totalXPEarned += XP_REWARDS.PROFESSION_ADDED;
+        actionsCompleted.push('Profession renseignée');
+        showXPRewardNotification('Profession renseignée', XP_REWARDS.PROFESSION_ADDED, 'Profil professionnel enrichi');
+      }
+      
+      if (isCompanyCompleted) {
+        totalXPEarned += XP_REWARDS.COMPANY_ADDED;
+        actionsCompleted.push('Entreprise précisée');
+        showXPRewardNotification('Entreprise précisée', XP_REWARDS.COMPANY_ADDED, 'Expérience professionnelle détaillée');
+      }
+      
+      if (isAvatarCompleted) {
+        totalXPEarned += XP_REWARDS.AVATAR_UPLOAD;
+        actionsCompleted.push('Photo de profil ajoutée');
+        showXPRewardNotification('Photo de profil ajoutée', XP_REWARDS.AVATAR_UPLOAD, 'Profil personnalisé');
+      }
+      
+      // Check for level up (assuming 100 XP per level)
+      const oldLevel = profile?.level || 1;
+      const oldXP = profile?.xp || 0;
+      const newXP = oldXP + totalXPEarned;
+      const newLevel = Math.floor(newXP / 100) + 1;
+      
+      if (newLevel > oldLevel) {
+        setTimeout(() => {
+          showLevelUpNotification(newLevel, newXP);
+        }, 1500);
+      }
+      
+      // Enhanced success toast with field changes and XP
+      if (actionsCompleted.length > 0) {
+        toast.success('🎉 Profil mis à jour avec succès !', {
+          description: `${actionsCompleted.join(', ')} • +${totalXPEarned} XP gagnés !`
+        });
+      } else if (changedFields.length > 0) {
+        toast.success('✅ Profil mis à jour avec succès', {
+          description: `Champs modifiés: ${changedFields.join(', ')}`
+        });
+      } else {
+        // Even if no changes detected, the form was submitted so show success
+        // This handles edge cases where detection logic might fail
+        toast.success('✅ Profil sauvegardé avec succès', {
+          description: 'Modifications enregistrées'
+        });
+        log.warn('⚠️ No changes detected but form was submitted - possible detection logic issue');
+      }
     } catch (error) {
       log.error('Error updating profile', { error, userId: userData.id });
       setError('root', {
@@ -90,58 +322,111 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ userData }) => {
     }
   };
 
-  const handleAvatarChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      // Validate file size (max 2MB)
-      if (file.size > 2 * 1024 * 1024) {
-        toast.error('La taille du fichier ne doit pas dépasser 2MB');
-        return;
-      }
-
-      // Validate file type
-      if (!file.type.startsWith('image/')) {
-        toast.error('Veuillez sélectionner un fichier image valide');
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onload = (e: ProgressEvent<FileReader>) => {
-        if (e.target?.result && typeof e.target.result === 'string') {
-          setAvatarPreview(e.target.result);
-        }
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  // Avatar change is now handled by parent component via externalOnAvatarChange
 
   const handleCancel = () => {
     reset();
-    setAvatarPreview(userData.avatar);
+    setLocalAvatarPreview(userData.avatar);
     clearErrors();
-    setIsEditing(false);
+    
+    if (onEditingChange) {
+      onEditingChange(false);
+    } else {
+      setIsEditing(false);
+    }
+  };
+
+  // Helper function to determine if field should be highlighted
+  const getFieldHighlightClass = (fieldName: string) => {
+    const isHighlighted = focusedField === fieldName;
+    const baseClass = effectiveIsEditing
+      ? 'border-border focus:border-primary focus:ring-1 focus:ring-primary bg-surface'
+      : 'border-transparent bg-secondary-50 text-text-secondary';
+    
+    if (isHighlighted && effectiveIsEditing) {
+      return 'border-primary ring-2 ring-primary/20 bg-primary/5 shadow-lg transform scale-[1.02] transition-all duration-300';
+    }
+    
+    return `${baseClass  } transition-all duration-300`;
   };
 
   return (
     <div className='space-y-8'>
       {/* Header */}
-      <div className='flex items-center justify-between'>
-        <div>
-          <h3 className='text-lg font-semibold text-text-primary'>Informations personnelles</h3>
-          <p className='text-text-secondary text-sm mt-1'>
-            Gérez vos informations de profil et vos préférences de compte
-          </p>
-        </div>
-        {!isEditing && (
-          <button
-            onClick={() => setIsEditing(true)}
-            className='inline-flex items-center px-4 py-2 border border-border rounded-lg text-sm font-medium text-text-primary bg-surface hover:bg-secondary-50 transition-colors'
-          >
-            <Icon aria-hidden='true' name='Edit' size={16} className='mr-2' />
-            Modifier
-          </button>
-        )}
+      <div className='mb-6'>
+        <h3 className='text-lg font-semibold text-text-primary'>Informations personnelles</h3>
+        <p className='text-text-secondary text-sm mt-1'>
+          Gérez vos informations de profil et vos préférences de compte
+        </p>
       </div>
+      
+      {/* Gamification Section - Show completion helper when editing */}
+      {effectiveIsEditing && profile && (() => {
+        // Calculer les champs manquants
+        const missingFields = [];
+        const hasCustomAvatar = profile.avatar_url && !profile.avatar_url.includes('ui-avatars.com');
+        
+        if (!profile.phone) missingFields.push({ key: 'phone', label: 'Téléphone', xp: 10, icon: 'Phone' });
+        if (!profile.profession) missingFields.push({ key: 'profession', label: 'Profession', xp: 10, icon: 'Briefcase' });
+        if (!profile.company) missingFields.push({ key: 'company', label: 'Entreprise', xp: 5, icon: 'Building' });
+        if (!hasCustomAvatar) missingFields.push({ key: 'avatar', label: 'Photo de profil', xp: 15, icon: 'Camera' });
+
+        // Si le profil est complet, afficher un message de félicitations
+        if (missingFields.length === 0) {
+          return (
+            <div className='bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200 mb-6'>
+              <div className='flex items-center gap-2 mb-4'>
+                <Icon name='Trophy' size={20} className='text-green-600' />
+                <h4 className='text-base font-semibold text-text-primary'>
+                  🎉 Profil complet !
+                </h4>
+              </div>
+              <p className='text-sm text-green-700 mb-3'>
+                Félicitations ! Votre profil est maintenant complet à 100%. Vous gagnez le maximum d'XP pour votre profil !
+              </p>
+              <div className='flex items-center gap-2 text-sm text-green-600'>
+                <Icon name='Award' size={16} className='text-green-600' />
+                <span className='font-medium'>Profil complet</span>
+                <span className='bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-bold'>60 XP total</span>
+              </div>
+            </div>
+          );
+        }
+
+        // Sinon, afficher les améliorations disponibles
+        return (
+          <div className='bg-gradient-to-r from-orange-50 to-yellow-50 rounded-xl p-6 border border-orange-200 mb-6'>
+            <div className='flex items-center gap-2 mb-4'>
+              <Icon name='Target' size={20} className='text-orange-500' />
+              <h4 className='text-base font-semibold text-text-primary'>
+                Améliorations disponibles ({missingFields.length} restant{missingFields.length > 1 ? 's' : ''})
+              </h4>
+            </div>
+            <p className='text-sm text-text-secondary mb-4'>
+              Complétez les champs suivants pour gagner plus d'XP et améliorer votre profil :
+            </p>
+            <div className='flex flex-wrap gap-2'>
+              {missingFields.filter(field => field.key !== 'avatar').map(field => (
+                <button
+                  key={field.key}
+                  onClick={() => handleFieldFocus(field.key, field.xp)}
+                  className='inline-flex items-center gap-2 px-3 py-2 bg-white/70 rounded-lg border border-orange-100 hover:border-orange-200 hover:bg-white transition-all text-sm'
+                >
+                  <Icon name={field.icon} size={14} className='text-orange-600' />
+                  <span>{field.label} (+{field.xp} XP)</span>
+                </button>
+              ))}
+              {missingFields.find(field => field.key === 'avatar') && (
+                <div className='inline-flex items-center gap-2 px-3 py-2 bg-white/70 rounded-lg border border-orange-100 text-sm opacity-75'>
+                  <Icon name='Camera' size={14} className='text-orange-600' />
+                  <span>Photo de profil (+15 XP)</span>
+                  <span className='text-xs text-gray-500'>(via bouton modifier)</span>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      })()}
 
       <form onSubmit={handleSubmit(onSubmit)} className='space-y-6' autoComplete="off">
         {/* Champs cachés pour confondre l'autofill */}
@@ -150,43 +435,6 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ userData }) => {
           <input type="password" name="password" autoComplete="current-password" />
         </div>
         
-        {/* Avatar Upload */}
-        <div className='bg-secondary-50 rounded-lg p-6'>
-          <h4 className='text-base font-medium text-text-primary mb-4'>Photo de profil</h4>
-          <div className='flex items-center space-x-6'>
-            <div className='relative'>
-              <div className='w-20 h-20 rounded-full overflow-hidden'>
-                <Image
-                  src={avatarPreview}
-                  alt='Avatar preview'
-                  className='w-full h-full object-cover'
-                />
-              </div>
-              {isEditing && (
-                <label className='absolute bottom-0 right-0 w-6 h-6 bg-primary text-white rounded-full flex items-center justify-center cursor-pointer hover:bg-primary-700 transition-colors'>
-                  <Icon aria-hidden='true' name='Camera' size={12} />
-                  <input
-                    type='file'
-                    accept='image/*'
-                    onChange={handleAvatarChange}
-                    className='hidden'
-                    autoComplete="off"
-                  />
-                </label>
-              )}
-            </div>
-            <div>
-              <p className='text-sm text-text-primary font-medium mb-1'>
-                {isEditing ? 'Choisissez une nouvelle photo de profil' : 'Votre photo de profil'}
-              </p>
-              <p className='text-xs text-text-secondary'>
-                {isEditing
-                  ? 'JPG, PNG ou GIF. Taille maximale de 2MB.'
-                  : 'Utilisée pour personnaliser votre expérience'}
-              </p>
-            </div>
-          </div>
-        </div>
 
         {/* Error Message */}
         {errors.root && (
@@ -211,10 +459,10 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ userData }) => {
                 required: 'Le nom est requis',
                 minLength: { value: 2, message: 'Le nom doit contenir au moins 2 caractères' },
               })}
-              disabled={!isEditing}
+              disabled={!effectiveIsEditing}
               autoComplete="name"
               className={`w-full px-3 py-2 border rounded-lg text-sm transition-colors ${
-                isEditing
+                effectiveIsEditing
                   ? 'border-border focus:border-primary focus:ring-1 focus:ring-primary bg-surface'
                   : 'border-transparent bg-secondary-50 text-text-secondary'
               } ${errors.name ? 'border-error' : ''}`}
@@ -245,79 +493,122 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ userData }) => {
           <div>
             <label className='block text-sm font-medium text-text-primary mb-2'>
               Téléphone
-              {isEditing && (
+              {effectiveIsEditing && (
                 <span className='text-xs text-text-secondary ml-1 font-normal'>
                   (Format français)
                 </span>
               )}
             </label>
-            {isEditing ? (
+            {effectiveIsEditing ? (
               <Controller
                 name="phone"
                 control={control}
                 render={({ field }) => (
-                  <PhoneInput
-                    value={field.value}
-                    onChange={(value) => {
-                      field.onChange(value);
-                      setValue('phone', value);
-                    }}
-                    disabled={false}
-                    showValidationIcon={true}
-                    showTypeHint={true}
-                    className="focus:border-primary focus:ring-1 focus:ring-primary"
-                  />
+                  <div className={focusedField === 'phone' ? 'transform scale-[1.02] transition-all duration-300' : 'transition-all duration-300'}>
+                    <PhoneInput
+                      value={field.value}
+                      onChange={(value) => {
+                        field.onChange(value);
+                        setValue('phone', value);
+                        if (focusedField === 'phone') {
+                          setFocusedField(null); // Clear highlight when user starts typing
+                        }
+                      }}
+                      disabled={false}
+                      showValidationIcon={true}
+                      showTypeHint={true}
+                      className={focusedField === 'phone' 
+                        ? 'border-primary ring-2 ring-primary/20 bg-primary/5 shadow-lg'
+                        : 'focus:border-primary focus:ring-1 focus:ring-primary'
+                      }
+                    />
+                  </div>
                 )}
               />
             ) : (
-              <input
-                type='tel'
-                value={userData.phone ? validateAndFormatFrenchPhone(userData.phone).formatted : ''}
-                disabled={true}
-                autoComplete="tel"
-                className='w-full px-3 py-2 border border-transparent bg-secondary-50 text-text-secondary rounded-lg text-sm'
-                placeholder='Aucun numéro renseigné'
-              />
+              <div className='w-full px-3 py-2 border border-transparent bg-secondary-50 rounded-lg text-sm min-h-[38px] flex items-center'>
+                {userData.phone ? (
+                  <div className="flex items-center gap-2">
+                    <Icon name="Phone" size={14} className="text-text-tertiary" />
+                    <span className="font-mono tracking-wide text-text-primary">
+                      {validateAndFormatFrenchPhone(userData.phone).formatted}
+                    </span>
+                    <span className="text-xs text-success bg-success-50 px-2 py-1 rounded-full">
+                      Vérifié
+                    </span>
+                  </div>
+                ) : (
+                  <span className="text-text-tertiary italic">Aucun numéro renseigné</span>
+                )}
+              </div>
             )}
           </div>
 
           {/* Profession */}
           <div>
             <label className='block text-sm font-medium text-text-primary mb-2'>Profession</label>
-            <input
-              type='text'
-              {...register('profession')}
-              disabled={!isEditing}
-              autoComplete="organization-title"
-              className={`w-full px-3 py-2 border rounded-lg text-sm transition-colors ${
-                isEditing
-                  ? 'border-border focus:border-primary focus:ring-1 focus:ring-primary bg-surface'
-                  : 'border-transparent bg-secondary-50 text-text-secondary'
-              }`}
-              placeholder='Ex: Développeur, Comptable, etc.'
-            />
+            {effectiveIsEditing ? (
+              <input
+                type='text'
+                {...register('profession')}
+                autoComplete="organization-title"
+                onFocus={() => setFocusedField(null)} // Clear highlight when user focuses
+                className={`w-full px-3 py-2 border rounded-lg text-sm ${getFieldHighlightClass('profession')}`}
+                placeholder='Ex: Développeur, Comptable, etc.'
+              />
+            ) : (
+              <div className='w-full px-3 py-2 border border-transparent bg-secondary-50 rounded-lg text-sm min-h-[38px] flex items-center'>
+                {userData.profession ? (
+                  <div className="flex items-center gap-2">
+                    <Icon name="Briefcase" size={14} className="text-text-tertiary" />
+                    <span className="text-text-primary">{userData.profession}</span>
+                  </div>
+                ) : userData.profession === '' ? (
+                  <span className="text-amber-600 italic flex items-center gap-1">
+                    <Icon name="AlertTriangle" size={12} />
+                    Champ vide (à compléter)
+                  </span>
+                ) : (
+                  <span className='text-text-tertiary italic'>Ex: Développeur, Comptable, etc.</span>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Company */}
           <div className='md:col-span-2'>
             <label className='block text-sm font-medium text-text-primary mb-2'>Entreprise</label>
-            <input
-              type='text'
-              {...register('company')}
-              disabled={!isEditing}
-              autoComplete="organization"
-              className={`w-full px-3 py-2 border rounded-lg text-sm transition-colors ${
-                isEditing
-                  ? 'border-border focus:border-primary focus:ring-1 focus:ring-primary bg-surface'
-                  : 'border-transparent bg-secondary-50 text-text-secondary'
-              }`}
-              placeholder='Ex: Mon Entreprise SARL'
-            />
+            {effectiveIsEditing ? (
+              <input
+                type='text'
+                {...register('company')}
+                autoComplete="organization"
+                onFocus={() => setFocusedField(null)} // Clear highlight when user focuses
+                className={`w-full px-3 py-2 border rounded-lg text-sm ${getFieldHighlightClass('company')}`}
+                placeholder='Ex: Mon Entreprise SARL'
+              />
+            ) : (
+              <div className='w-full px-3 py-2 border border-transparent bg-secondary-50 rounded-lg text-sm min-h-[38px] flex items-center'>
+                {userData.company ? (
+                  <div className="flex items-center gap-2">
+                    <Icon name="Building" size={14} className="text-text-tertiary" />
+                    <span className="text-text-primary">{userData.company}</span>
+                  </div>
+                ) : userData.company === '' ? (
+                  <span className="text-amber-600 italic flex items-center gap-1">
+                    <Icon name="AlertTriangle" size={12} />
+                    Champ vide (à compléter)
+                  </span>
+                ) : (
+                  <span className='text-text-tertiary italic'>Ex: Mon Entreprise SARL</span>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
         {/* Action Buttons */}
-        {isEditing && (
+        {effectiveIsEditing && (
           <div className='flex items-center justify-end space-x-4 pt-6 border-t border-border'>
             <button
               type='button'

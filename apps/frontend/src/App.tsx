@@ -9,6 +9,18 @@ import type { AppError } from './types/app-error';
 import { isAuthErrorWithCode } from '@shared/utils/auth';
 import type { AuthErrorWithCode } from './types/auth';
 import { log } from '@libs/logger';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+// Configuration du QueryClient global
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    },
+  },
+});
 
 const App: React.FC = () => {
   const errorLoggerWithToast: ErrorLogger = (error: AppError) => {
@@ -27,16 +39,18 @@ const App: React.FC = () => {
   };
 
   return (
-    <AuthProvider>
-      <CourseProvider>
-        <AdminCourseProvider>
-          <ErrorProvider logger={errorLoggerWithToast}>
-            <AppRoutes />
-            <Toaster richColors position="top-center" />
-          </ErrorProvider>
-        </AdminCourseProvider>
-      </CourseProvider>
-    </AuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <CourseProvider>
+          <AdminCourseProvider>
+            <ErrorProvider logger={errorLoggerWithToast}>
+              <AppRoutes />
+              <Toaster richColors position="top-center" />
+            </ErrorProvider>
+          </AdminCourseProvider>
+        </CourseProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 };
 

@@ -29,30 +29,10 @@ vi.mock('@features/courses/contexts/CourseContext', () => ({
 }));
 
 var mockUseRecentActivity;
-var mockUseAchievements;
 
 vi.mock('@shared/hooks/useRecentActivity', () => {
   mockUseRecentActivity = vi.fn(() => ({ activities: [] }));
   return { useRecentActivity: mockUseRecentActivity };
-});
-
-vi.mock('@shared/hooks/useAchievements', () => {
-  mockUseAchievements = vi.fn(() => ({
-    achievements: [
-      {
-        id: 'a1',
-        title: 'First',
-        description: 'First achievement',
-        icon: '',
-        rarity: 'common',
-        xpReward: 10,
-        earned: true,
-      },
-    ],
-    loading: false,
-    error: null,
-  }));
-  return { useAchievements: mockUseAchievements };
 });
 
 vi.mock('../components/ProgressChart', () => ({
@@ -65,7 +45,7 @@ describe('UserDashboard', () => {
   afterEach(() => {
     vi.clearAllMocks();
   });
-  it('renders achievement carousel', () => {
+  it('renders user dashboard', () => {
     render(
       <MemoryRouter>
         <UserDashboard />
@@ -75,11 +55,6 @@ describe('UserDashboard', () => {
       limit: 5,
       order: 'desc',
     });
-    expect(mockUseAchievements).toHaveBeenCalledWith('1', {
-      order: 'desc',
-      filters: { earned: true },
-    });
-    expect(screen.getAllByText(/Succès/i)[0]).toBeInTheDocument();
   });
 
   it('displays user name', () => {

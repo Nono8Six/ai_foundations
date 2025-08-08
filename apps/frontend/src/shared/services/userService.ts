@@ -159,7 +159,59 @@ export async function fetchUserProfile(user: User): Promise<UserProfile> {
     return newProfile as UserProfile;
   }
 
-  return profileData[0] as UserProfile;
+  const profile = profileData[0] as UserProfile;
+  
+  // Auto-calculate XP and level if they are null/0 (legacy profiles)
+  // Only recalculate if XP is 0/null but profile has data that should give XP
+  const hasProfileData = (profile.avatar_url && !profile.avatar_url.includes('ui-avatars.com')) ||
+                        (profile.phone && profile.phone.length >= 10) ||
+                        (profile.profession && profile.profession.trim().length > 0) ||
+                        (profile.company && profile.company.trim().length > 0);
+                        
+  if ((!profile.xp || profile.xp === 0) && hasProfileData) {
+    log.debug('🔄 Profile has null/default XP/level, calculating automatically...');
+    
+    const { xp, level } = calculateProfileXPAndLevel({
+      avatar_url: profile.avatar_url,
+      phone: profile.phone,
+      profession: profile.profession,
+      company: profile.company,
+    });
+    
+    // Only update if calculated values are different from current
+    if (xp !== (profile.xp || 0) || level !== (profile.level || 1)) {
+      log.debug(`🔄 Updating XP: ${profile.xp || 0} → ${xp}, Level: ${profile.level || 1} → ${level}`);
+      
+      try {
+        // Update the profile in database with calculated XP/level
+        const { data: updatedProfile, error: updateError } = await supabaseClient
+          .from('profiles')
+          .update({
+            xp,
+            level,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', user.id)
+          .select('*')
+          .single();
+
+        if (updateError) {
+          log.warn('⚠️ Failed to update auto-calculated XP/level:', updateError);
+          // Return profile with calculated values even if update failed
+          return { ...profile, xp, level };
+        }
+
+        log.debug('✅ Auto-calculated XP/level updated successfully');
+        return updatedProfile as UserProfile;
+      } catch (updateErr) {
+        log.warn('⚠️ Error updating auto-calculated XP/level:', updateErr);
+        // Return profile with calculated values even if update failed
+        return { ...profile, xp, level };
+      }
+    }
+  }
+  
+  return profile;
 }
 
 interface ProfileUpdates {
@@ -176,14 +228,79 @@ interface ProfileUpdates {
   last_completed_at?: string | null;
 }
 
+/**
+ * Calculate XP and level based on profile completion
+ */
+export function calculateProfileXPAndLevel(profile: Partial<ProfileUpdates> & { avatar_url?: string | null }): { xp: number; level: number } {
+  let xp = 0;
+  
+  // Avatar XP (15 points) - exclude default ui-avatars
+  if (profile.avatar_url && !profile.avatar_url.includes('ui-avatars.com')) {
+    xp += 15;
+  }
+  
+  // Phone XP (10 points) - must be at least 10 characters
+  if (profile.phone && profile.phone.length >= 10) {
+    xp += 10;
+  }
+  
+  // Profession XP (10 points) - must have content
+  if (profile.profession && profile.profession.trim().length > 0) {
+    xp += 10;
+  }
+  
+  // Company XP (5 points) - must have content
+  if (profile.company && profile.company.trim().length > 0) {
+    xp += 5;
+  }
+  
+  // Completion bonus (20 points) - all fields completed
+  const hasAvatar = profile.avatar_url && !profile.avatar_url.includes('ui-avatars.com');
+  const hasPhone = profile.phone && profile.phone.length >= 10;
+  const hasProfession = profile.profession && profile.profession.trim().length > 0;
+  const hasCompany = profile.company && profile.company.trim().length > 0;
+  
+  if (hasAvatar && hasPhone && hasProfession && hasCompany) {
+    xp += 20; // Completion bonus
+  }
+  
+  // Calculate level based on XP (100 XP per level)
+  const level = Math.floor(xp / 100) + 1;
+  
+  return { xp, level };
+}
+
 export async function updateUserProfile(
   userId: string,
   updates: ProfileUpdates
 ): Promise<UpdateUserProfileResponse> {
+  // Get current profile to calculate XP/level based on existing + new data
+  const { data: currentProfile, error: fetchError } = await supabaseClient
+    .from('profiles')
+    .select('*')
+    .eq('id', userId)
+    .single();
+
+  if (fetchError) {
+    log.error('Error fetching current profile for XP calculation:', fetchError);
+    throw fetchError;
+  }
+
+  // Merge current profile with updates for XP calculation
+  const mergedProfile = {
+    avatar_url: updates.avatar_url !== undefined ? updates.avatar_url : currentProfile.avatar_url,
+    phone: updates.phone !== undefined ? updates.phone : currentProfile.phone,
+    profession: updates.profession !== undefined ? updates.profession : currentProfile.profession,
+    company: updates.company !== undefined ? updates.company : currentProfile.company,
+  };
+
+  // Calculate new XP and level automatically
+  const { xp, level } = calculateProfileXPAndLevel(mergedProfile);
+
   // Créer un objet de données profil valide avec des valeurs par défaut
   const profileUpdate: Record<string, unknown> = {
-    id: userId,
-    updated_at: new Date().toISOString()
+    xp, // Auto-calculated XP
+    level, // Auto-calculated level
   };
 
   // Ajouter uniquement les champs fournis dans updates
@@ -193,27 +310,48 @@ export async function updateUserProfile(
   if (updates.phone !== undefined) profileUpdate.phone = updates.phone;
   if (updates.profession !== undefined) profileUpdate.profession = updates.profession;
   if (updates.company !== undefined) profileUpdate.company = updates.company;
-  if (updates.level !== undefined) profileUpdate.level = updates.level;
-  if (updates.xp !== undefined) profileUpdate.xp = updates.xp;
   if (updates.current_streak !== undefined) profileUpdate.current_streak = updates.current_streak;
   if (updates.is_admin !== undefined) profileUpdate.is_admin = updates.is_admin;
   if (updates.last_completed_at !== undefined) profileUpdate.last_completed_at = updates.last_completed_at;
 
-  // Les noms des paramètres doivent correspondre exactement à ceux définis dans les types générés
-  const { data, error } = await supabaseClient.rpc('update_user_profile', {
-    p_user_id: userId,
-    p_profile_data: profileUpdate as unknown as Json
-  } as const);
+  // XP and level are now auto-calculated, don't allow manual override
+  // if (updates.level !== undefined) profileUpdate.level = updates.level;
+  // if (updates.xp !== undefined) profileUpdate.xp = updates.xp;
+
+  // Utilisation directe de l'update au lieu de RPC pour éviter les erreurs
+  const { data, error } = await supabaseClient
+    .from('profiles')
+    .update(profileUpdate)
+    .eq('id', userId)
+    .select('*')
+    .single();
 
   if (error) {
     log.error('Error updating user profile:', error);
     throw error;
   }
 
-  const result = (Array.isArray(data) ? data[0] : data) as UpdateUserProfileResponse;
-  if (!result) {
-    throw new Error('No data returned from update_user_profile');
+  if (!data) {
+    throw new Error('No data returned from profile update');
   }
+  
+  // Mapper les données au format attendu - preserve nulls for optional fields
+  const result: UpdateUserProfileResponse = {
+    id: data.id,
+    email: data.email,
+    full_name: data.full_name || '',
+    avatar_url: data.avatar_url || '',
+    phone: data.phone || '',
+    profession: data.profession || '', // Keep empty string for form compatibility
+    company: data.company || '', // Keep empty string for form compatibility
+    level: data.level || 1,
+    xp: data.xp || 0,
+    current_streak: data.current_streak || 0,
+    is_admin: data.is_admin || false,
+    last_completed_at: data.last_completed_at || '',
+    created_at: data.created_at || '',
+    updated_at: data.updated_at || ''
+  };
   
   return result;
 }
@@ -308,13 +446,11 @@ export async function getUserSettings(userId: string): Promise<UserSettings | nu
       emailNotifications: true,
       pushNotifications: false,
       weeklyReport: true,
-      achievementAlerts: true,
       reminderNotifications: true,
     }),
     privacy_settings: toJson({
       profileVisibility: 'private',
       showProgress: false,
-      showAchievements: true,
       allowMessages: false,
     }),
     learning_preferences: toJson({
@@ -436,7 +572,6 @@ export async function updateUserSettings(
           privacy_settings: privacySettingsJson,
           learning_preferences: learningPreferencesJson,
           cookie_preferences: cookiePreferencesJson,
-          updated_at: new Date().toISOString(),
         })
         .eq('user_id', userId);
     } else {
@@ -451,7 +586,6 @@ export async function updateUserSettings(
           learning_preferences: learningPreferencesJson,
           cookie_preferences: cookiePreferencesJson,
           created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
         }]);
     }
     
