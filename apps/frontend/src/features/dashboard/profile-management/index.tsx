@@ -2,13 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@features/auth/contexts/AuthContext';
 import Icon from '@shared/components/AppIcon';
-import Image from '@shared/components/AppImage';
 import PersonalInfoTab from './components/PersonalInfoTab';
-import LearningStatsTab from './components/LearningStatsTab';
+import StatsPage from './components/StatsPage';
 import SettingsTab from './components/SettingsTab';
+import HeroProfile from './components/HeroProfile';
 
 const UserProfileManagement: React.FC = () => {
   const [activeTab, setActiveTab] = useState('personal');
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [avatarPreview, setAvatarPreview] = useState<string>('');
   const { user, userProfile } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -23,14 +25,21 @@ const UserProfileManagement: React.FC = () => {
     }
   }, [location]);
 
+  // Initialize avatar preview
+  React.useEffect(() => {
+    const defaultAvatar = userProfile?.avatar_url ||
+      `https://ui-avatars.com/api/?name=${encodeURIComponent(userProfile?.full_name || user?.email || 'User')}&background=1e40af&color=fff`;
+    setAvatarPreview(defaultAvatar);
+  }, [userProfile?.avatar_url, userProfile?.full_name, user?.email]);
+
   // Use real user data from userProfile
   const userData = {
     id: user?.id || '',
     name: userProfile?.full_name || user?.user_metadata?.full_name || user?.email || 'Utilisateur',
     email: user?.email || '',
-    phone: userProfile?.phone || '', // Now correctly using the real data
-    profession: userProfile?.profession || '', // Now correctly using the real data
-    company: userProfile?.company || '', // Now correctly using the real data
+    phone: userProfile?.phone || null, // Keep null values to distinguish from empty strings
+    profession: userProfile?.profession || null, // Keep null values to distinguish from empty strings
+    company: userProfile?.company || null, // Keep null values to distinguish from empty strings
     avatar:
       userProfile?.avatar_url ||
       `https://ui-avatars.com/api/?name=${encodeURIComponent(userProfile?.full_name || user?.email || 'User')}&background=1e40af&color=fff`,
@@ -41,8 +50,7 @@ const UserProfileManagement: React.FC = () => {
     streak: userProfile?.current_streak || 0,
     totalLearningTime: 0, // This would need to be calculated from user progress
     coursesCompleted: 0, // This would need to be calculated from user progress
-    certificatesEarned: 0, // This would need to be calculated from achievements
-    achievements: [], // This would come from the achievements table
+    certificatesEarned: 0,
   };
 
   const tabs = [
@@ -51,12 +59,55 @@ const UserProfileManagement: React.FC = () => {
     { id: 'settings', label: 'Paramètres', icon: 'Settings' },
   ];
 
+  // Handle avatar change
+  const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Validate file size (max 2MB)
+      if (file.size > 2 * 1024 * 1024) {
+        // Import toast dynamically to avoid module issues
+        import('sonner').then(({ toast }) => {
+          toast.error('La taille du fichier ne doit pas dépasser 2MB');
+        });
+        return;
+      }
+
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        import('sonner').then(({ toast }) => {
+          toast.error('Veuillez sélectionner un fichier image valide');
+        });
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e: ProgressEvent<FileReader>) => {
+        if (e.target?.result && typeof e.target.result === 'string') {
+          setAvatarPreview(e.target.result);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleEditToggle = () => {
+    setIsEditingProfile(!isEditingProfile);
+  };
+
   const renderTabContent = () => {
     switch (activeTab) {
       case 'personal':
-        return <PersonalInfoTab userData={userData} />;
+        return (
+          <PersonalInfoTab 
+            userData={userData}
+            profile={userProfile || undefined}
+            isEditingFromHero={isEditingProfile}
+            onEditingChange={setIsEditingProfile}
+            avatarPreview={avatarPreview}
+          />
+        );
       case 'stats':
-        return <LearningStatsTab />;
+        return <StatsPage />;
       case 'settings':
         return <SettingsTab />;
       default:
@@ -67,109 +118,44 @@ const UserProfileManagement: React.FC = () => {
   return (
     <div className='min-h-screen bg-background'>
       {/* Main Content */}
-      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-20'>
-        <div className='lg:grid lg:grid-cols-12 lg:gap-8'>
-          {/* Profile Sidebar */}
-          <div className='lg:col-span-3 mb-8 lg:mb-0'>
-            <div className='bg-surface rounded-xl shadow-subtle border border-border p-6'>
-              {/* Avatar Section */}
-              <div className='text-center mb-6'>
-                <div className='relative inline-block'>
-                  <div className='w-24 h-24 rounded-full overflow-hidden mx-auto mb-4'>
-                    <Image
-                      src={userData.avatar}
-                      alt={userData.name}
-                      className='w-full h-full object-cover'
-                    />
-                  </div>
-                </div>
-                <h2 className='text-xl font-semibold text-text-primary mb-1'>{userData.name}</h2>
-                <p className='text-text-secondary text-sm'>{userData.email}</p>
-              </div>
+      <div className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-20'>
+        {/* Hero Profile Section */}
+        <HeroProfile
+          userData={userData}
+          isEditing={isEditingProfile}
+          avatarPreview={avatarPreview}
+          onAvatarChange={handleAvatarChange}
+          onEditToggle={handleEditToggle}
+        />
 
-              {/* Level Progress */}
-              <div className='mb-6'>
-                <div className='flex items-center justify-between mb-2'>
-                  <span className='text-sm font-medium text-text-primary'>
-                    Niveau {userData.level}
-                  </span>
-                  <span className='text-sm text-text-secondary'>
-                    {userData.xp}/{userData.nextLevelXp} XP
-                  </span>
-                </div>
-                <div className='w-full bg-secondary-200 rounded-full h-2'>
-                  <div
-                    className='bg-gradient-to-r from-primary to-accent h-2 rounded-full transition-all duration-300'
-                    style={{ width: `${(userData.xp / userData.nextLevelXp) * 100}%` }}
-                  ></div>
-                </div>
-              </div>
-
-              {/* Quick Stats */}
-              <div className='space-y-3'>
-                <div className='flex items-center justify-between'>
+        {/* Tab Navigation and Content */}
+        <div className='bg-surface rounded-xl shadow-subtle border border-border'>
+          <div className='border-b border-border'>
+            <nav className='flex justify-center space-x-8 px-6' aria-label='Tabs'>
+              {tabs.map(tab => (
+                <button
+                  key={tab.id}
+                  onClick={() => {
+                    setActiveTab(tab.id);
+                    navigate(`/profile?tab=${tab.id}`, { replace: true });
+                  }}
+                  className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                    activeTab === tab.id
+                      ? 'border-primary text-primary'
+                      : 'border-transparent text-text-secondary hover:text-text-primary hover:border-secondary-300'
+                  }`}
+                >
                   <div className='flex items-center space-x-2'>
-                    <Icon aria-hidden='true' name='Flame' size={16} className='text-orange-500' />
-                    <span className='text-sm text-text-secondary'>Série actuelle</span>
+                    <Icon aria-hidden='true' name={tab.icon} size={16} />
+                    <span className='hidden sm:inline'>{tab.label}</span>
                   </div>
-                  <span className='text-sm font-medium text-text-primary'>
-                    {userData.streak} jours
-                  </span>
-                </div>
-                <div className='flex items-center justify-between'>
-                  <div className='flex items-center space-x-2'>
-                    <Icon aria-hidden='true' name='BookOpen' size={16} className='text-primary' />
-                    <span className='text-sm text-text-secondary'>Cours terminés</span>
-                  </div>
-                  <span className='text-sm font-medium text-text-primary'>
-                    {userData.coursesCompleted}
-                  </span>
-                </div>
-                <div className='flex items-center justify-between'>
-                  <div className='flex items-center space-x-2'>
-                    <Icon aria-hidden='true' name='Award' size={16} className='text-accent' />
-                    <span className='text-sm text-text-secondary'>Certificats</span>
-                  </div>
-                  <span className='text-sm font-medium text-text-primary'>
-                    {userData.certificatesEarned}
-                  </span>
-                </div>
-              </div>
-            </div>
+                </button>
+              ))}
+            </nav>
           </div>
 
-          {/* Main Content Area */}
-          <div className='lg:col-span-9'>
-            {/* Tab Navigation */}
-            <div className='bg-surface rounded-xl shadow-subtle border border-border mb-6'>
-              <div className='border-b border-border'>
-                <nav className='flex space-x-8 px-6' aria-label='Tabs'>
-                  {tabs.map(tab => (
-                    <button
-                      key={tab.id}
-                      onClick={() => {
-                        setActiveTab(tab.id);
-                        navigate(`/profile?tab=${tab.id}`, { replace: true });
-                      }}
-                      className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                        activeTab === tab.id
-                          ? 'border-primary text-primary'
-                          : 'border-transparent text-text-secondary hover:text-text-primary hover:border-secondary-300'
-                      }`}
-                    >
-                      <div className='flex items-center space-x-2'>
-                        <Icon aria-hidden='true' name={tab.icon} size={16} />
-                        <span className='hidden sm:inline'>{tab.label}</span>
-                      </div>
-                    </button>
-                  ))}
-                </nav>
-              </div>
-
-              {/* Tab Content */}
-              <div className='p-6'>{renderTabContent()}</div>
-            </div>
-          </div>
+          {/* Tab Content */}
+          <div className='p-6'>{renderTabContent()}</div>
         </div>
       </div>
     </div>

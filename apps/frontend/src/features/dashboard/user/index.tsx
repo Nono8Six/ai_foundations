@@ -6,12 +6,9 @@ import { useCourses } from '@features/courses/contexts/CourseContext';
 import Icon from '@shared/components/AppIcon';
 import Image from '@shared/components/AppImage';
 import ErrorBoundary from '@shared/components/ErrorBoundary';
-import RecentActivity from './components/RecentActivity';
+import RecentActivityWidget from './components/RecentActivityWidget';
 import ProgressChart from './components/ProgressChart';
-import AchievementCarousel from './components/AchievementCarousel';
 import QuickActions from './components/QuickActions';
-import { useRecentActivity } from '@shared/hooks/useRecentActivity';
-import { useAchievements } from '@shared/hooks/useAchievements';
 
 const UserDashboard: React.FC = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -19,11 +16,6 @@ const UserDashboard: React.FC = () => {
 
   const { userProfile, user } = useAuth();
   const { coursesWithProgress: courses, isLoading } = useCourses();
-  const { activities } = useRecentActivity(user?.id, { limit: 5, order: 'desc' });
-  const { achievements } = useAchievements(user?.id, {
-    order: 'desc',
-    filters: { earned: true },
-  });
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -174,13 +166,7 @@ const UserDashboard: React.FC = () => {
           <div className='grid grid-cols-1 lg:grid-cols-4 gap-8'>
             <div className='lg:col-span-3 space-y-8'>
               <ProgressChart />
-              <RecentActivity activities={activities.map(a => ({
-                ...a,
-                title: a.action,
-                description: typeof a.details === 'string' ? a.details : JSON.stringify(a.details),
-                icon: 'Activity',
-                timestamp: a.created_at ?? new Date().toISOString()
-              })) ?? []} />
+              <RecentActivityWidget userId={user?.id} limit={5} />
 
               <div className='bg-surface rounded-xl border border-border p-6'>
                 <div className='flex items-center justify-between mb-6'>
@@ -278,7 +264,6 @@ const UserDashboard: React.FC = () => {
             </div>
 
             <div className='lg:col-span-1 space-y-6'>
-              <AchievementCarousel achievements={achievements} />
               <QuickActions actions={quickActions} />
               <div className='bg-surface rounded-xl border border-border p-6'>
                 <h3 className='text-lg font-semibold text-text-primary mb-4'>Votre progression</h3>
@@ -288,11 +273,15 @@ const UserDashboard: React.FC = () => {
                       <span className='text-text-secondary'>Niveau actuel</span>
                       <span className='font-medium text-text-primary'>{userData.level}</span>
                     </div>
-                    <div className='w-full bg-secondary-200 rounded-full h-2'>
+                    <div className='w-full bg-gray-200/80 rounded-full h-3 overflow-hidden shadow-inner'>
                       <div
-                        className='bg-primary h-2 rounded-full transition-all duration-300'
+                        className='bg-gradient-to-r from-amber-400 via-yellow-500 to-orange-500 h-3 rounded-full transition-all duration-1000 ease-out relative overflow-hidden'
                         style={{ width: `${(userData.xp / userData.xpToNextLevel) * 100}%` }}
-                      ></div>
+                      >
+                        {/* Animated shimmer effect for consistency */}
+                        <div className='absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-pulse'></div>
+                        <div className='absolute top-0 left-0 w-full h-full bg-gradient-to-b from-white/30 to-transparent'></div>
+                      </div>
                     </div>
                     <div className='flex justify-between text-xs mt-1'>
                       <span className='text-text-secondary'>{userData.xp} XP</span>
