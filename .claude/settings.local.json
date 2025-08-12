@@ -32,7 +32,11 @@
       "mcp__supabase-deploya__get_table_schema",
       "mcp__supabase-deploya__get_db_schemas",
       "mcp__supabase-deploya__get_tables",
-      "Bash(git rm:*)"
+      "Bash(git rm:*)",
+      "mcp__supabase-deploya__live_dangerously",
+      "mcp__shadcn-ui__list_components",
+      "mcp__shadcn-ui__get_component",
+      "Bash(dir:*)"
     ],
     "deny": []
   },
@@ -41,5 +45,9 @@
     "supabase",
     "context7",
     "supabase-deploya"
-  ]
+  ],
+  "statusLine": {
+    "type": "command",
+    "command": "input=$(cat); project=$(basename \"$(echo \"$input\" | jq -r '.workspace.current_dir')\"); model=$(echo \"$input\" | jq -r '.model.display_name'); printf \"\\033[36m%s\\033[0m | \\033[32m%s\\033[0m | \\033[33m$(pwd | sed 's|.*/||')\\033[0m\" \"$model\" \"$project\""
+  }
 }

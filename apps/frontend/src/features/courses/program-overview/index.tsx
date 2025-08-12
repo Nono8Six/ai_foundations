@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '@features/auth/contexts/AuthContext';
 import Icon from '@shared/components/AppIcon';
-import { fetchCourses } from '@shared/services/courseService';
+import { fetchCoursesQueryOptions } from '@shared/services/courseService';
 import { log } from '@libs/logger';
 import CourseCard from './components/CourseCard';
 import FilterSidebar from './components/FilterSidebar';
 import CoursePathway from './components/CoursePathway';
 import type { CourseSortOption, CourseWithProgress } from '@frontend/types/course.types';
+import { useQuery } from '@tanstack/react-query';
 
 export interface ProgramFilters {
   skillLevel: string[];
@@ -27,38 +28,22 @@ const ProgramOverview: React.FC = () => {
   });
   const [showFilters, setShowFilters] = useState<boolean>(false);
   const [viewMode, setViewMode] = useState<'grid' | 'pathway'>('grid');
-  const [loading, setLoading] = useState<boolean>(true);
-  const [courses, setCourses] = useState<CourseWithProgress[]>([]);
   const [page, setPage] = useState<number>(1);
-  const [totalCourses, setTotalCourses] = useState<number>(0);
   const pageSize = 12;
 
-  useEffect(() => {
-    const load = async () => {
-      setLoading(true);
-      try {
-        const { data, pagination } = await fetchCourses({
-          filters: {
-            ...filters,
-            search: searchQuery,
-          },
-          sortBy,
-          pagination: { page, pageSize },
-        });
-        setCourses(data);
-        setTotalCourses(pagination.total ?? 0);
-      } catch (error) {
-        log.error('Error loading courses', error);
-        setCourses([]);
-        setTotalCourses(0);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const { data, isLoading, isError } = useQuery(
+    fetchCoursesQueryOptions({
+      filters: {
+        ...filters,
+        search: searchQuery,
+      },
+      sortBy,
+      pagination: { page, pageSize },
+    })
+  );
 
-    load();
-  }, [searchQuery, sortBy, filters, page]);
-
+  const courses = data?.data || [];
+  const totalCourses = data?.pagination.total || 0;
   const formattedCourses = courses;
 
   const handleFilterChange = (newFilters: ProgramFilters) => {
@@ -155,7 +140,7 @@ const ProgramOverview: React.FC = () => {
           </div>
 
           <div className='flex-1'>
-            {loading ? (
+            {isLoading ? (
               <div className='text-center py-12'>
                 <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4'></div>
                 <p className='text-text-secondary'>Chargement des cours...</p>

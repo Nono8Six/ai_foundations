@@ -1,347 +1,153 @@
 /**
- * Stats Page - Timeline d'activité avec données réelles depuis activity_log
+ * Stats Page - Dashboard gamifié motivant et engageant
  * 
- * Refonte complète avec :
- * - Timeline des événements XP/activité avec libellés humains (pas de JSON brut)
- * - Filtres scalables (période, type, XP uniquement, tri)
- * - Groupements temporels auto (jour/semaine/mois)
- * - Pagination infinie avec TanStack Query
- * - Insights contextuels avec agrégations
- * - Astuce profil masquée si profil déjà complété
+ * Focus sur :
+ * - Objectifs en premier pour motiver
+ * - Recommandations XP depuis xp_sources (ZÉRO donnée hardcodée)
+ * - Historique XP avec meilleure UX
+ * - Design moderne et responsive
+ * - ARCHITECTURE ULTRA-PRO: Toutes données depuis DB
  */
 
-import React, { useState, useMemo, useCallback } from 'react';
-import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
+import React, { useEffect, useState } from 'react';
 import { useAuth } from '@features/auth/contexts/AuthContext';
 
-// Services et formatters
-import { 
-  ActivityService,
-  type ActivityFilters
-} from '@shared/services/activityService';
-import { 
-  formatActivities, 
-  isProfileComplete,
-  type FormattedActivity 
-} from '@shared/utils/activityFormatter';
+// Services
+import { XPService, type XPOpportunity, type LevelInfo } from '@shared/services/xpService';
 
-// Composants d'activité
-import ActivityFilters from '@shared/components/activity/ActivityFilters';
-import ActivityTimeline from '@shared/components/activity/ActivityTimeline';
-import ActivityInsights from '@shared/components/activity/ActivityInsights';
-
-// Composants partagés
+// Composants
 import Icon from '@shared/components/AppIcon';
-
-const INITIAL_FILTERS: ActivityFilters = {
-  period: '90d',
-  sortBy: 'recent'
-};
-
-const PAGE_SIZE = 20;
+import AchievementsGrid from './AchievementsGrid';
 
 const StatsPage: React.FC = () => {
-  const { user, userProfile } = useAuth();
-  const [filters, setFilters] = useState<ActivityFilters>(INITIAL_FILTERS);
+  const { userProfile } = useAuth();
+  
+  // État pour les opportunités XP depuis DB (remplace données hardcodées)
+  const [xpOpportunities, setXpOpportunities] = useState<XPOpportunity[]>([]);
+  const [levelInfo, setLevelInfo] = useState<LevelInfo | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Déterminer le niveau de groupement selon la période
-  const groupBy = useMemo(() => {
-    switch (filters.period) {
-      case '30d':
-        return 'day';
-      case '90d': 
-        return 'week';
-      case '12m':
-      case 'all':
-        return 'month';
-      default:
-        return 'day';
-    }
-  }, [filters.period]);
+  const currentXP = userProfile?.xp || 0;
 
-  // Vérifier si le profil est complet pour masquer l'astuce
-  const profileCompleted = useMemo(() => {
-    return userProfile ? isProfileComplete(userProfile) : false;
-  }, [userProfile]);
+  // Chargement données XP et niveau depuis DB (ZÉRO logique hardcodée)
+  useEffect(() => {
+    const loadData = async () => {
+      if (!userProfile?.id) return;
+      
+      setIsLoading(true);
+      try {
+        // Charger en parallèle les opportunités XP et les infos de niveau
+        const [opportunities, levelInformation] = await Promise.all([
+          XPService.getAvailableXPOpportunities(userProfile.id),
+          XPService.calculateLevelInfo(currentXP)
+        ]);
 
-  // Query keys stables
-  const queryKeys = useMemo(() => ({
-    activities: ['user-activities', user?.id, filters],
-    aggregates: ['activity-aggregates', user?.id, { period: filters.period, types: filters.types }],
-    availableTypes: ['activity-types', user?.id],
-    hasXP: ['has-xp-activities', user?.id]
-  }), [user?.id, filters]);
-
-  // Vérifier si l'utilisateur a des activités XP
-  const { data: hasXPActivities, isLoading: checkingXP } = useQuery({
-    queryKey: queryKeys.hasXP,
-    queryFn: () => user?.id ? ActivityService.hasXPActivities(user.id) : false,
-    enabled: !!user?.id,
-    staleTime: 5 * 60 * 1000 // 5 minutes
-  });
-
-  // Timeline des activités avec pagination infinie
-  const {
-    data: activitiesData,
-    isLoading: activitiesLoading,
-    isFetchingNextPage,
-    hasNextPage,
-    fetchNextPage,
-    refetch: _refetchActivities
-  } = useInfiniteQuery({
-    queryKey: queryKeys.activities,
-    queryFn: ({ pageParam = 0 }) => {
-      if (!user?.id) {
-        return { activities: [], totalCount: 0, hasMore: false };
+        setXpOpportunities(opportunities.slice(0, 3)); // Top 3 pour l'affichage
+        setLevelInfo(levelInformation);
+      } catch (error) {
+        console.error('Error loading XP data:', error);
+        setXpOpportunities([]);
+        setLevelInfo(null);
+      } finally {
+        setIsLoading(false);
       }
-      return ActivityService.getUserActivities(
-        user.id,
-        filters,
-        { page: pageParam, pageSize: PAGE_SIZE }
-      );
-    },
-    getNextPageParam: (lastPage, pages) => {
-      return lastPage.hasMore ? pages.length : undefined;
-    },
-    enabled: !!user?.id,
-    staleTime: 2 * 60 * 1000, // 2 minutes
-    refetchOnWindowFocus: false
-  });
+    };
 
-  // Agrégations pour insights
-  const { data: aggregates, isLoading: aggregatesLoading } = useQuery({
-    queryKey: queryKeys.aggregates,
-    queryFn: () => user?.id ? ActivityService.getActivityAggregates(user.id, filters) : null,
-    enabled: !!user?.id,
-    staleTime: 2 * 60 * 1000,
-    refetchOnWindowFocus: false
-  });
+    loadData();
+  }, [userProfile?.id, currentXP]);
 
-  // Types disponibles pour filtres
-  const { data: availableTypes = [] } = useQuery({
-    queryKey: queryKeys.availableTypes,
-    queryFn: () => user?.id ? ActivityService.getAvailableTypes(user.id) : [],
-    enabled: !!user?.id,
-    staleTime: 5 * 60 * 1000,
-    refetchOnWindowFocus: false
-  });
-
-  // Handlers
-  const handleFiltersChange = useCallback((newFilters: ActivityFilters) => {
-    setFilters(newFilters);
-  }, []);
-
-  const handleLoadMore = useCallback(() => {
-    if (hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
-
-  // Formatter toutes les activités des pages
-  const allActivities: FormattedActivity[] = useMemo(() => {
-    if (!activitiesData?.pages) return [];
-    
-    const rawActivities = activitiesData.pages.flatMap(page => page.activities);
-    return formatActivities(rawActivities);
-  }, [activitiesData]);
-
-  const totalActivityCount = useMemo(() => {
-    return activitiesData?.pages?.[0]?.totalCount || 0;
-  }, [activitiesData]);
-
-  // Loading state initial  
-  if (checkingXP) {
+  if (!userProfile) {
     return (
-      <div className="space-y-8">
-        <div className="flex items-center justify-center h-32">
-          <div className="text-center">
-            <Icon name="Loader" className="animate-spin text-primary mx-auto mb-4" size={32} />
-            <p className="text-text-secondary">Chargement de votre activité...</p>
-          </div>
-        </div>
+      <div className="flex items-center justify-center h-64">
+        <Icon name="Loader" className="animate-spin text-primary" size={32} />
       </div>
     );
   }
 
-  // Aucune activité trouvée
-  if (totalActivityCount === 0 && !activitiesLoading) {
-    return (
-      <div className="space-y-8">
-        <div className="text-center">
-          <h3 className="text-lg font-semibold text-text-primary mb-2">
-            Statistiques d'apprentissage
-          </h3>
-          <p className="text-text-secondary text-sm">
-            Votre journal d'activité est encore vide
-          </p>
-        </div>
-        
-        <div className="text-center py-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
-            <Icon name="Sparkles" size={32} className="text-blue-600" />
-          </div>
-          <h3 className="text-xl font-semibold text-text-primary mb-3">
-            Prêt à commencer votre aventure ?
-          </h3>
-          <p className="text-text-secondary mb-8 max-w-md mx-auto leading-relaxed">
-            Vos activités d'apprentissage apparaîtront ici dès que vous commencerez. 
-            Chaque action compte pour votre progression !
-          </p>
-          
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a
-              href="/programmes"
-              className="inline-flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors font-medium shadow-sm hover:shadow-md"
-            >
-              <Icon name="BookOpen" size={18} className="mr-2" />
-              Explorer les cours
-            </a>
-            
-            {!profileCompleted && (
-              <a
-                href="/profile?tab=personal"
-                className="inline-flex items-center px-6 py-3 text-text-primary border border-border rounded-lg hover:bg-surface transition-colors font-medium"
-              >
-                <Icon name="User" size={18} className="mr-2" />
-                Compléter mon profil
-              </a>
-            )}
-          </div>
-          
-          {!profileCompleted && (
-            <div className="mt-8 pt-6 border-t border-border max-w-sm mx-auto">
-              <div className="flex items-center justify-center space-x-2 text-xs text-text-secondary">
-                <Icon name="Lightbulb" size={14} />
-                <span>
-                  Astuce : Complétez votre profil pour gagner vos premiers XP !
-                </span>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  }
-
-  // Rendu principal avec données
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="text-center">
-        <h3 className="text-lg font-semibold text-text-primary mb-2">
-          Statistiques d'apprentissage
-        </h3>
-        <p className="text-text-secondary text-sm">
-          Votre journal d'activité avec {totalActivityCount} événement{totalActivityCount > 1 ? 's' : ''}
-          {hasXPActivities && ' • Gains XP inclus'}
-        </p>
-      </div>
 
-      {/* Barre de filtres */}
-      <ActivityFilters
-        filters={filters}
-        availableTypes={availableTypes}
-        onFiltersChange={handleFiltersChange}
-        isLoading={activitiesLoading || aggregatesLoading}
-      />
+      {/* Grille des achievements vraies basée sur la DB */}
+      <AchievementsGrid />
 
-      {/* Layout principal */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        
-        {/* Timeline principale (col-span-3 sur lg) */}
-        <div className="lg:col-span-3">
-          <ActivityTimeline
-            activities={allActivities}
-            isLoading={activitiesLoading}
-            hasMore={hasNextPage}
-            onLoadMore={handleLoadMore}
-            groupBy={groupBy}
-            showDetails={true}
-          />
-        </div>
 
-        {/* Sidebar avec insights (col-span-1 sur lg) */}
-        <div className="lg:col-span-1">
-          <div className="sticky top-24 space-y-6">
-            
-            {/* Insights avec agrégations */}
-            {aggregates && (
-              <ActivityInsights
-                aggregates={aggregates}
-                period={filters.period || '90d'}
-                isLoading={aggregatesLoading}
-              />
-            )}
-
-            {/* Stats rapides du profil (pas de duplication avec header) */}
-            {userProfile && (
-              <div className="bg-surface rounded-lg border border-border p-4">
-                <h4 className="text-sm font-semibold text-text-primary mb-3 flex items-center">
-                  <Icon name="Activity" size={14} className="mr-2 text-accent" />
-                  Progression
-                </h4>
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-text-secondary">Série actuelle</span>
-                    <span className="font-medium text-text-primary">
-                      {userProfile.current_streak} jour{userProfile.current_streak !== 1 ? 's' : ''}
-                    </span>
-                  </div>
-                  {userProfile.last_completed_at && (
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-text-secondary">Dernière activité</span>
-                      <span className="font-medium text-text-primary">
-                        {new Date(userProfile.last_completed_at).toLocaleDateString('fr-FR', { 
-                          day: 'numeric', 
-                          month: 'short' 
-                        })}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Astuce conditionnelle - masquée si profil complété */}
-            {!profileCompleted && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <div className="flex items-start space-x-2">
-                  <Icon name="Lightbulb" size={16} className="text-blue-600 mt-0.5" />
-                  <div>
-                    <h5 className="text-sm font-semibold text-blue-800 mb-1">
-                      Conseil
-                    </h5>
-                    <p className="text-xs text-blue-700">
-                      Complétez votre profil pour débloquer plus d'XP et maximiser 
-                      votre progression dans l'apprentissage !
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-
+      {/* Recommandations XP gamifiées - DEPUIS DB */}
+      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-200 p-6">
+        <div className="flex items-center space-x-3 mb-6">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center">
+            <Icon name="Zap" size={18} className="text-white" />
           </div>
-        </div>
-      </div>
-
-      {/* Footer avec indicateur temps réel */}
-      <div className="text-center pt-6 border-t border-border">
-        <div className="flex items-center justify-center space-x-4 text-xs text-text-secondary">
-          <div className="flex items-center space-x-1">
-            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-            <span>Données temps réel</span>
-          </div>
-          <div className="w-px h-3 bg-border"></div>
-          <div className="flex items-center space-x-1">
-            <Icon name="Zap" size={12} />
-            <span>Timeline optimisée</span>
-          </div>
-          <div className="w-px h-3 bg-border"></div>
           <div>
-            {totalActivityCount} événement{totalActivityCount > 1 ? 's' : ''} total
+            <h3 className="text-lg font-semibold text-gray-900">Comment gagner plus d'XP</h3>
+            <p className="text-sm text-blue-600">Actions recommandées depuis notre base de règles XP</p>
+          </div>
+        </div>
+
+        {/* Affichage des opportunités depuis DB */}
+        {isLoading ? (
+          <div className="flex justify-center py-8">
+            <Icon name="Loader" className="animate-spin text-blue-500" size={24} />
+          </div>
+        ) : xpOpportunities.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {xpOpportunities.map((opportunity) => (
+              <div key={opportunity.id} className="bg-white rounded-lg border border-blue-200 p-4 hover:shadow-md transition-all duration-200 group">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center">
+                    <Icon name={opportunity.icon} size={20} className="text-white" />
+                  </div>
+                  <div className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
+                    opportunity.xpValue > 0 
+                      ? 'bg-emerald-100 text-emerald-700' 
+                      : 'bg-red-100 text-red-700'
+                  }`}>
+                    {opportunity.xpValue > 0 ? '+' : ''}{opportunity.xpValue} XP
+                  </div>
+                </div>
+                <h4 className="font-semibold text-gray-900 mb-1 text-sm">{opportunity.title}</h4>
+                <p className="text-xs text-gray-600 mb-3 leading-relaxed">{opportunity.description}</p>
+                <button className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-xs font-medium py-2 px-3 rounded-md hover:from-blue-600 hover:to-indigo-600 transition-all duration-200 group-hover:shadow-sm">
+                  {opportunity.actionText}
+                </button>
+                {!opportunity.isRepeatable && (
+                  <div className="mt-2 text-xs text-gray-500 flex items-center">
+                    <Icon name="Clock" size={12} className="mr-1" />
+                    Une fois seulement
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-8">
+            <Icon name="Zap" size={48} className="text-gray-400 mx-auto mb-4" />
+            <p className="text-gray-600">Aucune opportunité XP disponible pour le moment.</p>
+            <p className="text-sm text-gray-500 mt-1">Revenez plus tard pour découvrir de nouvelles façons de gagner de l&apos;XP !</p>
+          </div>
+        )}
+        
+        {/* Motivation supplémentaire */}
+        <div className="mt-6 text-center">
+          <div className="inline-flex items-center space-x-2 bg-white/70 backdrop-blur-sm px-4 py-2 rounded-full border border-blue-200">
+            <Icon name="TrendingUp" size={16} className="text-blue-500" />
+            <span className="text-sm font-medium text-blue-700">
+              {levelInfo?.isMaxLevel 
+                ? `Niveau maximum atteint: ${levelInfo.levelTitle}` 
+                : `Prochain niveau dans ${levelInfo?.xpForNextLevel || 0} XP`}
+            </span>
+            <div className="w-12 h-1.5 bg-blue-200 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-blue-500 transition-all duration-700"
+                style={{ width: `${Math.min(levelInfo?.progressPercent || 0, 100)}%` }}
+              />
+            </div>
           </div>
         </div>
       </div>
+
+
+
+
     </div>
   );
 };

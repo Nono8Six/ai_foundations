@@ -10,12 +10,22 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
       '@frontend': path.resolve(__dirname, './src'),
-      '@utils': path.resolve(__dirname, './src/utils'),
-      '@services': path.resolve(__dirname, './src/services'),
-      '@components': path.resolve(__dirname, './src/components'),
-      '@contexts': path.resolve(__dirname, './src/context'),
-      '@lib': path.resolve(__dirname, './src/lib'),
+      // New modular structure aliases
+      '@core': path.resolve(__dirname, './src/core'),
+      '@shared': path.resolve(__dirname, './src/shared'),
+      '@features': path.resolve(__dirname, './src/features'),
       '@libs': path.resolve(__dirname, '../../libs'),
+      // Updated aliases for new structure
+      '@utils': path.resolve(__dirname, './src/shared/utils'),
+      '@services': path.resolve(__dirname, './src/shared/services'),
+      '@components': path.resolve(__dirname, './src/shared/components'),
+      '@contexts': path.resolve(__dirname, './src/shared/contexts'),
+      '@ui': path.resolve(__dirname, './src/shared/ui'),
+      '@layouts': path.resolve(__dirname, './src/shared/layouts'),
+      '@hooks': path.resolve(__dirname, './src/shared/hooks'),
+      '@/lib': path.resolve(__dirname, './src/lib'),
+      '@lib': path.resolve(__dirname, './src/lib'),
+      // Libs aliases
       '@logger': path.resolve(__dirname, '../../libs/logger'),
     }
   },

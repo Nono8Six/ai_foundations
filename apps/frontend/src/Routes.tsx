@@ -16,6 +16,7 @@ const UserProfileManagement = lazy(() => import('@features/dashboard/profile-man
 const LessonViewer = lazy(() => import('@features/courses/lesson-viewer/index'));
 const AdminDashboard = lazy(() => import('@features/admin/dashboard/index'));
 const UserManagementAdmin = lazy(() => import('@features/admin/user-management/index'));
+const XPManagementAdmin = lazy(() => import('@features/admin/xp-management/index'));
 const ContentManagementCoursesModulesLessons = lazy(() => import('@features/cms/pages/index'));
 const NotFound = lazy(() => import('@features/public/pages/NotFound'));
 const VerifyEmail = lazy(() => import('@features/auth/pages/verify-email/index'));
@@ -51,6 +52,7 @@ const AppRoutes: React.FC = () => {
             <Route element={<AdminRoute />}>
               <Route path='/admin-dashboard' element={<AdminDashboard />} />
               <Route path='/user-management-admin' element={<UserManagementAdmin />} />
+              <Route path='/admin-xp-management' element={<XPManagementAdmin />} />
               <Route path='/cms' element={<ContentManagementCoursesModulesLessons />} />
             </Route>
 

@@ -81,7 +81,11 @@ export default defineConfig(() => {
         },
         {
           find: '@/lib',
-          replacement: path.resolve(__dirname, './src/shared/utils')
+          replacement: path.resolve(__dirname, './src/lib')
+        },
+        {
+          find: '@lib',
+          replacement: path.resolve(__dirname, './src/lib')
         },
         // Libs aliases (unchanged)
         {
@@ -100,11 +104,11 @@ export default defineConfig(() => {
     },
 
     server: {
-      port: 5173,
+      port: 5174,
       host: '0.0.0.0',
-      strictPort: true,
+      strictPort: false,
       allowedHosts: ['.amazonaws.com', '.builtwithrocket.new', 'localhost'],
-      hmr: { host: 'localhost', port: 5173 },
+      hmr: { host: 'localhost', port: 5174 },
       watch: {
         usePolling: process.env.CHOKIDAR_USEPOLLING === '1',
         interval: Number(process.env.CHOKIDAR_INTERVAL ?? 300),

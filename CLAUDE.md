@@ -262,3 +262,283 @@ pnpm dev
 ✅ If data exists: Display actual chronological XP gains
 ✅ Link to `/programmes` to start generating real data
 ✅ Use only `userProfile.xp`, `userProfile.level` from database
+
+## Gamification & XP Architecture (ULTRA-PRO)
+
+### Architecture Overview - ZÉRO Donnée Hardcodée
+
+L'architecture de gamification a été complètement refactorisée pour éliminer **TOUTES** les données hardcodées et implémenter un système ultra-scalable, configurable et professionnel.
+
+### Core Tables Architecture
+
+#### **`profiles`** - Hub Utilisateur Central
+- **Fonction**: Table utilisateur consolidée avec XP/niveau intégrés
+- **Champs XP**: `xp` (integer), `level` (integer), `last_xp_event_at` (timestamp)
+- **Relations**: Référencée par toutes les tables gamification
+- **Source de vérité**: Pour XP total et niveau utilisateur
+
+#### **`xp_events`** - Historique XP (Source de Vérité)
+- **Fonction**: Journal complet de tous les événements XP (gains/pertes)
+- **Champs**: `user_id`, `source_type`, `action_type`, `xp_delta`, `xp_before/after`, `metadata`
+- **Usage**: Audit trail, timeline XP, calculs de cohérence
+- **Index optimisé**: `(user_id, created_at DESC)`
+
+#### **`xp_sources`** - Règles XP Configurables ⭐
+- **Fonction**: Configuration de TOUTES les règles XP (remplace hardcoding)
+- **Champs**: `source_type`, `action_type`, `xp_value`, `is_repeatable`, `cooldown_minutes`, `max_per_day`
+- **Exemples**: 
+  - `lesson:start → 10 XP`
+  - `lesson:completion → 50 XP`
+  - `course:completion → 200 XP`
+  - `quiz:perfect → 30 XP`
+- **Usage**: `XPService.getAvailableXPOpportunities()` remplace StatsPage hardcodé
+
+#### **`level_definitions`** - Système Niveaux Dynamique 🚀
+- **Fonction**: Configuration progression niveaux (remplace "100 XP/niveau" hardcodé)
+- **Champs**: `level`, `xp_required`, `xp_for_next`, `title`, `badge_icon`, `badge_color`, `rewards`
+- **Progression**: Exponentielle configurée (0→100→250→450→700→1000→1350...)
+- **Usage**: `XPService.calculateLevelInfo(totalXP)` pour calculs dynamiques
+
+#### **`achievement_definitions`** - Templates Achievements
+- **Fonction**: Catalogue achievements disponibles avec conditions
+- **Champs**: `achievement_key`, `title`, `description`, `condition_type`, `condition_params`, `xp_reward`
+- **Types**: Seuils XP, niveaux, streaks, profil completion
+- **Auto-unlock**: `AchievementService.checkAndUnlockAchievements()`
+
+#### **`user_achievements`** - Achievements Débloqués
+- **Fonction**: Instances achievements par utilisateur
+- **Relations**: FK vers `profiles`, référence `achievement_definitions`
+- **Audit**: Date unlock, conditions remplies, XP reward
+
+### Services Architecture
+
+#### **XPService** - Service Principal XP
+- **`getAvailableXPOpportunities()`**: Remplace données hardcodées StatsPage
+- **`calculateLevelInfo(totalXP)`**: Calculs niveau depuis level_definitions
+- **`getXpTimeline()`**: Timeline événements XP avec groupement temporel
+- **`getXpAggregates()`**: Statistiques XP par période/source
+
+#### **AchievementService** - Gestion Achievements
+- **`checkAndUnlockAchievements()`**: Vérification automatique achievements
+- **`getUserStats()`**: Statistiques utilisateur pour conditions
+- **Logique niveau**: Utilise level_definitions (plus jamais hardcodé)
+
+### Performance Optimizations
+
+#### **Index Stratégiques**
+```sql
+-- Timeline XP (requête la plus fréquente)
+CREATE INDEX idx_xp_events_user_created ON xp_events (user_id, created_at DESC);
+
+-- Règles XP actives
+CREATE INDEX idx_xp_sources_active_type ON xp_sources (is_active, source_type, action_type);
+
+-- Calculs niveau optimisés
+CREATE INDEX idx_level_definitions_xp_required ON level_definitions (xp_required ASC);
+
+-- Profiles XP/niveau
+CREATE INDEX idx_profiles_xp_level ON profiles (xp, level);
+```
+
+### Frontend Integration
+
+#### **StatsPage.tsx** - REFACTORISÉ COMPLET
+- **AVANT**: 90 lignes de recommandations hardcodées
+- **APRÈS**: `XPService.getAvailableXPOpportunities()` depuis `xp_sources`
+- **Niveau**: `XPService.calculateLevelInfo()` depuis `level_definitions`
+- **Résultat**: ZÉRO donnée hardcodée
+
+#### **Services Dynamiques**
+- **XP Opportunities**: Depuis `xp_sources` table
+- **Level Progress**: Depuis `level_definitions` table
+- **Achievement Check**: Automatique avec conditions configurables
+
+### Architecture Scalability
+
+#### **Pour 100+ Utilisateurs**
+- Index optimisés pour requêtes concurrentes
+- Partitioning `xp_events` si volume > 100K
+- Caching Redis pour leaderboards
+
+#### **Pour Futures Features**
+- **Nouveaux types XP**: Ajout dans `xp_sources` sans code
+- **Nouveaux achievements**: Configuration dans `achievement_definitions`
+- **Progression custom**: Modification `level_definitions`
+- **Cooldowns/Limites**: Déjà supportés dans `xp_sources`
+
+### Migration Completed ✅
+
+#### **Tables Supprimées**
+- ❌ `user_xp_balance` (redondante avec `profiles.xp/.level`)
+
+#### **Données Migrées**
+- ✅ XP totals vers `profiles.xp`
+- ✅ Niveaux vers `profiles.level`
+- ✅ Vue `user_profiles_with_xp` mise à jour
+
+#### **Cohérence Garantie**
+- ✅ `xp_events` = source de vérité XP
+- ✅ Niveaux calculés depuis `level_definitions`
+- ✅ Règles XP depuis `xp_sources`
+
+### Code Examples
+
+#### **Utilisation XP Service**
+```typescript
+// Récupérer opportunités XP (remplace hardcodé)
+const opportunities = await XPService.getAvailableXPOpportunities(userId);
+
+// Calcul niveau dynamique (remplace Math.floor(xp/100))
+const levelInfo = await XPService.calculateLevelInfo(totalXP);
+
+// Timeline XP avec groupement
+const timeline = await XPService.getXpTimeline(userId, filters, pagination);
+```
+
+#### **Configuration Règles XP**
+```sql
+-- Ajouter nouvelle règle XP sans déploiement code
+INSERT INTO xp_sources (source_type, action_type, xp_value, description) 
+VALUES ('lesson', 'video_watched', 5, 'Regarder vidéo complète');
+```
+
+### Architecture Benefits
+
+✅ **ZÉRO hardcoding** - Toutes données depuis DB
+✅ **Ultra-configurable** - Règles XP/niveaux modifiables
+✅ **Scalable** - Index optimisés, architecture propre  
+✅ **Maintenable** - Code DRY, single source of truth
+✅ **Future-proof** - Extensible sans refactoring
+✅ **Performance** - Index stratégiques, requêtes optimisées
+
+## Architecture XP Unifiée (ULTRA-PRO) 🏆
+
+### Problème Résolu
+- **Duplication**: `xp_sources` et `achievement_definitions` avaient des overlaps
+- **UX fragmentée**: Sources XP éparpillées entre 2 systèmes
+- **Hardcoding**: Logique de mapping hardcodée dans frontend
+
+### Solution - API Unifiée
+
+**Tables clarifiées :**
+- **`xp_sources`**: Actions immédiates répétables (lesson:completion, quiz:perfect, etc.)
+- **`achievement_definitions`**: Objectifs long terme uniques (atteindre niveau 5, 500 XP total, etc.)
+- **Doublons éliminés**: profile_complete, streak_7day_milestone supprimés
+
+**API Unifiée XPService :**
+```typescript
+// API principale - TOUTES les sources XP
+static async getAllXPOpportunities(userId?: string): Promise<XPOpportunity[]>
+
+// API simplifiée - Top 3 actions pour bloc "Comment gagner plus d'XP"
+static async getAvailableXPOpportunities(userId?: string): Promise<XPOpportunity[]>
+```
+
+**Type unifié XPOpportunity :**
+```typescript
+interface XPOpportunity {
+  id: string;
+  title: string;            // Généré dynamiquement depuis DB
+  description: string;      // Depuis description DB ou généré
+  xpValue: number;
+  icon: string;             // Mappé sur sourceType
+  actionText: string;       // Action button text
+  available: boolean;
+  sourceType: string;       // lesson, course, quiz, profile, etc.
+  actionType: string;       // completion, perfect, start, etc.
+  isRepeatable: boolean;
+  cooldownMinutes: number;
+  maxPerDay?: number;
+  
+  // Nouveaux champs unifiés
+  category: 'action' | 'achievement'; // Différenciation type
+  conditionType?: string;             // Pour achievements
+  conditionParams?: Record<string, any>;
+  progress?: number;                  // Progression 0-100%
+  isUnlocked?: boolean;              // Pour achievements seulement
+}
+```
+
+### AchievementsGrid - Refactoring Total
+
+**AVANT :**
+- Multiples requêtes: `achievement_definitions` + `user_achievements` + `user_xp_balance`
+- Données hardcodées: `profile_completion: 100`, `member_rank: 2`
+- Affichage seulement achievements
+
+**APRÈS :**
+- **Une seule API**: `XPService.getAllXPOpportunities(userId)`
+- **TOUTES les sources XP**: Actions répétables + Achievements uniques
+- **Filtres unifiés**: Type (Actions/Achievements), Catégorie, Statut
+- **Zéro hardcoding**: Tout vient de la base dynamiquement
+
+**Interface unifiée :**
+```typescript
+// Filtres étendus
+type FilterType = 'all' | 'actions' | 'achievements' | 'unlocked' | 'locked';
+type CategoryType = 'all' | 'lesson' | 'course' | 'quiz' | 'profile' | 'streak' | 
+                   'module' | 'level' | 'xp' | 'special';
+
+// Affichage différentié
+- Actions: Badge bleu, icône Zap, informations cooldown/max-per-day
+- Achievements: Badge violet, icône Trophy, barre progression
+- Unlockés: Fond vert, CheckCircle
+```
+
+### Génération Dynamique - Zéro Hardcoding
+
+**Titres générés :**
+```typescript
+// AVANT: Map hardcodée de 50+ titres
+// APRÈS: Génération dynamique
+generateDynamicTitle(actionType, sourceType) {
+  // "completion" + "lesson" = "Terminer une leçon"
+  // "perfect_score" + "quiz" = "Réussir parfaitement un quiz"
+}
+```
+
+**Descriptions intelligentes :**
+```typescript
+// Utilise description DB ou génère selon pattern
+- Si actionType.includes('perfect') → "Excellez dans..."
+- Si actionType.includes('completion') → "Terminez..."
+- Si sourceType === 'profile' → "Améliorez votre profil..."
+```
+
+### Résultat Final
+
+**Stats :**
+- **Tables nettoyées**: 34 → 33 xp_sources, 10 → 9 achievement_definitions
+- **Zéro duplication**: Aucun overlap entre tables
+- **API unifiée**: Une seule source de vérité pour frontend
+- **Hardcoding éliminé**: 100% données depuis DB
+
+**Avantages :**
+- **Scalabilité**: Ajouter XP source = automatiquement visible partout
+- **Maintenance**: Une seule API à maintenir
+- **UX cohérente**: Même affichage pour toutes sources XP
+- **Performance**: Requête unifiée optimisée
+
+**Usage :**
+```typescript
+// Bloc "Comment gagner plus d'XP" (top 3 actions)
+const topActions = await XPService.getAvailableXPOpportunities(userId);
+
+// Bloc "Achievements disponibles" (tout unifié)
+const allSources = await XPService.getAllXPOpportunities(userId);
+```
+
+### Commandes de Test Architecture Unifiée
+
+```bash
+# Vérifier aucun doublon dans les données
+SELECT source_type, action_type, COUNT(*) FROM xp_sources 
+GROUP BY 1,2 HAVING COUNT(*) > 1;
+
+# Vérifier cohérence XP entre tables
+SELECT 'xp_sources' as table, COUNT(*), SUM(xp_value) 
+FROM xp_sources WHERE is_active=true;
+
+# Tester API unifiée frontend
+pnpm dev # Vérifier /profile?tab=stats
+```

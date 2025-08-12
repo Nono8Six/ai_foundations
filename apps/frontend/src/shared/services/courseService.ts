@@ -9,7 +9,8 @@ import {
   type CourseSortOption, 
   type PaginationOptions, 
   type PaginatedCoursesResult,
-  type CmsCourse
+  type CmsCourse,
+  type CourseDifficulty
 } from '@frontend/types/course.types';
 import { log } from '@libs/logger';
 import { z } from 'zod';
@@ -21,26 +22,22 @@ const supabaseClient = supabase;
 const DEFAULT_PAGE = 1;
 const DEFAULT_PAGE_SIZE = 12;
 
-// Cache pour les requêtes
-interface CacheEntry<T> {
-  data: T;
-  timestamp: number;
+// Difficulté autorisée pour les cours
+const ALLOWED_DIFFICULTIES: readonly CourseDifficulty[] = ['beginner', 'intermediate', 'advanced', 'expert'];
+
+function toAllowedDifficulty(value: unknown): CourseDifficulty | null {
+  return typeof value === 'string' && (ALLOWED_DIFFICULTIES as readonly string[]).includes(value)
+    ? (value as CourseDifficulty)
+    : null;
 }
 
-const cache = new Map<string, CacheEntry<PaginatedCoursesResult>>();
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+// Note: Le cache est maintenant géré exclusivement par TanStack Query.
+// La logique de cache manuelle a été supprimée pour éviter les conflits et les fuites de mémoire.
 
 /**
- * Vérifie si le cache est toujours valide
+ * Récupère une liste paginée de cours avec leur progression
  */
-function isCacheValid(key: string): boolean {
-  const cached = cache.get(key);
-  if (!cached) return false;
-  return Date.now() - cached.timestamp < CACHE_TTL;
-}
-
-// Note: Cache cleaning is now handled by TanStack Query's built-in cache management
-// Manual cache cleanup removed to prevent memory leaks
+ 
 
 /**
  * Récupère une liste paginée de cours avec leur progression
@@ -56,17 +53,6 @@ export async function fetchCourses({
 } = {}): Promise<PaginatedCoursesResult> {
   const { search = '', skillLevel = [], category = [], status = [] } = filters;
   const { page = DEFAULT_PAGE, pageSize = DEFAULT_PAGE_SIZE } = pagination;
-  
-  // Créer une clé de cache unique pour cette requête
-  const cacheKey = JSON.stringify({ filters, sortBy, page, pageSize });
-  
-  // Vérifier le cache
-  if (isCacheValid(cacheKey)) {
-    const cached = cache.get(cacheKey);
-    if (cached) {
-      return cached.data;
-    }
-  }
   
   try {
     // Construire la requête sur la vue user_course_progress
@@ -197,9 +183,6 @@ export async function fetchCourses({
       },
     };
     
-    // Mettre en cache le résultat
-    cache.set(cacheKey, { data: result, timestamp: Date.now() });
-    
     return result;
     
   } catch (error) {
@@ -207,6 +190,27 @@ export async function fetchCourses({
     throw error;
   }
 }
+
+/**
+ * Récupère une liste paginée de cours avec leur progression
+ */
+ 
+
+export const fetchCoursesQueryOptions = (options: {
+  filters?: CourseFilters;
+  sortBy?: CourseSortOption;
+  pagination?: Partial<PaginationOptions>;
+}) => ({
+  queryKey: ['courses', options.filters, options.sortBy, options.pagination],
+  queryFn: () => fetchCourses(options),
+});
+
+/**
+ * Récupère un cours avec tout son contenu (modules et leçons)
+ */
+ 
+
+
 
 /**
  * Récupère un cours avec tout son contenu (modules et leçons)
@@ -302,9 +306,10 @@ export async function fetchCoursesForCMS(): Promise<CmsCourse[]> {
 
     // Transformation et validation avec le schéma CMS
     const validatedCourses = data.map((course, index) => {
+      let transformedCourse: Record<string, unknown> | undefined;
       try {
         // Transformer les données au format CMS
-        const transformedCourse = transformToCmsFormat(course);
+        transformedCourse = transformToCmsFormat(course);
         
         // Valider avec le schéma CMS dédié
         const validatedCourse = CmsCourseSchema.parse(transformedCourse);
@@ -413,38 +418,46 @@ export async function fetchCoursesWithContentForCMS(): Promise<CmsCourse[]> {
  * Utilisé quand le CMS doit retourner des données au format interface utilisateur
  */
 export function cmsCourseToProgressCourse(cmsCourse: CmsCourse): CourseWithProgress {
+  const totalLessons = cmsCourse.lessons_count || 0;
+  const durationMinutes = cmsCourse.estimated_duration || 0;
+  const durationStr = durationMinutes
+    ? durationMinutes < 60
+      ? `${durationMinutes} min`
+      : `${Math.floor(durationMinutes / 60)}h${durationMinutes % 60 ? ` ${durationMinutes % 60}min` : ''}`
+    : '0h 00min';
+
   return {
-    ...cmsCourse,
-    // Champs spécifiques à CourseWithProgress
+    id: cmsCourse.id,
+    title: cmsCourse.title,
+    description: cmsCourse.description ?? null,
+    slug: cmsCourse.slug,
+    cover_image_url: cmsCourse.cover_image_url ?? null,
+    thumbnail_url: cmsCourse.thumbnail_url ?? null,
+    category: cmsCourse.category ?? null,
+    difficulty: toAllowedDifficulty(cmsCourse.difficulty),
+    is_published: cmsCourse.is_published ?? false,
+    created_at: cmsCourse.created_at,
+    updated_at: cmsCourse.updated_at,
+    // Champs de progression et méta
     user_id: 'anonymous',
-    total_lessons: cmsCourse.lessons_count || 0,
+    total_lessons: totalLessons,
     completed_lessons: 0,
     completion_percentage: 0,
     last_activity_at: null,
-    status: 'not_started' as const,
+    status: 'not_started',
     average_rating: 0,
     enrolled_students: 0,
-    duration_minutes: cmsCourse.estimated_duration || 0,
+    duration_minutes: durationMinutes,
     is_new: false,
-    difficulty: (cmsCourse.difficulty || 'beginner') as 'beginner' | 'intermediate' | 'advanced' | 'expert',
-    duration: cmsCourse.estimated_duration 
-      ? cmsCourse.estimated_duration < 60 
-        ? `${cmsCourse.estimated_duration} min`
-        : `${Math.floor(cmsCourse.estimated_duration / 60)}h${cmsCourse.estimated_duration % 60 ? ` ${cmsCourse.estimated_duration % 60}min` : ''}`
-      : '0h 00min',
+    duration: durationStr,
     progress: {
       completed: 0,
-      total: cmsCourse.lessons_count || 0,
+      total: totalLessons,
       percentage: 0,
       lastActivityAt: null,
-      status: 'not_started' as const
+      status: 'not_started',
     },
-    // Garder les champs optionnels
-    prerequisites: [],
-    tags: [],
-    previewLessons: 0,
-    instructor: 'System'
-  };
+  } as CourseWithProgress;
 }
 
 /**
@@ -460,8 +473,8 @@ export function progressCourseToCmsCourse(progressCourse: CourseWithProgress): C
     cover_image_url: progressCourse.cover_image_url,
     thumbnail_url: progressCourse.thumbnail_url,
     category: progressCourse.category,
-    difficulty: progressCourse.difficulty,
-    is_published: progressCourse.is_published,
+    difficulty: toAllowedDifficulty(progressCourse.difficulty) ?? null,
+    is_published: Boolean(progressCourse.is_published),
     created_at: progressCourse.created_at || new Date().toISOString(),
     updated_at: progressCourse.updated_at || new Date().toISOString(),
     price: 0, // Default pour CMS
@@ -485,7 +498,7 @@ export function dbRowToCmsCourse(dbRow: Record<string, unknown>): CmsCourse {
     cover_image_url: dbRow.cover_image_url as string | null,
     thumbnail_url: dbRow.thumbnail_url as string | null,
     category: dbRow.category as string | null,
-    difficulty: dbRow.difficulty as string | null,
+    difficulty: toAllowedDifficulty(dbRow.difficulty),
     is_published: dbRow.is_published as boolean,
     created_at: dbRow.created_at as string,
     updated_at: dbRow.updated_at as string,

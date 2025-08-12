@@ -133,7 +133,7 @@ const UserDashboard: React.FC = () => {
                 <p className='text-text-secondary'>
                   {userData.currentStreak > 0 ? (
                     <span>
-                      Vous êtes sur une série de{' '}
+                      Votre série active : {' '}
                       <span className='font-medium text-primary'>
                         {userData.currentStreak} jours
                       </span>{' '}

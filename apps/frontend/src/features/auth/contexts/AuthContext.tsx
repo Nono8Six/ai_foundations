@@ -19,6 +19,7 @@ import { toast } from 'sonner';
 import { createContextStrict } from "@shared/contexts/createContextStrict";
 import { setAuthErrorHandler } from '@core/supabase/interceptor';
 import { fetchUserProfile } from '@shared/services/userService';
+import { StreakService } from '@shared/services/streakService';
 
 const supabaseClient = supabase as SupabaseClient<Database>;
 
@@ -261,6 +262,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUserProfile(profile);
         setProfileError(null); // Clear any previous errors
         log.debug('✅ User profile loaded successfully:', profile);
+        
+        // Mettre à jour le streak lors de la connexion
+        try {
+          await StreakService.updateUserStreak(user.id);
+          log.debug('🔥 User streak updated successfully');
+        } catch (streakError) {
+          log.warn('⚠️ Failed to update user streak:', streakError);
+          // Ne pas faire échouer la connexion pour un problème de streak
+        }
       } catch (err) {
         const error = typeof err === 'string' ? new Error(err) : (err as Error);
         log.error('❌ Failed to fetch user profile:', error);

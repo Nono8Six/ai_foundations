@@ -125,6 +125,7 @@ const Header = (): JSX.Element => {
         { name: 'Administration', path: '/admin-dashboard', icon: 'Shield' },
         { name: 'Gestion Contenu', path: '/cms', icon: 'FileText' },
         { name: 'Gestion Utilisateurs', path: '/user-management-admin', icon: 'Users' },
+        { name: 'Gestion XP', path: '/admin-xp-management', icon: 'Zap' },
       ]
     : [];
 

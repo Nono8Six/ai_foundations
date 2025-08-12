@@ -14,6 +14,60 @@ export type Database = {
   }
   public: {
     Tables: {
+      achievement_definitions: {
+        Row: {
+          achievement_key: string
+          category: string
+          condition_params: Json | null
+          condition_type: string
+          cooldown_hours: number | null
+          created_at: string | null
+          description: string
+          icon: string
+          id: string
+          is_active: boolean | null
+          is_repeatable: boolean | null
+          sort_order: number | null
+          title: string
+          updated_at: string | null
+          xp_reward: number
+        }
+        Insert: {
+          achievement_key: string
+          category?: string
+          condition_params?: Json | null
+          condition_type: string
+          cooldown_hours?: number | null
+          created_at?: string | null
+          description: string
+          icon: string
+          id?: string
+          is_active?: boolean | null
+          is_repeatable?: boolean | null
+          sort_order?: number | null
+          title: string
+          updated_at?: string | null
+          xp_reward?: number
+        }
+        Update: {
+          achievement_key?: string
+          category?: string
+          condition_params?: Json | null
+          condition_type?: string
+          cooldown_hours?: number | null
+          created_at?: string | null
+          description?: string
+          icon?: string
+          id?: string
+          is_active?: boolean | null
+          is_repeatable?: boolean | null
+          sort_order?: number | null
+          title?: string
+          updated_at?: string | null
+          xp_reward?: number
+        }
+        Relationships: []
+      }
       activity_log: {
         Row: {
           action: string
@@ -45,6 +99,13 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_activity_log_user_id"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles_with_xp"
             referencedColumns: ["id"]
           },
         ]
@@ -127,47 +188,6 @@ export type Database = {
         }
         Relationships: []
       }
-      lesson_analytics: {
-        Row: {
-          completed_at: string | null
-          completion_percentage: number | null
-          id: string
-          interactions: Json | null
-          lesson_id: string | null
-          started_at: string | null
-          time_spent_minutes: number | null
-          user_id: string | null
-        }
-        Insert: {
-          completed_at?: string | null
-          completion_percentage?: number | null
-          id?: string
-          interactions?: Json | null
-          lesson_id?: string | null
-          started_at?: string | null
-          time_spent_minutes?: number | null
-          user_id?: string | null
-        }
-        Update: {
-          completed_at?: string | null
-          completion_percentage?: number | null
-          id?: string
-          interactions?: Json | null
-          lesson_id?: string | null
-          started_at?: string | null
-          time_spent_minutes?: number | null
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "lesson_analytics_lesson_id_fkey"
-            columns: ["lesson_id"]
-            isOneToOne: false
-            referencedRelation: "lessons"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       lessons: {
         Row: {
           content: Json | null
@@ -230,42 +250,42 @@ export type Database = {
           },
         ]
       }
-      media_files: {
+      level_definitions: {
         Row: {
+          badge_color: string | null
+          badge_icon: string | null
           created_at: string | null
-          file_size: number
-          file_type: string
-          filename: string
-          id: string
-          is_public: boolean | null
-          metadata: Json | null
-          original_name: string
-          storage_path: string
-          user_id: string | null
+          description: string | null
+          level: number
+          rewards: Json | null
+          title: string
+          updated_at: string | null
+          xp_for_next: number
+          xp_required: number
         }
         Insert: {
+          badge_color?: string | null
+          badge_icon?: string | null
           created_at?: string | null
-          file_size: number
-          file_type: string
-          filename: string
-          id?: string
-          is_public?: boolean | null
-          metadata?: Json | null
-          original_name: string
-          storage_path: string
-          user_id?: string | null
+          description?: string | null
+          level: number
+          rewards?: Json | null
+          title?: string
+          updated_at?: string | null
+          xp_for_next: number
+          xp_required: number
         }
         Update: {
+          badge_color?: string | null
+          badge_icon?: string | null
           created_at?: string | null
-          file_size?: number
-          file_type?: string
-          filename?: string
-          id?: string
-          is_public?: boolean | null
-          metadata?: Json | null
-          original_name?: string
-          storage_path?: string
-          user_id?: string | null
+          description?: string | null
+          level?: number
+          rewards?: Json | null
+          title?: string
+          updated_at?: string | null
+          xp_for_next?: number
+          xp_required?: number
         }
         Relationships: []
       }
@@ -328,12 +348,13 @@ export type Database = {
           id: string
           is_admin: boolean | null
           last_completed_at: string | null
-          level: number | null
+          last_xp_event_at: string | null
+          level: number
           phone: string | null
           profession: string | null
           profile_completion_history: Json | null
           updated_at: string | null
-          xp: number | null
+          xp: number
         }
         Insert: {
           avatar_url?: string | null
@@ -345,12 +366,13 @@ export type Database = {
           id: string
           is_admin?: boolean | null
           last_completed_at?: string | null
-          level?: number | null
+          last_xp_event_at?: string | null
+          level?: number
           phone?: string | null
           profession?: string | null
           profile_completion_history?: Json | null
           updated_at?: string | null
-          xp?: number | null
+          xp?: number
         }
         Update: {
           avatar_url?: string | null
@@ -362,47 +384,120 @@ export type Database = {
           id?: string
           is_admin?: boolean | null
           last_completed_at?: string | null
-          level?: number | null
+          last_xp_event_at?: string | null
+          level?: number
           phone?: string | null
           profession?: string | null
           profile_completion_history?: Json | null
           updated_at?: string | null
-          xp?: number | null
+          xp?: number
         }
         Relationships: []
       }
-      rgpd_requests: {
+      user_achievements: {
         Row: {
-          completed_at: string | null
-          created_at: string | null
+          achievement_name: string
+          achievement_type: string
           details: Json | null
           id: string
-          status: Database["public"]["Enums"]["rgpd_request_status"]
-          type: Database["public"]["Enums"]["rgpd_request_type"]
-          updated_at: string | null
+          unlocked_at: string | null
           user_id: string
+          xp_reward: number
         }
         Insert: {
-          completed_at?: string | null
-          created_at?: string | null
+          achievement_name: string
+          achievement_type: string
           details?: Json | null
           id?: string
-          status?: Database["public"]["Enums"]["rgpd_request_status"]
-          type: Database["public"]["Enums"]["rgpd_request_type"]
-          updated_at?: string | null
+          unlocked_at?: string | null
           user_id: string
+          xp_reward?: number
         }
         Update: {
-          completed_at?: string | null
-          created_at?: string | null
+          achievement_name?: string
+          achievement_type?: string
           details?: Json | null
           id?: string
-          status?: Database["public"]["Enums"]["rgpd_request_status"]
-          type?: Database["public"]["Enums"]["rgpd_request_type"]
-          updated_at?: string | null
+          unlocked_at?: string | null
           user_id?: string
+          xp_reward?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "user_achievements_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_achievements_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles_with_xp"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_login_sessions: {
+        Row: {
+          actions_performed: number | null
+          created_at: string | null
+          device_info: Json | null
+          id: string
+          ip_address: unknown | null
+          pages_visited: string[] | null
+          session_end: string | null
+          session_start: string | null
+          updated_at: string | null
+          user_agent: string | null
+          user_id: string | null
+          xp_gained_in_session: number | null
+        }
+        Insert: {
+          actions_performed?: number | null
+          created_at?: string | null
+          device_info?: Json | null
+          id?: string
+          ip_address?: unknown | null
+          pages_visited?: string[] | null
+          session_end?: string | null
+          session_start?: string | null
+          updated_at?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          xp_gained_in_session?: number | null
+        }
+        Update: {
+          actions_performed?: number | null
+          created_at?: string | null
+          device_info?: Json | null
+          id?: string
+          ip_address?: unknown | null
+          pages_visited?: string[] | null
+          session_end?: string | null
+          session_start?: string | null
+          updated_at?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          xp_gained_in_session?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_login_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_login_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles_with_xp"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_notes: {
         Row: {
@@ -488,6 +583,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "fk_user_progress_user_id"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles_with_xp"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "user_progress_lesson_id_fkey"
             columns: ["lesson_id"]
             isOneToOne: false
@@ -565,7 +667,113 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "fk_user_settings_user_id"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "user_profiles_with_xp"
+            referencedColumns: ["id"]
+          },
         ]
+      }
+      xp_events: {
+        Row: {
+          action_type: string
+          created_at: string
+          id: string
+          level_after: number | null
+          level_before: number | null
+          metadata: Json | null
+          reference_id: string | null
+          source_type: string
+          user_id: string
+          xp_after: number
+          xp_before: number
+          xp_delta: number
+        }
+        Insert: {
+          action_type: string
+          created_at?: string
+          id?: string
+          level_after?: number | null
+          level_before?: number | null
+          metadata?: Json | null
+          reference_id?: string | null
+          source_type: string
+          user_id: string
+          xp_after?: number
+          xp_before?: number
+          xp_delta: number
+        }
+        Update: {
+          action_type?: string
+          created_at?: string
+          id?: string
+          level_after?: number | null
+          level_before?: number | null
+          metadata?: Json | null
+          reference_id?: string | null
+          source_type?: string
+          user_id?: string
+          xp_after?: number
+          xp_before?: number
+          xp_delta?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "xp_events_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "xp_events_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles_with_xp"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      xp_sources: {
+        Row: {
+          action_type: string
+          cooldown_minutes: number | null
+          created_at: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          is_repeatable: boolean | null
+          max_per_day: number | null
+          source_type: string
+          xp_value: number
+        }
+        Insert: {
+          action_type: string
+          cooldown_minutes?: number | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_repeatable?: boolean | null
+          max_per_day?: number | null
+          source_type: string
+          xp_value: number
+        }
+        Update: {
+          action_type?: string
+          cooldown_minutes?: number | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_repeatable?: boolean | null
+          max_per_day?: number | null
+          source_type?: string
+          xp_value?: number
+        }
+        Relationships: []
       }
     }
     Views: {
@@ -591,6 +799,69 @@ export type Database = {
         }
         Relationships: []
       }
+      user_profiles_with_xp: {
+        Row: {
+          avatar_url: string | null
+          company: string | null
+          created_at: string | null
+          current_streak: number | null
+          email: string | null
+          full_name: string | null
+          id: string | null
+          is_admin: boolean | null
+          last_completed_at: string | null
+          last_xp_event_at: string | null
+          level: number | null
+          level_title: string | null
+          phone: string | null
+          profession: string | null
+          profile_completion_history: Json | null
+          updated_at: string | null
+          xp: number | null
+          xp_for_next_level: number | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          company?: string | null
+          created_at?: string | null
+          current_streak?: number | null
+          email?: string | null
+          full_name?: string | null
+          id?: string | null
+          is_admin?: boolean | null
+          last_completed_at?: string | null
+          last_xp_event_at?: string | null
+          level?: number | null
+          level_title?: never
+          phone?: string | null
+          profession?: string | null
+          profile_completion_history?: Json | null
+          updated_at?: string | null
+          xp?: number | null
+          xp_for_next_level?: never
+        }
+        Update: {
+          avatar_url?: string | null
+          company?: string | null
+          created_at?: string | null
+          current_streak?: number | null
+          email?: string | null
+          full_name?: string | null
+          id?: string | null
+          is_admin?: boolean | null
+          last_completed_at?: string | null
+          last_xp_event_at?: string | null
+          level?: number | null
+          level_title?: never
+          phone?: string | null
+          profession?: string | null
+          profile_completion_history?: Json | null
+          updated_at?: string | null
+          xp?: number | null
+          xp_for_next_level?: never
+        }
+        Relationships: []
+      }
     }
     Functions: {
       create_profile_completion_achievements: {
@@ -599,6 +870,10 @@ export type Database = {
       }
       email_exists: {
         Args: { search_email: string }
+        Returns: boolean
+      }
+      end_user_session: {
+        Args: { session_id: string }
         Returns: boolean
       }
       get_user_course_progress: {
@@ -621,6 +896,14 @@ export type Database = {
       is_admin_user: {
         Args: Record<PropertyKey, never>
         Returns: boolean
+      }
+      start_user_session: {
+        Args: {
+          target_user_id: string
+          session_ip?: unknown
+          session_user_agent?: string
+        }
+        Returns: string
       }
       update_user_profile: {
         Args: { p_user_id: string; p_profile_data: Json }

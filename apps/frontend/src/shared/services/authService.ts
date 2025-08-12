@@ -7,6 +7,7 @@
 
 import { supabase } from '@core/supabase/client';
 import { getUserClaims, syncUserClaims, type AuthClaims } from '@core/auth/claims';
+import { StreakService } from './streakService';
 import { log } from '@libs/logger';
 import type { User, Session } from '@supabase/supabase-js';
 import type { UserProfile } from '@frontend/types/user';
@@ -94,6 +95,9 @@ export class AuthService {
       if (this.state.claims && this.state.profile) {
         await this.ensureClaimsSync(user, this.state.claims, this.state.profile);
       }
+
+      // 5. Mettre à jour le streak quotidien
+      await this.updateUserStreak(user.id);
 
       this.state.error = null;
     } catch (error) {
@@ -318,6 +322,28 @@ export class AuthService {
     } catch (error) {
       log.error('❌ Error in updateProfile:', error);
       throw error;
+    }
+  }
+
+  /**
+   * Met à jour le streak de connexion quotidienne
+   */
+  private async updateUserStreak(userId: string): Promise<void> {
+    try {
+      log.debug('🔥 Updating daily login streak for user:', userId);
+      const streakInfo = await StreakService.updateUserStreak(userId);
+      
+      if (streakInfo) {
+        log.debug('✅ Streak updated:', streakInfo);
+        // Optionnel: mettre à jour le profil local si nécessaire
+        if (this.state.profile) {
+          this.state.profile.current_streak = streakInfo.current_streak;
+          this.state.profile.last_completed_at = streakInfo.last_completed_at;
+        }
+      }
+    } catch (error) {
+      log.warn('⚠️ Error updating user streak (non-blocking):', error);
+      // Ne pas faire échouer l'authentification à cause du streak
     }
   }
 }

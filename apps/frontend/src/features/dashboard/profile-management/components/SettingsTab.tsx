@@ -380,7 +380,7 @@ const SettingsTab: React.FC = () => {
                     {key === 'pushNotifications' && 'Notifications dans le navigateur'}
                     {key === 'weeklyReport' && 'Résumé de vos progrès chaque semaine'}
                     {key === 'achievementAlerts' && 'Notifications pour les nouveaux badges'}
-                    {key === 'reminderNotifications' && 'Rappels pour maintenir votre série'}
+                    {key === 'reminderNotifications' && 'Rappels pour maintenir votre série active'}
                   </p>
                 </div>
                 <button

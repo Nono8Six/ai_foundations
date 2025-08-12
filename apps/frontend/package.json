@@ -5,9 +5,14 @@
   "displayName": "IA Foundations",
   "type": "module",
   "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.14",
+    "@radix-ui/react-slot": "^1.2.3",
+    "@radix-ui/react-tabs": "^1.1.12",
     "@supabase/storage-js": "^2.10.2",
     "@supabase/supabase-js": "^2.52.0",
     "@tanstack/react-query": "^5.80.10",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "envalid": "^8.0.0",
     "framer-motion": "^12.23.6",
@@ -19,6 +24,7 @@
     "react-router-dom": "^7.6.3",
     "recharts": "^2.15.2",
     "sonner": "^2.0.5",
+    "tailwind-merge": "^3.3.1",
     "zod": "^3.25.67"
   },
   "scripts": {

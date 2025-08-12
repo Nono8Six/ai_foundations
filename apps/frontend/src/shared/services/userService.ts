@@ -77,9 +77,9 @@ export async function fetchUserProfile(user: User): Promise<UserProfile> {
     throw new Error('Token expired - please sign in again');
   }
   
-  // Forcer l'utilisation du token en configurant les headers
+  // Utiliser la nouvelle view qui combine profiles et user_xp_balance
   const { data: profileData, error } = await supabaseClient
-    .from('profiles')
+    .from('user_profiles_with_xp')
     .select('*')
     .eq('id', user.id);
 
@@ -105,7 +105,7 @@ export async function fetchUserProfile(user: User): Promise<UserProfile> {
           log.debug('✅ Session refreshed successfully');
           // Retry la requête avec la session rafraîchie
           const { data: retryData, error: retryError } = await supabaseClient
-            .from('profiles')
+            .from('user_profiles_with_xp')
             .select('*')
             .eq('id', user.id);
             
@@ -161,55 +161,9 @@ export async function fetchUserProfile(user: User): Promise<UserProfile> {
 
   const profile = profileData[0] as UserProfile;
   
-  // Auto-calculate XP and level if they are null/0 (legacy profiles)
-  // Only recalculate if XP is 0/null but profile has data that should give XP
-  const hasProfileData = (profile.avatar_url && !profile.avatar_url.includes('ui-avatars.com')) ||
-                        (profile.phone && profile.phone.length >= 10) ||
-                        (profile.profession && profile.profession.trim().length > 0) ||
-                        (profile.company && profile.company.trim().length > 0);
-                        
-  if ((!profile.xp || profile.xp === 0) && hasProfileData) {
-    log.debug('🔄 Profile has null/default XP/level, calculating automatically...');
-    
-    const { xp, level } = calculateProfileXPAndLevel({
-      avatar_url: profile.avatar_url,
-      phone: profile.phone,
-      profession: profile.profession,
-      company: profile.company,
-    });
-    
-    // Only update if calculated values are different from current
-    if (xp !== (profile.xp || 0) || level !== (profile.level || 1)) {
-      log.debug(`🔄 Updating XP: ${profile.xp || 0} → ${xp}, Level: ${profile.level || 1} → ${level}`);
-      
-      try {
-        // Update the profile in database with calculated XP/level
-        const { data: updatedProfile, error: updateError } = await supabaseClient
-          .from('profiles')
-          .update({
-            xp,
-            level,
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', user.id)
-          .select('*')
-          .single();
-
-        if (updateError) {
-          log.warn('⚠️ Failed to update auto-calculated XP/level:', updateError);
-          // Return profile with calculated values even if update failed
-          return { ...profile, xp, level };
-        }
-
-        log.debug('✅ Auto-calculated XP/level updated successfully');
-        return updatedProfile as UserProfile;
-      } catch (updateErr) {
-        log.warn('⚠️ Error updating auto-calculated XP/level:', updateErr);
-        // Return profile with calculated values even if update failed
-        return { ...profile, xp, level };
-      }
-    }
-  }
+  // XP et level sont maintenant gérés via le système d'événements dans xp_events
+  // et calculés automatiquement via user_xp_balance. Plus besoin de calcul manuel.
+  log.debug(`👤 Profile loaded - XP: ${profile.xp}, Level: ${profile.level}`);
   
   return profile;
 }
@@ -274,7 +228,7 @@ export async function updateUserProfile(
   userId: string,
   updates: ProfileUpdates
 ): Promise<UpdateUserProfileResponse> {
-  // Get current profile to calculate XP/level based on existing + new data
+  // Get current profile to determine what changed (for XP events)
   const { data: currentProfile, error: fetchError } = await supabaseClient
     .from('profiles')
     .select('*')
@@ -282,26 +236,12 @@ export async function updateUserProfile(
     .single();
 
   if (fetchError) {
-    log.error('Error fetching current profile for XP calculation:', fetchError);
+    log.error('Error fetching current profile:', fetchError);
     throw fetchError;
   }
 
-  // Merge current profile with updates for XP calculation
-  const mergedProfile = {
-    avatar_url: updates.avatar_url !== undefined ? updates.avatar_url : currentProfile.avatar_url,
-    phone: updates.phone !== undefined ? updates.phone : currentProfile.phone,
-    profession: updates.profession !== undefined ? updates.profession : currentProfile.profession,
-    company: updates.company !== undefined ? updates.company : currentProfile.company,
-  };
-
-  // Calculate new XP and level automatically
-  const { xp, level } = calculateProfileXPAndLevel(mergedProfile);
-
-  // Créer un objet de données profil valide avec des valeurs par défaut
-  const profileUpdate: Record<string, unknown> = {
-    xp, // Auto-calculated XP
-    level, // Auto-calculated level
-  };
+  // Créer un objet de mise à jour du profil (sans XP/level - gérés séparément)
+  const profileUpdate: Record<string, unknown> = {};
 
   // Ajouter uniquement les champs fournis dans updates
   if (updates.full_name !== undefined) profileUpdate.full_name = updates.full_name;
@@ -314,11 +254,10 @@ export async function updateUserProfile(
   if (updates.is_admin !== undefined) profileUpdate.is_admin = updates.is_admin;
   if (updates.last_completed_at !== undefined) profileUpdate.last_completed_at = updates.last_completed_at;
 
-  // XP and level are now auto-calculated, don't allow manual override
-  // if (updates.level !== undefined) profileUpdate.level = updates.level;
-  // if (updates.xp !== undefined) profileUpdate.xp = updates.xp;
+  // XP and level sont maintenant gérés par le système d'événements
+  // Ils seront calculés automatiquement dans user_xp_balance
 
-  // Utilisation directe de l'update au lieu de RPC pour éviter les erreurs
+  // Mettre à jour le profil (sans XP/level)
   const { data, error } = await supabaseClient
     .from('profiles')
     .update(profileUpdate)
@@ -335,22 +274,34 @@ export async function updateUserProfile(
     throw new Error('No data returned from profile update');
   }
   
-  // Mapper les données au format attendu - preserve nulls for optional fields
+  // Récupérer les données complètes avec XP/level depuis la view
+  const { data: fullProfile, error: fullProfileError } = await supabaseClient
+    .from('user_profiles_with_xp')
+    .select('*')
+    .eq('id', userId)
+    .single();
+
+  if (fullProfileError) {
+    log.error('Error fetching full profile with XP:', fullProfileError);
+    throw fullProfileError;
+  }
+
+  // Mapper les données au format attendu avec XP/level depuis user_xp_balance
   const result: UpdateUserProfileResponse = {
-    id: data.id,
-    email: data.email,
-    full_name: data.full_name || '',
-    avatar_url: data.avatar_url || '',
-    phone: data.phone || '',
-    profession: data.profession || '', // Keep empty string for form compatibility
-    company: data.company || '', // Keep empty string for form compatibility
-    level: data.level || 1,
-    xp: data.xp || 0,
-    current_streak: data.current_streak || 0,
-    is_admin: data.is_admin || false,
-    last_completed_at: data.last_completed_at || '',
-    created_at: data.created_at || '',
-    updated_at: data.updated_at || ''
+    id: fullProfile.id,
+    email: fullProfile.email,
+    full_name: fullProfile.full_name || '',
+    avatar_url: fullProfile.avatar_url || '',
+    phone: fullProfile.phone || '',
+    profession: fullProfile.profession || '', 
+    company: fullProfile.company || '', 
+    level: fullProfile.level || 1,  // Depuis user_xp_balance via la view
+    xp: fullProfile.xp || 0,        // Depuis user_xp_balance via la view
+    current_streak: fullProfile.current_streak || 0,
+    is_admin: fullProfile.is_admin || false,
+    last_completed_at: fullProfile.last_completed_at || '',
+    created_at: fullProfile.created_at || '',
+    updated_at: fullProfile.updated_at || ''
   };
   
   return result;

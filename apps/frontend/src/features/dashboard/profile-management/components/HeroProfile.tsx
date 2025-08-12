@@ -209,7 +209,7 @@ const HeroProfile: React.FC<HeroProfileProps> = ({
                 {userData.streak}
               </div>
               <div className='text-xs text-text-secondary truncate'>
-                jours de série
+                série active
               </div>
             </div>
           </div>

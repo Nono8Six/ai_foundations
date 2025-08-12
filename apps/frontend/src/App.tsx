@@ -26,8 +26,9 @@ const App: React.FC = () => {
   const errorLoggerWithToast: ErrorLogger = (error: AppError) => {
     const err = typeof error === 'string' ? new Error(error) : (error as AuthErrorWithCode | Error);
 
-    const isExpected = isAuthErrorWithCode(err) && 
-      (err.code === 'invalid_credentials' || err.code === 'auth_error');
+    const authError = isAuthErrorWithCode(err) ? err : null;
+    const isExpected = authError && 
+      (authError.code === 'invalid_credentials' || authError.code === 'auth_error');
 
     if (!isExpected) log.error('Error logged:', err);
 

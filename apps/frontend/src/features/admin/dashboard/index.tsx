@@ -280,6 +280,13 @@ const AdminDashboard: React.FC = () => {
                   <Icon aria-hidden='true' name='Plus' size={20} className='text-primary mr-3' />
                   <span className='text-sm font-medium text-text-primary'>Créer cours</span>
                 </Link>
+                <Link
+                  to='/admin-xp-management'
+                  className='flex items-center p-4 border border-border rounded-lg hover:bg-secondary-50 transition-colors'
+                >
+                  <Icon aria-hidden='true' name='Zap' size={20} className='text-primary mr-3' />
+                  <span className='text-sm font-medium text-text-primary'>Gestion XP</span>
+                </Link>
                 <button className='flex items-center p-4 border border-border rounded-lg hover:bg-secondary-50 transition-colors'>
                   <Icon
                     aria-hidden='true'
