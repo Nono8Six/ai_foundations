@@ -27,14 +27,12 @@ const SettingsTab: React.FC = () => {
     emailNotifications: true,
     pushNotifications: false,
     weeklyReport: true,
-    achievementAlerts: true,
     reminderNotifications: true,
   });
 
   const [privacySettings, setPrivacySettings] = useState<PrivacySettings>({
     profileVisibility: 'private',
     showProgress: false,
-    showAchievements: true,
     allowMessages: false,
   });
 

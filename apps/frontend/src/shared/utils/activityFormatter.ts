@@ -199,7 +199,7 @@ function formatTimeAgo(dateStr: string): string {
 /**
  * Génère une méta-description contextuelle
  */
-function generateMeta(event: ActivityEvent, config: typeof ACTIVITY_MAPPING[string]): string {
+function generateMeta(event: ActivityEvent, _config: typeof ACTIVITY_MAPPING[string]): string {
   const details = event.details || {};
   const parts: string[] = [];
   
@@ -263,7 +263,7 @@ export function formatActivity(event: ActivityEvent): FormattedActivity {
     label: finalConfig.label,
     icon: finalConfig.icon,
     iconColor: finalConfig.color,
-    xpDelta: typeof xpDelta === 'number' ? xpDelta : undefined,
+    xpDelta: typeof xpDelta === 'number' ? xpDelta : 0,
     meta,
     timeAgo,
     isBackfilled,

@@ -97,14 +97,16 @@ const UserProfileManagement: React.FC = () => {
   const renderTabContent = () => {
     switch (activeTab) {
       case 'personal':
-        return (
+        return userProfile ? (
           <PersonalInfoTab 
             userData={userData}
-            profile={userProfile || undefined}
+            profile={userProfile}
             isEditingFromHero={isEditingProfile}
             onEditingChange={setIsEditingProfile}
             avatarPreview={avatarPreview}
           />
+        ) : (
+          <div className="p-4 text-gray-500">Chargement du profil utilisateur...</div>
         );
       case 'stats':
         return <StatsPage />;

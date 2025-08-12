@@ -138,28 +138,28 @@ const MicroInsights: React.FC<MicroInsightsProps> = ({
           
           <div className="flex flex-wrap gap-2">
             {topSources.slice(0, 3).map((source, index) => {
-              const colors = SOURCE_COLORS[index] || SOURCE_COLORS[0];
+              const colors = SOURCE_COLORS[index] || SOURCE_COLORS[0] || { bg: 'bg-gray-100', border: 'border-gray-200', text: 'text-gray-700' };
               return (
                 <div
                   key={source.source}
                   className={`
                     flex items-center space-x-2 px-3 py-2 rounded-full border
-                    ${colors.bg} ${colors.border}
+                    ${colors?.bg || 'bg-gray-100'} ${colors?.border || 'border-gray-200'}
                   `}
                 >
-                  <span className={`text-sm font-medium ${colors.text}`}>
+                  <span className={`text-sm font-medium ${colors?.text || 'text-gray-700'}`}>
                     {formatSourceName(source.source)}
                   </span>
                   
                   <div className="flex items-center space-x-1">
                     {/* Nombre d'événements */}
-                    <span className={`text-xs ${colors.text} opacity-75`}>
+                    <span className={`text-xs ${colors?.text || 'text-gray-700'} opacity-75`}>
                       ×{source.count}
                     </span>
                     
                     {/* Total XP */}
                     <div className="w-px h-3 bg-current opacity-30" />
-                    <span className={`text-xs font-bold ${colors.text}`}>
+                    <span className={`text-xs font-bold ${colors?.text || 'text-gray-700'}`}>
                       {source.totalXp} XP
                     </span>
                   </div>

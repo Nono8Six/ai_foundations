@@ -65,8 +65,8 @@ export const Modal: React.FC<ModalProps> = ({
   // Set up focus trap
   const containerRef = useFocusTrap(isOpen, {
     restoreFocus: true,
-    initialFocus: initialFocus?.current || undefined,
-    finalFocus: finalFocus?.current || undefined,
+    initialFocus: initialFocus?.current || null,
+    finalFocus: finalFocus?.current || null,
   });
 
   // Handle escape key
@@ -126,9 +126,9 @@ export const Modal: React.FC<ModalProps> = ({
     >
       <div
         ref={(node) => {
-          if (node) {
-            containerRef.current = node;
-            modalRef.current = node;
+          if (node && containerRef.current !== node) {
+            (containerRef as React.MutableRefObject<HTMLDivElement>).current = node;
+            (modalRef as React.MutableRefObject<HTMLDivElement>).current = node;
           }
         }}
         className={cn(
@@ -343,7 +343,7 @@ export const useConfirmModal = () => {
       onConfirm={config.onConfirm}
       title={config.title}
       message={config.message}
-      variant={config.variant}
+      variant={config.variant || 'default'}
     />
   ) : null;
 

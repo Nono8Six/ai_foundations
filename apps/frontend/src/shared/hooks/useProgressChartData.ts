@@ -194,7 +194,7 @@ export function useProgressChartData(
         }
       });
       return {
-        day: format(dayDate, 'EEE'), // Mon, Tue, etc.
+        day: format(dayDate, 'EEE') || 'Mon', // Mon, Tue, etc.
         lessons: lessonsCompletedThisDay,
         hours: parseFloat(hoursSpentThisDay.toFixed(1)),
         xp: 0, // XP calculation not implemented yet
@@ -223,7 +223,7 @@ export function useProgressChartData(
         }
       });
       return {
-        month: format(monthDate, 'MMM'), // Jan, Feb, etc.
+        month: format(monthDate, 'MMM') || 'Jan', // Jan, Feb, etc.
         lessons: lessonsCompletedThisMonth,
         hours: parseFloat(hoursSpentThisMonth.toFixed(1)),
         xp: 0, // XP calculation not implemented yet

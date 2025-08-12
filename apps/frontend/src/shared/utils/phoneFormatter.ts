@@ -83,7 +83,6 @@ export function validateAndFormatFrenchPhone(input: string): PhoneValidationResu
   
   // Vérifier que le numéro commence par un chiffre valide
   const firstDigit = normalizedNumber[0];
-  const secondDigit = normalizedNumber[1];
   
   if (firstDigit !== '0') {
     return {

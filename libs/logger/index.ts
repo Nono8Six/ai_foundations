@@ -2,9 +2,8 @@ import pino, { Logger, type LoggerOptions } from 'pino';
 
 // Type augmentation for import.meta
 interface CustomImportMeta extends ImportMeta {
-  env: {
+  env: ImportMetaEnv & {
     VITE_LOG_LEVEL?: string;
-    [key: string]: string | undefined;
   };
 }
 

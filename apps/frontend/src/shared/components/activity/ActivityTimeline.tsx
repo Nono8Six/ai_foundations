@@ -72,16 +72,16 @@ function groupActivities(
 function getGroupKey(date: Date, groupBy: 'day' | 'week' | 'month'): string {
   switch (groupBy) {
     case 'day':
-      return date.toISOString().split('T')[0]; // "2025-01-08"
+      return date.toISOString().split('T')[0] || ''; // "2025-01-08"
     case 'week': {
       const year = date.getFullYear();
       const week = getWeekNumber(date);
       return `${year}-W${String(week).padStart(2, '0')}`; // "2025-W02"
     }
     case 'month':
-      return date.toISOString().substring(0, 7); // "2025-01"
+      return date.toISOString().substring(0, 7) || ''; // "2025-01"
     default:
-      return date.toISOString().split('T')[0];
+      return date.toISOString().split('T')[0] || '';
   }
 }
 
@@ -113,8 +113,8 @@ function getGroupLabel(groupKey: string, groupBy: 'day' | 'week' | 'month'): str
       
       case 'week': {
         const [year, weekStr] = groupKey.split('-W');
-        const week = parseInt(weekStr);
-        const jan1 = new Date(parseInt(year), 0, 1);
+        const week = parseInt(weekStr || '1');
+        const jan1 = new Date(parseInt(year || '2025'), 0, 1);
         const weekStart = new Date(jan1.getTime() + (week - 1) * 7 * 24 * 60 * 60 * 1000);
         
         return `Semaine du ${weekStart.toLocaleDateString('fr-FR', { 
@@ -161,8 +161,8 @@ function getDateFromTimeAgo(timeAgo: string): Date {
   // Parse les formats comme "il y a 2 j", "il y a 3 h", etc.
   const matches = timeAgo.match(/il y a (\d+)\s*([hmj])/);
   if (matches) {
-    const value = parseInt(matches[1]);
-    const unit = matches[2];
+    const value = parseInt(matches[1] || '0');
+    const unit = matches[2] || 'h';
     
     switch (unit) {
       case 'h':

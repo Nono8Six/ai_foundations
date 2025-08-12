@@ -173,7 +173,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, isLoading, setIsLoadin
             <Icon name='AlertTriangle' className='h-5 w-5 text-error-400 mr-3' />
             <div className='flex-1'>
               <p className='text-sm font-medium text-error-800'>{authError.message}</p>
-              {isAuthErrorWithCode(authError) && authError.code === 'email_not_confirmed' && (
+              {isAuthErrorWithCode(authError) && authError.code && authError.code === 'email_not_confirmed' && (
                 <div className='mt-2'>
                   <button
   type='button'

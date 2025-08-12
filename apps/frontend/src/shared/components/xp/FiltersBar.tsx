@@ -74,12 +74,12 @@ const FiltersBar: React.FC<FiltersBarProps> = ({
     
     onFiltersChange({ 
       ...filters, 
-      source: newSources.length === 0 ? undefined : newSources 
+      source: newSources.length === 0 ? [] : newSources 
     });
   };
 
   const clearSources = () => {
-    onFiltersChange({ ...filters, source: undefined });
+    onFiltersChange({ ...filters, source: [] });
   };
 
   const selectedSourceCount = filters.source?.length || 0;

@@ -95,7 +95,7 @@ export const ThemeProvider = ({
   children,
   defaultTheme = 'system',
   enableSystem = true,
-}) => {
+}: ThemeProviderProps) => {
   const [theme, setThemeState] = useState<Theme>(defaultTheme);
   const [systemTheme, setSystemTheme] = useState<ResolvedTheme>('light');
   const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>('light');
@@ -105,7 +105,7 @@ export const ThemeProvider = ({
     const storedTheme = getStoredTheme();
     const currentSystemTheme = getSystemTheme();
     
-    setTheme(storedTheme);
+    setTheme(storedTheme as Theme);
     setSystemTheme(currentSystemTheme);
     
     const resolved = storedTheme === 'system' ? currentSystemTheme : storedTheme as ResolvedTheme;

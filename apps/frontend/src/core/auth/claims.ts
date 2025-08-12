@@ -89,7 +89,7 @@ export const getUserClaims = async (user: User): Promise<AuthClaims> => {
 /**
  * Synchronise les claims utilisateur avec les metadata JWT
  */
-export const syncUserClaims = async (userId: string, claims: AuthClaims): Promise<void> => {
+export const syncUserClaims = async (_userId: string, claims: AuthClaims): Promise<void> => {
   try {
     log.debug('🔄 Synchronizing user claims...');
     

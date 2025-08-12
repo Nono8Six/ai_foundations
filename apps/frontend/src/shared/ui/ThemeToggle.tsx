@@ -178,7 +178,7 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
       trigger={trigger}
       items={dropdownItems}
       placement="bottom-end"
-      className={className}
+      className={className || ''}
     />
   );
 };
@@ -195,7 +195,7 @@ export const HeaderThemeToggle: React.FC<{ className?: string }> = ({ className 
     <ThemeToggle
       variant="icon"
       size="md"
-      className={className}
+      className={className || ''}
     />
   );
 };
@@ -209,7 +209,7 @@ export const SettingsThemeToggle: React.FC<{ className?: string }> = ({ classNam
       variant="dropdown"
       size="md"
       showLabel={true}
-      className={className}
+      className={className || ''}
     />
   );
 };
@@ -226,7 +226,7 @@ export const SidebarThemeToggle: React.FC<{
       <ThemeToggle
         variant="icon"
         size="sm"
-        className={className}
+        className={className || ''}
       />
     );
   }
@@ -236,7 +236,7 @@ export const SidebarThemeToggle: React.FC<{
       variant="button"
       size="sm"
       showLabel={true}
-      className={className}
+      className={className || ''}
     />
   );
 };

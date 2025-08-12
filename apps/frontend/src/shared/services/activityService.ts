@@ -111,7 +111,7 @@ export class ActivityService {
         user_id: row.user_id,
         type: row.type,
         action: row.action,
-        details: row.details || {},
+        details: (row.details as Record<string, any>) || {},
         created_at: row.created_at
       }));
 
@@ -152,7 +152,7 @@ export class ActivityService {
         user_id: row.user_id,
         type: row.type,
         action: row.action,
-        details: row.details || {},
+        details: (row.details as Record<string, any>) || {},
         created_at: row.created_at
       }));
 
@@ -216,17 +216,19 @@ export class ActivityService {
         typeStats.totalXP += xpValue;
 
         // Par jour (30 derniers jours max)
-        const dayKey = activity.created_at.split('T')[0];
-        const activityDate = new Date(activity.created_at);
-        const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+        if (activity.created_at) {
+          const dayKey = activity.created_at.split('T')[0];
+          const activityDate = new Date(activity.created_at);
+          const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
-        if (activityDate >= thirtyDaysAgo) {
-          if (!daysMap.has(dayKey)) {
-            daysMap.set(dayKey, { count: 0, totalXP: 0 });
+          if (activityDate >= thirtyDaysAgo) {
+            if (!daysMap.has(dayKey)) {
+              daysMap.set(dayKey, { count: 0, totalXP: 0 });
+            }
+            const dayStats = daysMap.get(dayKey)!;
+            dayStats.count += 1;
+            dayStats.totalXP += xpValue;
           }
-          const dayStats = daysMap.get(dayKey)!;
-          dayStats.count += 1;
-          dayStats.totalXP += xpValue;
         }
       });
 

@@ -2,11 +2,10 @@ import React, { useState } from 'react';
 import { useAuth } from '@features/auth/contexts/AuthContext';
 import Icon from '@shared/components/AppIcon';
 import { fetchCoursesQueryOptions } from '@shared/services/courseService';
-import { log } from '@libs/logger';
 import CourseCard from './components/CourseCard';
 import FilterSidebar from './components/FilterSidebar';
 import CoursePathway from './components/CoursePathway';
-import type { CourseSortOption, CourseWithProgress } from '@frontend/types/course.types';
+import type { CourseSortOption } from '@frontend/types/course.types';
 import { useQuery } from '@tanstack/react-query';
 
 export interface ProgramFilters {
@@ -31,7 +30,7 @@ const ProgramOverview: React.FC = () => {
   const [page, setPage] = useState<number>(1);
   const pageSize = 12;
 
-  const { data, isLoading, isError } = useQuery(
+  const { data, isLoading } = useQuery(
     fetchCoursesQueryOptions({
       filters: {
         ...filters,

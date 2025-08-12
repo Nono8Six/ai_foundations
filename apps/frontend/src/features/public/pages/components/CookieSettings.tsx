@@ -96,7 +96,7 @@ const CookieSettings: React.FC<CookieSettingsProps> = ({
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
         className="bg-surface rounded-lg max-w-2xl w-full max-h-[90vh] overflow-hidden"
-        onClick={(e) => e.stopPropagation()}
+        onClick={(e: React.MouseEvent) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-border">

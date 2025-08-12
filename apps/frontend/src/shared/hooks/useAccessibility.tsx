@@ -3,7 +3,7 @@
  * Comprehensive accessibility utilities for keyboard navigation and focus management
  */
 
-import { useEffect, useRef, useCallback, MutableRefObject } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 
 /* ================================
    KEYBOARD NAVIGATION HOOKS
@@ -110,6 +110,7 @@ export const useKeyboardNavigation = (
       document.addEventListener('keydown', handleKeyDown);
       return () => document.removeEventListener('keydown', handleKeyDown);
     }
+    return undefined;
   }, [handleKeyDown, enabled]);
 };
 
@@ -165,14 +166,17 @@ export const useRovingTabIndex = <T extends HTMLElement,>(
     focusItem(itemsLength - 1);
   }, [focusItem, itemsLength]);
 
-  const keyboardHandlers: KeyboardHandlers = {
-    onArrowUp: orientation === 'vertical' ? movePrevious : undefined,
-    onArrowDown: orientation === 'vertical' ? moveNext : undefined,
-    onArrowLeft: orientation === 'horizontal' ? movePrevious : undefined,
-    onArrowRight: orientation === 'horizontal' ? moveNext : undefined,
-    onHome: moveFirst,
-    onEnd: moveLast,
-  };
+  const keyboardHandlers: KeyboardHandlers = {};
+  if (orientation === 'vertical') {
+    keyboardHandlers.onArrowUp = movePrevious;
+    keyboardHandlers.onArrowDown = moveNext;
+  }
+  if (orientation === 'horizontal') {
+    keyboardHandlers.onArrowLeft = movePrevious;
+    keyboardHandlers.onArrowRight = moveNext;
+  }
+  keyboardHandlers.onHome = moveFirst;
+  keyboardHandlers.onEnd = moveLast;
 
   useKeyboardNavigation(keyboardHandlers, { enabled });
 
@@ -252,13 +256,13 @@ export const useFocusTrap = (
 
       if (event.shiftKey) {
         // Shift + Tab: moving backwards
-        if (document.activeElement === firstElement) {
+        if (document.activeElement === firstElement && lastElement) {
           event.preventDefault();
           lastElement.focus();
         }
       } else {
         // Tab: moving forwards
-        if (document.activeElement === lastElement) {
+        if (document.activeElement === lastElement && firstElement) {
           event.preventDefault();
           firstElement.focus();
         }
@@ -294,6 +298,7 @@ export const useFocusTrap = (
         }
       };
     }
+    return undefined;
   }, [active, handleTabKey, getFocusableElements, initialFocus, finalFocus, restoreFocus]);
 
   return containerRef;

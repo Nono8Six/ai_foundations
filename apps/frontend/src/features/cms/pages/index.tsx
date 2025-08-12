@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ReactElement } from 'react';
+import { useState, useEffect, ReactElement } from 'react';
 import { useAdminCourses } from '@features/admin/contexts/AdminCourseContext';
 import { toast } from 'sonner';
 import { fetchCoursesForCMS, dbRowToCmsCourse } from '@shared/services/courseService';
@@ -130,7 +130,7 @@ const mapToContentNode = (item: CmsCourseType | CourseWithContent | CmsContentIt
 
 
 const ContentManagementCoursesModulesLessons = (): ReactElement => {
-  const [selectedContent, setSelectedContent] = useState<CmsContentItem | null>(null);
+  const [selectedContent, setSelectedContent] = useState<CmsContentItem | CmsCourseType | null>(null);
   const [contentType, setContentType] = useState<'course' | 'module' | 'lesson'>('course');
   const [showMediaLibrary, setShowMediaLibrary] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -167,9 +167,13 @@ const ContentManagementCoursesModulesLessons = (): ReactElement => {
     load();
   }, []);
 
-  const handleContentSelect = (content: CmsContentItem) => {
+  const handleContentSelect = (content: CmsContentItem | CmsCourseType) => {
     setSelectedContent(content);
-    setContentType(content.type);
+    if ('type' in content) {
+      setContentType(content.type);
+    } else {
+      setContentType('course');
+    }
   };
 
   const handleSaveContent = async <T extends CmsContentItem>(
@@ -192,13 +196,13 @@ const ContentManagementCoursesModulesLessons = (): ReactElement => {
           title: courseData.title,
           description: courseData.description || null,
           slug,
-          cover_image_url: courseData.cover_image_url || null,
-          thumbnail_url: courseData.thumbnail_url || null,
-          category: courseData.category || null,
+          cover_image_url: (courseData as any).cover_image_url || null,
+          thumbnail_url: (courseData as any).thumbnail_url || null,
+          category: (courseData as any).category || null,
           difficulty: courseData.difficulty || null,
           is_published: courseData.status === 'published' ? true : false,
           updated_at: new Date().toISOString(),
-          created_at: courseData.created_at || new Date().toISOString()
+          created_at: (courseData as any).created_at || new Date().toISOString()
         };
         if (courseData.id && !courseData.id.startsWith('temp-')) {
           courseDataForApi.id = courseData.id;
@@ -207,19 +211,26 @@ const ContentManagementCoursesModulesLessons = (): ReactElement => {
           // Update
           const { id, ...updates } = courseDataForApi;
           const result = await updateCourse({ id, updates });
-          savedCourse = dbRowToCmsCourse(result);
-          setContentData(prev => prev.map(c => (c.id === savedCourse.id ? savedCourse : c)));
+          const baseCourse = dbRowToCmsCourse(result);
+          savedCourse = { ...baseCourse, type: 'course' as const } as CmsCourseType;
+          setContentData(prev => prev.map(c => (c.id === savedCourse.id ? savedCourse as unknown as CmsCourseType : c)));
           toast.success('Cours mis à jour avec succès !');
         } else {
           // Create
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { id: _discard, ...newCourseData } = courseDataForApi;
           const result = await createCourse(newCourseData);
-          savedCourse = dbRowToCmsCourse(result);
-          setContentData(prev => [...prev, savedCourse]);
+          const baseCourse = dbRowToCmsCourse(result);
+          savedCourse = { ...baseCourse, type: 'course' as const } as CmsCourseType;
+          setContentData(prev => [...prev, savedCourse as unknown as CmsCourseType]);
           toast.success('Cours créé avec succès !');
         }
-        setSelectedContent(savedCourse);
+        // Convertir en CmsContentItem compatible
+        const contentItem: CmsCourse = {
+          ...savedCourse as any,
+          type: 'course' as const
+        };
+        setSelectedContent(contentItem);
       } else {
         // Modules/Leçons (local state uniquement)
         log.info('Saving non-course content (local state only):', updatedContent);
@@ -402,7 +413,16 @@ const ContentManagementCoursesModulesLessons = (): ReactElement => {
                 onReorder={newOrder => {
                   const updatedData = newOrder.map(node => {
                     const existing = contentData.find(c => c.id === node.id);
-                    return existing ?? ({ ...node, type: 'course' } as CmsCourse);
+                    return existing ?? ({
+                      ...node,
+                      slug: node.title?.toLowerCase().replace(/\s+/g, '-') || 'course',
+                      is_published: false,
+                      created_at: new Date().toISOString(),
+                      updated_at: new Date().toISOString(),
+                      modules_count: 0,
+                      lessons_count: 0,
+                      estimated_duration: 0
+                    } as unknown as CmsCourseType);
                   });
                   setContentData(updatedData);
                 }}

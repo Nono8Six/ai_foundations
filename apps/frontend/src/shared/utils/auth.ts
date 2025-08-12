@@ -1,4 +1,4 @@
-import type { AuthErrorWithCode } from '../types/auth';
+import type { AuthErrorWithCode } from '@frontend/types/auth';
 
 export function isAuthErrorWithCode(e: unknown): e is AuthErrorWithCode {
   return (

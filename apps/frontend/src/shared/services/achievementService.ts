@@ -9,7 +9,7 @@
  */
 
 import { supabase } from '@core/supabase/client';
-import type { Database } from '@types/database.types';
+import type { Database } from '@frontend/types/database.types';
 
 export interface AchievementDefinition {
   id: string;
@@ -23,7 +23,7 @@ export interface AchievementDefinition {
   condition_params: {
     field: string;
     value: number;
-  };
+  } | null;
   is_repeatable: boolean;
   is_active: boolean;
 }
@@ -34,6 +34,25 @@ export interface UserStats {
   current_streak: number;
   profile_completion: number;
   member_rank: number;
+}
+
+/**
+ * Convert database row to AchievementDefinition
+ */
+function convertDbRowToDefinition(row: Database['public']['Tables']['achievement_definitions']['Row']): AchievementDefinition {
+  return {
+    id: row.id,
+    achievement_key: row.achievement_key,
+    title: row.title,
+    description: row.description,
+    icon: row.icon,
+    category: row.category,
+    xp_reward: row.xp_reward,
+    condition_type: row.condition_type,
+    condition_params: row.condition_params as AchievementDefinition['condition_params'],
+    is_repeatable: row.is_repeatable,
+    is_active: row.is_active
+  };
 }
 
 /**
@@ -75,7 +94,8 @@ export class AchievementService {
       const newUnlocks: string[] = [];
       let totalXpEarned = 0;
 
-      for (const definition of definitions || []) {
+      for (const dbRow of definitions || []) {
+        const definition = convertDbRowToDefinition(dbRow);
         if (alreadyUnlocked.has(definition.achievement_key)) {
           continue; // Déjà débloqué
         }
@@ -183,24 +203,8 @@ export class AchievementService {
     userStats: UserStats
   ): Promise<boolean> {
     try {
-      const now = new Date().toISOString();
-      
-      // Transaction pour garantir la cohérence
-      const { error } = await supabase.rpc('unlock_achievement', {
-        p_user_id: userId,
-        p_achievement_key: definition.achievement_key,
-        p_achievement_name: definition.title,
-        p_xp_reward: definition.xp_reward,
-        p_current_stats: userStats
-      });
-
-      if (error) {
-        // Si la fonction RPC n'existe pas, faire manuellement
-        console.warn('RPC function not available, doing manual unlock');
-        return await this.manualUnlockAchievement(userId, definition, userStats);
-      }
-
-      return true;
+      // Use manual unlock directly since RPC function doesn't exist
+      return await this.manualUnlockAchievement(userId, definition, userStats);
 
     } catch (error) {
       console.error('Error unlocking achievement:', error);
@@ -262,7 +266,7 @@ export class AchievementService {
       const newTotalXp = userStats.total_xp + definition.xp_reward;
       
       // Calculer nouveau niveau depuis level_definitions
-      const { data: levelData, error: levelError } = await supabase
+      const { data: levelData } = await supabase
         .from('level_definitions')
         .select('level')
         .lte('xp_required', newTotalXp)

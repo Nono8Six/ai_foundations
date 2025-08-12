@@ -166,7 +166,7 @@ const UserDashboard: React.FC = () => {
           <div className='grid grid-cols-1 lg:grid-cols-4 gap-8'>
             <div className='lg:col-span-3 space-y-8'>
               <ProgressChart />
-              <RecentActivityWidget userId={user?.id} limit={5} />
+              {user?.id && <RecentActivityWidget userId={user.id} limit={5} />}
 
               <div className='bg-surface rounded-xl border border-border p-6'>
                 <div className='flex items-center justify-between mb-6'>

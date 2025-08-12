@@ -117,6 +117,9 @@ import {
   XCircle,
   Youtube,
   Zap,
+  Sun,
+  Moon,
+  Monitor,
 } from 'lucide-react';
 
 const icons = {
@@ -237,6 +240,9 @@ const icons = {
   XCircle,
   Youtube,
   Zap,
+  Sun,
+  Moon,
+  Monitor,
 } as const;
 
 export type IconName = keyof typeof icons;

@@ -54,7 +54,7 @@ const ActivityFiltersComponent: React.FC<ActivityFiltersProps> = ({
   const selectedTypes = filters.types || [];
 
   const handlePeriodChange = (period: ActivityFilters['period']) => {
-    onFiltersChange({ ...filters, period });
+    onFiltersChange({ ...filters, period: period || 'all' });
   };
 
   const handleTypeToggle = (type: string) => {
@@ -64,14 +64,14 @@ const ActivityFiltersComponent: React.FC<ActivityFiltersProps> = ({
     
     onFiltersChange({
       ...filters,
-      types: newTypes.length > 0 ? newTypes : undefined
+      types: newTypes.length > 0 ? newTypes : []
     });
   };
 
   const handleXPToggle = () => {
     onFiltersChange({
       ...filters,
-      hasXP: filters.hasXP ? undefined : true
+      hasXP: !filters.hasXP
     });
   };
 

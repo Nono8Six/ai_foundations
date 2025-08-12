@@ -82,6 +82,7 @@ const Header = (): JSX.Element => {
         document.body.style.overflow = originalOverflow || 'unset';
       };
     }
+    return undefined;
   }, [isMenuOpen]);
 
   const getFirstName = () => {

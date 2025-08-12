@@ -10,7 +10,8 @@
  */
 
 import { supabase } from '@core/supabase/client';
-import type { Database } from '@types/database.types';
+import { log } from '@libs/logger';
+import type { Database } from '@frontend/types/database.types';
 
 // Types pour les événements XP
 export interface XPEvent {
@@ -21,8 +22,8 @@ export interface XPEvent {
   xp_delta: number;
   xp_before: number;
   xp_after: number;
-  level_before?: number;
-  level_after?: number;
+  level_before: number;
+  level_after: number;
   source: string;
   reference_id?: string;
   backfilled?: boolean;
@@ -216,9 +217,11 @@ function formatGroupLabel(groupKey: string, level: 'day' | 'week' | 'month'): st
   
   if (level === 'week') {
     const [year, week] = groupKey.split('-W');
-    const jan1 = new Date(parseInt(year), 0, 1);
-    const weekStart = new Date(jan1.getTime() + (parseInt(week) - 1) * 7 * 24 * 60 * 60 * 1000);
-    return `Semaine du ${weekStart.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}`;
+    if (year && week) {
+      const jan1 = new Date(parseInt(year), 0, 1);
+      const weekStart = new Date(jan1.getTime() + (parseInt(week) - 1) * 7 * 24 * 60 * 60 * 1000);
+      return `Semaine du ${weekStart.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}`;
+    }
   }
   
   if (level === 'month') {
@@ -340,7 +343,7 @@ export class XPService {
 
       // Transformer en événements XP typés
       const xpEvents: XPEvent[] = events.map(event => {
-        const metadata = event.metadata || {};
+        const metadata = (event.metadata as Record<string, any>) || {};
         return {
           id: event.id,
           user_id: event.user_id,
@@ -349,8 +352,8 @@ export class XPService {
           xp_delta: event.xp_delta || 0,
           xp_before: event.xp_before || 0,
           xp_after: event.xp_after || 0,
-          level_before: event.level_before,
-          level_after: event.level_after,
+          level_before: event.level_before || 0,
+          level_after: event.level_after || 0,
           source: metadata.source || `${event.source_type}:${event.action_type}`,
           reference_id: event.reference_id,
           backfilled: metadata.backfilled || false,
@@ -438,7 +441,7 @@ export class XPService {
 
       // Traiter les événements XP
       const xpEvents = events.map(event => {
-        const metadata = event.metadata || {};
+        const metadata = (event.metadata as Record<string, any>) || {};
         return {
           ...event,
           xp_delta: event.xp_delta || 0,
@@ -478,9 +481,9 @@ export class XPService {
       const last30Days = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
       
       filteredEvents
-        .filter(event => new Date(event.created_at) >= last30Days)
+        .filter(event => event.created_at && new Date(event.created_at) >= last30Days)
         .forEach(event => {
-          const day = event.created_at.split('T')[0]; // "2025-01-15"
+          const day = event.created_at!.split('T')[0]; // "2025-01-15"
           if (!daysMap.has(day)) {
             daysMap.set(day, { totalXp: 0, eventCount: 0 });
           }
@@ -523,7 +526,7 @@ export class XPService {
 
       const sourcesSet = new Set<string>();
       events.forEach(event => {
-        const metadata = event.metadata || {};
+        const metadata = (event.metadata as Record<string, any>) || {};
         const source = metadata.source || `${event.source_type}:${event.action_type}`;
         sourcesSet.add(source);
       });
@@ -570,6 +573,21 @@ export class XPService {
         .filter(def => def.xp_required <= totalXP)
         .sort((a, b) => b.level - a.level)[0] || levelDefinitions[0];
 
+      if (!currentLevelDef) {
+        return {
+          currentLevel: 1,
+          levelTitle: 'Débutant',
+          xpInCurrentLevel: totalXP,
+          xpForNextLevel: 100 - totalXP,
+          xpRequired: 0,
+          xpRequiredNext: 100,
+          totalXP,
+          progressPercent: Math.min((totalXP / 100) * 100, 100),
+          badgeIcon: 'Star',
+          badgeColor: '#3B82F6'
+        };
+      }
+
       const currentLevel = currentLevelDef.level;
       const nextLevelDef = levelDefinitions.find(def => def.level === currentLevel + 1);
       
@@ -595,15 +613,15 @@ export class XPService {
 
       return {
         currentLevel,
-        levelTitle: currentLevelDef.title,
+        levelTitle: currentLevelDef.title || `Niveau ${currentLevel}`,
         xpInCurrentLevel, // Ex: 25 XP dans le niveau 2
         xpForNextLevel, // Ex: 125 XP manquants pour niveau 3
         xpRequired, // Ex: 100 XP requis pour niveau 2
         xpRequiredNext, // Ex: 250 XP requis pour niveau 3
         totalXP, // Ex: 125 XP total
         progressPercent: Math.min(progressPercent, 100),
-        badgeIcon: currentLevelDef.badge_icon,
-        badgeColor: currentLevelDef.badge_color,
+        badgeIcon: currentLevelDef.badge_icon || 'Star',
+        badgeColor: currentLevelDef.badge_color || '#3B82F6',
         isMaxLevel: !nextLevelDef
       };
 
@@ -638,7 +656,14 @@ export class XPService {
         return [];
       }
 
-      return data || [];
+      return (data || []).map(item => ({
+        ...item,
+        description: item.description || '',
+        badge_color: item.badge_color || '#3B82F6',
+        badge_icon: item.badge_icon || 'Star',
+        title: item.title || `Niveau ${item.level}`,
+        rewards: (item.rewards as Record<string, any>) || {}
+      }));
 
     } catch (error) {
       console.error('Error in getLevelDefinitions:', error);
@@ -662,7 +687,11 @@ export class XPService {
         return [];
       }
 
-      return data || [];
+      return (data || []).map(item => ({
+        ...item,
+        unlocked_at: item.unlocked_at || new Date().toISOString(),
+        details: (item.details as Record<string, any>) || {}
+      }));
 
     } catch (error) {
       console.error('Error in getUserAchievements:', error);
@@ -686,7 +715,14 @@ export class XPService {
         return [];
       }
 
-      return data || [];
+      return (data || []).map(item => ({
+        ...item,
+        description: item.description || '',
+        is_active: item.is_active ?? true,
+        is_repeatable: item.is_repeatable ?? false,
+        cooldown_minutes: item.cooldown_minutes ?? 0,
+        max_per_day: item.max_per_day ?? 0
+      }));
 
     } catch (error) {
       console.error('Error in getXPSources:', error);
@@ -784,7 +820,7 @@ export class XPService {
           
           return {
             id: `action:${source.source_type}:${source.action_type}`,
-            title: source.title || `${source.action_type} ${source.source_type}`,
+            title: (source as any).title || `${source.action_type} ${source.source_type}`,
             description: source.description || this.generateDynamicDescription(source.action_type, source.source_type),
             xpValue: source.xp_value,
             icon: this.getDynamicIcon(source.source_type),
@@ -794,7 +830,7 @@ export class XPService {
             actionType: source.action_type,
             isRepeatable: source.is_repeatable || false,
             cooldownMinutes: source.cooldown_minutes || 0,
-            maxPerDay: source.max_per_day,
+            maxPerDay: source.max_per_day || 0,
             category: 'action' as const,
             progress: isCompleted ? 100 : 0, // 100% si déjà accompli
             isUnlocked: isCompleted // Marqué comme débloqué si déjà fait
@@ -825,10 +861,10 @@ export class XPService {
           actionType: achievement.achievement_key,
           isRepeatable: achievement.is_repeatable || false,
           cooldownMinutes: achievement.cooldown_hours ? achievement.cooldown_hours * 60 : 0,
-          maxPerDay: undefined,
+          maxPerDay: 0,
           category: 'achievement' as const,
           conditionType: achievement.condition_type,
-          conditionParams: achievement.condition_params,
+          conditionParams: (achievement.condition_params as Record<string, any>) || {},
           progress: 0, // TODO: Calculate actual progress
           isUnlocked: unlockedSet.has(achievement.achievement_key)
         }));
@@ -969,7 +1005,7 @@ export class XPService {
       const newXP = Math.max(0, previousXP - lossAmount); // Ne peut pas descendre sous 0
 
       // 2. Calculer le nouveau niveau
-      const { data: levelData, error: levelError } = await supabase
+      const { data: levelData, error: _levelError } = await supabase
         .from('level_definitions')
         .select('level')
         .lte('xp_required', newXP)
@@ -1009,7 +1045,7 @@ export class XPService {
       
       if (lossType === 'profile_incomplete') {
         // Supprimer l'achievement "Profil complet" s'il existe
-        const { data: deletedAchievements, error: deleteError } = await supabase
+        const { data: deletedAchievements, error: _deleteError } = await supabase
           .from('user_achievements')
           .delete()
           .eq('user_id', userId)
@@ -1085,7 +1121,7 @@ export class XPService {
       const currentLevel = profile.level || 1;
 
       // Calculer le niveau correct
-      const { data: correctLevelData, error: levelError } = await supabase
+      const { data: correctLevelData, error: _levelError2 } = await supabase
         .from('level_definitions')
         .select('level')
         .lte('xp_required', currentXP)

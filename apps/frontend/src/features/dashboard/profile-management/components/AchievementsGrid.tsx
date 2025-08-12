@@ -9,7 +9,6 @@ import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@features/auth/contexts/AuthContext';
 import { XPService } from '@shared/services/xpService';
-import type { XPOpportunity } from '@shared/services/xpService';
 import Icon from '@shared/components/AppIcon';
 
 type FilterType = 'all' | 'actions' | 'achievements' | 'unlocked' | 'locked';

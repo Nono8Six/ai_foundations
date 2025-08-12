@@ -25,14 +25,6 @@ interface HeroProfileProps {
 }
 
 // Utility functions for XP rarity system - Updated for modern 2025 design
-const _getRarityColor = (xp: number) => {
-  if (xp >= 500) return 'from-purple-400 to-pink-500'; // Mythique
-  if (xp >= 200) return 'from-yellow-400 to-orange-500'; // Légendaire
-  if (xp >= 100) return 'from-purple-400 to-purple-600'; // Épique
-  if (xp >= 50) return 'from-blue-400 to-blue-600'; // Rare
-  if (xp >= 25) return 'from-green-400 to-green-600'; // Inhabituel
-  return 'from-gray-400 to-gray-600'; // Apprenti
-};
 
 const getRarityName = (xp: number) => {
   if (xp >= 500) return 'Maître Mythique';
