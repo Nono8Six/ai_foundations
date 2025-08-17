@@ -1,0 +1,7 @@
+{
+  "description": "Database seeding",
+  "exitCode": 2,
+  "timestamp": "2025-08-17T13:34:04.650Z",
+  "stdout": "",
+  "stderr": "psql: error: connection to server at \"aws-0-eu-central-1.pooler.supabase.com\" (18.198.30.239), port 6543 failed: FATAL:  Tenant or user not found\r\nconnection to server at \"aws-0-eu-central-1.pooler.supabase.com\" (18.198.30.239), port 6543 failed: FATAL:  Tenant or user not found\r\n"
+}

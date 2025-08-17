@@ -52,6 +52,48 @@ export default tseslint.config(
     },
   },
 
+  // XP Architecture Guards (P9-C-LITE)
+  {
+    files: ['apps/frontend/src/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'CallExpression[callee.property.name="rpc"]',
+          message: 'Use XPRpc (src/shared/services/xp-rpc.ts), no direct supabase.rpc in UI.',
+        },
+        {
+          selector: 'CallExpression[callee.object.name="Math"][callee.property.name="floor"]',
+          message: 'Do not compute levels client-side. Use XPRpc.computeLevelInfo().',
+        },
+      ],
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: ['@supabase/supabase-js'],
+          paths: [
+            {
+              name: '@supabase/supabase-js',
+              message: 'Import shared client from src/core/supabase/client.ts',
+            },
+          ],
+        },
+      ],
+    },
+  },
+
+  // XP Architecture Exceptions (allowed files)
+  {
+    files: [
+      'apps/frontend/src/shared/services/xp-rpc.ts',
+      'apps/frontend/src/core/supabase/**/*.{ts,tsx}',
+    ],
+    rules: {
+      'no-restricted-syntax': 'off',
+      'no-restricted-imports': 'off',
+    },
+  },
+
   // Node.js scripts
   {
     files: ['scripts/**/*.{js,mjs,ts}'],

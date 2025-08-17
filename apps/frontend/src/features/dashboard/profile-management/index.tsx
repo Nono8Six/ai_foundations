@@ -6,11 +6,13 @@ import PersonalInfoTab from './components/PersonalInfoTab';
 import StatsPage from './components/StatsPage';
 import SettingsTab from './components/SettingsTab';
 import HeroProfile from './components/HeroProfile';
+import { XPRpc } from '@shared/services/xp-rpc';
 
 const UserProfileManagement: React.FC = () => {
   const [activeTab, setActiveTab] = useState('personal');
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState<string>('');
+  const [nextLevelXp, setNextLevelXp] = useState<number>(0);
   const { user, userProfile } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -32,6 +34,23 @@ const UserProfileManagement: React.FC = () => {
     setAvatarPreview(defaultAvatar);
   }, [userProfile?.avatar_url, userProfile?.full_name, user?.email]);
 
+  // Compute next level XP
+  useEffect(() => {
+    const computeNextLevelXp = async () => {
+      if (userProfile?.xp !== undefined) {
+        try {
+          const levelInfo = await XPRpc.computeLevelInfo(userProfile.xp);
+          setNextLevelXp(levelInfo.xpForNextLevel);
+        } catch (error) {
+          console.error('Failed to compute level info:', error);
+          setNextLevelXp(0);
+        }
+      }
+    };
+
+    computeNextLevelXp();
+  }, [userProfile?.xp]);
+
   // Use real user data from userProfile
   const userData = {
     id: user?.id || '',
@@ -46,7 +65,7 @@ const UserProfileManagement: React.FC = () => {
     joinDate: user?.created_at || new Date().toISOString(),
     level: userProfile?.level || 1,
     xp: userProfile?.xp || 0,
-    nextLevelXp: Math.floor(100 * Math.pow(userProfile?.level || 1, 1.5)),
+    nextLevelXp,
     streak: userProfile?.current_streak || 0,
     totalLearningTime: 0, // This would need to be calculated from user progress
     coursesCompleted: 0, // This would need to be calculated from user progress

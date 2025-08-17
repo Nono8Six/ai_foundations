@@ -52,8 +52,9 @@ pnpm format
 ### Supabase Cloud Management (Cloud-Only Setup)
 
 ```bash
-# Generate TypeScript types from cloud schema
-pnpm types:gen
+
+#Generate TypeScript types from cloud schema
+npx supabase gen types typescript --project-id oqmllypaarqvabuvbqga > apps/frontend/src/types/database.types.ts
 
 # Validate environment variables
 pnpm validate:env

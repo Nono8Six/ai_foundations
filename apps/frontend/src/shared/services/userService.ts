@@ -184,44 +184,90 @@ interface ProfileUpdates {
 
 /**
  * Calculate XP and level based on profile completion
+ * Uses RPC-only approach with xp_sources rules (NO HARDCODING)
  */
-export function calculateProfileXPAndLevel(profile: Partial<ProfileUpdates> & { avatar_url?: string | null }): { xp: number; level: number } {
-  let xp = 0;
-  
-  // Avatar XP (15 points) - exclude default ui-avatars
-  if (profile.avatar_url && !profile.avatar_url.includes('ui-avatars.com')) {
-    xp += 15;
+export async function calculateProfileXPAndLevel(profile: Partial<ProfileUpdates> & { avatar_url?: string | null }): Promise<{ xp: number; level: number }> {
+  try {
+    // Import XPRpc dynamically to avoid circular dependencies
+    const { XPRpc, XPError } = await import('./xp-rpc');
+    
+    let totalXp = 0;
+    
+    // Map profile fields to XP source types
+    const profileActions = [
+      {
+        condition: profile.avatar_url && !profile.avatar_url.includes('ui-avatars.com'),
+        sourceType: 'profile',
+        actionType: 'avatar_upload'
+      },
+      {
+        condition: profile.phone && profile.phone.length >= 10,
+        sourceType: 'profile', 
+        actionType: 'phone_added'
+      },
+      {
+        condition: profile.profession && profile.profession.trim().length > 0,
+        sourceType: 'profile',
+        actionType: 'profession_added'
+      },
+      {
+        condition: profile.company && profile.company.trim().length > 0,
+        sourceType: 'profile',
+        actionType: 'company_added'
+      }
+    ];
+
+    // Get XP values from active rules (RPC-only)
+    for (const action of profileActions) {
+      if (action.condition) {
+        try {
+          const xpValue = await XPRpc.getXPValue(action.sourceType, action.actionType);
+          totalXp += xpValue;
+        } catch (error) {
+          if (error instanceof XPError && error.isCode('xp_rule_missing')) {
+            // Rule missing - explicit error (no fallback)
+            throw new XPError(
+              'xp_rule_missing',
+              `XP rule missing for ${action.sourceType}:${action.actionType}. Please configure in xp_sources table.`,
+              { sourceType: action.sourceType, actionType: action.actionType }
+            );
+          }
+          throw error;
+        }
+      }
+    }
+
+    // Check for completion bonus
+    const allFieldsCompleted = profileActions.every(action => action.condition);
+    if (allFieldsCompleted) {
+      try {
+        const bonusXP = await XPRpc.getXPValue('profile', 'completion_bonus');
+        totalXp += bonusXP;
+      } catch (error) {
+        if (error instanceof XPError && error.isCode('xp_rule_missing')) {
+          throw new XPError(
+            'xp_rule_missing',
+            'XP rule missing for profile:completion_bonus. Please configure in xp_sources table.',
+            { sourceType: 'profile', actionType: 'completion_bonus' }
+          );
+        }
+        throw error;
+      }
+    }
+
+    // Calculate level using RPC (NO hardcoded 100 XP per level)
+    const levelInfo = await XPRpc.computeLevelInfo(totalXp);
+    
+    return { 
+      xp: totalXp, 
+      level: levelInfo.level 
+    };
+
+  } catch (error) {
+    // Log and re-throw for proper error handling
+    console.error('Error calculating profile XP and level:', error);
+    throw error;
   }
-  
-  // Phone XP (10 points) - must be at least 10 characters
-  if (profile.phone && profile.phone.length >= 10) {
-    xp += 10;
-  }
-  
-  // Profession XP (10 points) - must have content
-  if (profile.profession && profile.profession.trim().length > 0) {
-    xp += 10;
-  }
-  
-  // Company XP (5 points) - must have content
-  if (profile.company && profile.company.trim().length > 0) {
-    xp += 5;
-  }
-  
-  // Completion bonus (20 points) - all fields completed
-  const hasAvatar = profile.avatar_url && !profile.avatar_url.includes('ui-avatars.com');
-  const hasPhone = profile.phone && profile.phone.length >= 10;
-  const hasProfession = profile.profession && profile.profession.trim().length > 0;
-  const hasCompany = profile.company && profile.company.trim().length > 0;
-  
-  if (hasAvatar && hasPhone && hasProfession && hasCompany) {
-    xp += 20; // Completion bonus
-  }
-  
-  // Calculate level based on XP (100 XP per level)
-  const level = Math.floor(xp / 100) + 1;
-  
-  return { xp, level };
 }
 
 export async function updateUserProfile(

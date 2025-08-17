@@ -34,11 +34,16 @@
     "build": "vite build --sourcemap",
     "serve": "vite preview",
     "lint": "eslint src --fix",
+    "lint:xp": "eslint \"src/**/*.{ts,tsx}\" --quiet",
     "format": "prettier --write \"src/**/*.{js,jsx,json,css,scss,md}\"",
     "test": "vitest run --passWithNoTests",
+    "test:unit": "vitest run --passWithNoTests",
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "guard:xp": "node scripts/guard-xp.cjs",
+    "verify:xp": "pnpm run lint:xp && pnpm run guard:xp",
+    "p10:test:e2e": "vitest run src/tests/p10/ --reporter=verbose"
   },
   "browserslist": {
     "production": [

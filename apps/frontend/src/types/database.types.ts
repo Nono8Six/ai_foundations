@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -18,52 +18,70 @@ export type Database = {
         Row: {
           achievement_key: string
           category: string
+          code: string
           condition_params: Json | null
           condition_type: string
           cooldown_hours: number | null
           created_at: string | null
           description: string
+          effective_from: string | null
+          effective_to: string | null
           icon: string
           id: string
           is_active: boolean | null
           is_repeatable: boolean | null
+          scope: string | null
           sort_order: number | null
           title: string
           updated_at: string | null
+          validity: unknown | null
+          version: number
           xp_reward: number
         }
         Insert: {
           achievement_key: string
           category?: string
+          code: string
           condition_params?: Json | null
           condition_type: string
           cooldown_hours?: number | null
           created_at?: string | null
           description: string
+          effective_from?: string | null
+          effective_to?: string | null
           icon: string
           id?: string
           is_active?: boolean | null
           is_repeatable?: boolean | null
+          scope?: string | null
           sort_order?: number | null
           title: string
           updated_at?: string | null
+          validity?: unknown | null
+          version: number
           xp_reward?: number
         }
         Update: {
           achievement_key?: string
           category?: string
+          code?: string
           condition_params?: Json | null
           condition_type?: string
           cooldown_hours?: number | null
           created_at?: string | null
           description?: string
+          effective_from?: string | null
+          effective_to?: string | null
           icon?: string
           id?: string
           is_active?: boolean | null
           is_repeatable?: boolean | null
+          scope?: string | null
           sort_order?: number | null
           title?: string
           updated_at?: string | null
+          validity?: unknown | null
+          version?: number
           xp_reward?: number
         }
         Relationships: []
@@ -396,33 +414,49 @@ export type Database = {
       }
       user_achievements: {
         Row: {
+          achievement_id: string | null
           achievement_name: string
           achievement_type: string
+          achievement_version: number | null
           details: Json | null
           id: string
+          scope: string | null
           unlocked_at: string | null
           user_id: string
           xp_reward: number
         }
         Insert: {
+          achievement_id?: string | null
           achievement_name: string
           achievement_type: string
+          achievement_version?: number | null
           details?: Json | null
           id?: string
+          scope?: string | null
           unlocked_at?: string | null
           user_id: string
           xp_reward?: number
         }
         Update: {
+          achievement_id?: string | null
           achievement_name?: string
           achievement_type?: string
+          achievement_version?: number | null
           details?: Json | null
           id?: string
+          scope?: string | null
           unlocked_at?: string | null
           user_id?: string
           xp_reward?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "user_achievements_achievement_id_fkey"
+            columns: ["achievement_id"]
+            isOneToOne: false
+            referencedRelation: "achievement_definitions"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "user_achievements_user_id_fkey"
             columns: ["user_id"]
@@ -551,28 +585,31 @@ export type Database = {
           completed_at: string | null
           created_at: string | null
           id: string
-          lesson_id: string | null
-          status: string | null
+          lesson_id: string
+          started_at: string | null
+          status: string
           updated_at: string | null
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           completed_at?: string | null
           created_at?: string | null
           id?: string
-          lesson_id?: string | null
-          status?: string | null
+          lesson_id: string
+          started_at?: string | null
+          status?: string
           updated_at?: string | null
-          user_id?: string | null
+          user_id: string
         }
         Update: {
           completed_at?: string | null
           created_at?: string | null
           id?: string
-          lesson_id?: string | null
-          status?: string | null
+          lesson_id?: string
+          started_at?: string | null
+          status?: string
           updated_at?: string | null
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: [
           {
@@ -681,11 +718,14 @@ export type Database = {
           action_type: string
           created_at: string
           id: string
+          idempotency_key: string
           level_after: number | null
           level_before: number | null
           metadata: Json | null
           reference_id: string | null
+          source_id: string | null
           source_type: string
+          source_version: string | null
           user_id: string
           xp_after: number
           xp_before: number
@@ -695,11 +735,14 @@ export type Database = {
           action_type: string
           created_at?: string
           id?: string
+          idempotency_key: string
           level_after?: number | null
           level_before?: number | null
           metadata?: Json | null
           reference_id?: string | null
+          source_id?: string | null
           source_type: string
+          source_version?: string | null
           user_id: string
           xp_after?: number
           xp_before?: number
@@ -709,11 +752,14 @@ export type Database = {
           action_type?: string
           created_at?: string
           id?: string
+          idempotency_key?: string
           level_after?: number | null
           level_before?: number | null
           metadata?: Json | null
           reference_id?: string | null
+          source_id?: string | null
           source_type?: string
+          source_version?: string | null
           user_id?: string
           xp_after?: number
           xp_before?: number
@@ -741,42 +787,77 @@ export type Database = {
           action_type: string
           cooldown_minutes: number | null
           created_at: string | null
+          deprecated_reason: string | null
           description: string | null
+          effective_from: string | null
+          effective_to: string | null
           id: string
           is_active: boolean | null
           is_repeatable: boolean | null
           max_per_day: number | null
           source_type: string
+          title: string | null
+          validity: unknown | null
+          version: number
           xp_value: number
         }
         Insert: {
           action_type: string
           cooldown_minutes?: number | null
           created_at?: string | null
+          deprecated_reason?: string | null
           description?: string | null
+          effective_from?: string | null
+          effective_to?: string | null
           id?: string
           is_active?: boolean | null
           is_repeatable?: boolean | null
           max_per_day?: number | null
           source_type: string
+          title?: string | null
+          validity?: unknown | null
+          version: number
           xp_value: number
         }
         Update: {
           action_type?: string
           cooldown_minutes?: number | null
           created_at?: string | null
+          deprecated_reason?: string | null
           description?: string | null
+          effective_from?: string | null
+          effective_to?: string | null
           id?: string
           is_active?: boolean | null
           is_repeatable?: boolean | null
           max_per_day?: number | null
           source_type?: string
+          title?: string | null
+          validity?: unknown | null
+          version?: number
           xp_value?: number
         }
         Relationships: []
       }
     }
     Views: {
+      admin_xp_management: {
+        Row: {
+          action_type: string | null
+          cooldown_minutes: number | null
+          full_key: string | null
+          is_active: boolean | null
+          is_repeatable: boolean | null
+          last_used_at: string | null
+          max_per_day: number | null
+          source_type: string | null
+          title: string | null
+          type: string | null
+          usage_count: number | null
+          xp_value: number | null
+        }
+        Relationships: []
+      }
       user_course_progress: {
         Row: {
           category: string | null
@@ -864,9 +945,46 @@ export type Database = {
       }
     }
     Functions: {
+      admin_compensate_achievement: {
+        Args: {
+          p_code: string
+          p_idempotency_key: string
+          p_reason: string
+          p_version: number
+        }
+        Returns: {
+          affected_users: number
+          total_events: number
+          total_xp_reverted: number
+        }[]
+      }
+      compute_level: {
+        Args: { xp_total: number }
+        Returns: number
+      }
+      compute_level_info: {
+        Args: { p_xp_total: number }
+        Returns: {
+          level: number
+          xp_threshold: number
+          xp_to_next: number
+        }[]
+      }
       create_profile_completion_achievements: {
         Args: Record<PropertyKey, never>
         Returns: undefined
+      }
+      credit_xp: {
+        Args: {
+          p_idempotency_key: string
+          p_metadata?: Json
+          p_reference_id?: string
+          p_source_ref: string
+          p_source_version?: string
+          p_user_id: string
+          p_xp_delta: number
+        }
+        Returns: Json
       }
       email_exists: {
         Args: { search_email: string }
@@ -876,60 +994,384 @@ export type Database = {
         Args: { session_id: string }
         Returns: boolean
       }
-      get_user_course_progress: {
-        Args: { user_id_param: string; course_id_param: string }
+      gbt_bit_compress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_bool_compress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_bool_fetch: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_bpchar_compress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_bytea_compress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_cash_compress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_cash_fetch: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_date_compress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_date_fetch: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_decompress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_enum_compress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_enum_fetch: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_float4_compress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_float4_fetch: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_float8_compress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_float8_fetch: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_inet_compress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_int2_compress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_int2_fetch: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_int4_compress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_int4_fetch: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_int8_compress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_int8_fetch: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_intv_compress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_intv_decompress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_intv_fetch: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_macad_compress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_macad_fetch: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_macad8_compress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_macad8_fetch: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_numeric_compress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_oid_compress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_oid_fetch: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_text_compress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_time_compress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_time_fetch: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_timetz_compress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_ts_compress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_ts_fetch: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_tstz_compress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_uuid_compress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_uuid_fetch: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_var_decompress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbt_var_fetch: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbtreekey_var_in: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbtreekey_var_out: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbtreekey16_in: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbtreekey16_out: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbtreekey2_in: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbtreekey2_out: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbtreekey32_in: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbtreekey32_out: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbtreekey4_in: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbtreekey4_out: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbtreekey8_in: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gbtreekey8_out: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      get_active_xp_sources: {
+        Args: { p_at?: string }
         Returns: {
-          course_id: string
-          total_lessons: number
+          action_type: string
+          cooldown_minutes: number
+          description: string
+          effective_from: string
+          effective_to: string
+          is_repeatable: boolean
+          max_per_day: number
+          source_id: string
+          source_type: string
+          title: string
+          version: number
+          xp_value: number
+        }[]
+      }
+      get_user_course_progress: {
+        Args: { course_id_param: string; user_id_param: string }
+        Returns: {
           completed_lessons: number
           completion_percentage: number
+          course_id: string
+          total_lessons: number
+        }[]
+      }
+      get_user_lesson_lock_keys: {
+        Args: { p_lesson_id: string; p_user_id: string }
+        Returns: {
+          h1: number
+          h2: number
+        }[]
+      }
+      get_user_lock_keys: {
+        Args: { p_user_id: string }
+        Returns: {
+          h1: number
+          h2: number
         }[]
       }
       get_user_settings: {
         Args: { user_id?: string }
         Returns: {
+          learning_preferences: Json
           notification_settings: Json
           privacy_settings: Json
-          learning_preferences: Json
         }[]
       }
       is_admin_user: {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
+      recalculate_user_xp_after_achievement_removal: {
+        Args: { p_achievement_key: string; p_reason?: string }
+        Returns: {
+          new_level: number
+          new_total_xp: number
+          user_id: string
+          xp_removed: number
+        }[]
+      }
+      recalculate_user_xp_after_source_removal: {
+        Args: {
+          p_action_type: string
+          p_reason?: string
+          p_source_type: string
+        }
+        Returns: {
+          new_level: number
+          new_total_xp: number
+          user_id: string
+          xp_removed: number
+        }[]
+      }
+      simple_test: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       start_user_session: {
         Args: {
-          target_user_id: string
           session_ip?: unknown
           session_user_agent?: string
+          target_user_id: string
         }
         Returns: string
       }
-      update_user_profile: {
-        Args: { p_user_id: string; p_profile_data: Json }
+      sync_achievement_xp: {
+        Args: { target_user_id?: string }
         Returns: {
-          id: string
+          achievement_key: string
+          sync_status: string
+          user_id: string
+          xp_corrected: number
+        }[]
+      }
+      test_concurrent_credit_xp: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          error_message: string
+          event_id: string
+          operation_order: number
+          session_id: number
+          success: boolean
+          xp_after: number
+          xp_before: number
+        }[]
+      }
+      test_function: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      unlock_achievement: {
+        Args: {
+          p_code: string
+          p_idempotency_key: string
+          p_reference_id?: string
+          p_scope?: string
+          p_user_id: string
+          p_version: number
+        }
+        Returns: {
+          event_id: string
+          level_after: number
+          level_before: number
+          ua_id: string
+          xp_after: number
+          xp_before: number
+        }[]
+      }
+      update_user_profile: {
+        Args: { p_profile_data: Json; p_user_id: string }
+        Returns: {
+          avatar_url: string
+          company: string
+          created_at: string
+          current_streak: number
           email: string
           full_name: string
-          avatar_url: string
-          phone: string
-          profession: string
-          company: string
-          level: number
-          xp: number
-          current_streak: number
+          id: string
           is_admin: boolean
           last_completed_at: string
-          created_at: string
+          level: number
+          phone: string
+          profession: string
           updated_at: string
+          xp: number
         }[]
       }
       update_user_settings: {
         Args: { settings_data: Json; user_id?: string }
         Returns: {
+          learning_preferences: Json
           notification_settings: Json
           privacy_settings: Json
-          learning_preferences: Json
         }[]
       }
     }
@@ -941,7 +1383,15 @@ export type Database = {
       user_role_type: "admin" | "instructor" | "student"
     }
     CompositeTypes: {
-      [_ in never]: never
+      credit_xp_result: {
+        event_id: string | null
+        xp_before: number | null
+        xp_after: number | null
+        level_before: number | null
+        level_after: number | null
+        xp_delta_applied: number | null
+        gap: number | null
+      }
     }
   }
 }

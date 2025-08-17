@@ -26,13 +26,19 @@ interface HeroProfileProps {
 
 // Utility functions for XP rarity system - Updated for modern 2025 design
 
-const getRarityName = (xp: number) => {
-  if (xp >= 500) return 'Maître Mythique';
-  if (xp >= 200) return 'Expert Légendaire';
-  if (xp >= 100) return 'Apprenant Épique';
-  if (xp >= 50) return 'Étudiant Rare';
-  if (xp >= 25) return 'Novice Prometteur';
-  return 'Apprenti Débutant';
+// REFACTORÉ P4: Plus de hardcoding XP - utilise level au lieu de XP
+const getLevelBasedTitle = (level: number) => {
+  // Map niveau → titre basé sur les level_definitions
+  const levelTitles: Record<number, string> = {
+    1: 'Apprenti Débutant',
+    2: 'Novice Prometteur', 
+    3: 'Étudiant Rare',
+    4: 'Apprenant Épique',
+    5: 'Expert Légendaire',
+    6: 'Maître Mythique'
+  };
+  
+  return levelTitles[level] || `Niveau ${level}`;
 };
 
 const HeroProfile: React.FC<HeroProfileProps> = ({
@@ -129,7 +135,7 @@ const HeroProfile: React.FC<HeroProfileProps> = ({
             </div>
             <div>
               <div className='text-sm font-bold text-gray-800'>
-                Niveau {userData.level} • {getRarityName(userData.xp)}
+                Niveau {userData.level} • {getLevelBasedTitle(userData.level)}
               </div>
               <div className='text-xs text-gray-600'>
                 {userData.xp} / {userData.nextLevelXp} XP

@@ -8,8 +8,121 @@ import { validateAndFormatFrenchPhone, cleanPhoneForStorage } from '@shared/util
 import { log } from '@libs/logger';
 import { useAuth } from '@features/auth/contexts/AuthContext';
 // import ProfileCompletionGamification from './ProfileCompletionGamification';
-import { showXPRewardNotification, showLevelUpNotification, XP_REWARDS } from './XPNotificationSystem';
+import { showXPRewardNotification, showLevelUpNotification } from './XPNotificationSystem';
+import { XPRpc, XPError, makeIdempotencyKey } from '@shared/services/xp-rpc';
+// import { useIdempotentXPAction } from '@shared/hooks/useIdempotentAction';
 import type { UserProfile } from '@frontend/types/user';
+
+// Component to dynamically display XP value for a specific action
+const DynamicXPBadge: React.FC<{ sourceType: string; actionType: string; fallback?: number }> = ({ 
+  sourceType, 
+  actionType, 
+  fallback = 0 
+}) => {
+  const [xpValue, setXpValue] = React.useState<number | null>(null);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    async function fetchXPValue() {
+      try {
+        setLoading(true);
+        const value = await XPRpc.getXPValue(sourceType, actionType);
+        setXpValue(value);
+      } catch (error) {
+        if (error instanceof XPError && error.isCode('xp_rule_missing')) {
+          setXpValue(fallback);
+        } else {
+          log.error(`Error fetching XP value for ${sourceType}:${actionType}:`, error);
+          setXpValue(fallback);
+        }
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchXPValue();
+  }, [sourceType, actionType, fallback]);
+
+  if (loading) {
+    return <span>(...)</span>;
+  }
+
+  return <span>{xpValue}</span>;
+};
+
+// Component to dynamically calculate profile completion XP total
+const ProfileXPTotal: React.FC<{ profile: UserProfile }> = ({ profile }) => {
+  const [totalXP, setTotalXP] = React.useState<number | null>(null);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    async function calculateTotalXP() {
+      try {
+        setLoading(true);
+        let total = 0;
+        
+        // Check each profile field and get XP value from RPC
+        const hasCustomAvatar = profile.avatar_url && !profile.avatar_url.includes('ui-avatars.com');
+        
+        if (hasCustomAvatar) {
+          const avatarXP = await XPRpc.getXPValue('profile', 'avatar_upload');
+          total += avatarXP;
+        }
+        
+        if (profile.phone) {
+          const phoneXP = await XPRpc.getXPValue('profile', 'phone_added');
+          total += phoneXP;
+        }
+        
+        if (profile.profession) {
+          const professionXP = await XPRpc.getXPValue('profile', 'profession_added');
+          total += professionXP;
+        }
+        
+        if (profile.company) {
+          const companyXP = await XPRpc.getXPValue('profile', 'company_added');
+          total += companyXP;
+        }
+        
+        // Check for completion bonus if all fields are filled
+        if (hasCustomAvatar && profile.phone && profile.profession && profile.company) {
+          try {
+            const bonusXP = await XPRpc.getXPValue('profile', 'completion_bonus');
+            total += bonusXP;
+          } catch (error) {
+            // Completion bonus might not exist, continue without it
+            if (error instanceof XPError && !error.isCode('xp_rule_missing')) {
+              throw error;
+            }
+          }
+        }
+        
+        setTotalXP(total);
+      } catch (error) {
+        log.error('Error calculating profile XP total:', error);
+        setTotalXP(0); // Fallback to 0 on error
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    calculateTotalXP();
+  }, [profile.avatar_url, profile.phone, profile.profession, profile.company]);
+
+  if (loading) {
+    return (
+      <span className='bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-bold'>
+        Calcul...
+      </span>
+    );
+  }
+
+  return (
+    <span className='bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-bold'>
+      {totalXP} XP total
+    </span>
+  );
+};
 
 interface FormData {
   name: string;
@@ -107,6 +220,8 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({
     },
   });
 
+  // Removed idempotent action wrapper for simplicity - can be re-added later
+
   // Update form values when userData changes - AFTER useForm initialization
   React.useEffect(() => {
     if (userData.name) { // Only reset when userData is loaded
@@ -121,10 +236,10 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({
   }, [userData.name, userData.email, userData.phone, userData.profession, userData.company, reset]);
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
-    try {
-      setIsSubmitting(true);
+      try {
+        setIsSubmitting(true);
 
-      // Le téléphone est optionnel, ne pas bloquer la sauvegarde
+        // Le téléphone est optionnel, ne pas bloquer la sauvegarde
 
       // Prepare the update data - Normalize strings and avoid empty strings in DB
       const updates = {
@@ -249,7 +364,7 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({
         }, 2000);
       }
       
-      // Show XP notifications for newly completed fields
+      // Show XP notifications for newly completed fields (RPC-only approach)
       const isPhoneCompleted = !userData.phone && data.phone;
       const isProfessionCompleted = !userData.profession && data.profession;
       const isCompanyCompleted = !userData.company && data.company;
@@ -258,40 +373,64 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({
       let totalXPEarned = 0;
       const actionsCompleted = [];
       
-      if (isPhoneCompleted) {
-        totalXPEarned += XP_REWARDS.PHONE_ADDED;
-        actionsCompleted.push('Téléphone ajouté');
-        showXPRewardNotification('Téléphone ajouté', XP_REWARDS.PHONE_ADDED, 'Communication facilitée');
-      }
-      
-      if (isProfessionCompleted) {
-        totalXPEarned += XP_REWARDS.PROFESSION_ADDED;
-        actionsCompleted.push('Profession renseignée');
-        showXPRewardNotification('Profession renseignée', XP_REWARDS.PROFESSION_ADDED, 'Profil professionnel enrichi');
-      }
-      
-      if (isCompanyCompleted) {
-        totalXPEarned += XP_REWARDS.COMPANY_ADDED;
-        actionsCompleted.push('Entreprise précisée');
-        showXPRewardNotification('Entreprise précisée', XP_REWARDS.COMPANY_ADDED, 'Expérience professionnelle détaillée');
-      }
-      
-      if (isAvatarCompleted) {
-        totalXPEarned += XP_REWARDS.AVATAR_UPLOAD;
-        actionsCompleted.push('Photo de profil ajoutée');
-        showXPRewardNotification('Photo de profil ajoutée', XP_REWARDS.AVATAR_UPLOAD, 'Profil personnalisé');
-      }
-      
-      // Check for level up (assuming 100 XP per level)
-      const oldLevel = profile?.level || 1;
-      const oldXP = profile?.xp || 0;
-      const newXP = oldXP + totalXPEarned;
-      const newLevel = Math.floor(newXP / 100) + 1;
-      
-      if (newLevel > oldLevel) {
-        setTimeout(() => {
-          showLevelUpNotification(newLevel, newXP);
-        }, 1500);
+      // Get XP values from RPC (NO hardcoded values)
+      try {
+        if (isPhoneCompleted) {
+          const phoneXP = await XPRpc.getXPValue('profile', 'phone_added');
+          totalXPEarned += phoneXP;
+          actionsCompleted.push('Téléphone ajouté');
+          showXPRewardNotification('Téléphone ajouté', phoneXP, 'Communication facilitée');
+        }
+        
+        if (isProfessionCompleted) {
+          const professionXP = await XPRpc.getXPValue('profile', 'profession_added');
+          totalXPEarned += professionXP;
+          actionsCompleted.push('Profession renseignée');
+          showXPRewardNotification('Profession renseignée', professionXP, 'Profil professionnel enrichi');
+        }
+        
+        if (isCompanyCompleted) {
+          const companyXP = await XPRpc.getXPValue('profile', 'company_added');
+          totalXPEarned += companyXP;
+          actionsCompleted.push('Entreprise précisée');
+          showXPRewardNotification('Entreprise précisée', companyXP, 'Expérience professionnelle détaillée');
+        }
+        
+        if (isAvatarCompleted) {
+          const avatarXP = await XPRpc.getXPValue('profile', 'avatar_upload');
+          totalXPEarned += avatarXP;
+          actionsCompleted.push('Photo de profil ajoutée');
+          showXPRewardNotification('Photo de profil ajoutée', avatarXP, 'Profil personnalisé');
+        }
+        
+        // Check for level up using RPC (NO hardcoded 100 XP per level)
+        if (totalXPEarned > 0) {
+          const oldLevel = profile?.level || 1;
+          const oldXP = profile?.xp || 0;
+          const newXP = oldXP + totalXPEarned;
+          
+          const newLevelInfo = await XPRpc.computeLevelInfo(newXP);
+          
+          if (newLevelInfo.level > oldLevel) {
+            setTimeout(() => {
+              showLevelUpNotification(newLevelInfo.level, newXP);
+            }, 1500);
+          }
+        }
+        
+      } catch (error) {
+        if (error instanceof XPError && error.isCode('xp_rule_missing')) {
+          // Rule missing - explicit error, no fallback
+          log.error('XP rule missing for profile action:', error.details);
+          toast.error('Configuration XP manquante', {
+            description: 'Veuillez configurer les règles XP dans la table xp_sources'
+          });
+        } else {
+          log.error('Error calculating XP rewards:', error);
+          toast.error('Erreur XP', {
+            description: 'Impossible de calculer les récompenses XP'
+          });
+        }
       }
       
       // Enhanced success toast with field changes and XP
@@ -317,6 +456,7 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({
         type: 'manual',
         message: 'Erreur lors de la mise à jour du profil. Veuillez réessayer.',
       });
+      throw error; // Re-throw for idempotent action error handling
     } finally {
       setIsSubmitting(false);
     }
@@ -366,10 +506,10 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({
         const missingFields = [];
         const hasCustomAvatar = profile.avatar_url && !profile.avatar_url.includes('ui-avatars.com');
         
-        if (!profile.phone) missingFields.push({ key: 'phone', label: 'Téléphone', xp: 10, icon: 'Phone' });
-        if (!profile.profession) missingFields.push({ key: 'profession', label: 'Profession', xp: 10, icon: 'Briefcase' });
-        if (!profile.company) missingFields.push({ key: 'company', label: 'Entreprise', xp: 5, icon: 'Building' });
-        if (!hasCustomAvatar) missingFields.push({ key: 'avatar', label: 'Photo de profil', xp: 15, icon: 'Camera' });
+        if (!profile.phone) missingFields.push({ key: 'phone', label: 'Téléphone', sourceType: 'profile', actionType: 'phone_added', icon: 'Phone' });
+        if (!profile.profession) missingFields.push({ key: 'profession', label: 'Profession', sourceType: 'profile', actionType: 'profession_added', icon: 'Briefcase' });
+        if (!profile.company) missingFields.push({ key: 'company', label: 'Entreprise', sourceType: 'profile', actionType: 'company_added', icon: 'Building' });
+        if (!hasCustomAvatar) missingFields.push({ key: 'avatar', label: 'Photo de profil', sourceType: 'profile', actionType: 'avatar_upload', icon: 'Camera' });
 
         // Si le profil est complet, afficher un message de félicitations
         if (missingFields.length === 0) {
@@ -387,7 +527,7 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({
               <div className='flex items-center gap-2 text-sm text-green-600'>
                 <Icon name='Award' size={16} className='text-green-600' />
                 <span className='font-medium'>Profil complet</span>
-                <span className='bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-bold'>60 XP total</span>
+                <ProfileXPTotal profile={profile} />
               </div>
             </div>
           );
@@ -409,17 +549,17 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({
               {missingFields.filter(field => field.key !== 'avatar').map(field => (
                 <button
                   key={field.key}
-                  onClick={() => handleFieldFocus(field.key, field.xp)}
+                  onClick={() => handleFieldFocus(field.key, 0)} // XP value passed as 0 since it's dynamic
                   className='inline-flex items-center gap-2 px-3 py-2 bg-white/70 rounded-lg border border-orange-100 hover:border-orange-200 hover:bg-white transition-all text-sm'
                 >
                   <Icon name={field.icon} size={14} className='text-orange-600' />
-                  <span>{field.label} (+{field.xp} XP)</span>
+                  <span>{field.label} (+<DynamicXPBadge sourceType={field.sourceType} actionType={field.actionType} fallback={10} /> XP)</span>
                 </button>
               ))}
               {missingFields.find(field => field.key === 'avatar') && (
                 <div className='inline-flex items-center gap-2 px-3 py-2 bg-white/70 rounded-lg border border-orange-100 text-sm opacity-75'>
                   <Icon name='Camera' size={14} className='text-orange-600' />
-                  <span>Photo de profil (+15 XP)</span>
+                  <span>Photo de profil (+<DynamicXPBadge sourceType="profile" actionType="avatar_upload" fallback={15} /> XP)</span>
                   <span className='text-xs text-gray-500'>(via bouton modifier)</span>
                 </div>
               )}

@@ -1,64 +1,100 @@
 import React from 'react';
 import { toast } from 'sonner';
 import Icon from '@shared/components/AppIcon';
+import { XPRulesService } from '@shared/services/xpRulesService';
+import { log } from '@libs/logger';
 
 /**
- * XP Point System - Points awarded for profile completion actions
+ * XP Point System - REFACTORÉ P4
+ * PLUS de hardcoding: toutes les valeurs viennent de xp_sources via RPC
  */
-export const XP_REWARDS = {
-  AVATAR_UPLOAD: 15,
-  PHONE_ADDED: 10,
-  PROFESSION_ADDED: 10,
-  COMPANY_ADDED: 5,
-  PROFILE_COMPLETION_BONUS: 20, // Bonus when profile is 100% complete
-} as const;
 
 /**
- * XP Calculation Functions
+ * Récupère la valeur XP pour une action profile depuis xp_sources
+ * REMPLACE l'ancien XP_REWARDS hardcodé
  */
-export const calculateXPReward = (field: keyof typeof XP_REWARDS): number => {
-  return XP_REWARDS[field];
+export const getProfileXPReward = async (field: string): Promise<number> => {
+  try {
+    // Mapping des champs vers les actions XP dans xp_sources
+    const actionMap: Record<string, { sourceType: string; actionType: string }> = {
+      'AVATAR_UPLOAD': { sourceType: 'profile', actionType: 'avatar_upload' },
+      'PHONE_ADDED': { sourceType: 'profile', actionType: 'phone_added' },
+      'PROFESSION_ADDED': { sourceType: 'profile', actionType: 'profession_added' },
+      'COMPANY_ADDED': { sourceType: 'profile', actionType: 'company_added' },
+      'PROFILE_COMPLETION_BONUS': { sourceType: 'profile', actionType: 'completion_bonus' }
+    };
+
+    const action = actionMap[field];
+    if (!action) {
+      throw new Error(`Unknown profile field: ${field}`);
+    }
+
+    const xpValue = await XPRulesService.getXPValue(action.sourceType, action.actionType);
+    return xpValue;
+  } catch (error) {
+    log.error(`Failed to get XP reward for ${field}:`, error);
+    throw error;
+  }
 };
 
-export const calculateTotalProfileXP = (profile: {
+/**
+ * Version synchrone pour compatibility (utilise cache)
+ * OBSOLÈTE: à remplacer par getProfileXPReward async
+ */
+export const calculateXPReward = async (field: string): Promise<number> => {
+  return getProfileXPReward(field);
+};
+
+/**
+ * Calcule le XP total du profil depuis les règles xp_sources
+ * REMPLACE calculateTotalProfileXP hardcodé
+ */
+export const calculateTotalProfileXP = async (profile: {
   avatar_url?: string | null;
   phone?: string | null;
   profession?: string | null;
   company?: string | null;
-}): number => {
+}): Promise<number> => {
   let totalXP = 0;
   
-  // Avatar upload XP
-  if (profile.avatar_url && !profile.avatar_url.includes('ui-avatars.com')) {
-    totalXP += XP_REWARDS.AVATAR_UPLOAD;
+  try {
+    // Avatar upload XP
+    if (profile.avatar_url && !profile.avatar_url.includes('ui-avatars.com')) {
+      totalXP += await XPRulesService.getXPValue('profile', 'avatar_upload');
+    }
+    
+    // Phone XP
+    if (profile.phone && profile.phone.length >= 10) {
+      totalXP += await XPRulesService.getXPValue('profile', 'phone_added');
+    }
+    
+    // Profession XP
+    if (profile.profession && profile.profession.trim().length > 0) {
+      totalXP += await XPRulesService.getXPValue('profile', 'profession_added');
+    }
+    
+    // Company XP
+    if (profile.company && profile.company.trim().length > 0) {
+      totalXP += await XPRulesService.getXPValue('profile', 'company_added');
+    }
+    
+    // Profile completion bonus (all fields completed)
+    const allFieldsCompleted = (
+      profile.avatar_url && !profile.avatar_url.includes('ui-avatars.com') &&
+      profile.phone && profile.phone.length >= 10 &&
+      profile.profession && profile.profession.trim().length > 0 &&
+      profile.company && profile.company.trim().length > 0
+    );
+    
+    if (allFieldsCompleted) {
+      totalXP += await XPRulesService.getXPValue('profile', 'completion_bonus');
+    }
+    
+    return totalXP;
+  } catch (error) {
+    log.error('Error calculating total profile XP:', error);
+    throw error;
   }
-  
-  // Phone XP
-  if (profile.phone && profile.phone.length >= 10) {
-    totalXP += XP_REWARDS.PHONE_ADDED;
-  }
-  
-  // Profession XP
-  if (profile.profession && profile.profession.trim().length > 0) {
-    totalXP += XP_REWARDS.PROFESSION_ADDED;
-  }
-  
-  // Company XP
-  if (profile.company && profile.company.trim().length > 0) {
-    totalXP += XP_REWARDS.COMPANY_ADDED;
-  }
-  
-  // Completion bonus if all fields are filled
-  const hasAvatar = profile.avatar_url && !profile.avatar_url.includes('ui-avatars.com');
-  const hasPhone = profile.phone && profile.phone.length >= 10;
-  const hasProfession = profile.profession && profile.profession.trim().length > 0;
-  const hasCompany = profile.company && profile.company.trim().length > 0;
-  
-  if (hasAvatar && hasPhone && hasProfession && hasCompany) {
-    totalXP += XP_REWARDS.PROFILE_COMPLETION_BONUS;
-  }
-  
-  return totalXP;
 };
 
 /**
@@ -98,108 +134,97 @@ export const showLevelUpNotification = (newLevel: number, totalXP: number) => {
           🎉 Niveau {newLevel} atteint !
         </div>
         <div className="text-sm text-text-secondary">
-          Total: {totalXP} XP • Continuez sur votre lancée !
+          Vous avez maintenant {totalXP} XP au total
         </div>
       </div>
     </div>,
     {
       duration: 8000,
       position: 'top-center',
-      className: 'bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 shadow-lg',
+      className: 'bg-gradient-to-r from-accent/10 to-primary/10 border border-accent/20',
     }
   );
 };
 
+export const showProfileCompletionReward = async (earnedXP: number) => {
+  try {
+    const bonusXP = await XPRulesService.getXPValue('profile', 'completion_bonus');
+    
+    toast.success(
+      <div className="flex items-center gap-3">
+        <div className="w-10 h-10 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
+          <Icon name="CheckCircle" size={20} className="text-white" />
+        </div>
+        <div className="flex-1">
+          <div className="font-bold text-lg text-text-primary">
+            🏆 Profil Complet !
+          </div>
+          <div className="text-sm text-text-secondary">
+            +{earnedXP} XP gagnés + {bonusXP} XP de bonus
+          </div>
+        </div>
+      </div>,
+      {
+        duration: 10000,
+        position: 'top-center',
+        className: 'bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200',
+      }
+    );
+  } catch (error) {
+    log.error('Error showing profile completion reward:', error);
+    // Fallback notification sans bonus
+    toast.success(
+      <div className="flex items-center gap-3">
+        <div className="w-10 h-10 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
+          <Icon name="CheckCircle" size={20} className="text-white" />
+        </div>
+        <div className="flex-1">
+          <div className="font-bold text-lg text-text-primary">
+            🏆 Profil Complet !
+          </div>
+          <div className="text-sm text-text-secondary">
+            +{earnedXP} XP gagnés
+          </div>
+        </div>
+      </div>
+    );
+  }
+};
+
 /**
- * Action XP Display Component
+ * Action XP Badge Component
  */
 interface ActionXPBadgeProps {
-  action: keyof typeof XP_REWARDS;
-  completed?: boolean;
-  className?: string;
+  xpValue: number;
+  size?: 'sm' | 'md' | 'lg';
+  variant?: 'default' | 'success' | 'warning';
+  showIcon?: boolean;
 }
 
 export const ActionXPBadge: React.FC<ActionXPBadgeProps> = ({ 
-  action, 
-  completed = false, 
-  className = '' 
+  xpValue, 
+  size = 'md', 
+  variant = 'default',
+  showIcon = true 
 }) => {
-  const points = XP_REWARDS[action];
-  
+  const sizeClasses = {
+    sm: 'px-2 py-1 text-xs',
+    md: 'px-3 py-1.5 text-sm',
+    lg: 'px-4 py-2 text-base'
+  };
+
+  const variantClasses = {
+    default: 'bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 text-primary',
+    success: 'bg-gradient-to-r from-green-100 to-emerald-100 border border-green-200 text-green-700',
+    warning: 'bg-gradient-to-r from-amber-100 to-yellow-100 border border-amber-200 text-amber-700'
+  };
+
+  const iconSize = size === 'sm' ? 12 : size === 'md' ? 14 : 16;
+
   return (
-    <div 
-      className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium transition-all duration-300 ${
-        completed 
-          ? 'bg-green-100 text-green-700 border border-green-200' 
-          : 'bg-primary-100 text-primary-700 border border-primary-200 hover:bg-primary-200'
-      } ${className}`}
-    >
-      <Icon 
-        name={completed ? "Check" : "Zap"} 
-        size={12} 
-        className={completed ? "text-green-600" : "text-primary-600"} 
-      />
-      <span>{completed ? "Gagné" : `+${points}`} XP</span>
+    <div className={`inline-flex items-center gap-1 rounded-full font-semibold ${sizeClasses[size]} ${variantClasses[variant]}`}>
+      {showIcon && <Icon name="Zap" size={iconSize} />}
+      <span>+{xpValue} XP</span>
     </div>
   );
-};
-
-/**
- * XP Progress Indicator Component
- */
-interface XPProgressIndicatorProps {
-  currentXP: number;
-  currentLevel: number;
-  nextLevelXP: number;
-  className?: string;
-}
-
-export const XPProgressIndicator: React.FC<XPProgressIndicatorProps> = ({ 
-  currentXP, 
-  currentLevel, 
-  nextLevelXP,
-  className = '' 
-}) => {
-  const progressPercentage = Math.min((currentXP / nextLevelXP) * 100, 100);
-  const xpToNext = Math.max(nextLevelXP - currentXP, 0);
-  
-  return (
-    <div className={`space-y-2 ${className}`}>
-      <div className="flex items-center justify-between text-sm">
-        <div className="flex items-center gap-2">
-          <Icon name="Trophy" size={16} className="text-accent" />
-          <span className="font-medium text-text-primary">Niveau {currentLevel}</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <Icon name="Zap" size={16} className="text-primary" />
-          <span className="font-medium text-text-primary">{currentXP.toLocaleString()} XP</span>
-        </div>
-      </div>
-      
-      <div className="relative w-full bg-secondary-200 rounded-full h-2">
-        <div
-          className="absolute top-0 left-0 h-full bg-gradient-to-r from-primary to-accent rounded-full transition-all duration-1000 ease-out"
-          style={{ width: `${progressPercentage}%` }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse rounded-full"></div>
-        </div>
-      </div>
-      
-      <div className="flex items-center justify-between text-xs text-text-secondary">
-        <span>{currentXP} XP</span>
-        <span>{xpToNext > 0 ? `${xpToNext} XP vers niveau ${currentLevel + 1}` : `Niveau ${currentLevel} atteint !`}</span>
-        <span>{nextLevelXP} XP</span>
-      </div>
-    </div>
-  );
-};
-
-export default {
-  XP_REWARDS,
-  calculateXPReward,
-  calculateTotalProfileXP,
-  showXPRewardNotification,
-  showLevelUpNotification,
-  ActionXPBadge,
-  XPProgressIndicator,
 };

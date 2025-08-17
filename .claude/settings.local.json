@@ -36,9 +36,15 @@
       "mcp__supabase-deploya__live_dangerously",
       "mcp__shadcn-ui__list_components",
       "mcp__shadcn-ui__get_component",
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "mcp__supabase__apply_migration",
+      "Bash(git grep:*)",
+      "Bash(true)"
     ],
-    "deny": []
+    "deny": [],
+    "additionalDirectories": [
+      "C:\\c\\GitHub"
+    ]
   },
   "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [

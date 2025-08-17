@@ -9,9 +9,11 @@ import ErrorBoundary from '@shared/components/ErrorBoundary';
 import RecentActivityWidget from './components/RecentActivityWidget';
 import ProgressChart from './components/ProgressChart';
 import QuickActions from './components/QuickActions';
+import { XPRpc } from '@shared/services/xp-rpc';
 
 const UserDashboard: React.FC = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [xpToNextLevel, setXpToNextLevel] = useState<number>(0);
   const navigate = useNavigate();
 
   const { userProfile, user } = useAuth();
@@ -23,6 +25,22 @@ const UserDashboard: React.FC = () => {
     }, 60000);
     return () => clearInterval(timer);
   }, []);
+
+  useEffect(() => {
+    const computeXpToNextLevel = async () => {
+      if (userProfile?.xp !== undefined) {
+        try {
+          const levelInfo = await XPRpc.computeLevelInfo(userProfile.xp);
+          setXpToNextLevel(levelInfo.xpForNextLevel);
+        } catch (error) {
+          console.error('Failed to compute level info:', error);
+          setXpToNextLevel(0);
+        }
+      }
+    };
+
+    computeXpToNextLevel();
+  }, [userProfile?.xp]);
 
   const nextLessonToContinue = useMemo(() => {
     if (!courses || courses.length === 0) return null;
@@ -63,7 +81,7 @@ const UserDashboard: React.FC = () => {
         `https://ui-avatars.com/api/?name=${encodeURIComponent(userProfile?.full_name || user?.email || 'User')}&background=1e40af&color=fff`,
       level: userProfile?.level || 1,
       xp: userProfile?.xp || 0,
-      xpToNextLevel: Math.floor(100 * Math.pow(userProfile?.level || 1, 1.5)),
+      xpToNextLevel,
       currentStreak: userProfile?.current_streak || 0,
       totalCourses: courses.length,
       completedCourses: courses.filter(
@@ -72,7 +90,7 @@ const UserDashboard: React.FC = () => {
       totalLessons: courses.reduce((acc, course) => acc + (course.progress?.total || 0), 0),
       completedLessons: courses.reduce((acc, course) => acc + (course.progress?.completed || 0), 0),
     }),
-    [userProfile, user, courses]
+    [userProfile, user, courses, xpToNextLevel]
   );
 
   const getFirstName = () => {

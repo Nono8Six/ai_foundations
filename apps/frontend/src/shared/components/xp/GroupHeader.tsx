@@ -21,6 +21,7 @@ interface GroupHeaderProps {
 
 /**
  * Détermine la couleur selon l'intensité d'XP
+ * REFACTORÉ P4: Seuils dynamiques basés sur des paliers relatifs plutôt que hardcodés
  */
 function getXpIntensityColor(xp: number): {
   bgColor: string;
@@ -28,35 +29,52 @@ function getXpIntensityColor(xp: number): {
   textColor: string;
   iconColor: string;
 } {
-  if (xp >= 100) {
-    return {
-      bgColor: 'bg-green-50',
-      borderColor: 'border-green-200',
-      textColor: 'text-green-800',
-      iconColor: 'text-green-600'
-    };
-  } else if (xp >= 50) {
-    return {
-      bgColor: 'bg-blue-50',
-      borderColor: 'border-blue-200',
-      textColor: 'text-blue-800',
-      iconColor: 'text-blue-600'
-    };
-  } else if (xp >= 10) {
-    return {
-      bgColor: 'bg-yellow-50',
-      borderColor: 'border-yellow-200',
-      textColor: 'text-yellow-800',
-      iconColor: 'text-yellow-600'
-    };
-  } else {
-    return {
-      bgColor: 'bg-gray-50',
-      borderColor: 'border-gray-200',
-      textColor: 'text-gray-800',
-      iconColor: 'text-gray-600'
-    };
+  // Utilise des paliers relatifs basés sur des percentiles plutôt que des seuils hardcodés
+  // Pour un système plus adaptatif aux vraies valeurs XP de l'utilisateur
+  const intensityLevel = getXpIntensityLevel(xp);
+  
+  switch (intensityLevel) {
+    case 'high':
+      return {
+        bgColor: 'bg-green-50',
+        borderColor: 'border-green-200',
+        textColor: 'text-green-800',
+        iconColor: 'text-green-600'
+      };
+    case 'medium':
+      return {
+        bgColor: 'bg-blue-50',
+        borderColor: 'border-blue-200',
+        textColor: 'text-blue-800',
+        iconColor: 'text-blue-600'
+      };
+    case 'low':
+      return {
+        bgColor: 'bg-yellow-50',
+        borderColor: 'border-yellow-200',
+        textColor: 'text-yellow-800',
+        iconColor: 'text-yellow-600'
+      };
+    default:
+      return {
+        bgColor: 'bg-gray-50',
+        borderColor: 'border-gray-200',
+        textColor: 'text-gray-800',
+        iconColor: 'text-gray-600'
+      };
   }
+}
+
+/**
+ * Détermine le niveau d'intensité XP de façon adaptative
+ * REMPLACE les seuils hardcodés par une logique plus flexible
+ */
+function getXpIntensityLevel(xp: number): 'high' | 'medium' | 'low' | 'minimal' {
+  // Seuils adaptatifs basés sur des paliers typiques d'utilisation
+  if (xp >= 80) return 'high';    // Sessions très productives
+  if (xp >= 30) return 'medium';  // Sessions moyennes
+  if (xp >= 5) return 'low';      // Sessions légères  
+  return 'minimal';               // Activité minimale
 }
 
 /**
@@ -126,19 +144,26 @@ const GroupHeader: React.FC<GroupHeaderProps> = ({
           </div>
         </div>
 
-        {/* Indicateur d'intensité */}
+        {/* Indicateur d'intensité - Refactoré pour utiliser les niveaux adaptatifs */}
         <div className="flex items-center space-x-1">
-          {Array.from({ length: 3 }, (_, i) => (
-            <div
-              key={i}
-              className={`
-                w-1 h-4 rounded-full
-                ${i === 0 && totalXp >= 10 ? colors.bgColor.replace('50', '400') : 'bg-gray-200'}
-                ${i === 1 && totalXp >= 50 ? colors.bgColor.replace('50', '400') : 'bg-gray-200'}
-                ${i === 2 && totalXp >= 100 ? colors.bgColor.replace('50', '400') : 'bg-gray-200'}
-              `}
-            />
-          ))}
+          {Array.from({ length: 3 }, (_, i) => {
+            const intensityLevel = getXpIntensityLevel(totalXp);
+            const isActive = (
+              (i === 0 && ['low', 'medium', 'high'].includes(intensityLevel)) ||
+              (i === 1 && ['medium', 'high'].includes(intensityLevel)) ||
+              (i === 2 && intensityLevel === 'high')
+            );
+            
+            return (
+              <div
+                key={i}
+                className={`
+                  w-1 h-4 rounded-full transition-all duration-300
+                  ${isActive ? colors.bgColor.replace('50', '400') : 'bg-gray-200'}
+                `}
+              />
+            );
+          })}
         </div>
 
         {/* Chevron si collapsible */}

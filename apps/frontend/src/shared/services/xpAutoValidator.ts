@@ -226,29 +226,53 @@ export class XPAutoValidator {
 
     switch (condition_type) {
       case 'xp_threshold':
-        return userStats.total_xp >= (condition_params.threshold || 100);
+        // REFACTORÉ P4: Plus de fallback hardcodé - erreur explicite si threshold manquant
+        if (!condition_params.threshold) {
+          throw new Error('Achievement condition_params.threshold is required for xp_threshold type');
+        }
+        return userStats.total_xp >= condition_params.threshold;
 
       case 'level_reached':
-        return userStats.current_level >= (condition_params.level || 2);
+        // REFACTORÉ P4: Plus de fallback hardcodé - erreur explicite si level manquant
+        if (!condition_params.level) {
+          throw new Error('Achievement condition_params.level is required for level_reached type');
+        }
+        return userStats.current_level >= condition_params.level;
 
       case 'streak_milestone':
-        return userStats.current_streak >= (condition_params.days || 7);
+        // REFACTORÉ P4: Plus de fallback hardcodé - erreur explicite si days manquant
+        if (!condition_params.days) {
+          throw new Error('Achievement condition_params.days is required for streak_milestone type');
+        }
+        return userStats.current_streak >= condition_params.days;
 
       case 'course_completion_count':
-        return userStats.courses_completed >= (condition_params.count || 1);
+        // REFACTORÉ P4: Plus de fallback hardcodé - erreur explicite si count manquant
+        if (condition_params.count === undefined) {
+          throw new Error('Achievement condition_params.count is required for course_completion_count type');
+        }
+        return userStats.courses_completed >= condition_params.count;
 
       case 'lesson_completion_count':
-        return userStats.lessons_completed >= (condition_params.count || 1);
+        // REFACTORÉ P4: Plus de fallback hardcodé - erreur explicite si count manquant
+        if (condition_params.count === undefined) {
+          throw new Error('Achievement condition_params.count is required for lesson_completion_count type');
+        }
+        return userStats.lessons_completed >= condition_params.count;
 
       case 'perfect_scores_count':
-        return userStats.perfect_scores >= (condition_params.count || 1);
+        // REFACTORÉ P4: Plus de fallback hardcodé - erreur explicite si count manquant
+        if (condition_params.count === undefined) {
+          throw new Error('Achievement condition_params.count is required for perfect_scores_count type');
+        }
+        return userStats.perfect_scores >= condition_params.count;
 
       case 'profile_completion':
         return userStats.profile_completion_percent >= 100;
 
       case 'first_action':
         // Vérifier si l'utilisateur a effectué cette action au moins une fois
-        return await this.checkFirstAction(userStats.user_id, condition_params.action_type);
+        return this.checkFirstAction(userStats.user_id, condition_params.action_type);
 
       default:
         log.warn(`Unknown achievement condition type: ${condition_type}`);
