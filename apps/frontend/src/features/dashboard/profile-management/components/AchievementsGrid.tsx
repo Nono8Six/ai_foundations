@@ -8,7 +8,7 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@features/auth/contexts/AuthContext';
-import { XPService } from '@shared/services/xpService';
+import { XPAdapter } from '@shared/services/xp-adapter';
 import Icon from '@shared/components/AppIcon';
 
 type FilterType = 'all' | 'actions' | 'achievements' | 'unlocked' | 'locked';
@@ -28,7 +28,7 @@ const AchievementsGrid: React.FC<AchievementsGridProps> = ({ className = '' }) =
   // Récupérer TOUTES les opportunités XP unifiées (actions + achievements)
   const { data: allOpportunities, isLoading } = useQuery({
     queryKey: ['unified-xp-opportunities', user?.id],
-    queryFn: () => XPService.getAllXPOpportunities(user?.id),
+    queryFn: () => XPAdapter.getAllXPOpportunities(),
     enabled: !!user?.id
   });
 

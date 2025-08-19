@@ -9,7 +9,8 @@ import { log } from '@libs/logger';
 import { useAuth } from '@features/auth/contexts/AuthContext';
 // import ProfileCompletionGamification from './ProfileCompletionGamification';
 import { showXPRewardNotification, showLevelUpNotification } from './XPNotificationSystem';
-import { XPRpc, XPError, makeIdempotencyKey } from '@shared/services/xp-rpc';
+import { XPRpc, XPError } from '@shared/services/xp-rpc';
+import { XPAdapter } from '@shared/services/xp-adapter';
 // import { useIdempotentXPAction } from '@shared/hooks/useIdempotentAction';
 import type { UserProfile } from '@frontend/types/user';
 
@@ -409,11 +410,11 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({
           const oldXP = profile?.xp || 0;
           const newXP = oldXP + totalXPEarned;
           
-          const newLevelInfo = await XPRpc.computeLevelInfo(newXP);
+          const newLevelInfo = await XPAdapter.getLevelInfo(newXP);
           
-          if (newLevelInfo.level > oldLevel) {
+          if (newLevelInfo.currentLevel > oldLevel) {
             setTimeout(() => {
-              showLevelUpNotification(newLevelInfo.level, newXP);
+              showLevelUpNotification(newLevelInfo.currentLevel, newXP);
             }, 1500);
           }
         }

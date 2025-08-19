@@ -9,7 +9,7 @@ import ErrorBoundary from '@shared/components/ErrorBoundary';
 import RecentActivityWidget from './components/RecentActivityWidget';
 import ProgressChart from './components/ProgressChart';
 import QuickActions from './components/QuickActions';
-import { XPRpc } from '@shared/services/xp-rpc';
+import { XPAdapter } from '@shared/services/xp-adapter';
 
 const UserDashboard: React.FC = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -30,7 +30,7 @@ const UserDashboard: React.FC = () => {
     const computeXpToNextLevel = async () => {
       if (userProfile?.xp !== undefined) {
         try {
-          const levelInfo = await XPRpc.computeLevelInfo(userProfile.xp);
+          const levelInfo = await XPAdapter.getLevelInfo(userProfile.xp || 0);
           setXpToNextLevel(levelInfo.xpForNextLevel);
         } catch (error) {
           console.error('Failed to compute level info:', error);
@@ -294,7 +294,11 @@ const UserDashboard: React.FC = () => {
                     <div className='w-full bg-gray-200/80 rounded-full h-3 overflow-hidden shadow-inner'>
                       <div
                         className='bg-gradient-to-r from-amber-400 via-yellow-500 to-orange-500 h-3 rounded-full transition-all duration-1000 ease-out relative overflow-hidden'
-                        style={{ width: `${(userData.xp / userData.xpToNextLevel) * 100}%` }}
+                        style={{ 
+                          width: userData.xpToNextLevel > 0 
+                            ? `${Math.min((userData.xp / (userData.xp + userData.xpToNextLevel)) * 100, 100)}%`
+                            : '100%'
+                        }}
                       >
                         {/* Animated shimmer effect for consistency */}
                         <div className='absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-pulse'></div>
@@ -303,7 +307,11 @@ const UserDashboard: React.FC = () => {
                     </div>
                     <div className='flex justify-between text-xs mt-1'>
                       <span className='text-text-secondary'>{userData.xp} XP</span>
-                      <span className='text-text-secondary'>{userData.xpToNextLevel} XP</span>
+                      <span className='text-text-secondary'>
+                        {userData.xpToNextLevel > 0 
+                          ? `${userData.xp + userData.xpToNextLevel} XP` 
+                          : 'Niveau max'}
+                      </span>
                     </div>
                   </div>
                   <div className='flex items-center justify-between p-3 bg-secondary-50 rounded-lg'>

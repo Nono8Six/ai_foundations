@@ -6,7 +6,7 @@ import PersonalInfoTab from './components/PersonalInfoTab';
 import StatsPage from './components/StatsPage';
 import SettingsTab from './components/SettingsTab';
 import HeroProfile from './components/HeroProfile';
-import { XPRpc } from '@shared/services/xp-rpc';
+import { XPAdapter } from '@shared/services/xp-adapter';
 
 const UserProfileManagement: React.FC = () => {
   const [activeTab, setActiveTab] = useState('personal');
@@ -39,7 +39,7 @@ const UserProfileManagement: React.FC = () => {
     const computeNextLevelXp = async () => {
       if (userProfile?.xp !== undefined) {
         try {
-          const levelInfo = await XPRpc.computeLevelInfo(userProfile.xp);
+          const levelInfo = await XPAdapter.getLevelInfo(userProfile.xp || 0);
           setNextLevelXp(levelInfo.xpForNextLevel);
         } catch (error) {
           console.error('Failed to compute level info:', error);

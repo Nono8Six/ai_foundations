@@ -188,8 +188,9 @@ interface ProfileUpdates {
  */
 export async function calculateProfileXPAndLevel(profile: Partial<ProfileUpdates> & { avatar_url?: string | null }): Promise<{ xp: number; level: number }> {
   try {
-    // Import XPRpc dynamically to avoid circular dependencies
+    // Import XP services dynamically to avoid circular dependencies
     const { XPRpc, XPError } = await import('./xp-rpc');
+    const { XPAdapter } = await import('./xp-adapter');
     
     let totalXp = 0;
     
@@ -255,12 +256,12 @@ export async function calculateProfileXPAndLevel(profile: Partial<ProfileUpdates
       }
     }
 
-    // Calculate level using RPC (NO hardcoded 100 XP per level)
-    const levelInfo = await XPRpc.computeLevelInfo(totalXp);
+    // Calculate level using XPAdapter (NO hardcoded 100 XP per level)
+    const levelInfo = await XPAdapter.getLevelInfo(totalXp);
     
     return { 
       xp: totalXp, 
-      level: levelInfo.level 
+      level: levelInfo.currentLevel 
     };
 
   } catch (error) {
