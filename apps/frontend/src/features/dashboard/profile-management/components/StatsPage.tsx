@@ -12,8 +12,8 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@features/auth/contexts/AuthContext';
 
-// Services
-import { XPService, type XPOpportunity, type LevelInfo } from '@shared/services/xpService';
+// Services  
+import { XPAdapter, type XPOpportunity, type UILevelInfo as LevelInfo } from '@shared/services/xp-adapter';
 
 // Composants
 import Icon from '@shared/components/AppIcon';
@@ -38,11 +38,11 @@ const StatsPage: React.FC = () => {
       try {
         // Charger en parallèle les opportunités XP et les infos de niveau
         const [opportunities, levelInformation] = await Promise.all([
-          XPService.getAvailableXPOpportunities(userProfile.id),
-          XPService.calculateLevelInfo(currentXP)
+          XPAdapter.getTopXPOpportunities(userProfile.id, 3),
+          XPAdapter.getLevelInfo(currentXP)
         ]);
 
-        setXpOpportunities(opportunities.slice(0, 3)); // Top 3 pour l'affichage
+        setXpOpportunities(opportunities);
         setLevelInfo(levelInformation);
       } catch (error) {
         console.error('Error loading XP data:', error);
