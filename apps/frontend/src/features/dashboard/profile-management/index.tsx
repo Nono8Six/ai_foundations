@@ -13,6 +13,8 @@ const UserProfileManagement: React.FC = () => {
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState<string>('');
   const [nextLevelXp, setNextLevelXp] = useState<number>(0);
+  const [levelProgressPercent, setLevelProgressPercent] = useState<number>(0);
+  const [nextLevelThreshold, setNextLevelThreshold] = useState<number>(0);
   const { user, userProfile } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -41,9 +43,13 @@ const UserProfileManagement: React.FC = () => {
         try {
           const levelInfo = await XPAdapter.getLevelInfo(userProfile.xp || 0);
           setNextLevelXp(levelInfo.xpForNextLevel);
+          setLevelProgressPercent(levelInfo.progressPercent);
+          setNextLevelThreshold(levelInfo.xpRequiredNext);
         } catch (error) {
           console.error('Failed to compute level info:', error);
           setNextLevelXp(0);
+          setLevelProgressPercent(0);
+          setNextLevelThreshold(0);
         }
       }
     };
@@ -66,6 +72,8 @@ const UserProfileManagement: React.FC = () => {
     level: userProfile?.level || 1,
     xp: userProfile?.xp || 0,
     nextLevelXp,
+    nextLevelThreshold,
+    levelProgressPercent,
     streak: userProfile?.current_streak || 0,
     totalLearningTime: 0, // This would need to be calculated from user progress
     coursesCompleted: 0, // This would need to be calculated from user progress

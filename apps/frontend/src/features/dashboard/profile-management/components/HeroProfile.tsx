@@ -11,6 +11,8 @@ interface HeroProfileProps {
     level: number;
     xp: number;
     nextLevelXp: number;
+    nextLevelThreshold: number;
+    levelProgressPercent: number;
     streak: number;
     coursesCompleted: number;
     certificatesEarned: number;
@@ -138,7 +140,7 @@ const HeroProfile: React.FC<HeroProfileProps> = ({
                 Niveau {userData.level} • {getLevelBasedTitle(userData.level)}
               </div>
               <div className='text-xs text-gray-600'>
-                {userData.xp} / {userData.nextLevelXp} XP
+                {userData.xp} / {userData.nextLevelThreshold} XP
               </div>
             </div>
           </div>
@@ -146,7 +148,7 @@ const HeroProfile: React.FC<HeroProfileProps> = ({
           {/* Right: Next Level Info */}
           <div className='text-right'>
             <div className='text-sm font-bold text-orange-600'>
-              Plus que {userData.nextLevelXp - userData.xp} XP
+              Plus que {userData.nextLevelXp} XP
             </div>
             <div className='text-xs text-gray-500'>
               pour niveau {userData.level + 1}
@@ -161,12 +163,12 @@ const HeroProfile: React.FC<HeroProfileProps> = ({
             role="progressbar"
             aria-valuenow={userData.xp}
             aria-valuemin={0}
-            aria-valuemax={userData.nextLevelXp}
-            aria-label={`XP: ${userData.xp} sur ${userData.nextLevelXp}`}
+            aria-valuemax={userData.nextLevelThreshold}
+            aria-label={`XP: ${userData.xp} sur ${userData.nextLevelThreshold}`}
           >
             <div
               className='absolute top-0 left-0 h-full bg-gradient-to-r from-amber-400 via-yellow-500 to-orange-500 rounded-full transition-all duration-1000 ease-out relative overflow-hidden'
-              style={{ width: `${Math.min((userData.xp / userData.nextLevelXp) * 100, 100)}%` }}
+              style={{ width: `${Math.min(userData.levelProgressPercent, 100)}%` }}
             >
               {/* Animated shimmer effect */}
               <div className='absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-pulse'></div>
@@ -184,10 +186,10 @@ const HeroProfile: React.FC<HeroProfileProps> = ({
           {/* Progress percentage tooltip */}
           <div className='flex justify-between items-center mt-1'>
             <span className='text-xs text-gray-500'>
-              {Math.round((userData.xp / userData.nextLevelXp) * 100)}% vers niveau suivant
+              {Math.round(userData.levelProgressPercent)}% vers niveau suivant
             </span>
             <span className='text-xs text-gray-500'>
-              {userData.xp} / {userData.nextLevelXp} XP
+              {userData.xp} / {userData.nextLevelThreshold} XP
             </span>
           </div>
         </div>

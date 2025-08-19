@@ -14,6 +14,8 @@ import { XPAdapter } from '@shared/services/xp-adapter';
 const UserDashboard: React.FC = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [xpToNextLevel, setXpToNextLevel] = useState<number>(0);
+  const [levelProgressPercent, setLevelProgressPercent] = useState<number>(0);
+  const [nextLevelThreshold, setNextLevelThreshold] = useState<number>(0);
   const navigate = useNavigate();
 
   const { userProfile, user } = useAuth();
@@ -32,9 +34,13 @@ const UserDashboard: React.FC = () => {
         try {
           const levelInfo = await XPAdapter.getLevelInfo(userProfile.xp || 0);
           setXpToNextLevel(levelInfo.xpForNextLevel);
+          setLevelProgressPercent(levelInfo.progressPercent);
+          setNextLevelThreshold(levelInfo.xpRequiredNext);
         } catch (error) {
           console.error('Failed to compute level info:', error);
           setXpToNextLevel(0);
+          setLevelProgressPercent(0);
+          setNextLevelThreshold(0);
         }
       }
     };
@@ -296,7 +302,7 @@ const UserDashboard: React.FC = () => {
                         className='bg-gradient-to-r from-amber-400 via-yellow-500 to-orange-500 h-3 rounded-full transition-all duration-1000 ease-out relative overflow-hidden'
                         style={{ 
                           width: userData.xpToNextLevel > 0 
-                            ? `${Math.min((userData.xp / (userData.xp + userData.xpToNextLevel)) * 100, 100)}%`
+                            ? `${Math.min(levelProgressPercent, 100)}%`
                             : '100%'
                         }}
                       >
@@ -309,7 +315,7 @@ const UserDashboard: React.FC = () => {
                       <span className='text-text-secondary'>{userData.xp} XP</span>
                       <span className='text-text-secondary'>
                         {userData.xpToNextLevel > 0 
-                          ? `${userData.xp + userData.xpToNextLevel} XP` 
+                          ? `${nextLevelThreshold} XP` 
                           : 'Niveau max'}
                       </span>
                     </div>
