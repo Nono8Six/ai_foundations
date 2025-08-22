@@ -214,7 +214,7 @@ export type Database = {
           id: string
           is_published: boolean | null
           lesson_order: number
-          module_id: string | null
+          module_id: string
           resources: Json | null
           text_content: string | null
           title: string
@@ -231,7 +231,7 @@ export type Database = {
           id?: string
           is_published?: boolean | null
           lesson_order: number
-          module_id?: string | null
+          module_id: string
           resources?: Json | null
           text_content?: string | null
           title: string
@@ -248,7 +248,7 @@ export type Database = {
           id?: string
           is_published?: boolean | null
           lesson_order?: number
-          module_id?: string | null
+          module_id?: string
           resources?: Json | null
           text_content?: string | null
           title?: string
@@ -309,7 +309,7 @@ export type Database = {
       }
       modules: {
         Row: {
-          course_id: string | null
+          course_id: string
           created_at: string | null
           description: string | null
           id: string
@@ -319,7 +319,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
-          course_id?: string | null
+          course_id: string
           created_at?: string | null
           description?: string | null
           id?: string
@@ -329,7 +329,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
-          course_id?: string | null
+          course_id?: string
           created_at?: string | null
           description?: string | null
           id?: string
@@ -414,7 +414,7 @@ export type Database = {
       }
       user_achievements: {
         Row: {
-          achievement_id: string | null
+          achievement_id: string
           achievement_name: string
           achievement_type: string
           achievement_version: number | null
@@ -426,7 +426,7 @@ export type Database = {
           xp_reward: number
         }
         Insert: {
-          achievement_id?: string | null
+          achievement_id: string
           achievement_name: string
           achievement_type: string
           achievement_version?: number | null
@@ -438,7 +438,7 @@ export type Database = {
           xp_reward?: number
         }
         Update: {
-          achievement_id?: string | null
+          achievement_id?: string
           achievement_name?: string
           achievement_type?: string
           achievement_version?: number | null
@@ -485,7 +485,7 @@ export type Database = {
           session_start: string | null
           updated_at: string | null
           user_agent: string | null
-          user_id: string | null
+          user_id: string
           xp_gained_in_session: number | null
         }
         Insert: {
@@ -499,7 +499,7 @@ export type Database = {
           session_start?: string | null
           updated_at?: string | null
           user_agent?: string | null
-          user_id?: string | null
+          user_id: string
           xp_gained_in_session?: number | null
         }
         Update: {
@@ -513,7 +513,7 @@ export type Database = {
           session_start?: string | null
           updated_at?: string | null
           user_agent?: string | null
-          user_id?: string | null
+          user_id?: string
           xp_gained_in_session?: number | null
         }
         Relationships: [
@@ -539,7 +539,7 @@ export type Database = {
           created_at: string | null
           id: string
           is_private: boolean | null
-          lesson_id: string | null
+          lesson_id: string
           position: Json | null
           selected_text: string | null
           tags: string[] | null
@@ -551,7 +551,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           is_private?: boolean | null
-          lesson_id?: string | null
+          lesson_id: string
           position?: Json | null
           selected_text?: string | null
           tags?: string[] | null
@@ -563,7 +563,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           is_private?: boolean | null
-          lesson_id?: string | null
+          lesson_id?: string
           position?: Json | null
           selected_text?: string | null
           tags?: string[] | null
@@ -986,6 +986,18 @@ export type Database = {
         }
         Returns: Json
       }
+      credit_xp_safe: {
+        Args: {
+          p_idempotency_key: string
+          p_metadata?: Json
+          p_reference_id?: string
+          p_source_ref: string
+          p_source_version?: string
+          p_user_id: string
+          p_xp_delta: number
+        }
+        Returns: Json
+      }
       email_exists: {
         Args: { search_email: string }
         Returns: boolean
@@ -1266,6 +1278,10 @@ export type Database = {
           privacy_settings: Json
         }[]
       }
+      is_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
       is_admin_user: {
         Args: Record<PropertyKey, never>
         Returns: boolean
@@ -1347,6 +1363,24 @@ export type Database = {
           xp_before: number
         }[]
       }
+      unlock_achievement_safe: {
+        Args: {
+          p_code: string
+          p_idempotency_key: string
+          p_reference_id?: string
+          p_scope?: string
+          p_user_id: string
+          p_version: number
+        }
+        Returns: {
+          event_id: string
+          level_after: number
+          level_before: number
+          ua_id: string
+          xp_after: number
+          xp_before: number
+        }[]
+      }
       update_user_profile: {
         Args: { p_profile_data: Json; p_user_id: string }
         Returns: {
@@ -1377,10 +1411,6 @@ export type Database = {
     }
     Enums: {
       lesson_type: "video" | "text" | "quiz" | "exercise"
-      progress_status: "not_started" | "in_progress" | "completed"
-      rgpd_request_status: "pending" | "processing" | "completed" | "rejected"
-      rgpd_request_type: "access" | "deletion" | "rectification"
-      user_role_type: "admin" | "instructor" | "student"
     }
     CompositeTypes: {
       credit_xp_result: {
@@ -1517,10 +1547,6 @@ export const Constants = {
   public: {
     Enums: {
       lesson_type: ["video", "text", "quiz", "exercise"],
-      progress_status: ["not_started", "in_progress", "completed"],
-      rgpd_request_status: ["pending", "processing", "completed", "rejected"],
-      rgpd_request_type: ["access", "deletion", "rectification"],
-      user_role_type: ["admin", "instructor", "student"],
     },
   },
 } as const

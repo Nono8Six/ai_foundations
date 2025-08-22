@@ -543,3 +543,59 @@ FROM xp_sources WHERE is_active=true;
 # Tester API unifiée frontend
 pnpm dev # Vérifier /profile?tab=stats
 ```
+
+## Documentation Backend - Maintenance Obligatoire
+
+### CONSIGNE CRITIQUE : Maintenance BACKEND_ARCHITECTURE.md
+
+**TOUJOURS maintenir le fichier `BACKEND_ARCHITECTURE.md` à jour lors de TOUTE modification backend.**
+
+#### Workflow Obligatoire
+
+**À CHAQUE modification de la base de données :**
+
+1. **📝 Documenter IMMÉDIATEMENT** dans `BACKEND_ARCHITECTURE.md`
+2. **🔍 Mettre à jour les sections concernées** (schémas, tables, fonctions, RLS)
+3. **📊 Actualiser les métriques** et statistiques
+4. **🧪 Ajouter les tests** de validation effectués
+5. **📅 Dater la modification** en bas du document
+
+#### Sections à Maintenir
+
+- **Métriques et Statistiques** : Nombre tables, RLS policies, fonctions
+- **Architecture par Schéma** : Ajouts/modifications tables
+- **Templates RLS** : Nouvelles politiques appliquées  
+- **Fonctions RPC** : Nouvelles fonctions créées
+- **Tests et Validation** : Résultats tests nouveaux composants
+- **Index et Performance** : Nouveaux index créés
+
+#### Template Mise à Jour
+
+```markdown
+### Étape X : [Nom Étape] - [Date]
+
+#### Modifications Apportées
+- **Nouveau schéma** : `schema_name` avec X tables
+- **Nouvelles tables** : table1, table2, table3
+- **Politiques RLS** : +X politiques ajoutées
+- **Fonctions RPC** : fonction1(), fonction2()
+
+#### Métriques Mises à Jour
+- **Schémas Totaux** : X
+- **Tables Totales** : X 
+- **Politiques RLS** : X
+- **Tests Validés** : X/X ✅
+
+#### Tests Effectués
+```sql
+-- Tests de validation spécifiques
+```
+```
+
+#### Responsabilité
+
+**Claude Code DOIT** maintenir cette documentation avec la même rigueur que le code. 
+
+**Aucune modification backend** ne doit être committée sans mise à jour correspondante de `BACKEND_ARCHITECTURE.md`.
+
+Cette documentation est la **single source of truth** de l'architecture backend et doit refléter l'état exact du système en temps réel.

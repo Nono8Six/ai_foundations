@@ -1,7 +1,0 @@
-{
-  "description": "EXPLAIN ANALYZE collection",
-  "exitCode": 3,
-  "timestamp": "2025-08-17T17:09:11.847Z",
-  "stdout": "📋 P10: Collecting EXPLAIN ANALYZE for key RPC functions...\r\nSET\r\n",
-  "stderr": "psql:C:/GitHub/ai_foundations_lms/scripts/p10/collect_explain.sql:9: ERROR:  permission denied to set parameter \"log_statement_stats\"\r\npsql:C:/GitHub/ai_foundations_lms/scripts/p10/collect_explain.sql:9: STATEMENT:  SET log_statement_stats = ON;\r\n"
-}

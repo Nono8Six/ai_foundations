@@ -1,7 +1,0 @@
-{
-  "description": "Performance benchmarks",
-  "exitCode": 3,
-  "timestamp": "2025-08-17T17:09:55.180Z",
-  "stdout": "BEGIN\r\nCREATE EXTENSION\r\nSET\r\nSET\r\n📊 P10: Starting performance benchmarks...\r\n",
-  "stderr": "psql:C:/GitHub/ai_foundations_lms/scripts/p10/db_perf.sql:3: NOTICE:  extension \"pgcrypto\" already exists, skipping\r\npsql:C:/GitHub/ai_foundations_lms/scripts/p10/db_perf.sql:28: ERROR:  relation \"perf_results\" already exists\r\npsql:C:/GitHub/ai_foundations_lms/scripts/p10/db_perf.sql:28: STATEMENT:  CREATE TEMP TABLE perf_results (\r\n  test_name VARCHAR(100),\r\n  operation_type VARCHAR(50),\r\n  iteration INTEGER,\r\n  start_time TIMESTAMP WITH TIME ZONE,\r\n  end_time TIMESTAMP WITH TIME ZONE,\r\n  duration_ms DECIMAL(10,3),\r\n  success BOOLEAN,\r\n  metadata JSONB\r\n);\r\n"
-}

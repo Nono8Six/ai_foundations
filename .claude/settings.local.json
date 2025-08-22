@@ -39,7 +39,14 @@
       "Bash(dir:*)",
       "mcp__supabase__apply_migration",
       "Bash(git grep:*)",
-      "Bash(true)"
+      "Bash(true)",
+      "mcp__supabase-deploya__get_management_api_safety_rules",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__get-library-docs",
+      "mcp__supabase-deploya__get_auth_admin_methods_spec",
+      "mcp__supabase-deploya__call_auth_admin_method",
+      "Bash(psql:*)",
+      "mcp__supabase-deploya__send_management_api_request"
     ],
     "deny": [],
     "additionalDirectories": [

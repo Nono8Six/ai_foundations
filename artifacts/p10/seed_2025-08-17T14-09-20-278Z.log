@@ -1,7 +1,0 @@
-{
-  "description": "Database seeding",
-  "exitCode": 3,
-  "timestamp": "2025-08-17T14:09:20.278Z",
-  "stdout": "🌱 P10: Seeding test data...\r\nBEGIN\r\nINSERT 0 3\r\n",
-  "stderr": "psql:C:/GitHub/ai_foundations_lms/scripts/p10/seed.sql:94: ERROR:  profiles writes must go through credit_xp (ctx=NULL)\r\nCONTEXT:  PL/pgSQL function profiles_guard_write() line 5 at RAISE\r\npsql:C:/GitHub/ai_foundations_lms/scripts/p10/seed.sql:94: STATEMENT:  INSERT INTO profiles (\r\n  id,\r\n  full_name,\r\n  xp,\r\n  level,\r\n  current_streak,\r\n  last_completed_at,\r\n  created_at,\r\n  updated_at\r\n) VALUES \r\n  (\r\n    '00000000-0000-0000-0000-000000000001',\r\n    'Test User 1',\r\n    0,\r\n    1,\r\n    0,\r\n    NULL,\r\n    NOW(),\r\n    NOW()\r\n  ),\r\n  (\r\n    '00000000-0000-0000-0000-000000000002',\r\n    'Test User 2', \r\n    150,\r\n    2,\r\n    3,\r\n    NOW() - INTERVAL '1 day',\r\n    NOW(),\r\n    NOW()\r\n  ),\r\n  (\r\n    '00000000-0000-0000-0000-000000000003',\r\n    'Admin User',\r\n    500,\r\n    3,\r\n    10,\r\n    NOW() - INTERVAL '2 hours',\r\n    NOW(),\r\n    NOW()\r\n  )\r\nON CONFLICT (id) DO UPDATE SET\r\n  full_name = EXCLUDED.full_name,\r\n  updated_at = NOW();\r\n"
-}
