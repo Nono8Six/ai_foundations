@@ -7,7 +7,7 @@ export interface AppImageProps extends React.ImgHTMLAttributes<HTMLImageElement>
   className?: string;
 }
 
-const Image: React.FC<AppImageProps> = ({ src, alt = 'Image Name', className = '', ...props }) => {
+const Image: React.FC<AppImageProps> = ({ src, alt = 'Image Name', className = '', loading = 'lazy', decoding = 'async', ...props }) => {
   // Ensure src is a valid URL
   const getValidImageUrl = (url: string | undefined) => {
     if (!url) return '/assets/images/no_image.png';
@@ -25,6 +25,8 @@ const Image: React.FC<AppImageProps> = ({ src, alt = 'Image Name', className = '
       src={getValidImageUrl(src)}
       alt={alt}
       className={className}
+      loading={loading}
+      decoding={decoding as any}
       onError={e => {
         log.warn('Image load error for:', src);
         (e.target as HTMLImageElement).src = '/assets/images/no_image.png';

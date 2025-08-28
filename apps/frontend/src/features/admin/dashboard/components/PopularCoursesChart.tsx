@@ -61,7 +61,7 @@ const PopularCoursesChart: React.FC = () => {
       setLoading(true);
       try {
         const { data: courses, error: coursesError } = await supabase
-          .from('courses')
+          .schema('content').from('courses')
           .select('id, title, modules!inner(id, lessons!inner(id))')
           .eq('is_published', true);
 

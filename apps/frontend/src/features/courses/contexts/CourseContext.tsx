@@ -15,8 +15,8 @@ type CourseData = PaginatedCoursesResult;
 export interface CourseContextValue {
   coursesWithProgress: CourseWithProgress[];
   userProgress: Database['public']['Tables']['user_progress']['Row'][];
-  lessons: Database['public']['Tables']['lessons']['Row'][];
-  modules: Database['public']['Tables']['modules']['Row'][];
+  lessons: Database['content']['Tables']['lessons']['Row'][];
+  modules: Database['content']['Tables']['modules']['Row'][];
   isLoading: boolean;
   refetchCourses: () => Promise<QueryObserverResult<CourseData | null, unknown>>;
 }
@@ -36,7 +36,7 @@ export const CourseProvider = ({ children }: { children: ReactNode }) => {
   >({
     queryKey: key,
     queryFn: () => fetchCourses(),
-    enabled: !!user?.id,
+    enabled: true, // Les cours publiés sont accessibles à tous
     retry: false,
   });
 
@@ -55,11 +55,11 @@ export const CourseProvider = ({ children }: { children: ReactNode }) => {
   >(() => [], []);
 
   const defaultLessons = React.useMemo<
-    Database['public']['Tables']['lessons']['Row'][]
+    Database['content']['Tables']['lessons']['Row'][]
   >(() => [], []);
 
   const defaultModules = React.useMemo<
-    Database['public']['Tables']['modules']['Row'][]
+    Database['content']['Tables']['modules']['Row'][]
   >(() => [], []);
 
   // La valeur du contexte utilise directement les résultats de useQuery

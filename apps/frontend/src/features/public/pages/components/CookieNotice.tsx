@@ -14,6 +14,8 @@ const CookieNotice: React.FC<CookieNoticeProps> = ({ onAccept, onOpenSettings })
       animate={{ y: 0, opacity: 1 }}
       exit={{ y: 100, opacity: 0 }}
       transition={{ duration: 0.3 }}
+      role='region'
+      aria-label='Bannière cookies'
       className='fixed bottom-0 left-0 right-0 z-50 bg-surface border-t border-border shadow-lg'
     >
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4'>
@@ -38,6 +40,7 @@ const CookieNotice: React.FC<CookieNoticeProps> = ({ onAccept, onOpenSettings })
           <div className='flex items-center space-x-3 flex-shrink-0'>
             <button
               onClick={onAccept}
+              autoFocus
               className='px-6 py-2 bg-primary text-white font-medium rounded-lg hover:bg-primary-700 transition-colors duration-200 flex items-center'
             >
               <Icon aria-hidden='true' name='Check' size={16} className='mr-2' />

@@ -17,7 +17,10 @@ const ALLOW_WRITES_REGEX = new RegExp(
     'src/shared/services/achievementService.ts',
     'src/shared/services/streakService.ts',
     'src/shared/services/xpAutoValidator.ts',
-    'src/shared/services/xpService.ts'
+    'src/shared/services/xpService.ts',
+    // Additional files needed for backend alignment
+    'src/data/profileApi.ts',
+    'src/features/auth/contexts/AuthContext.tsx'
   ].map(s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')
 );
 

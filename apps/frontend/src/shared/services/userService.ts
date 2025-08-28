@@ -23,6 +23,24 @@ const debug = process.env.NODE_ENV === 'development'
   ? (message: string, ...args: unknown[]) => log.debug(`[UserService] ${message}`, ...args)
   : () => undefined;
 
+/**
+ * Check if an email already exists in the system
+ * This helps provide better UX before attempting signup
+ * NOTE: This function is disabled due to RLS restrictions on profiles table.
+ * Email duplicate detection is handled by Supabase auth.signUp() response instead.
+ */
+export async function checkEmailExists(email: string): Promise<boolean> {
+  try {
+    // RLS on profiles table prevents unauthenticated access
+    // We'll rely on Supabase auth.signUp() error handling instead
+    log.debug('Skipping email existence check due to RLS restrictions');
+    return false; // Always allow signup attempt - let Supabase handle duplicates
+  } catch (error) {
+    log.warn('Unexpected error checking email existence:', error);
+    return false; // Allow signup on error rather than block
+  }
+}
+
 const supabaseClient = supabase as SupabaseClient<Database>;
 
 const toJson = <T extends Json>(v: T): Json => v;
@@ -77,9 +95,9 @@ export async function fetchUserProfile(user: User): Promise<UserProfile> {
     throw new Error('Token expired - please sign in again');
   }
   
-  // Utiliser la nouvelle view qui combine profiles et user_xp_balance
+  // Utiliser la table profiles directement
   const { data: profileData, error } = await supabaseClient
-    .from('user_profiles_with_xp')
+    .from('profiles')
     .select('*')
     .eq('id', user.id);
 
@@ -105,7 +123,7 @@ export async function fetchUserProfile(user: User): Promise<UserProfile> {
           log.debug('✅ Session refreshed successfully');
           // Retry la requête avec la session rafraîchie
           const { data: retryData, error: retryError } = await supabaseClient
-            .from('user_profiles_with_xp')
+            .from('profiles')
             .select('*')
             .eq('id', user.id);
             
@@ -132,38 +150,83 @@ export async function fetchUserProfile(user: User): Promise<UserProfile> {
   }
 
   if (!profileData || profileData.length === 0) {
-    const defaultProfile: UserProfile = {
-      id: user.id,
-      email: user.email || '',
-      full_name: (user.user_metadata as { full_name?: string })?.full_name || 'User',
-      level: 1,
-      xp: 0,
+    // Profile doesn't exist, create using profileApi which handles the correct schema
+    const profile = await profileApi.ensureProfile(user);
+    
+    // Get XP data from gamification schema
+    let xpData = { total_xp: 0, current_level: 1 };
+    try {
+      const { data: xpResult, error: xpError } = await supabaseClient
+        .schema('gamification')
+        .from('user_xp')
+        .select('total_xp, current_level')
+        .eq('user_id', profile.id)
+        .single();
+      
+      if (!xpError && xpResult) {
+        xpData = { total_xp: xpResult.total_xp || 0, current_level: xpResult.current_level || 1 };
+      }
+    } catch (xpErr) {
+      log.debug('No XP data found for new profile, using defaults');
+    }
+
+    // Convert from profileApi format to UserProfile format
+    return {
+      id: profile.id,
+      email: profile.email,
+      full_name: profile.full_name || 'User',
+      level: xpData.current_level,
+      xp: xpData.total_xp,
       current_streak: 0,
       is_admin: false,
-      avatar_url: null,
+      avatar_url: profile.avatar_url,
       phone: null,
       profession: null,
       company: null,
       last_completed_at: null,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    };
-
-    const { data: newProfile, error: createError } = await supabaseClient
-      .from('profiles')
-      .insert([defaultProfile])
-      .select()
-      .single();
-
-    if (createError) throw createError;
-    return newProfile as UserProfile;
+      created_at: profile.created_at || new Date().toISOString(),
+      updated_at: profile.updated_at || new Date().toISOString(),
+    } as UserProfile;
   }
 
-  const profile = profileData[0] as UserProfile;
+  const profileRow = profileData[0];
   
-  // XP et level sont maintenant gérés via le système d'événements dans xp_events
-  // et calculés automatiquement via user_xp_balance. Plus besoin de calcul manuel.
-  log.debug(`👤 Profile loaded - XP: ${profile.xp}, Level: ${profile.level}`);
+  // Get real XP data from gamification schema
+  let xpData = { total_xp: 0, current_level: 1 };
+  try {
+    const { data: xpResult, error: xpError } = await supabaseClient
+      .schema('gamification')
+      .from('user_xp')
+      .select('total_xp, current_level')
+      .eq('user_id', profileRow.id)
+      .single();
+    
+    if (!xpError && xpResult) {
+      xpData = { total_xp: xpResult.total_xp || 0, current_level: xpResult.current_level || 1 };
+    }
+  } catch (xpErr) {
+    log.debug('No XP data found for existing profile, using defaults');
+  }
+  
+  // Map the database row to UserProfile format
+  const profile: UserProfile = {
+    id: profileRow.id,
+    email: profileRow.email,
+    full_name: profileRow.display_name || 'User',
+    level: xpData.current_level,
+    xp: xpData.total_xp,
+    current_streak: 0, // Default value - should be fetched from gamification schema
+    is_admin: profileRow.is_admin || false,
+    avatar_url: profileRow.avatar_url,
+    phone: null, // Not in current profiles table
+    profession: null, // Not in current profiles table
+    company: null, // Not in current profiles table
+    last_completed_at: null, // Not in current profiles table
+    created_at: profileRow.created_at,
+    updated_at: profileRow.updated_at,
+  };
+  
+  log.debug(`👤 Profile loaded - ID: ${profile.id}, Name: ${profile.full_name}`);
   
   return profile;
 }
@@ -321,9 +384,9 @@ export async function updateUserProfile(
     throw new Error('No data returned from profile update');
   }
   
-  // Récupérer les données complètes avec XP/level depuis la view
+  // Récupérer les données complètes depuis la table profiles
   const { data: fullProfile, error: fullProfileError } = await supabaseClient
-    .from('user_profiles_with_xp')
+    .from('profiles')
     .select('*')
     .eq('id', userId)
     .single();
@@ -333,20 +396,20 @@ export async function updateUserProfile(
     throw fullProfileError;
   }
 
-  // Mapper les données au format attendu avec XP/level depuis user_xp_balance
+  // Mapper les données au format attendu depuis la table profiles
   const result: UpdateUserProfileResponse = {
     id: fullProfile.id,
     email: fullProfile.email,
-    full_name: fullProfile.full_name || '',
+    full_name: fullProfile.display_name || '',
     avatar_url: fullProfile.avatar_url || '',
-    phone: fullProfile.phone || '',
-    profession: fullProfile.profession || '', 
-    company: fullProfile.company || '', 
-    level: fullProfile.level || 1,  // Depuis user_xp_balance via la view
-    xp: fullProfile.xp || 0,        // Depuis user_xp_balance via la view
-    current_streak: fullProfile.current_streak || 0,
-    is_admin: fullProfile.is_admin || false,
-    last_completed_at: fullProfile.last_completed_at || '',
+    phone: null, // Not in profiles table
+    profession: null, // Not in profiles table
+    company: null, // Not in profiles table
+    level: 1, // Default value
+    xp: 0, // Default value
+    current_streak: 0, // Default value
+    is_admin: false, // Default value - check via RBAC
+    last_completed_at: '',
     created_at: fullProfile.created_at || '',
     updated_at: fullProfile.updated_at || ''
   };

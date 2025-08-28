@@ -12,6 +12,9 @@ import {
   DropdownMenuSeparator,
 } from '@shared/ui/dropdown-menu';
 import { Skeleton } from '@shared/ui/skeleton';
+import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuLink } from '@shared/components/ui/navigation-menu';
+import { Sheet, SheetContent, SheetClose } from '@shared/components/ui/sheet';
+import { Button } from '@shared/components/ui/button';
 
 // Typage des éléments de navigation
 interface NavItem {
@@ -133,7 +136,7 @@ const Header = (): JSX.Element => {
 
   return (
     <>
-      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-out ${
+      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-out pt-[env(safe-area-inset-top)] ${
         isScrolled 
           ? 'backdrop-blur-md bg-surface/80 border-b border-border/50 shadow-lg' 
           : 'backdrop-blur-sm bg-surface/50 border-b border-transparent'
@@ -152,20 +155,22 @@ const Header = (): JSX.Element => {
               </div>
             </Link>
 
-            {/* Desktop Navigation with modern effects */}
-            <nav className='hidden lg:flex items-center space-x-1'>
-              {navItems.map(item => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`nav-indicator flex items-center space-x-2 px-4 py-2 rounded-lg group ${
-                    location.pathname === item.path ? 'active text-primary' : 'text-text-secondary hover:text-primary'
-                  }`}
-                >
-                  <Icon aria-hidden='true' name={item.icon} size={18} className='transition-transform duration-300 group-hover:scale-110' />
-                  <span className='font-medium nav-text'>{item.name}</span>
-                </Link>
-              ))}
+            {/* Desktop Navigation - shadcn NavigationMenu */}
+            <nav className='hidden lg:flex items-center'>
+              <NavigationMenu>
+                <NavigationMenuList>
+                  {navItems.map(item => (
+                    <NavigationMenuItem key={item.path}>
+                      <NavigationMenuLink asChild active={location.pathname === item.path}>
+                        <Link to={item.path} className='flex items-center gap-2'>
+                          <Icon aria-hidden='true' name={item.icon} size={18} className='transition-transform duration-200 group-hover:scale-110' />
+                          <span className='font-medium'>{item.name}</span>
+                        </Link>
+                      </NavigationMenuLink>
+                    </NavigationMenuItem>
+                  ))}
+                </NavigationMenuList>
+              </NavigationMenu>
               {/* Admin menu in desktop navigation */}
               {userProfile?.is_admin && (
                 <div className='relative group'>
@@ -217,9 +222,11 @@ const Header = (): JSX.Element => {
 
             {/* Mobile Menu Button with animation */}
             <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              onClick={() => setIsMenuOpen(o => !o)}
+              aria-controls='mobile-menu'
+              aria-expanded={isMenuOpen}
+              aria-label={isMenuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
               className='lg:hidden relative p-3 rounded-xl hover:bg-surface/80 transition-all duration-300 backdrop-blur-sm group'
-              aria-label='Toggle menu'
             >
               <div className='relative w-6 h-6'>
                 <span className={`absolute left-0 top-1 w-6 h-0.5 bg-text-primary transition-all duration-300 ease-out ${
@@ -288,24 +295,25 @@ const Header = (): JSX.Element => {
         </div>
       </header>
 
-      {/* Enhanced Mobile Menu */}
-      <div className={`fixed inset-0 z-40 lg:hidden transition-all duration-300 ease-out ${
-        isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
-      }`}>
-        {/* Backdrop */}
-        <div className='absolute inset-0 bg-black/50 backdrop-blur-sm' onClick={() => setIsMenuOpen(false)} />
-        
-        {/* Menu Panel */}
-        <div 
-          ref={mobileMenuRef}
-          className={`absolute top-16 left-0 right-0 bg-surface/95 backdrop-blur-md border-b border-border/50 shadow-2xl transition-all duration-300 ease-out transform ${
-            isMenuOpen ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
-          }`}
-        >
-          <div className='max-w-7xl mx-auto px-4 py-6 stagger-animation'>
+      {/* Enhanced Mobile Menu (Sheet) */}
+      <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+        <SheetContent side='top' id='mobile-menu' className='p-0 bg-surface/80 backdrop-blur-md border-b border-border/50 lg:hidden'>
+          <div className='max-w-7xl mx-auto px-4 pt-4 pb-2 flex items-center justify-between'>
+            <div className='flex items-center gap-3'>
+              <div className='relative w-10 h-10 bg-gradient-to-br from-primary via-primary-600 to-primary-700 rounded-xl flex items-center justify-center shadow-lg'>
+                <Icon aria-hidden='true' name='GraduationCap' size={22} color='white' />
+              </div>
+              <span className='text-base font-semibold text-text-primary'>AI Foundations</span>
+            </div>
+            <button onClick={() => setIsMenuOpen(false)} aria-label='Fermer le menu' className='p-2 rounded-lg hover:bg-secondary-50 text-text-secondary hover:text-primary transition-colors'>
+              <Icon aria-hidden='true' name='X' size={18} />
+            </button>
+          </div>
+          <div className='max-w-7xl mx-auto px-4 pb-6'>
+            <div className='mx-0 rounded-2xl border border-border/60 bg-surface/90 shadow-elevation-2 p-1'>
             {/* User info for mobile */}
             {user && (
-              <div className='flex items-center space-x-4 p-4 bg-surface/60 rounded-xl mb-6 backdrop-blur-sm'>
+              <div className='flex items-center gap-4 p-4 rounded-xl'>
                 <Avatar
                   src={userProfile?.avatar_url ?? undefined}
                   name={userProfile?.full_name || user?.user_metadata?.full_name}
@@ -318,7 +326,7 @@ const Header = (): JSX.Element => {
               </div>
             )}
 
-            <nav className='space-y-2'>
+            <nav className='space-y-1'>
               {/* Main Navigation */}
               <div className='space-y-1'>
                 {navItems.map(item => (
@@ -326,23 +334,16 @@ const Header = (): JSX.Element => {
                     key={item.path}
                     to={item.path}
                     onClick={() => setIsMenuOpen(false)}
-                    className={`relative flex items-center space-x-4 px-4 py-4 rounded-xl transition-all duration-300 overflow-hidden ${
+                    className={`group relative flex items-center gap-4 px-3.5 py-3 rounded-xl transition-colors ${
                       location.pathname === item.path 
-                        ? 'bg-gradient-to-r from-primary/15 to-primary/5 text-primary shadow-lg border-l-4 border-primary' 
-                        : 'text-text-secondary hover:bg-surface/60 hover:text-primary'
+                        ? 'bg-primary/10 text-primary ring-1 ring-primary/20' 
+                        : 'text-text-secondary hover:bg-secondary-50 hover:text-primary'
                     }`}
                   >
-                    <Icon aria-hidden='true' name={item.icon} size={20} />
-                    <span className='font-medium text-lg'>{item.name}</span>
-                    {location.pathname === item.path && (
-                      <>
-                        <div className='ml-auto flex items-center space-x-1'>
-                          <div className='w-2 h-2 bg-primary rounded-full animate-pulse' />
-                          <div className='w-1 h-1 bg-primary/60 rounded-full animate-pulse' style={{animationDelay: '0.3s'}} />
-                        </div>
-                        <div className='absolute top-0 right-0 w-20 h-full bg-gradient-to-l from-primary/10 to-transparent' />
-                      </>
-                    )}
+                    <div className='grid place-items-center w-10 h-10 rounded-lg bg-primary/10 text-primary'>
+                      <Icon aria-hidden='true' name={item.icon} size={18} />
+                    </div>
+                    <span className='font-medium'>{item.name}</span>
                   </Link>
                 ))}
               </div>
@@ -350,21 +351,23 @@ const Header = (): JSX.Element => {
               {/* Profile section for mobile */}
               {user && (
                 <>
-                  <div className='h-px bg-border/30 my-4' />
-                  <div className='space-y-1'>
-                    <h3 className='px-4 py-2 text-sm font-semibold text-text-tertiary uppercase tracking-wide'>Mon Compte</h3>
+                  <div className='h-px bg-border/60 my-2' />
+                  <div className='space-y-1 py-1'>
+                    <h3 className='px-3.5 py-2 text-xs font-semibold text-text-tertiary uppercase tracking-wide'>Mon Compte</h3>
                     {profileItems.map(item => (
                       <Link
                         key={item.path}
                         to={item.path}
                         onClick={() => setIsMenuOpen(false)}
-                        className={`relative flex items-center space-x-4 px-4 py-3 rounded-xl transition-all duration-300 overflow-hidden ${
+                        className={`group relative flex items-center gap-4 px-3.5 py-3 rounded-xl transition-colors ${
                           location.pathname === item.path.split('?')[0]
-                            ? 'bg-gradient-to-r from-primary/15 to-primary/5 text-primary shadow-sm border-l-2 border-primary'
-                            : 'text-text-secondary hover:bg-surface/60 hover:text-primary'
+                            ? 'bg-primary/10 text-primary ring-1 ring-primary/20'
+                            : 'text-text-secondary hover:bg-secondary-50 hover:text-primary'
                         }`}
                       >
-                        <Icon aria-hidden='true' name={item.icon} size={18} />
+                        <div className='grid place-items-center w-10 h-10 rounded-lg bg-primary/10 text-primary'>
+                          <Icon aria-hidden='true' name={item.icon} size={18} />
+                        </div>
                         <span className='font-medium'>{item.name}</span>
                       </Link>
                     ))}
@@ -375,10 +378,10 @@ const Header = (): JSX.Element => {
               {/* Admin section for mobile */}
               {adminItems.length > 0 && (
                 <>
-                  <div className='h-px bg-border/30 my-4' />
-                  <div className='space-y-1'>
-                    <h3 className='px-4 py-2 text-sm font-semibold text-primary uppercase tracking-wide flex items-center space-x-2'>
-                      <Icon aria-hidden='true' name='Shield' size={16} />
+                  <div className='h-px bg-border/60 my-2' />
+                  <div className='space-y-1 py-1'>
+                    <h3 className='px-3.5 py-2 text-xs font-semibold text-primary uppercase tracking-wide flex items-center gap-2'>
+                      <Icon aria-hidden='true' name='Shield' size={14} />
                       <span>Administration</span>
                     </h3>
                     {adminItems.map(item => (
@@ -386,13 +389,15 @@ const Header = (): JSX.Element => {
                         key={item.path}
                         to={item.path}
                         onClick={() => setIsMenuOpen(false)}
-                        className={`relative flex items-center space-x-4 px-4 py-3 rounded-xl transition-all duration-300 overflow-hidden ${
+                        className={`group relative flex items-center gap-4 px-3.5 py-3 rounded-xl transition-colors ${
                           location.pathname === item.path 
-                            ? 'bg-gradient-to-r from-primary/15 to-primary/5 text-primary shadow-sm border-l-2 border-primary' 
-                            : 'text-text-secondary hover:bg-surface/60 hover:text-primary'
+                            ? 'bg-primary/10 text-primary ring-1 ring-primary/20' 
+                            : 'text-text-secondary hover:bg-secondary-50 hover:text-primary'
                         }`}
                       >
-                        <Icon aria-hidden='true' name={item.icon} size={18} />
+                        <div className='grid place-items-center w-10 h-10 rounded-lg bg-primary/10 text-primary'>
+                          <Icon aria-hidden='true' name={item.icon} size={18} />
+                        </div>
                         <span className='font-medium'>{item.name}</span>
                       </Link>
                     ))}
@@ -401,8 +406,8 @@ const Header = (): JSX.Element => {
               )}
 
               {/* Actions section */}
-              <div className='h-px bg-border/30 my-6' />
-              <div className='space-y-3'>
+              <div className='h-px bg-border/60 my-3' />
+              <div className='space-y-3 pb-[env(safe-area-inset-bottom)]'>
                 {user ? (
                   <button
                     onClick={handleLogout}
@@ -416,26 +421,29 @@ const Header = (): JSX.Element => {
                     <Link
                       to='/login'
                       onClick={() => setIsMenuOpen(false)}
-                      className='flex items-center space-x-4 px-4 py-4 text-text-secondary hover:text-primary hover:bg-surface/60 transition-all duration-300 rounded-xl'
+                      className='group flex items-center gap-4 px-3.5 py-3 rounded-xl text-text-secondary hover:text-primary hover:bg-secondary-50 transition-colors'
                     >
-                      <Icon aria-hidden='true' name='LogIn' size={18} />
-                      <span className='font-medium text-lg'>Connexion</span>
+                      <div className='grid place-items-center w-10 h-10 rounded-lg bg-primary/10 text-primary'>
+                        <Icon aria-hidden='true' name='LogIn' size={18} />
+                      </div>
+                      <span className='font-medium'>Connexion</span>
                     </Link>
                     <Link
                       to='/register'
                       onClick={() => setIsMenuOpen(false)}
-                      className='flex items-center space-x-4 bg-gradient-to-r from-primary to-primary-600 text-white px-4 py-4 rounded-xl hover:from-primary-600 hover:to-primary-700 transition-all duration-300 font-medium shadow-lg btn-modern hover-lift'
+                      className='inline-flex items-center justify-center w-full h-12 rounded-xl bg-gradient-to-r from-primary to-primary-600 text-white font-medium hover:from-primary-600 hover:to-primary-700 transition-colors shadow-elevation-2'
                     >
-                      <Icon aria-hidden='true' name='UserPlus' size={18} />
-                      <span className='text-lg'>Rejoindre</span>
+                      <Icon aria-hidden='true' name='UserPlus' size={18} className='mr-2' />
+                      Rejoindre
                     </Link>
                   </div>
                 )}
               </div>
             </nav>
+            </div>
           </div>
-        </div>
-      </div>
+        </SheetContent>
+      </Sheet>
       
       {/* Spacer for fixed header */}
       <div className='h-16' />

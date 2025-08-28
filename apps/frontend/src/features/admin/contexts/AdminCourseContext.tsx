@@ -14,20 +14,20 @@ const supabaseClient = supabase as SupabaseClient<Database>;
 
 export interface AdminCourseContextValue {
   createCourse: (
-    course: Database['public']['Tables']['courses']['Insert']
-  ) => Promise<Database['public']['Tables']['courses']['Row']>;
+    course: Database['content']['Tables']['courses']['Insert']
+  ) => Promise<Database['content']['Tables']['courses']['Row']>;
   updateCourse: (args: {
     id: string;
-    updates: Database['public']['Tables']['courses']['Update'];
-  }) => Promise<Database['public']['Tables']['courses']['Row']>;
+    updates: Database['content']['Tables']['courses']['Update'];
+  }) => Promise<Database['content']['Tables']['courses']['Row']>;
   deleteCourse: (id: string) => Promise<void>;
   createModule: (
-    module: Database['public']['Tables']['modules']['Insert']
-  ) => Promise<Database['public']['Tables']['modules']['Row']>;
+    module: Database['content']['Tables']['modules']['Insert']
+  ) => Promise<Database['content']['Tables']['modules']['Row']>;
   updateModule: (args: {
     id: string;
-    updates: Database['public']['Tables']['modules']['Update'];
-  }) => Promise<Database['public']['Tables']['modules']['Row']>;
+    updates: Database['content']['Tables']['modules']['Update'];
+  }) => Promise<Database['content']['Tables']['modules']['Row']>;
   deleteModule: (id: string) => Promise<void>;
 }
 
@@ -44,44 +44,44 @@ export const AdminCourseProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const createCourse = useMutation<
-    Database['public']['Tables']['courses']['Row'],
+    Database['content']['Tables']['courses']['Row'],
     Error,
-    Database['public']['Tables']['courses']['Insert']
+    Database['content']['Tables']['courses']['Insert']
   >({
-    mutationFn: async (course: Database['public']['Tables']['courses']['Insert']) => {
+    mutationFn: async (course: Database['content']['Tables']['courses']['Insert']) => {
       const result = await safeQuery<
-        Database['public']['Tables']['courses']['Row']
+        Database['content']['Tables']['courses']['Row']
       >(() =>
-        supabaseClient.from('courses').insert(course).select().single()
+        supabaseClient.schema('content').from('courses').insert(course).select().single()
       );
-      return assertData<Database['public']['Tables']['courses']['Row']>(result);
+      return assertData<Database['content']['Tables']['courses']['Row']>(result);
     },
     onSuccess: invalidateCourses,
   });
 
   const updateCourse = useMutation<
-    Database['public']['Tables']['courses']['Row'],
+    Database['content']['Tables']['courses']['Row'],
     Error,
-    { id: string; updates: Database['public']['Tables']['courses']['Update'] }
+    { id: string; updates: Database['content']['Tables']['courses']['Update'] }
   >({
     mutationFn: async ({
       id,
       updates,
     }: {
       id: string;
-      updates: Database['public']['Tables']['courses']['Update'];
+      updates: Database['content']['Tables']['courses']['Update'];
     }) => {
       const result = await safeQuery<
-        Database['public']['Tables']['courses']['Row']
+        Database['content']['Tables']['courses']['Row']
       >(() =>
-        supabaseClient
+        supabaseClient.schema('content')
           .from('courses')
           .update(updates)
           .eq('id', id)
           .select()
           .single()
       );
-      return assertData<Database['public']['Tables']['courses']['Row']>(result);
+      return assertData<Database['content']['Tables']['courses']['Row']>(result);
     },
     onSuccess: invalidateCourses,
   });
@@ -89,7 +89,7 @@ export const AdminCourseProvider = ({ children }: { children: ReactNode }) => {
   const deleteCourse = useMutation<void, Error, string>({
     mutationFn: async (id: string) => {
       const { error } = await safeQuery(() =>
-        supabaseClient.from('courses').delete().eq('id', id)
+        supabaseClient.schema('content').from('courses').delete().eq('id', id)
       );
       if (error) throw error;
     },
@@ -97,51 +97,51 @@ export const AdminCourseProvider = ({ children }: { children: ReactNode }) => {
   });
 
   const createModule = useMutation<
-    Database['public']['Tables']['modules']['Row'],
+    Database['content']['Tables']['modules']['Row'],
     Error,
-    Database['public']['Tables']['modules']['Insert']
+    Database['content']['Tables']['modules']['Insert']
   >({
-    mutationFn: async (module: Database['public']['Tables']['modules']['Insert']) => {
+    mutationFn: async (module: Database['content']['Tables']['modules']['Insert']) => {
       const result = await safeQuery<
-        Database['public']['Tables']['modules']['Row']
+        Database['content']['Tables']['modules']['Row']
       >(() =>
-        supabaseClient.from('modules').insert(module).select().single()
+        supabaseClient.schema('content').from('modules').insert(module).select().single()
       );
-      return assertData<Database['public']['Tables']['modules']['Row']>(result);
+      return assertData<Database['content']['Tables']['modules']['Row']>(result);
     },
     onSuccess: invalidateCourses,
   });
 
   const updateModule = useMutation<
-    Database['public']['Tables']['modules']['Row'],
+    Database['content']['Tables']['modules']['Row'],
     Error,
-    { id: string; updates: Database['public']['Tables']['modules']['Update'] }
+    { id: string; updates: Database['content']['Tables']['modules']['Update'] }
   >({
     mutationFn: async ({
       id,
       updates,
     }: {
       id: string;
-      updates: Database['public']['Tables']['modules']['Update'];
+      updates: Database['content']['Tables']['modules']['Update'];
     }) => {
       const result = await safeQuery<
-        Database['public']['Tables']['modules']['Row']
+        Database['content']['Tables']['modules']['Row']
       >(() =>
-        supabaseClient
+        supabaseClient.schema('content')
           .from('modules')
           .update(updates)
           .eq('id', id)
           .select()
           .single()
       );
-      return assertData<Database['public']['Tables']['modules']['Row']>(result);
+      return assertData<Database['content']['Tables']['modules']['Row']>(result);
     },
     onSuccess: invalidateCourses,
   });
 
   const deleteModule = useMutation<void, Error, string>({
     mutationFn: async (id: string) => {
-      const { error } = await safeQuery(() => supabaseClient.from('modules').delete().eq('id', id));
+      const { error } = await safeQuery(() => supabaseClient.schema('content').from('modules').delete().eq('id', id));
       if (error) throw error;
     },
     onSuccess: invalidateCourses,

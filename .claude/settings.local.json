@@ -46,11 +46,31 @@
       "mcp__supabase-deploya__get_auth_admin_methods_spec",
       "mcp__supabase-deploya__call_auth_admin_method",
       "Bash(psql:*)",
-      "mcp__supabase-deploya__send_management_api_request"
+      "mcp__supabase-deploya__send_management_api_request",
+      "Bash(move \"C:\\tmp\\AUDIT_BACKEND_ULTRA_25-08-24.md\" \"C:\\GitHub\\ai_foundations_lms\\docs\"\")",
+      "Bash(move \"C:\\tmp\\SECURITY_ASSESSMENT_REPORT.md\" \"C:\\GitHub\\ai_foundations_lms\\docs\"\")",
+      "Bash(move \"C:\\tmp\\PERFORMANCE_OPTIMIZATION_GUIDE.md\" \"C:\\GitHub\\ai_foundations_lms\\docs\"\")",
+      "Bash(move \"C:\\tmp\\DATA_GOVERNANCE_PLAYBOOK.md\" \"C:\\GitHub\\ai_foundations_lms\\docs\"\")",
+      "Bash(move \"C:\\tmp\\OPERATIONAL_RUNBOOKS.md\" \"C:\\GitHub\\ai_foundations_lms\\docs\"\")",
+      "Bash(move C:tmpAUDIT_BACKEND_ULTRA_25-08-24.md C:GitHubai_foundations_lmsdocs)",
+      "Bash(move C:tmpSECURITY_ASSESSMENT_REPORT.md C:GitHubai_foundations_lmsdocs)",
+      "Bash(move C:tmpPERFORMANCE_OPTIMIZATION_GUIDE.md C:GitHubai_foundations_lmsdocs)",
+      "mcp__supabase__list_migrations",
+      "Bash(npx supabase gen types:*)",
+      "mcp__supabase__get_project_url",
+      "mcp__supabase__get_advisors",
+      "Bash(timeout:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx supabase:*)",
+      "Bash(taskkill:*)",
+      "Bash(cmd /c:*)",
+      "mcp__supabase__get_logs",
+      "Bash(git reset:*)"
     ],
     "deny": [],
     "additionalDirectories": [
-      "C:\\c\\GitHub"
+      "C:\\c\\GitHub",
+      "C:\\mnt\\c\\GitHub"
     ]
   },
   "enableAllProjectMcpServers": true,

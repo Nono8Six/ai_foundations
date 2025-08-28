@@ -104,11 +104,11 @@ export default defineConfig(() => {
     },
 
     server: {
-      port: 5174,
+      port: 5173,
       host: '0.0.0.0',
-      strictPort: false,
+      strictPort: true,
       allowedHosts: ['.amazonaws.com', '.builtwithrocket.new', 'localhost'],
-      hmr: { host: 'localhost', port: 5174 },
+      hmr: { host: 'localhost', port: 5173 },
       watch: {
         usePolling: process.env.CHOKIDAR_USEPOLLING === '1',
         interval: Number(process.env.CHOKIDAR_INTERVAL ?? 300),

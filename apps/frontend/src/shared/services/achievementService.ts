@@ -245,7 +245,7 @@ export class AchievementService {
 
       // 2. Insérer l'événement XP
       const { error: xpEventError } = await supabase
-        .from('xp_events')
+        .from('gamification.xp_events')
         .insert({
           user_id: userId,
           source_type: 'achievement',

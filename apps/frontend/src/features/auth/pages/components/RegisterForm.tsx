@@ -3,6 +3,9 @@ import { useForm } from 'react-hook-form';
 import Icon from '@shared/components/AppIcon';
 import { useAuth } from '@features/auth/contexts/AuthContext';
 import { log } from '@libs/logger';
+import PasswordStrengthIndicator from '@shared/components/PasswordStrengthIndicator';
+import PasswordConfirmationIndicator from '@shared/components/PasswordConfirmationIndicator';
+import { checkEmailExists } from '@shared/services/userService';
 
 export interface RegisterFormProps {
   isLoading: boolean;
@@ -24,15 +27,28 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ isLoading, setIsLoading }) 
     handleSubmit,
     formState: { errors },
     watch,
+    reset,
+    setValue,
   } = useForm<FormValues>();
   const { signUp } = useAuth();
   const [authError, setAuthError] = useState('');
   const password = watch('password');
+  const confirmPassword = watch('confirmPassword');
   const onSubmit = async (data: FormValues) => {
     setIsLoading(true);
     setAuthError('');
 
     try {
+      // First, check if email already exists
+      log.debug('Checking if email exists:', data.email);
+      const emailExists = await checkEmailExists(data.email);
+      
+      if (emailExists) {
+        setAuthError('Cette adresse email est déjà utilisée. Essayez de vous connecter ou utilisez "Mot de passe oublié".');
+        setIsLoading(false);
+        return;
+      }
+
       const result = await signUp({
         email: data.email,
         password: data.password,
@@ -40,9 +56,43 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ isLoading, setIsLoading }) 
         lastName: data.lastName,
       });
 
-      if (result) {
+      // Check for errors in result
+      if (result?.error) {
+        log.error('Registration error:', result.error.message);
+        setAuthError(result.error.message);
+        
+        // Si c'est une erreur d'email existant, clear les champs pour permettre une nouvelle tentative
+        if (result.error.message.includes('email est déjà utilisé') || result.error.message.includes('Cette adresse email est déjà utilisée')) {
+          setTimeout(() => {
+            reset({
+              firstName: '',
+              lastName: '',
+              email: '',
+              password: '',
+              confirmPassword: '',
+              terms: false,
+            });
+            // Focus sur le champ email pour une nouvelle tentative
+            const emailInput = document.getElementById('email') as HTMLInputElement;
+            if (emailInput) {
+              emailInput.focus();
+            }
+          }, 100);
+        }
+        
+        setIsLoading(false);
+        return;
+      }
+
+      // Check if we got a valid response
+      if (result?.data) {
         localStorage.setItem('pendingEmail', data.email);
         window.location.href = '/verify-email';
+      } else {
+        // This should not happen, but handle gracefully
+        log.error('No result data from signUp');
+        setAuthError("Erreur inattendue lors de l'inscription. Veuillez réessayer.");
+        setIsLoading(false);
       }
     } catch (err) {
       const error = err instanceof Error ? err : new Error(String(err));
@@ -138,6 +188,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ isLoading, setIsLoading }) 
           <input
             id='email'
             type='email'
+            autoComplete='email'
             {...register('email', {
               required: "L'adresse email est requise",
               pattern: {
@@ -176,16 +227,28 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ isLoading, setIsLoading }) 
           <input
             id='password'
             type='password'
+            autoComplete='new-password'
             {...register('password', {
               required: 'Le mot de passe est requis',
               minLength: {
                 value: 8,
                 message: 'Le mot de passe doit contenir au moins 8 caractères',
               },
-              pattern: {
-                value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
-                message:
-                  'Le mot de passe doit contenir au moins une majuscule, une minuscule, un chiffre et un caractère spécial',
+              validate: (value) => {
+                if (!value) return 'Le mot de passe est requis';
+                if (value.length < 8) return 'Le mot de passe doit contenir au moins 8 caractères';
+                
+                const hasLower = /[a-z]/.test(value);
+                const hasUpper = /[A-Z]/.test(value);
+                const hasNumber = /\d/.test(value);
+                const hasSpecial = /[@$!%*?&]/.test(value);
+                
+                if (!hasLower) return 'Le mot de passe doit contenir au moins une minuscule';
+                if (!hasUpper) return 'Le mot de passe doit contenir au moins une majuscule';
+                if (!hasNumber) return 'Le mot de passe doit contenir au moins un chiffre';
+                if (!hasSpecial) return 'Le mot de passe doit contenir au moins un caractère spécial (@$!%*?&)';
+                
+                return true;
               },
             })}
             aria-invalid={Boolean(errors.password)}
@@ -205,6 +268,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ isLoading, setIsLoading }) 
             {errors.password.message}
           </p>
         )}
+        <PasswordStrengthIndicator password={password || ''} />
       </div>
 
       {/* Confirm Password Field */}
@@ -222,6 +286,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ isLoading, setIsLoading }) 
           <input
             id='confirmPassword'
             type='password'
+            autoComplete='new-password'
             {...register('confirmPassword', {
               required: 'La confirmation du mot de passe est requise',
               validate: value => value === password || 'Les mots de passe ne correspondent pas',
@@ -243,6 +308,10 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ isLoading, setIsLoading }) 
             {errors.confirmPassword.message}
           </p>
         )}
+        <PasswordConfirmationIndicator 
+          password={password || ''} 
+          confirmPassword={confirmPassword || ''}
+        />
       </div>
 
       {/* Auth Error Message */}

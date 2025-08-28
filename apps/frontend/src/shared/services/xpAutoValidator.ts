@@ -170,7 +170,7 @@ export class XPAutoValidator {
 
       // Stats depuis xp_events pour les compteurs
       const { data: xpEvents, error: xpError } = await supabase
-        .from('xp_events')
+        .from('gamification.xp_events')
         .select('source_type, action_type, metadata')
         .eq('user_id', userId);
 
@@ -287,7 +287,7 @@ export class XPAutoValidator {
   private static async checkFirstAction(userId: string, actionType: string): Promise<boolean> {
     try {
       const { data, error } = await supabase
-        .from('xp_events')
+        .from('gamification.xp_events')
         .select('id')
         .eq('user_id', userId)
         .eq('action_type', actionType)
@@ -330,7 +330,7 @@ export class XPAutoValidator {
 
       // 2. Créer l'événement XP pour le reward
       const { error: xpError } = await supabase
-        .from('xp_events')
+        .from('gamification.xp_events')
         .insert({
           user_id: userId,
           source_type: 'achievement',

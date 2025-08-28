@@ -2,7 +2,7 @@
   "name": "ai-foundations-monorepo",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@10.13.1+sha512.37ebf1a5c7a30d5fabe0c5df44ee8da4c965ca0c5af3dbab28c3a1681b70a256218d05c81c9c0dcf767ef6b8551eb5b960042b9ed4300c59242336377e01cfad",
+  "packageManager": "pnpm@10.15.0+sha512.486ebc259d3e999a4e8691ce03b5cac4a71cbeca39372a9b762cb500cfdf0873e2cb16abe3d951b1ee2cf012503f027b98b6584e4df22524e0c7450d9ec7aa7b",
   "engines": {
     "node": ">=18.0.0",
     "pnpm": ">=9.0.0"
@@ -21,6 +21,7 @@
     "format": "prettier --write .",
     "prepare": "husky && husky install",
     "gen:types": "node --experimental-json-modules scripts/gen-types.js",
+    "types:generate": "npx supabase gen types typescript --project-id oqmllypaarqvabuvbqga --schema=public,gamification,content,learn,rbac,assessments,referrals,access,media,storage,util > apps/frontend/src/types/database.types.ts",
     "validate:env": "node scripts/validate-env.js",
     "p10:status": "node -r ./scripts/p10/_env.cjs scripts/p10/status.cjs",
     "p10:test:db": "node -r ./scripts/p10/_env.cjs scripts/p10/run_db.cjs",
@@ -38,6 +39,7 @@
     "@commitlint/config-conventional": "^19.8.1",
     "@eslint/js": "^9.31.0",
     "@rollup/rollup-win32-x64-msvc": "^4.45.1",
+    "@supabase/mcp-server-supabase": "^0.4.5",
     "@types/jest": "^29.5.14",
     "@types/lodash": "^4.17.20",
     "@types/node": "^24.1.0",

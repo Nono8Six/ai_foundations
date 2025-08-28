@@ -241,7 +241,7 @@ export class AdminXPService {
 
       // Récupérer tous les utilisateurs ayant gagné XP de cette source
       const { data: affectedEvents, error: eventsError } = await supabase
-        .from('xp_events')
+        .from('gamification.xp_events')
         .select('user_id, xp_delta')
         .eq('source_type', sourceType)
         .eq('action_type', actionType)
@@ -310,7 +310,7 @@ export class AdminXPService {
 
         // Créer un événement XP négatif pour traçabilité
         const { error: eventError } = await supabase
-          .from('xp_events')
+          .from('gamification.xp_events')
           .insert([{
             user_id: userId,
             source_type: 'admin',
@@ -367,7 +367,7 @@ export class AdminXPService {
     try {
       // Calculer l'impact sans l'appliquer
       const { data: affectedEvents, error } = await supabase
-        .from('xp_events')
+        .from('gamification.xp_events')
         .select('user_id, xp_delta')
         .eq('source_type', sourceType)
         .eq('action_type', actionType);

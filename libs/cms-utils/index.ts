@@ -49,9 +49,9 @@ export type CmsContentItem = CmsCourse | CmsModule | CmsLesson;
 
 import type { Database } from '@frontend/types/database.types';
 
-export type CourseWithContent = Database['public']['Tables']['courses']['Row'] & {
-  modules: (Database['public']['Tables']['modules']['Row'] & {
-    lessons: Database['public']['Tables']['lessons']['Row'][];
+export type CourseWithContent = Database['content']['Tables']['courses']['Row'] & {
+  modules: (Database['content']['Tables']['modules']['Row'] & {
+    lessons: Database['content']['Tables']['lessons']['Row'][];
   })[];
 };
 
@@ -74,7 +74,7 @@ export function courseApiToCmsCourse(course: CourseWithContent): CmsCourse {
       lessons: module.lessons?.map(lesson => ({
         id: lesson.id,
         title: lesson.title,
-        duration: lesson.duration ?? 0,
+        duration: lesson.duration_seconds ?? 0,
         createdAt: lesson.created_at ?? '',
         updatedAt: lesson.updated_at ?? '',
         moduleId: lesson.module_id ?? '',
@@ -85,7 +85,7 @@ export function courseApiToCmsCourse(course: CourseWithContent): CmsCourse {
 }
 
 export function courseRowToCmsCourse(
-  course: Database['public']['Tables']['courses']['Row']
+  course: Database['content']['Tables']['courses']['Row']
 ): CmsCourse {
   return {
     id: course.id,

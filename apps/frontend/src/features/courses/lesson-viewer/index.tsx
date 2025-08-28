@@ -72,7 +72,7 @@ const LessonViewer: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       const { data: lessonData, error: lessonError } = await supabase
-        .from('lessons')
+        .schema('content').from('lessons')
         .select('*')
         .limit(1)
         .single();
@@ -97,7 +97,7 @@ const LessonViewer: React.FC = () => {
       }
 
       const { data: modulesData, error: modulesError } = await supabase
-        .from('modules')
+        .schema('content').from('modules')
         .select('id, title, lessons(id, title, duration)')
         .order('id');
 

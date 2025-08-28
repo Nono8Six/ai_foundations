@@ -2,6 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import type { Database } from '@frontend/types/database.types';
 import { z } from 'zod';
 import { log } from '@libs/logger';
+import { dynamicAuthStorage } from './storage';
 
 const envSchema = z.object({
   VITE_SUPABASE_URL: z.string().url(),
@@ -18,6 +19,10 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
     persistSession: true,
     detectSessionInUrl: true,
     flowType: 'pkce',
+    // Professional "Remember me" handling via dynamic storage (localStorage vs sessionStorage)
+    storage: dynamicAuthStorage,
+    // Reduce debug logs - only for explicit debugging
+    debug: false,
   },
   global: {
     headers: {

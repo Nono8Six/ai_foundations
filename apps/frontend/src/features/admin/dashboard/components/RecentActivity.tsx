@@ -120,13 +120,13 @@ const RecentActivity: React.FC = () => {
     setLoading(true);
     try {
       const { data, error } = await supabase
-        .from('activity_log')
+        .from('gamification.xp_events')
         .select(
           `
           id,
-          type,
-          action,
-          details,
+          source_type,
+          action_type,
+          metadata,
           created_at,
           user_id
         `

@@ -5,9 +5,9 @@ import { useProgressChartData } from './useProgressChartData';
 import type { Database } from '@frontend/types/database.types';
 import { subDays, format } from 'date-fns';
 
-type LessonRow = Database['public']['Tables']['lessons']['Row'];
-type CourseRow = Database['public']['Tables']['courses']['Row'];
-type ModuleRow = Database['public']['Tables']['modules']['Row'];
+type LessonRow = Database['content']['Tables']['lessons']['Row'];
+type CourseRow = Database['content']['Tables']['courses']['Row'];
+type ModuleRow = Database['content']['Tables']['modules']['Row'];
 type UserProgressRow = Database['public']['Tables']['user_progress']['Row'];
 
 // Mock data with minimal required fields

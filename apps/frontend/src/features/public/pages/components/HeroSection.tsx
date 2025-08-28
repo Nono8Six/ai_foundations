@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '@features/auth/contexts/AuthContext';
 import { motion } from 'framer-motion';
 import Icon from '@shared/components/AppIcon';
+import { Button } from '@shared/components/ui/button';
 
 const HeroSection: React.FC = () => {
   const { user } = useAuth();
@@ -66,45 +67,27 @@ const HeroSection: React.FC = () => {
               className='flex flex-col sm:flex-row gap-4 justify-center lg:justify-start'
             >
               {!user ? (
-                <Link
-                  to='/register'
-                  className='inline-flex items-center justify-center px-8 py-4 bg-primary text-white font-semibold rounded-lg hover:bg-primary-700 transition-all duration-200 shadow-medium hover:shadow-lg hover:-translate-y-0.5 group'
-                >
-                  <Icon
-                    aria-hidden='true'
-                    name='Play'
-                    size={20}
-                    className='mr-2 group-hover:scale-110 transition-transform duration-200'
-                  />
-                  Commencer maintenant
-                </Link>
+                <Button asChild size='lg'>
+                  <Link to='/register' aria-label='Créer un compte et commencer maintenant'>
+                    <Icon aria-hidden='true' name='Play' size={20} className='mr-2' />
+                    Commencer maintenant
+                  </Link>
+                </Button>
               ) : (
-                <Link
-                  to='/user-dashboard'
-                  className='inline-flex items-center justify-center px-8 py-4 bg-primary text-white font-semibold rounded-lg hover:bg-primary-700 transition-all duration-200 shadow-medium hover:shadow-lg hover:-translate-y-0.5 group'
-                >
-                  <Icon
-                    aria-hidden='true'
-                    name='Play'
-                    size={20}
-                    className='mr-2 group-hover:scale-110 transition-transform duration-200'
-                  />
-                  Accéder à mon tableau de bord
-                </Link>
+                <Button asChild size='lg'>
+                  <Link to='/user-dashboard' aria-label='Accéder à mon tableau de bord'>
+                    <Icon aria-hidden='true' name='Play' size={20} className='mr-2' />
+                    Accéder à mon tableau de bord
+                  </Link>
+                </Button>
               )}
 
-              <Link
-                to='/programmes'
-                className='inline-flex items-center justify-center px-8 py-4 border-2 border-primary text-primary font-semibold rounded-lg hover:bg-primary hover:text-white transition-all duration-200 group'
-              >
-                <Icon
-                  aria-hidden='true'
-                  name='BookOpen'
-                  size={20}
-                  className='mr-2 group-hover:scale-110 transition-transform duration-200'
-                />
-                En savoir plus
-              </Link>
+              <Button asChild variant='outline' size='lg'>
+                <Link to='/programmes' aria-label='Découvrir les programmes'>
+                  <Icon aria-hidden='true' name='BookOpen' size={20} className='mr-2' />
+                  En savoir plus
+                </Link>
+              </Button>
             </motion.div>
 
             {/* Stats */}

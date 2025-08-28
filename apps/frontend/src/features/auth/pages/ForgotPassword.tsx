@@ -25,6 +25,11 @@ const ForgotPassword: React.FC = () => {
     const trimmed = email.trim();
     try {
       await resetPassword(trimmed);
+      try {
+        localStorage.setItem('pendingResetEmail', trimmed);
+      } catch {
+        // localStorage might not be available
+      }
       toast.success(
         'Si un compte existe, un email de r\xE9initialisation a \xE9t\xE9 envoy\xE9.'
       );

@@ -199,6 +199,13 @@ export class XPRpc {
   /**
    * Crédite de l'XP à un utilisateur
    * 
+   * 🚨 EMERGENCY FIX: Currently using credit_xp_compat wrapper function
+   * due to critical mismatch between frontend expectations and actual DB function.
+   * The original credit_xp expects (source_type, action_type) but frontend
+   * sends (source_ref, xp_delta). Compatibility layer bridges this gap.
+   * 
+   * TODO: Migrate to proper integration after fixing parameter mismatch
+   * 
    * @param params - Paramètres validés pour credit_xp RPC
    * @returns Résultat avec détails de l'événement XP créé
    */
@@ -214,16 +221,17 @@ export class XPRpc {
     // Validation params
     const validatedParams = CreditXpParamsSchema.parse(params);
     
-    log.debug('Calling credit_xp RPC:', {
+    log.debug('🚨 EMERGENCY FIX: Calling credit_xp_compat (compatibility wrapper):', {
       userId: validatedParams.userId,
       sourceRef: validatedParams.sourceRef,
       xpDelta: validatedParams.xpDelta,
-      idempotencyKey: `${validatedParams.idempotencyKey.substring(0, 8)  }...`
+      idempotencyKey: `${validatedParams.idempotencyKey.substring(0, 8)  }...`,
+      note: 'Using compatibility layer due to frontend-backend mismatch'
     });
 
     const result = await wrapXPOperation(
       async () => {
-        const { data, error } = await supabase.rpc('credit_xp' as any, {
+        const { data, error } = await supabase.rpc('credit_xp_compat' as any, {
           p_user_id: validatedParams.userId,
           p_source_ref: validatedParams.sourceRef,
           p_xp_delta: validatedParams.xpDelta,
@@ -298,7 +306,7 @@ export class XPRpc {
 
     const result = await wrapXPOperation(
       async () => {
-        const { data, error } = await supabase.rpc('compute_level_info' as any, {
+        const { data, error } = await supabase.rpc('get_level_info' as any, {
           p_xp_total: totalXp
         });
         return { data, error };

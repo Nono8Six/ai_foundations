@@ -190,7 +190,7 @@ const ContentManagementCoursesModulesLessons = (): ReactElement => {
           : `course-${Date.now()}`;
 
         // Préparation des données pour l'API (seulement les champs de la table courses)
-        const courseDataForApi: Omit<Database['public']['Tables']['courses']['Row'], 'id'> & {
+        const courseDataForApi: Omit<Database['content']['Tables']['courses']['Row'], 'id'> & {
           id?: string;
         } = {
           title: courseData.title,

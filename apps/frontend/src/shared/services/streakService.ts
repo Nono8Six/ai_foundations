@@ -170,7 +170,7 @@ export class StreakService {
 
       // Ajouter l'événement XP
       const { error: xpEventError } = await supabase
-        .from('xp_events')
+        .from('gamification.xp_events')
         .insert({
           user_id: userId,
           source_type: sourceType,

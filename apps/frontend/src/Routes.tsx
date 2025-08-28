@@ -11,6 +11,7 @@ const PublicHomepage = lazy(() => import('@features/public/pages/index'));
 const ProgramOverview = lazy(() => import('@features/courses/program-overview/index'));
 const AuthenticationLoginRegister = lazy(() => import('@features/auth/pages/index'));
 const ForgotPassword = lazy(() => import('@features/auth/pages/ForgotPassword'));
+const ResetPassword = lazy(() => import('@features/auth/pages/ResetPassword'));
 const UserDashboard = lazy(() => import('@features/dashboard/user/index'));
 const UserProfileManagement = lazy(() => import('@features/dashboard/profile-management/index'));
 const LessonViewer = lazy(() => import('@features/courses/lesson-viewer/index'));
@@ -64,6 +65,7 @@ const AppRoutes: React.FC = () => {
           <Route path='/login' element={<AuthenticationLoginRegister />} />
           <Route path='/register' element={<AuthenticationLoginRegister />} />
           <Route path='/forgot-password' element={<ForgotPassword />} />
+          <Route path='/reset-password' element={<ResetPassword />} />
           <Route path='/verify-email' element={<VerifyEmail />} />
 
           {/* Redirections pour les anciennes URLs ou les URLs alternatives */}

@@ -1,4 +1,5 @@
 // src/App.tsx
+import React from 'react';
 import { Toaster, toast } from 'sonner';
 import AppRoutes from './Routes';
 import { AuthProvider } from '@features/auth/contexts/AuthContext';
@@ -10,6 +11,8 @@ import { isAuthErrorWithCode } from '@shared/utils/auth';
 import type { AuthErrorWithCode } from './types/auth';
 import { log } from '@libs/logger';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import SessionWarningModal from '@shared/components/SessionWarningModal';
+import { useSessionManagement } from '@shared/hooks/useSessionManagement';
 
 // Configuration du QueryClient global
 const queryClient = new QueryClient({
@@ -21,6 +24,26 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+// Inner component to access session management after providers are set up
+const AppContent: React.FC = () => {
+  const sessionManagement = useSessionManagement();
+
+  return (
+    <>
+      <AppRoutes />
+      <Toaster richColors position="top-center" />
+      
+      {/* Session Warning Modal */}
+      <SessionWarningModal
+        show={sessionManagement.sessionWarning.show}
+        timeRemaining={sessionManagement.sessionWarning.timeRemaining}
+        onExtend={sessionManagement.sessionWarning.onExtend}
+        onLogout={sessionManagement.sessionWarning.onLogout}
+      />
+    </>
+  );
+};
 
 const App: React.FC = () => {
   const errorLoggerWithToast: ErrorLogger = (error: AppError) => {
@@ -45,8 +68,7 @@ const App: React.FC = () => {
         <CourseProvider>
           <AdminCourseProvider>
             <ErrorProvider logger={errorLoggerWithToast}>
-              <AppRoutes />
-              <Toaster richColors position="top-center" />
+              <AppContent />
             </ErrorProvider>
           </AdminCourseProvider>
         </CourseProvider>

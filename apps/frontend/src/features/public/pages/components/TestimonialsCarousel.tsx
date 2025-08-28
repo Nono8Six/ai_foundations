@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import Icon from '@shared/components/AppIcon';
 import Image from '@shared/components/AppImage';
 
 const TestimonialsCarousel: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const reduceMotion = useReducedMotion();
 
   const testimonials = [
     {
@@ -96,12 +98,12 @@ const TestimonialsCarousel: React.FC = () => {
   ];
 
   useEffect(() => {
+    if (paused || reduceMotion) return;
     const timer = setInterval(() => {
       setCurrentIndex(prevIndex => (prevIndex === testimonials.length - 1 ? 0 : prevIndex + 1));
     }, 6000);
-
     return () => clearInterval(timer);
-  }, [testimonials.length]);
+  }, [testimonials.length, paused, reduceMotion]);
 
   const nextTestimonial = () => {
     setCurrentIndex(currentIndex === testimonials.length - 1 ? 0 : currentIndex + 1);
@@ -118,7 +120,12 @@ const TestimonialsCarousel: React.FC = () => {
   }
 
   return (
-    <section className='py-16 lg:py-20 bg-surface'>
+    <section
+      className='py-16 lg:py-20 bg-surface'
+      role='region'
+      aria-roledescription='carousel'
+      aria-label='Témoignages étudiants'
+    >
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
         {/* Section Header */}
         <motion.div
@@ -140,6 +147,19 @@ const TestimonialsCarousel: React.FC = () => {
             professionnelle grâce à l&rsquo;IA
           </p>
         </motion.div>
+
+        {/* Controls */}
+        <div className='flex justify-end -mt-8 mb-4'>
+          <button
+            onClick={() => setPaused(p => !p)}
+            className='inline-flex items-center px-3 py-1.5 text-sm rounded-md border bg-surface hover:bg-secondary-50 transition-colors'
+            aria-pressed={paused}
+            aria-label={paused ? 'Relancer le carrousel' : 'Mettre le carrousel en pause'}
+          >
+            <Icon aria-hidden='true' name={paused ? 'Play' : 'Pause'} size={14} className='mr-2' />
+            {paused ? 'Lecture' : 'Pause'}
+          </button>
+        </div>
 
         {/* Testimonial Carousel */}
         <div className='relative'>

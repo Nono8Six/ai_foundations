@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Icon from '@shared/components/AppIcon';
 import Image from '@shared/components/AppImage';
+import { Button } from '@shared/components/ui/button';
 
 const ProgramOverview: React.FC = () => {
   const courses = [
@@ -265,20 +266,18 @@ const ProgramOverview: React.FC = () => {
               travail grâce à l&rsquo;IA
             </p>
             <div className='flex flex-col sm:flex-row gap-4 justify-center'>
-              <Link
-                to='/register'
-                className='inline-flex items-center justify-center px-8 py-4 bg-surface text-primary font-semibold rounded-lg hover:bg-secondary-50 transition-colors duration-200'
-              >
-                <Icon aria-hidden='true' name='Rocket' size={20} className='mr-2' />
-                Commencer gratuitement
-              </Link>
-              <Link
-                to='/programmes'
-                className='inline-flex items-center justify-center px-8 py-4 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-primary transition-colors duration-200'
-              >
-                <Icon aria-hidden='true' name='Info' size={20} className='mr-2' />
-                Plus d&rsquo;informations
-              </Link>
+              <Button asChild size='lg' variant='secondary'>
+                <Link to='/register'>
+                  <Icon aria-hidden='true' name='Rocket' size={20} className='mr-2' />
+                  Commencer gratuitement
+                </Link>
+              </Button>
+              <Button asChild size='lg' variant='outline' className='border-white text-white hover:text-primary hover:bg-white'>
+                <Link to='/programmes'>
+                  <Icon aria-hidden='true' name='Info' size={20} className='mr-2' />
+                  Plus d&rsquo;informations
+                </Link>
+              </Button>
             </div>
           </div>
         </motion.div>

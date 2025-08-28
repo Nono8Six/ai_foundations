@@ -55,7 +55,7 @@ export type CourseDifficulty = 'beginner' | 'intermediate' | 'advanced' | 'exper
 /**
  * Métadonnées d'un cours avec sa progression
  */
-export interface CourseWithProgress extends Omit<Database['public']['Tables']['courses']['Row'], 'difficulty'> {
+export interface CourseWithProgress extends Omit<Database['content']['Tables']['courses']['Row'], 'difficulty'> {
   /** Niveau de difficulté typé */
   difficulty: CourseDifficulty;
   /** Détails de la progression */
@@ -92,8 +92,8 @@ export interface CourseWithProgress extends Omit<Database['public']['Tables']['c
   instructor?: string;
   /** Modules avec leurs leçons pour ce cours */
   modules?: Array<
-    Database['public']['Tables']['modules']['Row'] & {
-      lessons: Database['public']['Tables']['lessons']['Row'][];
+    Database['content']['Tables']['modules']['Row'] & {
+      lessons: Database['content']['Tables']['lessons']['Row'][];
     }
   >;
 }

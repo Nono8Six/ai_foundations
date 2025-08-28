@@ -9,6 +9,7 @@ import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
 import GoogleAuthButton from './components/GoogleAuthButton';
 import Card from '@shared/ui/Card';
+import { ROUTES } from '@shared/constants/routes';
 
 const AuthenticationLoginRegister: React.FC = () => {
   const location = useLocation();
@@ -29,7 +30,7 @@ const AuthenticationLoginRegister: React.FC = () => {
   // Redirect if user is already logged in
   useEffect(() => {
     if (user) {
-      navigate('/espace');
+      navigate(ROUTES.postAuth);
     }
   }, [user, navigate]);
 
@@ -47,11 +48,8 @@ const AuthenticationLoginRegister: React.FC = () => {
     if (activeTab === 'login') {
       toast.success('Connexion réussie !');
       // Redirect based on user role
-      if (userData.role === 'admin') {
-        navigate('/admin-dashboard');
-      } else {
-        navigate('/espace');
-      }
+      // TODO: when RBAC available, redirect admin accordingly.
+      navigate(ROUTES.postAuth);
     }
     // For registration, the success UI is handled in RegisterForm component
 
@@ -59,55 +57,57 @@ const AuthenticationLoginRegister: React.FC = () => {
   };
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-primary-50 via-background to-accent-50 pt-16'>
+    <div className='min-h-screen bg-gradient-to-br from-primary-50 via-background to-accent-50'>
       {/* Main Content */}
-      <div className='flex items-center justify-center min-h-screen px-4 py-12'>
+      <div className='flex items-center justify-center min-h-screen px-4 py-6 sm:py-8 md:py-12'>
         <div className='w-full max-w-md'>
           {/* Welcome Section */}
-          <div className='text-center mb-8'>
-            <div className='w-20 h-20 bg-gradient-to-br from-primary to-primary-700 rounded-full flex items-center justify-center mx-auto mb-6 shadow-medium'>
-              <Icon aria-hidden='true' name='Brain' size={40} color='white' />
+          <div className='text-center mb-6 sm:mb-8'>
+            <div className='w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-primary to-primary-700 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 shadow-medium'>
+              <Icon aria-hidden='true' name='Brain' size={32} className='sm:w-10 sm:h-10' color='white' />
             </div>
-            <h1 className='text-3xl font-bold text-text-primary mb-2'>
+            <h1 className='text-2xl sm:text-3xl font-bold text-text-primary mb-2'>
               {activeTab === 'login' ? 'Bon retour !' : 'Rejoignez-nous'}
             </h1>
-            <p className='text-text-secondary'>
+            <p className='text-sm sm:text-base text-text-secondary px-2'>
               {activeTab === 'login'
                 ? 'Connectez-vous pour continuer votre apprentissage IA'
-                : "Commencez votre parcours d&rsquo;apprentissage IA dès aujourd&rsquo;hui"}
+                : "Commencez votre parcours d'apprentissage IA dès aujourd'hui"}
             </p>
           </div>
 
           {/* Authentication Card */}
-          <Card className='rounded-2xl overflow-hidden'>
+          <Card className='rounded-2xl overflow-visible'>
             {/* Tab Navigation */}
             <div className='flex border-b border-border'>
               <button
                 onClick={() => setActiveTab('login')}
-                className={`flex-1 py-4 px-6 text-sm font-medium transition-all duration-200 ${
+                className={`flex-1 py-3 px-3 sm:py-4 sm:px-6 text-xs sm:text-sm font-medium transition-all duration-200 ${
                   activeTab === 'login'
                     ? 'text-primary bg-primary-50 border-b-2 border-primary'
                     : 'text-text-secondary hover:text-primary hover:bg-secondary-50'
                 }`}
               >
-                <Icon aria-hidden='true' name='LogIn' size={18} className='inline mr-2' />
-                Connexion
+                <Icon aria-hidden='true' name='LogIn' size={16} className='inline mr-1 sm:mr-2' />
+                <span className='hidden sm:inline'>Connexion</span>
+                <span className='sm:hidden'>Se connecter</span>
               </button>
               <button
                 onClick={() => setActiveTab('register')}
-                className={`flex-1 py-4 px-6 text-sm font-medium transition-all duration-200 ${
+                className={`flex-1 py-3 px-3 sm:py-4 sm:px-6 text-xs sm:text-sm font-medium transition-all duration-200 ${
                   activeTab === 'register'
                     ? 'text-primary bg-primary-50 border-b-2 border-primary'
                     : 'text-text-secondary hover:text-primary hover:bg-secondary-50'
                 }`}
               >
-                <Icon aria-hidden='true' name='UserPlus' size={18} className='inline mr-2' />
-                Inscription
+                <Icon aria-hidden='true' name='UserPlus' size={16} className='inline mr-1 sm:mr-2' />
+                <span className='hidden sm:inline'>Inscription</span>
+                <span className='sm:hidden'>S'inscrire</span>
               </button>
             </div>
 
             {/* Form Content */}
-            <div className='p-6'>
+            <div className='p-4 sm:p-6'>
               {/* Google Auth Button */}
               <GoogleAuthButton
                 isLoading={isLoading}
@@ -141,16 +141,16 @@ const AuthenticationLoginRegister: React.FC = () => {
           </Card>
 
           {/* Footer Links */}
-          <div className='text-center mt-6 space-y-3'>
+          <div className='text-center mt-4 sm:mt-6 space-y-2 sm:space-y-3'>
             {activeTab === 'login' ? (
               <>
                 <Link
-                  to='/forgot-password'
-                  className='block text-sm text-primary hover:text-primary-700 transition-colors duration-200'
+                  to={ROUTES.forgot}
+                  className='block text-xs sm:text-sm text-primary hover:text-primary-700 transition-colors duration-200'
                 >
                   Mot de passe oublié ?
                 </Link>
-                <p className='text-sm text-text-secondary'>
+                <p className='text-xs sm:text-sm text-text-secondary'>
                   Pas encore de compte ?{' '}
                   <button
                     onClick={() => setActiveTab('register')}
@@ -161,7 +161,7 @@ const AuthenticationLoginRegister: React.FC = () => {
                 </p>
               </>
             ) : (
-              <p className='text-sm text-text-secondary'>
+              <p className='text-xs sm:text-sm text-text-secondary'>
                 Déjà un compte ?{' '}
                 <button
                   onClick={() => setActiveTab('login')}
@@ -174,18 +174,18 @@ const AuthenticationLoginRegister: React.FC = () => {
           </div>
 
           {/* Demo Info */}
-          <div className='mt-8 p-4 bg-accent-50 border border-accent-200 rounded-lg'>
-            <div className='flex items-start space-x-3'>
+          <div className='mt-6 sm:mt-8 p-3 sm:p-4 bg-accent-50 border border-accent-200 rounded-lg'>
+            <div className='flex items-start space-x-2 sm:space-x-3'>
               <Icon
                 aria-hidden='true'
                 name='Info'
-                size={20}
-                className='text-accent flex-shrink-0 mt-0.5'
+                size={16}
+                className='text-accent flex-shrink-0 mt-0.5 sm:w-5 sm:h-5'
               />
               <div>
-                <h4 className='text-sm font-medium text-accent-700 mb-1'>Information de test</h4>
-                <p className='text-xs text-accent-600 mb-2'>
-                  Pour tester l&rsquo;application, créez un compte ou utilisez Google OAuth.
+                <h4 className='text-xs sm:text-sm font-medium text-accent-700 mb-1'>Information de test</h4>
+                <p className='text-xs text-accent-600'>
+                  Pour tester l'application, créez un compte ou utilisez Google OAuth.
                 </p>
               </div>
             </div>

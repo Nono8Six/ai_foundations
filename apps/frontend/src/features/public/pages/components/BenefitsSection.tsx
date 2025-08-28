@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import Icon from '@shared/components/AppIcon';
+import { Card, CardContent } from '@shared/components/ui/card';
 
 const BenefitsSection: React.FC = () => {
   const benefits = [
@@ -145,8 +146,10 @@ const BenefitsSection: React.FC = () => {
                 key={index}
                 variants={cardVariants}
                 whileHover={{ y: -5 }}
-                className={`bg-surface rounded-xl p-6 border ${colorClasses.border} shadow-subtle hover:shadow-medium transition-all duration-300 group`}
+                className='group'
               >
+                <Card className={`hover:shadow-md transition-all duration-300 ${colorClasses.border}`}>
+                  <CardContent className='p-6'>
                 {/* Icon & Productivity Badge */}
                 <div className='flex items-start justify-between mb-4'>
                   <div
@@ -190,6 +193,8 @@ const BenefitsSection: React.FC = () => {
                     </li>
                   ))}
                 </ul>
+                  </CardContent>
+                </Card>
               </motion.div>
             );
           })}

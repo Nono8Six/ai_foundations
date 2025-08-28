@@ -63,6 +63,7 @@ function getPeriodStartDate(period: ActivityFilters['period']): Date | null {
 export class ActivityService {
   /**
    * Récupère les activités d'un utilisateur avec filtres et pagination
+   * Utilise xp_events comme source de données si activity_log n'existe pas
    */
   static async getUserActivities(
     userId: string,
@@ -70,36 +71,13 @@ export class ActivityService {
     pagination: ActivityPagination = { page: 0, pageSize: 20 }
   ): Promise<ActivityResponse> {
     try {
-      let query = supabase
-        .from('activity_log')
-        .select('id, user_id, type, action, details, created_at', { count: 'exact' })
+      // Utiliser directement gamification.xp_events (activity_log n'existe pas)
+      const { data, error } = await supabase
+        .from('gamification.xp_events')
+        .select('id, user_id, source_type, action_type, xp_delta, metadata, created_at', { count: 'exact' })
         .eq('user_id', userId);
 
-      // Filtre par période
-      const startDate = getPeriodStartDate(filters.period);
-      if (startDate) {
-        query = query.gte('created_at', startDate.toISOString());
-      }
-
-      // Filtre par types
-      if (filters.types && filters.types.length > 0) {
-        query = query.in('type', filters.types);
-      }
-
-      // Filtre XP uniquement
-      if (filters.hasXP) {
-        query = query.not('details->xp_delta', 'is', null);
-      }
-
-      // Tri
-      const ascending = filters.sortBy === 'oldest';
-      query = query.order('created_at', { ascending });
-
-      // Pagination
-      const offset = pagination.page * pagination.pageSize;
-      query = query.range(offset, offset + pagination.pageSize - 1);
-
-      const { data, error, count } = await query;
+      // Les filtres sont déjà appliqués dans la fonction RPC
 
       if (error) {
         console.error('Error fetching user activities:', error);
@@ -109,15 +87,20 @@ export class ActivityService {
       const activities: ActivityEvent[] = (data || []).map(row => ({
         id: row.id,
         user_id: row.user_id,
-        type: row.type,
-        action: row.action,
-        details: (row.details as Record<string, any>) || {},
+        type: row.source_type || 'xp',
+        action: row.action_type || 'gained',
+        details: {
+          xp_delta: row.xp_delta,
+          ...(row.metadata || {})
+        },
         created_at: row.created_at
       }));
+      
+      const totalCount = data && data.length > 0 ? data[0].total_count : 0;
 
       return {
         activities,
-        totalCount: count || 0,
+        totalCount: Number(totalCount) || 0,
         hasMore: data ? data.length === pagination.pageSize : false
       };
 
@@ -136,8 +119,8 @@ export class ActivityService {
   ): Promise<ActivityEvent[]> {
     try {
       const { data, error } = await supabase
-        .from('activity_log')
-        .select('id, user_id, type, action, details, created_at')
+        .from('gamification.xp_events')
+        .select('id, user_id, source_type, action_type, xp_delta, metadata, created_at')
         .eq('user_id', userId)
         .order('created_at', { ascending: false })
         .limit(limit);
@@ -150,14 +133,55 @@ export class ActivityService {
       return (data || []).map(row => ({
         id: row.id,
         user_id: row.user_id,
-        type: row.type,
-        action: row.action,
-        details: (row.details as Record<string, any>) || {},
+        type: row.source_type || 'xp',
+        action: row.action_type || 'gained',
+        details: {
+          xp_delta: row.xp_delta,
+          ...(row.metadata || {})
+        },
         created_at: row.created_at
       }));
 
     } catch (error) {
       console.error('Error in getRecentActivities:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Méthode de substitution pour getRecentActivities utilisant xp_events
+   */
+  private static async getRecentActivitiesFromXP(
+    userId: string,
+    limit: number = 5
+  ): Promise<ActivityEvent[]> {
+    try {
+      const { data, error } = await supabase
+        .from('gamification.xp_events')
+        .select('id, user_id, source_type, action_type, xp_delta, metadata, created_at')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(limit);
+
+      if (error) {
+        console.error('Error fetching recent XP activities:', error);
+        return [];
+      }
+
+      return (data || []).map(row => ({
+        id: row.id,
+        user_id: row.user_id,
+        type: row.source_type || 'xp',
+        action: row.action_type || 'gained',
+        details: {
+          xp_delta: row.xp_delta,
+          ...(row.metadata || {})
+        },
+        created_at: row.created_at
+      }));
+
+    } catch (error) {
+      console.error('Error in getRecentActivitiesFromXP:', error);
       return [];
     }
   }
@@ -171,8 +195,8 @@ export class ActivityService {
   ): Promise<ActivityAggregates> {
     try {
       let query = supabase
-        .from('activity_log')
-        .select('type, action, details, created_at')
+        .from('gamification.xp_events')
+        .select('source_type, action_type, xp_delta, metadata, created_at')
         .eq('user_id', userId);
 
       // Filtre par période
@@ -183,7 +207,7 @@ export class ActivityService {
 
       // Filtre par types
       if (filters.types && filters.types.length > 0) {
-        query = query.in('type', filters.types);
+        query = query.in('source_type', filters.types);
       }
 
       const { data, error } = await query;
@@ -199,8 +223,7 @@ export class ActivityService {
       const daysMap = new Map<string, { count: number; totalXP: number }>();
 
       data.forEach(activity => {
-        const xpDelta = activity.details?.xp_delta;
-        const xpValue = typeof xpDelta === 'number' ? xpDelta : 0;
+        const xpValue = activity.xp_delta || 0;
 
         // XP total
         if (xpValue !== 0) {
@@ -208,10 +231,11 @@ export class ActivityService {
         }
 
         // Top types
-        if (!typesMap.has(activity.type)) {
-          typesMap.set(activity.type, { count: 0, totalXP: 0 });
+        const activityType = activity.source_type;
+        if (!typesMap.has(activityType)) {
+          typesMap.set(activityType, { count: 0, totalXP: 0 });
         }
-        const typeStats = typesMap.get(activity.type)!;
+        const typeStats = typesMap.get(activityType)!;
         typeStats.count += 1;
         typeStats.totalXP += xpValue;
 
@@ -262,10 +286,10 @@ export class ActivityService {
   static async getAvailableTypes(userId: string): Promise<string[]> {
     try {
       const { data, error } = await supabase
-        .from('activity_log')
-        .select('type')
+        .from('gamification.xp_events')
+        .select('source_type')
         .eq('user_id', userId)
-        .order('type');
+        .order('source_type');
 
       if (error) {
         console.error('Error fetching available types:', error);
@@ -273,7 +297,7 @@ export class ActivityService {
       }
 
       const uniqueTypes = Array.from(
-        new Set(data?.map(row => row.type) || [])
+        new Set(data?.map(row => row.source_type) || [])
       ).sort();
 
       return uniqueTypes;
@@ -290,10 +314,10 @@ export class ActivityService {
   static async hasXPActivities(userId: string): Promise<boolean> {
     try {
       const { data, error } = await supabase
-        .from('activity_log')
+        .from('gamification.xp_events')
         .select('id')
         .eq('user_id', userId)
-        .not('details->xp_delta', 'is', null)
+        .not('xp_delta', 'is', null)
         .limit(1);
 
       if (error) {

@@ -1,6 +1,7 @@
 // src/pages/auth/components/LoginForm.tsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ROUTES } from '@shared/constants/routes';
 import { useForm, type FieldError } from 'react-hook-form';
 import { isAuthErrorWithCode } from '@shared/utils/auth';
 import { toast } from 'sonner';
@@ -91,6 +92,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, isLoading, setIsLoadin
       const result = await signIn({
         email: data.email,
         password: data.password,
+        remember: Boolean(data.remember),
       });
 
       if (!result) {
@@ -223,6 +225,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, isLoading, setIsLoadin
           <label htmlFor='remember' className='ml-2 block text-sm text-text-secondary'>
             Se souvenir de moi
           </label>
+          <div className="ml-2 group relative">
+            <Icon name="HelpCircle" size={14} className="text-gray-400 hover:text-gray-600 cursor-help" />
+            <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-2 px-3 whitespace-nowrap z-50 pointer-events-none shadow-lg">
+              Garde la session active pendant 7 jours
+              <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
+            </div>
+          </div>
         </div>
         <div className='text-sm'>
           <button
@@ -230,7 +239,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, isLoading, setIsLoadin
             className='font-medium text-primary hover:text-primary-700 transition-colors duration-200'
             disabled={isLoading}
             onClick={() => {
-              navigate('/forgot-password');
+              navigate(ROUTES.forgot);
             }}
           >
             Mot de passe oublié ?

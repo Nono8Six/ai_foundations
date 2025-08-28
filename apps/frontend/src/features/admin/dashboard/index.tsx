@@ -37,7 +37,7 @@ const AdminDashboard: React.FC = () => {
         const sevenDaysAgo = new Date();
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
         const { data: activeUsersData, error: activeUsersError } = await supabase
-          .from('activity_log')
+          .from('gamification.xp_events')
           .select('user_id', { count: 'exact' })
           .gte('created_at', sevenDaysAgo.toISOString());
         if (activeUsersError) throw activeUsersError;
